@@ -1,0 +1,1 @@
+add_executable(calculator ast.cpp calculator.cpp calculator_parser.cpp)
