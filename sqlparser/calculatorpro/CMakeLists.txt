@@ -1,0 +1,1 @@
+add_executable(calculatorpro symbol.cpp ast_pro.cpp)
