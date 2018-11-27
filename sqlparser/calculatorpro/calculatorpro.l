@@ -5,7 +5,6 @@
 
 %{
 #include "ast_pro.h"
-#include "symbol.h"
 #include "calculatorpro_parser.h"
 %}
 

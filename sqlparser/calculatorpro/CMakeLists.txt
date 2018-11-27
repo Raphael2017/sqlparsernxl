@@ -1,1 +1,1 @@
-add_library(symbol symbol.cpp ast_pro.cpp)
+add_executable(calculatorpro ast_pro.cpp calculatorpro.cpp calculatorpro_parser.cpp)

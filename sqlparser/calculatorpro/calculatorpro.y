@@ -4,9 +4,8 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "symbol.h"
-#include "ast_pro.h"
 #include "calculatorpro.h"
+#include "ast_pro.h"
 %}
 
 %union
@@ -112,4 +111,12 @@ symlist: NAME
     |   NAME ',' symlist
 {
     $$ = symbol::newsymlist($1, $3);
+}
+
+%%
+int main()
+{
+    printf("> ");
+
+    return yyparse();
 }

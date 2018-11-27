@@ -1,15 +1,14 @@
 #ifndef AST_PRO_H
 #define AST_PRO_H
 
-#include "calculatorpro_parser.h"
+#include <list>
+#include <map>
+#include <string>
+
+struct symbol;
 
 extern int yylineno;    /* from flex */
 void yyerror(char* s, ...);
-
-// forward declare
-struct exp;
-struct numval;
-struct symbol;
 
 struct node
 {
@@ -53,8 +52,6 @@ enum bifs
     B_print
 };
 
-struct symbol;
-
 // inner function
 struct fncall : public node
 {
@@ -96,6 +93,32 @@ struct symasgn : public node
     virtual double eval();
     symbol* s;
     node* v;
+};
+
+
+//
+struct symbol
+{
+    typedef std::list<symbol*> symlist;
+    static std::list<symbol*>* newsymlist(symbol*, std::list<symbol*>*);
+    symbol() : value(0), func(nullptr), syms(nullptr) {}
+    ~symbol();
+    void def(std::list<symbol*>* ss, node* stmts);
+    std::string name;
+    double value;
+
+    node* func;                 /* func body */
+    symlist* syms;    /* func formal params */
+};
+
+
+struct symstab
+{
+    static symstab* instance();
+    symbol* lookup(const char*);
+    std::map<std::string, symbol> data_;
+private:
+    static symstab* ins_;
 };
 
 #endif
