@@ -1,5 +1,5 @@
 #include "symbol.h"
-#include "ast_pro.h"
+
 
 std::list<symbol*>* symbol::newsymlist(symbol* name, std::list<symbol*>* symlist)
 {

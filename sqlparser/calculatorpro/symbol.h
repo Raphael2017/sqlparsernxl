@@ -5,20 +5,22 @@
 #include <map>
 #include <string>
 
-struct node;
+#include "ast_pro.h"
 
 struct symbol
 {
+    typedef std::list<symbol*> symlist;
     static std::list<symbol*>* newsymlist(symbol*, std::list<symbol*>*);
-    symbol() : value(0), func(nullptr), syms(nullptr) {}
+    //symbol() : value(0), func(nullptr), syms(nullptr) {}
     ~symbol();
     void def(std::list<symbol*>* ss, node* stmts);
     std::string name;
     double value;
 
     node* func;                 /* func body */
-    std::list<symbol*>* syms;    /* func formal params */
+    symlist* syms;    /* func formal params */
 };
+
 
 struct symstab
 {

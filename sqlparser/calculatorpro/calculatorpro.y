@@ -4,6 +4,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "symbol.h"
 #include "ast_pro.h"
 #include "calculatorpro.h"
 %}
@@ -13,7 +14,7 @@
     struct node* a;
     double d;
     struct symbol* s;
-    std::list<symbol*>* sl;
+    symbol::symlist* sl;
     int fn;
 }
 

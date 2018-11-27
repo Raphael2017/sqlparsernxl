@@ -1,6 +1,8 @@
 #ifndef AST_PRO_H
 #define AST_PRO_H
 
+#include "calculatorpro_parser.h"
+
 extern int yylineno;    /* from flex */
 void yyerror(char* s, ...);
 
