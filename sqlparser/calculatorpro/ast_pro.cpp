@@ -114,7 +114,31 @@ double exp::eval()
         case '5' : ret = (l->eval() >= r->eval()) ? 1 : 0; break;
         case '6' : ret = (l->eval() <= r->eval()) ? 1 : 0; break;
 
-        case 'L' : l->eval(); ret = r->eval(); break;
+        case 'L' :
+        {
+            if (!r)
+            {
+                ret = l->eval();
+            }
+            else
+            {
+                l->eval(); ret = r->eval();
+            }
+        }
+            break;
+        case 'Q' : l->eval(); ret = r->eval(); break;
+        case 'R' :
+        {
+            if (!r)
+            {
+                ret = l->eval();
+            }
+            else
+            {
+                l->eval(); ret = r->eval();
+            }
+        }
+            break;
         default: printf("internal error: bad node %c\n", nodetype);
     }
     return ret;
@@ -188,7 +212,7 @@ double ufncall::eval()
     while (nargs > 0 && ll)
     {
         double param = 0.0;
-        if (ll->nodetype == 'L')
+        if (ll->nodetype == 'Q')
         {
             param = ((struct exp*)ll)->l->eval();
             ll = ((struct exp*)ll)->r;
@@ -330,7 +354,7 @@ std::list<symbol*>* symbol::newsymlist(symbol* name, std::list<symbol*>* symlist
     {
         ret = new std::list<symbol*>;
     }
-    ret->push_back(name);
+    ret->push_front(name);
     return ret;
 }
 

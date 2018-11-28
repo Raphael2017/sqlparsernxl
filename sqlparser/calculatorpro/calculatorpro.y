@@ -40,12 +40,14 @@ calclist:   /*  */
     |   calclist stmt EOL
 {
     printf("= %4.4g\n> ", $2->eval());
+    printf("%s\n>", $2->serialize().c_str());
     delete $2;
 }
     |   calclist FUNCTION NAME '(' symlist ')' list END EOL
 {
     $3->def($5, $7);
-    printf("Defined %s\n> ", $3->name.c_str());
+    printf("Defined function %s\n> ", $3->name.c_str());
+    printf("%s\n>", $3->serialize().c_str());
 }
     |   calclist error EOL
 {
@@ -79,18 +81,12 @@ list: /*  */
 }
     |   stmt ';' list
 {
-    if (!$3)
-        $$ = $1;
-    else
-        $$ = node::newexp('L', $1, $3);
+    $$ = node::newexp('L', $1, $3);
 }
     |   ifstmt list
     |   whilestmt list
 {
-    if (!$2)
-        $$ = $1;
-    else
-        $$ = node::newexp('L', $1, $2);
+    $$ = node::newexp('R', $1, $2);
 }
 ;
 
@@ -100,7 +96,7 @@ exp: exp CMP exp    { $$ = node::newcmp($2, $1, $3); }
     |   exp '*' exp { $$ = node::newexp('*', $1, $3); }
     |   exp '/' exp { $$ = node::newexp('/', $1, $3); }
     |   '|' exp     { $$ = node::newexp('|', $2, nullptr); }
-    |   '(' exp ')' { $$ = $2; }
+    |   '(' exp ')' { $$ = $2; $$->withparent = true; }
     |   '-' exp %prec UMINUS { $$ = node::newexp('M', $2, nullptr); }
     |   NUMBER      { $$ = node::newnum($1); }
     |   NAME        { $$ = node::newref($1); }
@@ -112,7 +108,7 @@ exp: exp CMP exp    { $$ = node::newcmp($2, $1, $3); }
 explist: exp
     |   exp ',' explist
 {
-    $$ = node::newexp('L', $1, $3);
+    $$ = node::newexp('Q', $1, $3);
 }
 ;
 

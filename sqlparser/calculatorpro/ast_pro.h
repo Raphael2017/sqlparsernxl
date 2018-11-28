@@ -23,15 +23,20 @@ struct node
     static node* newflow(int nodetype, node* cond, node* tl, node* tr);
 
     int nodetype;
+    bool withparent;
+
+    int serializetype;
     virtual ~node() {}
     virtual double eval() = 0;
+    virtual std::string serialize() = 0;
 };
 
 struct exp : public node
 {
-    exp() : l(nullptr), r(nullptr) {}
+    exp() : l(nullptr), r(nullptr) { withparent = false; }
     ~exp();
     virtual double eval();
+    virtual std::string serialize();
     node* l;
     node* r;
 };
@@ -40,6 +45,7 @@ struct numval : public node
 {
     ~numval();
     virtual double eval();
+    virtual std::string serialize();
     double number;
 };
 
@@ -57,6 +63,7 @@ struct fncall : public node
     fncall() : l(nullptr) {}
     ~fncall();
     virtual double eval();
+    virtual std::string serialize();
     node* l;
     bifs functype;
 };
@@ -66,6 +73,7 @@ struct ufncall : public node
 {
     ~ufncall();
     virtual double eval();
+    virtual std::string serialize();
     node* l;        /* func real param */
     symbol* s;
 };
@@ -74,6 +82,7 @@ struct flow : public node
 {
     ~flow();
     virtual double eval();
+    virtual std::string serialize();
     node* cond; /* condition */
     node* tl;   /* then or do */
     node* el;   /* opt else */
@@ -83,6 +92,7 @@ struct symref : public node
 {
     ~symref();
     virtual double eval();
+    virtual std::string serialize();
     symbol* s;
 };
 
@@ -90,6 +100,7 @@ struct symasgn : public node
 {
     ~symasgn();
     virtual double eval();
+    virtual std::string serialize();
     symbol* s;
     node* v;
 };
@@ -100,6 +111,7 @@ struct symbol
 {
     typedef std::list<symbol*> symlist;
     static std::list<symbol*>* newsymlist(symbol*, std::list<symbol*>*);
+    virtual std::string serialize();
     symbol() : value(0), func(nullptr), syms(nullptr) {}
     ~symbol();
     void def(std::list<symbol*>* ss, node* stmts);

@@ -1,2 +1,2 @@
-add_executable(calculatorpro ast_pro.cpp calculatorpro.cpp calculatorpro_parser.cpp)
+add_executable(calculatorpro ast_pro.cpp calculatorpro.cpp calculatorpro_parser.cpp ast_pro_serialize.cpp)
 target_link_libraries(calculatorpro m)
