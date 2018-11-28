@@ -33,7 +33,7 @@ std::string exp::serialize()
         case 'R' :
         {
             auto tmp = r == nullptr ? "" : r->serialize();
-            ret = l->serialize() + ", " + tmp;
+            ret = l->serialize() + " " + tmp;
         }
             break;
         default: printf("internal error: bad node %c\n", nodetype);
