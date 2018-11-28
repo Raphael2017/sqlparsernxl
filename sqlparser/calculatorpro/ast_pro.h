@@ -25,7 +25,6 @@ struct node
     int nodetype;
     bool withparent;
 
-    int serializetype;
     virtual ~node() {}
     virtual double eval() = 0;
     virtual std::string serialize() = 0;

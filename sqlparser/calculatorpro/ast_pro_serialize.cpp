@@ -30,6 +30,7 @@ std::string exp::serialize()
         {
             ret = l->serialize() + ", " + r->serialize();
         }
+            break;
         case 'R' :
         {
             auto tmp = r == nullptr ? "" : r->serialize();
@@ -98,7 +99,8 @@ std::string flow::serialize()
             break;
         case 'W':
         {
-
+            /*WHILE exp DO list END*/
+            return ret + "WHILE " + cond->serialize() + " DO " + tl->serialize() + " END";
         }
             break;
     }
@@ -117,7 +119,9 @@ std::string symasgn::serialize()
 {
     /*NAME '=' exp*/
     std::string ret = "";
-    return ret + s->name + " = " + v->serialize();
+    ret = ret + s->name + " = " + v->serialize();
+    if (withparent)
+        ret = "(" + ret + ")";
     return ret;
 }
 
