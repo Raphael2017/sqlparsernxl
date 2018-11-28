@@ -1,11 +1,16 @@
 #include "ast_pro.h"
 #include <math.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <list>
 
 void yyerror(char* s, ...)
 {
-
+    va_list ap;
+    va_start(ap, s);
+    fprintf(stderr, "%d: error: ", yylineno);
+    vfprintf(stderr, s, ap);
+    fprintf(stderr, "\n");
 }
 
 node* node::newexp(int nodetype, node* l, node* r)
@@ -100,6 +105,16 @@ double exp::eval()
         case '/' : ret = l->eval() / r->eval(); break;
         case '|' : ret = l->eval(); ret = ret > 0 ? ret : -ret; break;
         case 'M' : ret = - l->eval(); break;
+
+        // compare
+        case '1' : ret = (l->eval() > r->eval()) ? 1 : 0; break;
+        case '2' : ret = (l->eval() < r->eval()) ? 1 : 0; break;
+        case '3' : ret = (l->eval() != r->eval()) ? 1 : 0; break;
+        case '4' : ret = (l->eval() == r->eval()) ? 1 : 0; break;
+        case '5' : ret = (l->eval() >= r->eval()) ? 1 : 0; break;
+        case '6' : ret = (l->eval() <= r->eval()) ? 1 : 0; break;
+
+        case 'L' : l->eval(); ret = r->eval(); break;
         default: printf("internal error: bad node %c\n", nodetype);
     }
     return ret;
@@ -170,10 +185,20 @@ double ufncall::eval()
     std::list<double> olds, news;
     // news
     node* ll = l;
-    while (ll)
+    while (nargs > 0 && ll)
     {
-        news.push_back(ll->eval());
-        ll = ((struct exp*)ll)->r;
+        double param = 0.0;
+        if (ll->nodetype == 'L')
+        {
+            param = ((struct exp*)ll)->l->eval();
+            ll = ((struct exp*)ll)->r;
+        }
+        else
+        {
+            param = ll->eval();
+            ll = nullptr;
+        }
+        news.push_back(param);
         nargs--;
     }
 

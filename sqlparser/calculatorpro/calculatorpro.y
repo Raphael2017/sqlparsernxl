@@ -22,7 +22,7 @@
 %token <fn> FUNC;
 %token EOL
 
-%token IF THEN ELSE WHILE DO LET
+%token IF THEN ELSE WHILE DO FUNCTION END
 
 %nonassoc <fn> CMP
 %right '='
@@ -30,7 +30,7 @@
 %left '*' '/'
 %nonassoc '|' UMINUS
 
-%type <a> exp stmt list explist
+%type <a> exp stmt list explist ifstmt whilestmt
 %type <sl> symlist
 
 %start calclist
@@ -42,9 +42,9 @@ calclist:   /*  */
     printf("= %4.4g\n> ", $2->eval());
     delete $2;
 }
-    |   calclist LET NAME '(' symlist ')' '=' list EOL
+    |   calclist FUNCTION NAME '(' symlist ')' list END EOL
 {
-    $3->def($5, $8);
+    $3->def($5, $7);
     printf("Defined %s\n> ", $3->name.c_str());
 }
     |   calclist error EOL
@@ -54,19 +54,23 @@ calclist:   /*  */
 }
 ;
 
-stmt: IF exp THEN list
+stmt:   exp
+;
+
+ifstmt : IF exp THEN list END
 {
     $$ = node::newflow('I', $2, $4, nullptr);
 }
-    |   IF exp THEN list ELSE list
+    |   IF exp THEN list ELSE list END
 {
     $$ = node::newflow('I', $2, $4, $6);
 }
-    |   WHILE exp DO list
+;
+
+whilestmt : WHILE exp DO list END
 {
     $$ = node::newflow('W', $2, $4, nullptr);
 }
-    |   exp
 ;
 
 list: /*  */
@@ -79,6 +83,14 @@ list: /*  */
         $$ = $1;
     else
         $$ = node::newexp('L', $1, $3);
+}
+    |   ifstmt list
+    |   whilestmt list
+{
+    if (!$2)
+        $$ = $1;
+    else
+        $$ = node::newexp('L', $1, $2);
 }
 ;
 

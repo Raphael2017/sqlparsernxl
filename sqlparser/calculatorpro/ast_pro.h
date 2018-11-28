@@ -43,7 +43,6 @@ struct numval : public node
     double number;
 };
 
-
 enum bifs
 {
     B_sqrt = 1,
@@ -110,7 +109,6 @@ struct symbol
     node* func;                 /* func body */
     symlist* syms;    /* func formal params */
 };
-
 
 struct symstab
 {
