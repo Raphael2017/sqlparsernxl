@@ -1,0 +1,2 @@
+add_executable(calculatorprox node.cpp)
+target_link_libraries(calculatorprox m)

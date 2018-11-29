@@ -23,7 +23,7 @@ struct node
     static node* newflow(int nodetype, node* cond, node* tl, node* tr);
 
     int nodetype;
-    bool withparent;
+    bool withparent = false;
 
     virtual ~node() {}
     virtual double eval() = 0;
@@ -32,7 +32,7 @@ struct node
 
 struct exp : public node
 {
-    exp() : l(nullptr), r(nullptr) { withparent = false; }
+    exp() : l(nullptr), r(nullptr) { }
     ~exp();
     virtual double eval();
     virtual std::string serialize();
@@ -70,6 +70,7 @@ struct fncall : public node
 // user function
 struct ufncall : public node
 {
+    ufncall() : l(nullptr) {}
     ~ufncall();
     virtual double eval();
     virtual std::string serialize();
@@ -79,6 +80,7 @@ struct ufncall : public node
 
 struct flow : public node
 {
+    flow() : cond(nullptr), tl(nullptr), el(nullptr) {}
     ~flow();
     virtual double eval();
     virtual std::string serialize();
@@ -89,6 +91,7 @@ struct flow : public node
 
 struct symref : public node
 {
+    symref() : s(nullptr) {}
     ~symref();
     virtual double eval();
     virtual std::string serialize();
@@ -97,6 +100,7 @@ struct symref : public node
 
 struct symasgn : public node
 {
+    symasgn() : s(nullptr), v(nullptr) {}
     ~symasgn();
     virtual double eval();
     virtual std::string serialize();

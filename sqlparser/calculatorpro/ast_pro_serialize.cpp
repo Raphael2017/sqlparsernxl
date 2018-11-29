@@ -47,7 +47,10 @@ std::string exp::serialize()
 std::string numval::serialize()
 {
     std::string ret = "";
-    return ret + std::to_string(number);
+    ret = ret + std::to_string(number);
+    if (withparent)
+        ret = "(" + ret + ")";
+    return ret;
 }
 
 std::string fncall::serialize()
@@ -57,17 +60,23 @@ std::string fncall::serialize()
     switch (functype)
     {
         case B_sqrt:
-            return ret + "sqrt" +   "(" + l->serialize() + ")";
+            ret = ret + "sqrt" +   "(" + l->serialize() + ")";
+            break;
         case B_exp:
-            return ret + "exp" +    "(" + l->serialize() + ")";
+            ret = ret + "exp" +    "(" + l->serialize() + ")";
+            break;
         case B_log:
-            return ret + "log" +    "(" + l->serialize() + ")";
+            ret = ret + "log" +    "(" + l->serialize() + ")";
+            break;
         case B_print:
-            return ret + "print" +  "(" + l->serialize() + ")";
+            ret = ret + "print" +  "(" + l->serialize() + ")";
+            break;
         default:
             yyerror("Unknown built-in function %d", functype);
             return ret;
     }
+    if (withparent)
+        ret = "(" + ret + ")";
     return ret;
 }
 
@@ -75,7 +84,10 @@ std::string ufncall::serialize()
 {
     std::string ret = "";
     /*NAME '(' explist ')'*/
-    return ret + s->name + "(" + l->serialize() + ")";
+    ret = ret + s->name + "(" + l->serialize() + ")";
+    if (withparent)
+        ret = "(" + ret + ")";
+    return ret;
 }
 
 std::string flow::serialize()
@@ -111,7 +123,9 @@ std::string symref::serialize()
 {
     /*NAME*/
     std::string ret = "";
-    return ret + s->name;
+    ret = ret + s->name;
+    if (withparent)
+        ret = "(" + ret + ")";
     return ret;
 }
 
