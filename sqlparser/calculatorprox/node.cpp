@@ -94,6 +94,7 @@ Node::~Node()
 {
     for (auto& nd : children_)
         delete(nd);
+    children_.clear();
 }
 
 void Node::print(int lvl) const
@@ -103,17 +104,6 @@ void Node::print(int lvl) const
 
 std::string Node::serialize()
 {
-    if (nodeType_ == E_EXP_LIST)
-    {
-        auto length = ListLength(this);
-        printf("E_EXP_LIST: %d", length);
-
-        std::list<Node*> ll;
-        ToList(this, ll);
-        printf("E_EXP_LIST: %d", ll.size());
-    }
-
-
     std::string ret = "";
     if (!isTerminalToken)
     {
@@ -173,12 +163,31 @@ double Node::eval()
             break;
         case E_IFSTMT_WITH_NO_ELSE:
         {
-
+            if (getChild(E_IFSTMT_WITH_NO_ELSE_COND)->eval() != 0)
+            {
+                ret = getChild(E_IFSTMT_WITH_NO_ELSE_ACT1)->eval();
+            }
         }
             break;
         case E_IFSTMT_WITH_ELSE:
+        {
+            if (getChild(E_IFSTMT_WITH_ELSE_COND)->eval() != 0)
+            {
+                ret = getChild(E_IFSTMT_WITH_ELSE_ACT1)->eval();
+            }
+            else
+            {
+                ret = getChild(E_IFSTMT_WITH_ELSE_ACT2)->eval();
+            }
+        }
             break;
         case E_WHILESTMT:
+        {
+            while (getChild(E_WHILESTMT_COND)->eval())
+            {
+                ret = getChild(E_WHILESTMT_ACT)->eval();
+            }
+        }
             break;
         case E_STMT_LIST:
         {
