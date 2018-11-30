@@ -1,2 +1,2 @@
-add_executable(calculatorprox node.cpp)
+add_executable(calculatorprox node.cpp calculatorprox.cpp calculatorprox_parser.cpp)
 target_link_libraries(calculatorprox m)

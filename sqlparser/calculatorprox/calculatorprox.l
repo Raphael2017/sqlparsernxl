@@ -22,12 +22,12 @@ EXP ([Ee][-+]?[0-9]+)
 "(" |
 ")" { return yytext[0]; }
 
-">"     { yylval.fn = 1; return CMP; }
-"<"     { yylval.fn = 2; return CMP; }
-"<>"    { yylval.fn = 3; return CMP; }
-"=="    { yylval.fn = 4; return CMP; }
-">="    { yylval.fn = 5; return CMP; }
-"<="    { yylval.fn = 6; return CMP; }
+">"     { yylval.fn = E_CMP_M; return CMP; }
+"<"     { yylval.fn = E_CMP_L; return CMP; }
+"<>"    { yylval.fn = E_CMP_NE; return CMP; }
+"=="    { yylval.fn = E_CMP_E; return CMP; }
+">="    { yylval.fn = E_CMP_ME; return CMP; }
+"<="    { yylval.fn = E_CMP_LE; return CMP; }
 
 "if"        { return IF; }
 "then"      { return THEN; }
@@ -37,12 +37,17 @@ EXP ([Ee][-+]?[0-9]+)
 "function"  { return FUNCTION; }
 "end"       { return END; }
 
-"sqrt"      { yylval.fn = B_sqrt; return FUNC; }
-"exp"       { yylval.fn = B_exp; return FUNC; }
-"log"       { yylval.fn = B_log; return FUNC; }
-"print"     { yylval.fn = B_print; return FUNC; }
+"sqrt"      { yylval.fn = E_IN_CALL_SQRT; return FUNC; }
+"exp"       { yylval.fn = E_IN_CALL_EXP; return FUNC; }
+"log"       { yylval.fn = E_IN_CALL_LOG; return FUNC; }
+"print"     { yylval.fn = E_IN_CALL_PRINT; return FUNC; }
 
-[a-zA-Z][a-zA-Z0-9]* { return NAME; }
+[a-zA-Z][a-zA-Z0-9]* {
+    yylval.nd = Node::makeTerminalNode(E_NAME);
+    symstab::instance()->lookup(yytext);
+    yylval.nd->terminalToken_.str = yytext;
+    return NAME;
+}
 
 [0-9]+"."[0-9]*{EXP}?   |
 "."?[0-9]+{EXP}?    { yylval.d = atof(yytext); return NUMBER; }

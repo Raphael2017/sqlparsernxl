@@ -29,6 +29,4 @@ namespace hsql {
     return isType(type);
   }
 
-    std::string serialize()
-
 }

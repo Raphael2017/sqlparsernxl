@@ -10,13 +10,13 @@
 
 %union
 {
-    struct Node* a;
+    struct Node* nd;
     double d;
     int fn;
 }
 
 %token <d> NUMBER
-%token <a> NAME
+%token <nd> NAME
 %token <fn> FUNC;
 %token EOL
 
@@ -28,7 +28,7 @@
 %left '*' '/'
 %nonassoc '|' UMINUS
 
-%type <a> exp stmt list explist ifstmt whilestmt symlist
+%type <nd> exp stmt list explist ifstmt whilestmt symlist funcdef
 
 
 %start calclist
@@ -41,11 +41,10 @@ calclist:   /*  */
     printf("%s\n>", $2->serialize().c_str());
     delete $2;
 }
-    |   calclist FUNCTION NAME '(' symlist ')' list END EOL
+    |   calclist funcdef EOL
 {
-    $3->def($5, $7);
-    printf("Defined function %s\n> ", $3->name.c_str());
-    printf("%s\n>", $3->serialize().c_str());
+    symstab::instance()->lookup($2->getChild(0)->terminalToken_.str.c_str())->setChild(1, $2);
+    printf("%s\n>", $2->serialize().c_str());
 }
     |   calclist error EOL
 {
@@ -54,22 +53,32 @@ calclist:   /*  */
 }
 ;
 
+funcdef : FUNCTION NAME '(' symlist ')' list END
+{
+    /*[0] name [1] Node* funcbody [2] Node* symlist */
+    $$ = Node::makeNonTerminalNode(E_FUNC_DEF, 3, $2, $4, $6);
+    $$->serialize_format = {"FUNCTION ", "{0}", "(", "{1}", ") ", "{2}", " END" };
+}
+
 stmt:   exp
 ;
 
 ifstmt : IF exp THEN list END
 {
-    $$ = node::newflow('I', $2, $4, nullptr);
+    $$ = Node::makeNonTerminalNode(E_IFSTMT_WITH_NO_ELSE, 2, $2, $4 );
+    $$->serialize_format = {"IF ", "{0}", " THEN ", "{1}", " END"};
 }
     |   IF exp THEN list ELSE list END
 {
-    $$ = node::newflow('I', $2, $4, $6);
+    $$ = Node::makeNonTerminalNode(E_IFSTMT_WITH_ELSE, 3, $2, $4, $6 );
+    $$->serialize_format = {"IF ", "{0}", " THEN ", "{1}", " ELSE ", "{2}", " END"};
 }
 ;
 
 whilestmt : WHILE exp DO list END
 {
-    $$ = node::newflow('W', $2, $4, nullptr);
+    $$ = Node::makeNonTerminalNode(E_WHILESTMT, 2, $2, $4);
+    $$->serialize_format = {"WHILE ", "{0}", " DO ", "{1}", " END"};
 }
 ;
 
@@ -79,44 +88,137 @@ list: /*  */
 }
     |   stmt ';' list
 {
-    $$ = node::newexp('L', $1, $3);
+    $$ = Node::makeNonTerminalNode(E_STMT_LIST, 2, $1, $3);
+    $$->serialize_format = {"{0}", "; ", "{1}"};
 }
     |   ifstmt list
     |   whilestmt list
 {
-    $$ = node::newexp('R', $1, $2);
+    $$ = Node::makeNonTerminalNode(E_STMT_LIST, 2, $1, $2);
+    $$->serialize_format = {"{0}", " ", "{1}"};
 }
 ;
 
-exp: exp CMP exp    { $$ = node::newcmp($2, $1, $3); }
-    |   exp '+' exp { $$ = node::newexp('+', $1, $3); }
-    |   exp '-' exp { $$ = node::newexp('-', $1, $3); }
-    |   exp '*' exp { $$ = node::newexp('*', $1, $3); }
-    |   exp '/' exp { $$ = node::newexp('/', $1, $3); }
-    |   '|' exp     { $$ = node::newexp('|', $2, nullptr); }
-    |   '(' exp ')' { $$ = $2; $$->withparent = true; }
-    |   '-' exp %prec UMINUS { $$ = node::newexp('M', $2, nullptr); }
-    |   NUMBER      { $$ = node::newnum($1); }
-    |   NAME        { $$ = node::newref($1); }
-    |   NAME '=' exp { $$ = node::newasgn($1, $3); }
-    |   FUNC '(' explist ')' { $$ = node::newfunc($1, $3); }
-    |   NAME '(' explist ')' { $$ = node::newcall($1, $3); }
+exp: exp CMP exp
+{
+    $$ = Node::makeNonTerminalNode((NodeType)$2, 2, $1, $3);
+    switch ((NodeType)$2)
+    {
+        case E_CMP_M:
+            $$->serialize_format = {"{0}", ">", "{1}"};
+            break;
+        case E_CMP_L:
+            $$->serialize_format = {"{0}", "<", "{1}"};
+            break;
+        case E_CMP_NE:
+            $$->serialize_format = {"{0}", "<>", "{1}"};
+            break;
+        case E_CMP_E:
+            $$->serialize_format = {"{0}", "==", "{1}"};
+            break;
+        case E_CMP_ME:
+            $$->serialize_format = {"{0}", ">=", "{1}"};
+            break;
+        case E_CMP_LE:
+            $$->serialize_format = {"{0}", "<=", "{1}"};
+            break;
+    }
+}
+    |   exp '+' exp
+{
+    $$ = Node::makeNonTerminalNode(E_OPE_ADD, 2, $1, $3);
+    $$->serialize_format = {"{0}", "+", "{1}"};
+}
+    |   exp '-' exp
+{
+    $$ = Node::makeNonTerminalNode(E_OPE_SUB, 2, $1, $3);
+    $$->serialize_format = {"{0}", "-", "{1}"};
+}
+    |   exp '*' exp
+{
+    $$ = Node::makeNonTerminalNode(E_OPE_MUL, 2, $1, $3);
+    $$->serialize_format = {"{0}", "*", "{1}"};
+}
+    |   exp '/' exp
+{
+    $$ = Node::makeNonTerminalNode(E_OPE_DIV, 2, $1, $3);
+    $$->serialize_format = {"{0}", "/", "{1}"};
+}
+    |   '|' exp
+{
+    $$ = Node::makeNonTerminalNode(E_OPE_ABS, 1, $2);
+    $$->serialize_format = {"|", " ", "{0}"};
+}
+    |   '(' exp ')'
+{
+    $$ = Node::makeNonTerminalNode(E_EXP_WITH_PAR, 1, $2);
+    $$->serialize_format = {"(", "{0}", ")"};
+}
+    |   '-' exp %prec UMINUS
+{
+    $$ = Node::makeNonTerminalNode(E_OPE_UMINUS, 1, $2);
+    $$->serialize_format = {"-", "{0}"};
+}
+    |   NUMBER
+{
+    $$ = Node::makeTerminalNode(E_NUMBER);
+    $$->terminalToken_.d = $1;
+}
+    |   NAME
+{
+    $$ = Node::makeNonTerminalNode(E_NAME_REF, 1, $1);
+    $$->serialize_format = {"{0}"};
+}
+    |   NAME '=' exp
+{
+    $$ = Node::makeNonTerminalNode(E_ASGN, 2, $1, $3);
+    $$->serialize_format = {"{0}", "=", "{1}"};
+}
+    |   FUNC '(' explist ')'
+{
+    $$ = Node::makeNonTerminalNode((NodeType)$1, 1, $3 );
+    switch ((NodeType)$1)
+    {
+        case E_IN_CALL_SQRT:
+            $$->serialize_format = {"sqrt", "(", "{0}", ")"};
+            break;
+        case E_IN_CALL_EXP:
+            $$->serialize_format = {"exp", "(", "{0}", ")"};
+            break;
+        case E_IN_CALL_LOG:
+            $$->serialize_format = {"log", "(", "{0}", ")"};
+            break;
+        case E_IN_CALL_PRINT:
+            $$->serialize_format = {"print", "(", "{0}", ")"};
+            break;
+
+    }
+}
+    |   NAME '(' explist ')'
+{
+    $$ = Node::makeNonTerminalNode(E_DIY_CALL, 2, $1, $3);
+    $$->serialize_format = {"{0}", "(", "{1}", ")"};
+}
 ;
 
 explist: exp
     |   exp ',' explist
 {
-    $$ = node::newexp('Q', $1, $3);
+    $$ = Node::makeNonTerminalNode(E_EXP_LIST, 2, $1, $3);
+    $$->serialize_format = {"{0}", ", ", "{1}"};
 }
 ;
 
 symlist: NAME
 {
-    $$ = symbol::newsymlist($1, nullptr);
+    $$ = Node::makeNonTerminalNode(E_SYM_LIST, 2, $1, nullptr);
+    $$->serialize_format = {"{0}"};
 }
     |   NAME ',' symlist
 {
-    $$ = symbol::newsymlist($1, $3);
+    $$ = Node::makeNonTerminalNode(E_SYM_LIST, 2, $1, $3);
+    $$->serialize_format = {"{0}", ", ", "{1}"};
+
 }
 
 %%

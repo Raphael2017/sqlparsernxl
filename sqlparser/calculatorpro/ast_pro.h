@@ -50,7 +50,7 @@ struct numval : public node
 
 enum bifs
 {
-    B_sqrt = 1,
+    B_sqrt = 0,
     B_exp,
     B_log,
     B_print
