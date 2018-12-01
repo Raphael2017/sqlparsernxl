@@ -11,6 +11,7 @@ struct TerminalToken
 {
     double d;
     std::string str;
+    std::string yytext;
 };
 struct Node
 {
@@ -50,6 +51,6 @@ private:
 };
 
 extern int yylineno;    /* from flex */
-void yyerror(char* s, ...);
+void yyerror(const char* s, ...);
 
 #endif

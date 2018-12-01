@@ -36,6 +36,8 @@ EXP ([Ee][-+]?[0-9]+)
 "do"        { return DO; }
 "function"  { return FUNCTION; }
 "end"       { return END; }
+"and"       { return AND; }
+"or"        { return OR; }
 
 "sqrt"      { yylval.fn = E_IN_CALL_SQRT; return FUNC; }
 "exp"       { yylval.fn = E_IN_CALL_EXP; return FUNC; }
@@ -50,7 +52,12 @@ EXP ([Ee][-+]?[0-9]+)
 }
 
 [0-9]+"."[0-9]*{EXP}?   |
-"."?[0-9]+{EXP}?    { yylval.d = atof(yytext); return NUMBER; }
+"."?[0-9]+{EXP}?    {
+    yylval.nd = Node::makeTerminalNode(E_NUMBER);
+    yylval.nd->terminalToken_.d = atof(yytext);
+    yylval.nd->terminalToken_.yytext = yytext;
+    return NUMBER;
+}
 
 "//".*
 [ \t]   /* ignore */

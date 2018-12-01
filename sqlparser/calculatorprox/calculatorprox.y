@@ -15,17 +15,19 @@
     int fn;
 }
 
-%token <d> NUMBER
+%token <nd> NUMBER
 %token <nd> NAME
 %token <fn> FUNC;
 %token EOL
 
-%token IF THEN ELSE WHILE DO FUNCTION END
+%token IF THEN ELSE WHILE DO FUNCTION END AND OR
 
+%left AND OR
 %nonassoc <fn> CMP
 %right '='
 %left '+' '-'
 %left '*' '/'
+
 %nonassoc '|' UMINUS
 
 %type <nd> exp stmt list explist ifstmt whilestmt symlist funcdef
@@ -99,7 +101,17 @@ list: /*  */
 }
 ;
 
-exp: exp CMP exp
+exp: exp AND exp
+{
+    $$ = Node::makeNonTerminalNode(E_LOGIC_AND, 2, $1, $3);
+    $$->serialize_format = {"{0}", " AND ", "{1}"};
+}
+    |   exp OR exp
+{
+    $$ = Node::makeNonTerminalNode(E_LOGIC_OR, 2, $1, $3);
+    $$->serialize_format = {"{0}", " OR ", "{1}"};
+}
+    |   exp CMP exp
 {
     $$ = Node::makeNonTerminalNode((NodeType)$2, 2, $1, $3);
     switch ((NodeType)$2)
@@ -161,8 +173,7 @@ exp: exp CMP exp
 }
     |   NUMBER
 {
-    $$ = Node::makeTerminalNode(E_NUMBER);
-    $$->terminalToken_.d = $1;
+    $$ = $1;
 }
     |   NAME
 {

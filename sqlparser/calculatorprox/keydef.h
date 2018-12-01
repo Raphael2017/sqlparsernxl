@@ -75,6 +75,10 @@ enum NodeType
     E_NAME,
     E_FUNC_DEF,
 
+    E_LOGIC_AND,
+    E_LOGIC_OR,
+
+
     E_CMP_START     = 100,
     E_CMP_M         = 101,
     E_CMP_L         = 102,

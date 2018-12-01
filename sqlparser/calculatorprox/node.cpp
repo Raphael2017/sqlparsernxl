@@ -1,6 +1,6 @@
 #include "node.h"
 #include <stdarg.h>
-
+#include "math.h"
 
 Node* Node::makeTerminalNode(NodeType tp)
 {
@@ -70,7 +70,7 @@ void Node::ToList(Node* root, std::list<Node*>& ret)
     if (!root)
         return;
     if (!IsList(root))
-        ret.push_back(root);
+        return ret.push_back(root);
     for (auto child : root->children_)
     {
         if (!child) continue;
@@ -132,7 +132,7 @@ std::string Node::serialize()
         {
             case E_NUMBER:
             {
-                ret = std::to_string(terminalToken_.d);
+                ret = terminalToken_.yytext;
             }
                 break;
             case E_NAME:
@@ -199,6 +199,18 @@ double Node::eval()
         case E_NAME:
             break;
         case E_FUNC_DEF:
+            break;
+        case E_LOGIC_AND:
+        {
+            ret = ((getChild(E_OPE_BINARY_L_OPERANDS)->eval()!=0) &&
+                    (getChild(E_OPE_BINARY_R_OPERANDS)->eval()!=0)) ? 1 : 0;
+        }
+            break;
+        case E_LOGIC_OR:
+        {
+            ret = ((getChild(E_OPE_BINARY_L_OPERANDS)->eval()!=0) ||
+                   (getChild(E_OPE_BINARY_R_OPERANDS)->eval()!=0)) ? 1 : 0;
+        }
             break;
         case E_CMP_START:
             break;
@@ -275,7 +287,8 @@ double Node::eval()
             break;
         case E_NAME_REF:
         {
-            ret = symstab::instance()->lookup(getChild(E_NAME_REF_NAME)->terminalToken_.str.c_str())->getChild(E_SYMBOL_VALUE)->terminalToken_.d;
+            ret = symstab::instance()->lookup(getChild(E_NAME_REF_NAME)->terminalToken_.str.c_str())
+                    ->getChild(E_SYMBOL_VALUE)->terminalToken_.d;
         }
             break;
         case E_ASGN:
@@ -289,12 +302,25 @@ double Node::eval()
         case E_IN_CALL_START:
             break;
         case E_IN_CALL_SQRT:
+        {
+            ret = sqrt(getChild(E_IN_CALL_EXPLIST)->eval());
+        }
             break;
         case E_IN_CALL_EXP:
+        {
+            ret = exp(getChild(E_IN_CALL_EXPLIST)->eval());
+        }
             break;
         case E_IN_CALL_LOG:
+        {
+            ret = log(getChild(E_IN_CALL_EXPLIST)->eval());
+        }
             break;
         case E_IN_CALL_PRINT:
+        {
+            ret = 0.0;
+            printf("= %4.4g\n", getChild(E_IN_CALL_EXPLIST)->eval());
+        }
             break;
         case E_DIY_CALL:
         {
@@ -403,7 +429,7 @@ Node* symstab::lookup(const char * sym)
     return data_[sym];
 }
 
-void yyerror(char* s, ...)
+void yyerror(const char* s, ...)
 {
     va_list ap;
     va_start(ap, s);
