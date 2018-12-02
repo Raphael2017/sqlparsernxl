@@ -333,6 +333,12 @@ double Node::eval()
             Node* explist = getChild(E_DIY_CALL_EXPLIST);   // shican
 
             Node* func = symstab::instance()->lookup(nm.c_str())->getChild(E_SUMB_FUNC);
+            if (!func)
+            {
+                yyerror("call undefined function %s", nm.c_str());
+                return 0.0;
+            }
+
             Node* symlist = func->getChild(E_FUNC_DEF_SYMLIST); // xingcan
             Node* act = func->getChild(E_FUNC_DEF_ACT);
 
