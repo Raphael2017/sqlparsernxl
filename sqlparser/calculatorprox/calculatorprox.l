@@ -38,6 +38,7 @@ EXP ([Ee][-+]?[0-9]+)
 "end"       { return END; }
 "and"       { return AND; }
 "or"        { return OR; }
+"not"       { return NOT; }
 
 "sqrt"      { yylval.fn = E_IN_CALL_SQRT; return FUNC; }
 "exp"       { yylval.fn = E_IN_CALL_EXP; return FUNC; }

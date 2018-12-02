@@ -212,6 +212,11 @@ double Node::eval()
                    (getChild(E_OPE_BINARY_R_OPERANDS)->eval()!=0)) ? 1 : 0;
         }
             break;
+        case E_LOGIC_NOT:
+        {
+            ret = getChild(E_OPE_UNARY_OPERANDS)->eval() != 0 ? 0 : 1;
+        }
+            break;
         case E_CMP_START:
             break;
         case E_CMP_M:

@@ -77,6 +77,7 @@ enum NodeType
 
     E_LOGIC_AND,
     E_LOGIC_OR,
+    E_LOGIC_NOT,
 
 
     E_CMP_START     = 100,

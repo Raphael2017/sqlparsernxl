@@ -20,7 +20,7 @@
 %token <fn> FUNC;
 %token EOL
 
-%token IF THEN ELSE WHILE DO FUNCTION END AND OR
+%token IF THEN ELSE WHILE DO FUNCTION END AND OR NOT
 
 %left AND OR
 %nonassoc <fn> CMP
@@ -28,7 +28,7 @@
 %left '+' '-'
 %left '*' '/'
 
-%nonassoc '|' UMINUS
+%nonassoc '|' UMINUS NOT
 
 %type <nd> exp stmt list explist ifstmt whilestmt symlist funcdef
 
@@ -160,6 +160,11 @@ exp: exp AND exp
 {
     $$ = Node::makeNonTerminalNode(E_OPE_ABS, 1, $2);
     $$->serialize_format = {"|", " ", "{0}"};
+}
+    |   NOT exp
+{
+    $$ = Node::makeNonTerminalNode(E_LOGIC_NOT, 1, $2);
+    $$->serialize_format = {"NOT", " ", "{0}"};
 }
     |   '(' exp ')'
 {
