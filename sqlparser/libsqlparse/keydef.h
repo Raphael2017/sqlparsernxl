@@ -48,6 +48,7 @@ enum NodeType
 
     E_ORDER_BY,
     E_HAVING,
+    E_WHEN,
 
     E_ALL,
     E_DISTINCT,
@@ -83,7 +84,7 @@ enum NodeType
     E_JOIN_NATURAL,
 
 
-
+    E_OP_NAME_FIELD,
 
 
 

@@ -605,9 +605,6 @@ relation_factor:
 ;
 
 joined_table:
-  /* we do not support cross join and natural join
-    * using clause is not supported either
-    */
     '(' joined_table ')'
 {
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE_WITH_PARENS, 1, $2);
@@ -629,6 +626,17 @@ joined_table:
     Node* nd = Node::makeTerminalNode(E_JOIN_NATURAL, "NATURAL");
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $4, nullptr);
     $$->serialize_format = {"{1}", "{0}", "JOIN", "{2}"
+}
+  | table_factor join_type JOIN table_factor USING '(' column_ref ')'
+{
+    $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, $2, $1, $4, $7);
+    $$->serialize_format = {"{1}", "{0}", "JOIN", "{2}", "USING", "(", "{3}", ")"};
+}
+  | table_factor JOIN table_factor USING '(' column_ref ')'
+{
+    Node* nd = Node::makeTerminalNode(E_JOIN_INNER, "");
+    $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $3, $6);
+    $$->serialize_format = {"{1}", "{0}", "JOIN", "{2}", "USING", "(", "{3}", ")"};
 }
 ;
 
@@ -680,4 +688,16 @@ join_outer:
     OUTER                       { $$ = 1; /*this is a flag*/}
   | /* EMPTY */                 { $$ = nullptr; }
 ;
+
+opt_when:
+    /* EMPTY */
+    { $$ = NULL; }
+  | WHEN expr
+{
+    $$ = Node::makeNonTerminalNode(E_WHEN, 1, $1);
+    $$->serialize_format = {"WHEN", "{0}"};
+}
+;
+
+/* expression grammar */
 
