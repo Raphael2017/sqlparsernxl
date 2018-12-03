@@ -22,5 +22,8 @@ int main()
     std::string n(f.begin()+1, f.end()-1);
     int num = std::atoi(n.c_str());
 
+    const char* a = "\"hello world\"";
+    std::string tmp(a+1, a + strlen(a) - 1);
+
     return 0;
 }

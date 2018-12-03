@@ -1,3 +1,6 @@
+#ifndef KEY_DEF_H
+#define KEY_DEF_H
+
 /*key definition*/
 // E_SYMBOL
 #define E_SYMBOL_VALUE 0
@@ -117,3 +120,5 @@ enum NodeType
     E_SYM_LIST      = 910,
 
 };
+
+#endif
