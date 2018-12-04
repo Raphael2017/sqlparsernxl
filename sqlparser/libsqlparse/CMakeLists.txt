@@ -1,0 +1,1 @@
+add_executable(libsqlparsetest node.cpp sqlparser_flex.cpp sqlparser_bison.cpp)

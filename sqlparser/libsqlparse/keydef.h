@@ -31,9 +31,16 @@ enum NodeType
     E_STRING,
     E_IDENTIFIER,
     E_QUESTIONMARK,
+    E_ALL,
+    E_DISTINCT,
+    E_STAR,
+
+    E_TYPE_INTEGER,
+    E_TYPE_BOOLEAN,
+    E_TYPE_DOUBLE,
 
     E_STMT_LIST,
-    E_SELECT;
+    E_SELECT,
     E_SELECT_WITH_PARENS,
 
 
@@ -50,8 +57,7 @@ enum NodeType
     E_HAVING,
     E_WHEN,
 
-    E_ALL,
-    E_DISTINCT,
+
 
     E_SORT_LIST,
 
@@ -69,7 +75,7 @@ enum NodeType
 
     E_PROJECT_STRING,
     E_ALIAS,
-    E_STAR,
+
 
     E_FROM_LIST,
 
@@ -85,13 +91,61 @@ enum NodeType
 
 
     E_OP_NAME_FIELD,
+    E_OP_EXISTS,
+    E_OP_POS,
+    E_OP_NEG,
+    E_OP_ADD,
+    E_OP_MINUS,
+    E_OP_MUL,
+    E_OP_DIV,
+    E_OP_REM,
+    E_OP_POW,
+    E_OP_MOD,
 
+    E_OP_LE,
+    E_OP_LT,
+    E_OP_EQ,
+    E_OP_GE,
+    E_OP_GT,
+    E_OP_NE,
+    E_OP_LIKE,
+    E_OP_NOT_LIKE,
+    E_OP_AND,
+    E_OP_OR,
+    E_OP_NOT,
+    E_OP_IS,
+    E_OP_IS_NOT,
+    E_OP_BTW,
+    E_OP_NOT_BTW,
+    E_OP_IN,
+    E_OP_NOT_IN,
+    E_OP_CNN,
 
+    E_EXPR_LIST,
+    E_EXPR_LIST_WITH_PARENS,
+
+    E_CASE,
+    E_CASE_DEFAULT,
+
+    E_FUN_CALL,
+
+    E_WHEN_LIST,
 
 
     E_NODETYPE_END
 };
 
 #define SELECT_SERIALIZE_FORMAT  {"SELECT ", "{13}", "{0}", "{1}", "{2}", "{3}", "{4}", "{5}", "{8}", "{6}", "{7}", "{9}", "{10}", "{11}", "{12}", "{14}"}
+
+#ifndef YYtypeDEF_YY_SCANNER_T
+#define YYtypeDEF_YY_SCANNER_T
+typedef void* yyscan_t;
+#endif
+
+#define YYSTYPE HSQL_STYPE
+#define YYLTYPE HSQL_LTYPE
+
+#define HSQL_LTYPE HSQL_CUST_LTYPE
+#define HSQL_LTYPE_IS_DECLARED 1
 
 #endif

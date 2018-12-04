@@ -1,30 +1,91 @@
+%{
+/**
+ * bison_parser.y
+ * defines bison_parser.h
+ * outputs bison_parser.c
+ *
+ * Grammar File Spec: http://dinosaur.compilertools.net/bison/bison_6.html
+ *
+ */
+/*********************************
+ ** Section 1: C Declarations
+ *********************************/
+
+#include "sqlparser_bison.h"
+#include "sqlparser_flex.h"
+
+#include <stdio.h>
+#include <string.h>
+
+
+int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *msg) {
+
+	return 0;
+}
+
+%}
+/*********************************
+ ** Section 2: Bison Parser Declarations
+ *********************************/
+
+
+// Specify code that is included in the generated .h and .c files
+%code requires {
+// %code requires block
+
+#include "node.h"
+}
+
+// Auto update column and line number
+
+// Define the names of the created files (defined in Makefile)
 %output  "sqlparser_bison.cpp"
 %defines "sqlparser_bison.h"
 
-%{
-#include <stdint.h>
-#include <stdarg.h>
-#include "node.h"
-#include "sqlparser_flex.h"
+// Tell bison to create a reentrant parser
+%define api.pure full
 
-extern void yyerror(void* yylloc, ParseResult* p, char* s,...);
-extern int yylineno;
-%}
 
-%define api.pure
-%parse-param {ParseResult* result}
+%define parse.error verbose
 %locations
-%no-lines
-/*%verbose*/
+
+%initial-action {
+	// Initialize
+	@$.first_column = 0;
+	@$.last_column = 0;
+	@$.first_line = 0;
+	@$.last_line = 0;
+};
 
 
+// Define additional parameters for yylex (http://www.gnu.org/software/bison/manual/html_node/Pure-Calling.html)
+%lex-param   { yyscan_t scanner }
+
+// Define additional parameters for yyparse
+%parse-param { ParseResult* result }
+%parse-param { yyscan_t scanner }
+
+
+/*********************************
+ ** Define all data-types (http://www.gnu.org/software/bison/manual/html_node/Union-Decl.html)
+ *********************************/
 %union
 {
     struct Node* node;
     int    ival;
 }
 
+
+/*********************************
+ ** Destructor symbols
+ *********************************/
 %destructor { delete($$); }<node>
+
+
+/*********************************
+ ** Token Definition
+ *********************************/
+
 
 %token <node> NAME
 %token <node> STRING
@@ -101,9 +162,14 @@ extern int yylineno;
 %type <node> case_expr func_expr in_expr
 %type <node> case_arg when_clause_list when_clause case_default
 
+
 %start sql_stmt
 %%
+/*********************************
+ ** Section 3: Grammar Definition
+ *********************************/
 
+// Defines our general input.
 sql_stmt:
     stmt_list END_P
 {
@@ -123,6 +189,7 @@ stmt_list:  stmt
 
 stmt:
     select_stmt
+    |   /*EMPTY*/   { $$ = nullptr; }
 ;
 
 /* SELECT GRAMMAR */
@@ -998,12 +1065,8 @@ data_type:  TINYINT
 ;
 
 %%
+/*********************************
+ ** Section 4: Additional C code
+ *********************************/
 
-void yyerror(void* yylloc, ParseResult* p, char* s, ...)
-{
-    va_list ap;
-    va_start(ap, s);
-    fprintf(stderr, "%d: error: ", yylineno);
-    vfprintf(stderr, s, ap);
-    fprintf(stderr, "\n");
-}
+/* empty */

@@ -1,0 +1,1 @@
+add_executable(libnxl node.cpp sqlparser_flex.cpp sqlparser_bison.cpp ttt.cpp)

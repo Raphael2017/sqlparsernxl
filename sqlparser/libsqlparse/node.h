@@ -22,7 +22,7 @@ struct TerminalToken
     std::string str;
 
     // before convert
-    std::string yytext;
+    std::string yytex;
 };
 struct Node
 {
@@ -51,17 +51,5 @@ struct Node
 private:
     static int GetKey(std::string);
 };
-
-struct symstab
-{
-    static symstab* instance();
-    Node* lookup(const char*);
-private:
-    std::map<std::string, Node*> data_;
-    static symstab* ins_;
-};
-
-extern int yylineno;    /* from flex */
-void yyerror(const char* s, ...);
 
 #endif

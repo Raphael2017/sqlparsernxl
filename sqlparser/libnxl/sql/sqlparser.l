@@ -1,3 +1,30 @@
+/**
+ * lexer
+ *
+ *
+ */
+
+
+/***************************
+ ** Section 1: Definitions
+ ***************************/
+%{
+
+#include "node.h"
+#include "sqlparser_bison.h"
+#include <stdio.h>
+#include <sstream>
+#include <stdlib.h>
+#include <string.h>
+
+static std::stringstream strbuf;
+
+%}
+
+/***************************
+ ** Section 2: Rules
+ ***************************/
+
 /* Define the output files */
 %option header-file="sqlparser_flex.h"
 %option outfile="sqlparser_flex.cpp"
@@ -13,22 +40,11 @@
 /* other flags */
 %option noyywrap
 %option nounput
+%option warn
 %option case-insensitive
 %option bison-locations
 /* %option nodefault */
 
-%{
-#include "node.h"
-#include "sqlparser_bison.h"
-#include <stdio.h>
-#include <sstream>
-#include <stdlib.h>
-#include <string.h>
-
-/* #define TOKEN(name) { return SQL_##name; } */
-
-static std::stringstream strbuf;
-%}
 
 %x hint
 %x sq
@@ -56,6 +72,9 @@ sqescape      [\\][^0-7]
 sqoctal       [\\][0-7]{1,3}
 sqnewline     {quote}{whitespace}{quote}
 
+/***************************
+ ** Section 3: Rules
+ ***************************/
 %%
 ADD               { return ADD; }
 ALTER             { return ALTER; }
@@ -282,14 +301,14 @@ FALSE   {
 \"[^\"\n]+\" {
     Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
     yylval->node = nd;
-    nd.terminalToken_.str = std::string(yytext+1, yytext + strlen(yytext) - 1);
+    nd->terminalToken_.str = std::string(yytext+1, yytext + strlen(yytext) - 1);
     return NAME;
 }
 
 [A-Za-z][A-Za-z0-9_]* {
 	Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
 	yylval->node = nd;
-	nd.terminalToken_.str = yytext;
+	nd->terminalToken_.str = yytext;
 	return NAME;
 }
 
@@ -312,11 +331,18 @@ FALSE   {
     return QUESTIONMARK;
 }
 
+[ \t\r\n]    {}
 <<EOF>>    { return END_P; }
 
 .   {
     fprintf(stderr, "[SQL-Lexer-Error] Unknown Character: %c\n", yytext[0]);
     return ERROR;
 }
-
 %%
+/***************************
+ ** Section 3: User code
+ ***************************/
+
+int yyerror(const char *msg) {
+    fprintf(stderr, "[SQL-Lexer-Error] %s\n",msg); return 0;
+}
