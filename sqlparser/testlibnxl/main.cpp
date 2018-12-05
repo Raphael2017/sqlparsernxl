@@ -31,54 +31,6 @@ Node* protect_exp()
     return ret;
 }
 
-void find_table_direct_ref(Node* root, const std::string& target, std::list<std::string>& ret)
-{
-    if (!root)  return;
-    switch (root->nodeType_)
-    {
-        case E_SELECT:
-        {
-            find_table_direct_ref(root->getChild(E_SELECT_FROM_LIST), target, ret);
-        }
-            break;
-        case E_FROM_CLAUSE:
-        {
-            find_table_direct_ref(root->getChild(E_FROM_CLAUSE_FROM_LIST), target, ret);
-        }
-            break;
-        case E_FROM_LIST:
-        {
-            find_table_direct_ref(root->getChild(E_LIST_ITEM), target, ret);
-            find_table_direct_ref(root->getChild(E_LIST_NEXT), target, ret);
-        }
-            break;
-        case E_ALIAS:
-        {
-            if (!(root->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS)->nodeType_ == E_SELECT_WITH_PARENS))
-            {
-                find_table_direct_ref(root->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS), target, ret);
-            }
-        }
-            break;
-        case E_JOINED_TABLE:
-        {
-            find_table_direct_ref(root->getChild(E_JOINED_TABLE_TABLE_FACTOR_L), target, ret);
-            find_table_direct_ref(root->getChild(E_JOINED_TABLE_TABLE_FACTOR_R), target, ret);
-        }
-            break;
-        case E_JOINED_TABLE_WITH_PARENS:
-        {
-            find_table_direct_ref(root->getChild(E_JOINED_TABLE_WITH_PARENS_JOINED_TABLE), target, ret);
-        }
-            break;
-        case E_IDENTIFIER:
-        {
-            ret.push_back(root->terminalToken_.str);
-        }
-            break;
-    }
-}
-
 int main()
 {
     std::string a = "SELECT L_RETURNFLAG, L_LINESTATUS, SUM(L_QUANTITY) AS SUM_QTY,\n"
@@ -303,6 +255,6 @@ int main()
     printf("%s\n", root->serialize().c_str());
 
     std::list<std::string> tables;
-    find_table_direct_ref(s2, "", tables);
+    parser::find_table_direct_ref(s2, tables);
     return 0;
 }

@@ -69,4 +69,55 @@ void parser::find_node(Node* root, NodeType target, std::list<Node*>& ret)
     }
 }
 
+void parser::find_table_direct_ref(Node* root, std::list<std::string>& ret)
+{
+    if (!root)  return;
+    switch (root->nodeType_)
+    {
+        case E_SELECT:
+        {
+            find_table_direct_ref(root->getChild(E_SELECT_FROM_LIST), ret);
+        }
+            break;
+        case E_FROM_CLAUSE:
+        {
+            find_table_direct_ref(root->getChild(E_FROM_CLAUSE_FROM_LIST), ret);
+        }
+            break;
+        case E_FROM_LIST:
+        {
+            find_table_direct_ref(root->getChild(E_LIST_ITEM), ret);
+            find_table_direct_ref(root->getChild(E_LIST_NEXT), ret);
+        }
+            break;
+        case E_ALIAS:
+        {
+            // skip child select
+            if (!(root->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS)->nodeType_ == E_SELECT_WITH_PARENS))
+            {
+                find_table_direct_ref(root->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS), ret);
+            }
+        }
+            break;
+        case E_JOINED_TABLE:
+        {
+            find_table_direct_ref(root->getChild(E_JOINED_TABLE_TABLE_FACTOR_L), ret);
+            find_table_direct_ref(root->getChild(E_JOINED_TABLE_TABLE_FACTOR_R), ret);
+        }
+            break;
+        case E_JOINED_TABLE_WITH_PARENS:
+        {
+            find_table_direct_ref(root->getChild(E_JOINED_TABLE_WITH_PARENS_JOINED_TABLE), ret);
+        }
+            break;
+        case E_IDENTIFIER:
+        {
+            ret.push_back(root->terminalToken_.str);
+        }
+            break;
+        default:
+            break;
+    }
+}
+
 
