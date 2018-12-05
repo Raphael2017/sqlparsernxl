@@ -132,6 +132,11 @@ std::string Node::serialize()
     return ret;
 }
 
+std::string Node::serialize_non_recursive()
+{
+
+}
+
 double Node::eval()
 {
     double ret = 0.0;

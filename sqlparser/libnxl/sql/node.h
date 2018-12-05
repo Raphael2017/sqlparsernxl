@@ -39,6 +39,7 @@ struct Node
     ~Node();
     void print(int) const;      // debug info
     std::string serialize();
+    std::string serialize_non_recursive();
     double eval();
     Node* getChild(int key);
     bool setChild(int key, Node*);
