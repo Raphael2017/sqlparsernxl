@@ -1,16 +1,17 @@
-#include "sqlparser_flex.h"
+#include "parser.h"
 #include "sqlparser_bison.h"
+#include "sqlparser_flex.h"
 
-
-bool parse(const std::string& sql, ParseResult* result) {
+bool parser::parse(const std::string& sql, ParseResult* result)
+{
     yyscan_t scanner;
     YY_BUFFER_STATE state;
 
-    if (yylex_init(&scanner)) {
-        // Couldn't initialize the lexer.
+    if (yylex_init(&scanner) || yylex_init_extra(result, &scanner)) {
         fprintf(stderr, "SQLParser: Error when initializing lexer!\n");
         return false;
     }
+
     const char* text = sql.c_str();
     state = yy_scan_string(text, scanner);
 
@@ -19,14 +20,14 @@ bool parse(const std::string& sql, ParseResult* result) {
     int ret = yyparse(result, scanner);
     bool success = (ret == 0);
 
-
     return true;
 }
 
-bool tokenize(const std::string& sql, std::vector<int16_t>* tokens) {
-    // Initialize the scanner.
+bool parser::tokenize(const std::string& sql, std::vector<yytokentype>* tokens)
+{
+    ParseResult result;
     yyscan_t scanner;
-    if (yylex_init(&scanner)) {
+    if (yylex_init(&scanner) || yylex_init_extra(&result, &scanner)) {
         fprintf(stderr, "SQLParser: Error when initializing lexer!\n");
         return false;
     }
@@ -42,24 +43,30 @@ bool tokenize(const std::string& sql, std::vector<int16_t>* tokens) {
     int16_t token = yylex(&yylval, &yylloc, scanner);
     yytokentype tmp = (yytokentype)token;
     while (token != END_P) {
-        tokens->push_back(token);
+        tokens->push_back((yytokentype)token);
         token = yylex(&yylval, &yylloc, scanner);
 
         tmp = (yytokentype)token;
+        tmp = tmp;
     }
-
 
     return true;
 }
 
-
-int main()
+void parser::find_node(Node* root, NodeType target, std::list<Node*>& ret)
 {
-    std::string a = "select qwerty(*) from account; select a,b from (select u1,u2 from asdfg) AS kop;";
-    ParseResult result;
-    std::vector<int16_t> tks;
-    tokenize(a, &tks);
-    parse(a, &result);
-    std::string b = result.result_tree_->serialize();
-    return 0;
+    if (!root)
+        return;
+    if (target == root->nodeType_)
+        ret.push_back(root);
+
+    if (!root->isTerminalToken)
+    {
+        for (auto it : root->children_)
+        {
+            find_node(it, target, ret);
+        }
+    }
 }
+
+

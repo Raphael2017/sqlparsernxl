@@ -206,20 +206,21 @@ extern int yydebug;
     TRAILING = 408,
     TRANSACTION = 409,
     TO = 410,
-    UPDATE = 411,
-    USER = 412,
-    USING = 413,
-    VALUES = 414,
-    VARCHAR = 415,
-    VARBINARY = 416,
-    WHERE = 417,
-    WHEN = 418,
-    WITH = 419,
-    WORK = 420,
-    PROCESSLIST = 421,
-    QUERY = 422,
-    CONNECTION = 423,
-    WEAK = 424
+    TOP = 411,
+    UPDATE = 412,
+    USER = 413,
+    USING = 414,
+    VALUES = 415,
+    VARCHAR = 416,
+    VARBINARY = 417,
+    WHERE = 418,
+    WHEN = 419,
+    WITH = 420,
+    WORK = 421,
+    PROCESSLIST = 422,
+    QUERY = 423,
+    CONNECTION = 424,
+    WEAK = 425
   };
 #endif
 
@@ -233,7 +234,7 @@ union YYSTYPE
     struct Node* node;
     int    ival;
 
-#line 237 "sqlparser_bison.h" /* yacc.c:1909  */
+#line 238 "sqlparser_bison.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

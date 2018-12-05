@@ -5,13 +5,15 @@
 #include <list>
 #include <string>
 #include <map>
+#include <sstream>
 #include "keydef.h"
 
 struct Node;
 struct ParseResult
 {
     Node* result_tree_;
-    //
+
+    std::stringstream buf_;
 };
 
 struct TerminalToken

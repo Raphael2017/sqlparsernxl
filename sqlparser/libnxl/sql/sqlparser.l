@@ -17,9 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-static std::stringstream strbuf;
+//static std::stringstream strbuf;
 
 %}
+
 
 /***************************
  ** Section 2: Rules
@@ -224,6 +225,7 @@ SET_SLAVE_CLUSTER         { return SET_SLAVE_CLUSTER;  }
 MASTER            { return MASTER; }
 SLAVE             { return SLAVE;  }
 FORCE             { return FORCE;  }
+TOP               { return TOP; }
 
 NULL    {
     yylval->node = Node::makeTerminalNode(E_NULL, yytext);
@@ -275,21 +277,24 @@ FALSE   {
 
 {sqbegin}   {
     BEGIN(sq);
-    strbuf = std::stringstream{};
+    ((ParseResult*)yyextra)->buf_ = std::stringstream{};
+    ((ParseResult*)yyextra)->buf_ << '\'';
 }
 
 <sq>{sqdouble} {
-    strbuf << '\'';
+    ((ParseResult*)yyextra)->buf_ << '\'';
 }
 
 <sq>{sqcontent} {
-    strbuf << yytext;
+    ((ParseResult*)yyextra)->buf_ << yytext;
 }
 
 <sq>{sqend} {
     BEGIN(INITIAL);
-    Node* nd = Node::makeTerminalNode(E_STRING, strbuf.str().c_str());
-    nd->terminalToken_.str = strbuf.str();
+    ((ParseResult*)yyextra)->buf_ << '\'';
+    Node* nd = Node::makeTerminalNode(E_STRING, ((ParseResult*)yyextra)->buf_.str().c_str());
+    nd->terminalToken_.str = ((ParseResult*)yyextra)->buf_.str();
+    yylval->node = nd;
     return STRING;
 }
 

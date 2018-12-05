@@ -21,6 +21,7 @@
 #define E_SELECT_FOR_UPDATE             12
 #define E_SELECT_HINTS                  13
 #define E_SELECT_WHEN                   14
+#define E_SELECT_OPT_TOP                15
 
 //  E_SELECT_WITH_PARENS
 #define E_SELECT_WITH_PARENS_SELECT 0
@@ -207,11 +208,13 @@ enum NodeType
 
     E_WHEN_LIST,
 
+    E_TOP_CLAUSE,
 
     E_NODETYPE_END
 };
 
-#define SELECT_SERIALIZE_FORMAT  {"SELECT ", "{13}", "{0}", "{1}", "{2}", "{3}", "{4}", "{5}", "{8}", "{6}", "{7}", "{9}", "{10}", "{11}", "{12}", "{14}"}
+#define SELECT_SERIALIZE_FORMAT  {"SELECT ", "{13}", " ", "{15}", " ", "{0}", " ", "{1}", " ", "{2}", " ", "{3}",  " ",  \
+    "{4}", " ", "{5}", " ", "{8}", " ", "{6}", " ", "{7}", " ", "{9}", " ", "{10}", " ", "{11}", " ", "{12}", " ", "{14}"}
 
 #ifndef YYtypeDEF_YY_SCANNER_T
 #define YYtypeDEF_YY_SCANNER_T
