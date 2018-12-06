@@ -41,6 +41,8 @@ Node* protect_exp(const std::string& tableName, bool isWithParens)
 
 void protect(Node* root, const std::string& protect_table);
 
+void ffd_(Node* root, NodeType target, std::list<Node*>& ret);
+
 int main()
 {
     std::string a = "";
@@ -250,6 +252,7 @@ int main()
     ParseResult result;
     parser::parse(a, &result);
 
+
     if (!result.accept)
         return 1;
 
@@ -258,6 +261,10 @@ int main()
 
     printf("before: %s\n", a.c_str());
     printf("after : %s", Node::SerializeNonRecursive(root).c_str());
+
+    std::list<Node*> ret,ret1;
+    ffd_(root, E_SELECT, ret);
+    Node::find_node_non_recursive(root, E_SELECT, ret1);
 
     return 0;
 }
@@ -299,4 +306,83 @@ void protect(Node* root, const std::string& protect_table)
 
     }
 
+}
+
+void ffd(Node* root, NodeType target, std::list<Node*>& ret)
+{
+    if (!root)
+        return;
+    if (target == root->nodeType_)
+        ret.push_back(root);
+    if (root->isTerminalToken)
+        return;
+    for (auto it : root->children_)
+    {
+        ffd(it, target, ret);
+    }
+}
+
+void ffd_(Node* root, NodeType target, std::list<Node*>& ret)
+{
+    int stackmax = 0;
+    if (!root) return;
+    struct
+    {
+        Node* node;
+        std::vector<Node*>::iterator it;
+        int state = 0;
+    } stack[100];
+
+    Node* node = root;
+    std::vector<Node*>::iterator it;
+    if (!node->isTerminalToken)
+        it = node->children_.begin();
+    int top = 0, state = 0;
+    while (true)
+    {
+        if (top >= stackmax) stackmax = top;
+        if (!node)
+        {
+            if (top == 0)
+                break;
+            top--;
+            node = stack[top].node;
+            it = stack[top].it;
+            state = stack[top].state;
+        }
+        else
+        {
+            if (0 == state)
+            {
+                if (node->nodeType_ == target)
+                    ret.push_back(node);
+            }
+            else if (1 == state)
+            {
+                ++it;
+            }
+            if (it == node->children_.end() || (0 == state && node->isTerminalToken))
+            {
+                if (top == 0)
+                    break;
+                top--;
+                node = stack[top].node;
+                it = stack[top].it;
+                state = stack[top].state;
+                continue;
+            }
+
+            // call
+            stack[top].node = node;
+            stack[top].it = it;
+            stack[top].state = 1;
+            top++;
+
+            node = *it;
+            if (node && !node->isTerminalToken)
+                it = node->children_.begin();
+            state = 0;
+        }
+    }
+    return;
 }
