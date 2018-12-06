@@ -111,6 +111,7 @@ enum NodeType
     E_TYPE_INTEGER,
     E_TYPE_BOOLEAN,
     E_TYPE_DOUBLE,
+    E_TYPE_DATETIME,
 
     E_SET_UNION,
     E_SET_INTERSECT,

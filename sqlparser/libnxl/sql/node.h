@@ -12,6 +12,7 @@ struct Node;
 struct ParseResult
 {
     Node* result_tree_;
+    bool accept = false;
 
     std::stringstream buf_;
 };
@@ -32,14 +33,30 @@ struct Node
     static Node* makeNonTerminalNode(NodeType tp, int num, ...);
 
     static bool IsList(Node*);
+
+    /*
+     * we provide recursive and non_recursive interface
+     * */
     static int ListLength(Node*);
+    static int ListLengthNonRecursive(Node*);
+
     static void ToList(Node*, std::list<Node*>&);
+    static void ToListNonRecursive(Node*, std::list<Node*>&);
+
+    static std::string SerializeNonRecursive(Node* root);
+    std::string serialize();
+
+    static void find_node(Node* root, NodeType target, std::list<Node*>& ret);
+    static void find_node_non_recursive(Node* root, NodeType target, std::list<Node*>& ret);
+
+    static void find_table_direct_ref(Node* root, std::list<std::string>& ret); // ignore subquery
+    static void find_table_direct_ref_non_recursive(Node* root, std::list<std::string>& ret);
 
     Node();
     ~Node();
     void print(int) const;      // debug info
-    std::string serialize();
-    std::string serialize_non_recursive();
+
+
     double eval();
     Node* getChild(int key);
     bool setChild(int key, Node*);

@@ -175,6 +175,7 @@ sql_stmt:
 {
     $$ = $1;
     result->result_tree_ = $1;
+    result->accept = true;
     YYACCEPT;
 }
 ;
@@ -1079,7 +1080,9 @@ data_type:  TINYINT
     |   BOOLEAN
 { $$ = Node::makeTerminalNode(E_TYPE_BOOLEAN, "BOOLEAN"); }
     |   REAL
-{ $$ = Node::makeTerminalNode(E_TYPE_INTEGER, "E_TYPE_DOUBLE"); }
+{ $$ = Node::makeTerminalNode(E_TYPE_DOUBLE, "REAL"); }
+    |   DATETIME
+{ $$ = Node::makeTerminalNode(E_TYPE_DATETIME, "DATETIME"); }
 ;
 
 %%

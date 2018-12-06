@@ -1,14 +1,15 @@
 #include "parser.h"
+#include <algorithm>
 
-Node* protect_exp()
+Node* protect_exp(const std::string& tableName, bool isWithParens)
 {
     /* SUPPLIER.NXLFIELD1 >= 10 AND SUPPLIER.NXLFIELD2 <> 5 */
     Node* f1 = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 2,
-            Node::makeTerminalNode(E_IDENTIFIER, "SUPPLIER"),
+            Node::makeTerminalNode(E_IDENTIFIER, tableName.c_str()),
             Node::makeTerminalNode(E_IDENTIFIER, "NXLFIELD1"));
     f1->serialize_format = {"{0}", ".", "{1}"};
     Node* f2 = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 2,
-             Node::makeTerminalNode(E_IDENTIFIER, "SUPPLIER"),
+             Node::makeTerminalNode(E_IDENTIFIER, tableName.c_str()),
              Node::makeTerminalNode(E_IDENTIFIER, "NXLFIELD2"));
     f2->serialize_format = {"{0}", ".", "{1}"};
 
@@ -26,39 +27,23 @@ Node* protect_exp()
     Node* exp = Node::makeNonTerminalNode(E_OP_AND, 2, c1, c2);
     exp->serialize_format = {"{0}", " AND ", "{1}"};
 
+    if (!isWithParens)
+    {
+        return exp;
+    }
+
     Node* ret = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, exp);
     ret->serialize_format = {"(", "{0}", ")"};
+
+
     return ret;
 }
 
+void protect(Node* root, const std::string& protect_table);
+
 int main()
 {
-    std::string a = "SELECT L_RETURNFLAG, L_LINESTATUS, SUM(L_QUANTITY) AS SUM_QTY,\n"
-                    " SUM(L_EXTENDEDPRICE) AS SUM_BASE_PRICE, SUM(L_EXTENDEDPRICE*(1-L_DISCOUNT)) AS SUM_DISC_PRICE,\n"
-                    " SUM(L_EXTENDEDPRICE*(1-L_DISCOUNT)*(1+L_TAX)) AS SUM_CHARGE, AVG(L_QUANTITY) AS AVG_QTY,\n"
-                    " AVG(L_EXTENDEDPRICE) AS AVG_PRICE, AVG(L_DISCOUNT) AS AVG_DISC, COUNT(*) AS COUNT_ORDER\n"
-                    "FROM LINEITEM AS TESTLINEITEM\n"
-                    "WHERE L_SHIPDATE <= dateadd(dd, -90, cast('1998-12-01' as TINYINT))\n"
-                    "GROUP BY L_RETURNFLAG, L_LINESTATUS\n"
-                    "ORDER BY L_RETURNFLAG,L_LINESTATUS;";
-
-    a = "SELECT TOP 100 S_ACCTBAL, S_NAME, N_NAME, P_PARTKEY, P_MFGR, S_ADDRESS, S_PHONE, S_COMMENT\n"
-        "FROM PART, SUPPLIER, PARTSUPP, NATION, REGION\n"
-        "WHERE P_PARTKEY = PS_PARTKEY AND S_SUPPKEY = PS_SUPPKEY AND P_SIZE = 15 AND\n"
-        "P_TYPE LIKE '%%BRASS' AND S_NATIONKEY = N_NATIONKEY AND N_REGIONKEY = R_REGIONKEY AND\n"
-        "R_NAME = 'EUROPE' AND\n"
-        "PS_SUPPLYCOST = (SELECT MIN(PS_SUPPLYCOST) FROM PARTSUPP, SUPPLIER, NATION, REGION\n"
-        " WHERE P_PARTKEY = PS_PARTKEY AND S_SUPPKEY = PS_SUPPKEY\n"
-        " AND S_NATIONKEY = N_NATIONKEY AND N_REGIONKEY = R_REGIONKEY AND R_NAME = 'EUROPE')\n"
-        "ORDER BY S_ACCTBAL DESC, N_NAME, S_NAME, P_PARTKEY";
-
-    a = "-- http://www.sqlserver-dba.com/2011/09/this-is-a-followup-on-my-earlier-post-of-sql-server-test-data-generation-testing-tools-i-had-some-requests-for-my-set-up-pr.html\n"
-        "SELECT TOP 10 L_ORDERKEY, SUM(L_EXTENDEDPRICE*(1-L_DISCOUNT)) AS REVENUE, O_ORDERDATE, O_SHIPPRIORITY\n"
-        "FROM CUSTOMER, ORDERS, LINEITEM\n"
-        "WHERE C_MKTSEGMENT = 'BUILDING' AND C_CUSTKEY = O_CUSTKEY AND L_ORDERKEY = O_ORDERKEY AND\n"
-        "O_ORDERDATE < '1995-03-15' AND L_SHIPDATE > '1995-03-15'\n"
-        "GROUP BY L_ORDERKEY, O_ORDERDATE, O_SHIPPRIORITY\n"
-        "ORDER BY REVENUE DESC, O_ORDERDATE;";
+    std::string a = "";
 
     a = "-- http://www.sqlserver-dba.com/2011/09/this-is-a-followup-on-my-earlier-post-of-sql-server-test-data-generation-testing-tools-i-had-some-requests-for-my-set-up-pr.html\n"
         "SELECT O_ORDERPRIORITY, COUNT(*) AS ORDER_COUNT FROM ORDERS\n"
@@ -223,38 +208,95 @@ int main()
         "GROUP BY CNTRYCODE\n"
         "ORDER BY CNTRYCODE;";
 
+    a = "SELECT L_RETURNFLAG, L_LINESTATUS, SUM(L_QUANTITY) AS SUM_QTY,\n"
+        " SUM(L_EXTENDEDPRICE) AS SUM_BASE_PRICE, SUM(L_EXTENDEDPRICE*(1-L_DISCOUNT)) AS SUM_DISC_PRICE,\n"
+        " SUM(L_EXTENDEDPRICE*(1-L_DISCOUNT)*(1+L_TAX)) AS SUM_CHARGE, AVG(L_QUANTITY) AS AVG_QTY,\n"
+        " AVG(L_EXTENDEDPRICE) AS AVG_PRICE, AVG(L_DISCOUNT) AS AVG_DISC, COUNT(*) AS COUNT_ORDER\n"
+        "FROM LINEITEM AS TESTLINEITEM\n"
+        "WHERE L_SHIPDATE <= dateadd(dd, -90, cast('1998-12-01' as TINYINT))\n"
+        "GROUP BY L_RETURNFLAG, L_LINESTATUS\n"
+        "ORDER BY L_RETURNFLAG,L_LINESTATUS;";
+
+    a = "SELECT TOP 100 S_ACCTBAL, S_NAME, N_NAME, P_PARTKEY, P_MFGR, S_ADDRESS, S_PHONE, S_COMMENT\n"
+        "FROM PART, SUPPLIER, PARTSUPP, NATION, REGION\n"
+        "WHERE P_PARTKEY = PS_PARTKEY AND S_SUPPKEY = PS_SUPPKEY AND P_SIZE = 15 AND\n"
+        "P_TYPE LIKE '%%BRASS' AND S_NATIONKEY = N_NATIONKEY AND N_REGIONKEY = R_REGIONKEY AND\n"
+        "R_NAME = 'EUROPE' AND\n"
+        "PS_SUPPLYCOST = (SELECT MIN(PS_SUPPLYCOST) FROM PARTSUPP, SUPPLIER, NATION, REGION\n"
+        " WHERE P_PARTKEY = PS_PARTKEY AND S_SUPPKEY = PS_SUPPKEY\n"
+        " AND S_NATIONKEY = N_NATIONKEY AND N_REGIONKEY = R_REGIONKEY AND R_NAME = 'EUROPE')\n"
+        "ORDER BY S_ACCTBAL DESC, N_NAME, S_NAME, P_PARTKEY";
+
+
+    a = "-- http://www.sqlserver-dba.com/2011/09/this-is-a-followup-on-my-earlier-post-of-sql-server-test-data-generation-testing-tools-i-had-some-requests-for-my-set-up-pr.html\n"
+        "SELECT TOP 10 L_ORDERKEY, SUM(L_EXTENDEDPRICE*(1-L_DISCOUNT)) AS REVENUE, O_ORDERDATE, O_SHIPPRIORITY\n"
+        "FROM CUSTOMER, ORDERS, LINEITEM\n"
+        "WHERE C_MKTSEGMENT = 'BUILDING' AND C_CUSTKEY = O_CUSTKEY AND L_ORDERKEY = O_ORDERKEY AND\n"
+        "O_ORDERDATE < '1995-03-15' AND L_SHIPDATE > '1995-03-15'\n"
+        "GROUP BY L_ORDERKEY, O_ORDERDATE, O_SHIPPRIORITY\n"
+        "ORDER BY REVENUE DESC, O_ORDERDATE;";
+
+    a = "-- TPC_H Query 20 - Potential Part Promotion\n"
+        "SELECT S_NAME, S_ADDRESS FROM SUPPLIER, NATION\n"
+        "WHERE S_SUPPKEY IN (SELECT PS_SUPPKEY FROM PARTSUPP\n"
+        " WHERE PS_PARTKEY in (SELECT P_PARTKEY FROM \"PART\" WHERE P_NAME like 'forest%%') AND\n"
+        " PS_AVAILQTY > (SELECT 0.5*sum(L_QUANTITY) FROM LINEITEM WHERE L_PARTKEY = PS_PARTKEY AND\n"
+        "  L_SUPPKEY = PS_SUPPKEY AND L_SHIPDATE >= '1994-01-01' AND\n"
+        "  L_SHIPDATE < dateadd(yy,1,'1994-01-01'))) AND S_NATIONKEY = N_NATIONKEY AND N_NAME = 'CANADA'\n"
+        "ORDER BY S_NAME;";
+
+
+
     ParseResult result;
     parser::parse(a, &result);
 
-    std::vector<yytokentype> tks;
+    if (!result.accept)
+        return 1;
 
     Node* root = result.result_tree_;
+    protect(root, "NATION");
+
+    printf("before: %s\n", a.c_str());
+    printf("after : %s", Node::SerializeNonRecursive(root).c_str());
+
+    return 0;
+}
+
+void protect(Node* root, const std::string& protect_table)
+{
+    if (!root)
+        return;
+
     std::list<Node*> ss;
-    parser::find_node(root, E_SELECT, ss);
+    Node::find_node_non_recursive(root, E_SELECT, ss);
 
-    Node* s2 = nullptr;
-    for (auto it : ss)
+    for (auto selit : ss)
     {
-        //printf("%s\n", it->serialize().c_str());
-        s2 = it;
-    }
+        std::list<std::string> table_direct_ref;
+        Node::find_table_direct_ref_non_recursive(selit, table_direct_ref);
+        auto fd = std::find(table_direct_ref.begin(), table_direct_ref.end(), protect_table);
+        if (fd == table_direct_ref.end())
+            continue;
 
-    {
-        Node* from = nullptr;
-        if ((from = s2->getChild(E_SELECT_OPT_WHERE)))
+        Node* where = nullptr;
+        if ((where = selit->getChild(E_SELECT_OPT_WHERE)))
         {
-            Node* exp_old = from->getChild(E_WHERE_CLAUSE_EXPR);
+            Node* exp_old = where->getChild(E_WHERE_CLAUSE_EXPR);
             Node* exp_old_with_parens = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, exp_old);
             exp_old_with_parens->serialize_format = {"(", "{0}", ")"};
 
-            Node* exp_new = Node::makeNonTerminalNode(E_OP_AND, 2, exp_old_with_parens, protect_exp());
+            Node* exp_new = Node::makeNonTerminalNode(E_OP_AND, 2, exp_old_with_parens, protect_exp(protect_table, true));
             exp_new->serialize_format = {"{0}", " AND ", "{1}"};
-            from->setChild(E_WHERE_CLAUSE_EXPR, exp_new);
+            where->setChild(E_WHERE_CLAUSE_EXPR, exp_new);
         }
-    }
-    printf("%s\n", root->serialize().c_str());
+        else
+        {
+            Node* exp_new = protect_exp(protect_table, false);
+            where = Node::makeNonTerminalNode(E_WHERE_CLAUSE, 1, exp_new);
+            where->serialize_format = {"WHERE ", "{0}"};
+            selit->setChild(E_SELECT_OPT_WHERE, where);
+        }
 
-    std::list<std::string> tables;
-    parser::find_table_direct_ref(s2, tables);
-    return 0;
+    }
+
 }
