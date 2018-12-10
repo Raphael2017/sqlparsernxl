@@ -171,8 +171,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 
 // Defines our general input.
 sql_stmt:
-    /*EMPTY*/   { $$ = nullptr; }
-    | stmt_list END_P
+    stmt_list END_P
 {
     $$ = $1;
     result->result_tree_ = $1;
@@ -187,15 +186,11 @@ stmt_list:  stmt
     $$ = Node::makeNonTerminalNode(E_STMT_LIST, 2, $1, $3);
     $$->serialize_format = {"{0}", "; ", "{1}"};
 }
-    |   stmt stmt_list
-{
-    $$ = Node::makeNonTerminalNode(E_STMT_LIST, 2, $1, $2);
-    $$->serialize_format = {"{0}", " ", "{1}"};
-}
 ;
 
 stmt:
     select_stmt
+    | /*EMPTY*/   { $$ = nullptr; }
 ;
 
 /* SELECT GRAMMAR */

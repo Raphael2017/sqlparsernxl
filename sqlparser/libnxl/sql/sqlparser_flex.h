@@ -50,6 +50,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include "sqlparser_bison.h"
+
 /* end standard C headers. */
 
 /* flex integer type definitions */
@@ -520,7 +521,7 @@ extern int yylex \
 #undef yyTABLES_NAME
 #endif
 
-#line 346 "sqlparser.l"
+#line 347 "sqlparser.l"
 
 
 #line 527 "sqlparser_flex.h"

@@ -675,7 +675,7 @@ static const yytype_uint16 yyrline[] =
      923,   928,   933,   938,   943,   948,   953,   958,   963,   970,
      971,   978,   985,   987,   992,   993,  1000,  1007,  1013,  1018,
     1024,  1029,  1034,  1039,  1046,  1050,  1057,  1060,  1063,  1066,
-    1070,  1072,  1074,  1076,  1078,  1080,  1082,  1084
+    1069,  1071,  1073,  1075,  1077,  1079,  1081,  1083
 };
 #endif
 
@@ -3484,49 +3484,49 @@ yyreduce:
     break;
 
   case 160:
-#line 1071 "sqlparser.y" /* yacc.c:1646  */
+#line 1070 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_INTEGER, "TINYINT"); }
 #line 3490 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 161:
-#line 1073 "sqlparser.y" /* yacc.c:1646  */
+#line 1072 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_INTEGER, "SMALLINT"); }
 #line 3496 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 162:
-#line 1075 "sqlparser.y" /* yacc.c:1646  */
+#line 1074 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_INTEGER, "MEDIUMINT"); }
 #line 3502 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 163:
-#line 1077 "sqlparser.y" /* yacc.c:1646  */
+#line 1076 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_INTEGER, "INTEGER"); }
 #line 3508 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 164:
-#line 1079 "sqlparser.y" /* yacc.c:1646  */
+#line 1078 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_INTEGER, "BIGINT"); }
 #line 3514 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 165:
-#line 1081 "sqlparser.y" /* yacc.c:1646  */
+#line 1080 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_BOOLEAN, "BOOLEAN"); }
 #line 3520 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 166:
-#line 1083 "sqlparser.y" /* yacc.c:1646  */
+#line 1082 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_DOUBLE, "REAL"); }
 #line 3526 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 167:
-#line 1085 "sqlparser.y" /* yacc.c:1646  */
+#line 1084 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_DATETIME, "DATETIME"); }
 #line 3532 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
@@ -3767,7 +3767,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1088 "sqlparser.y" /* yacc.c:1906  */
+#line 1087 "sqlparser.y" /* yacc.c:1906  */
 
 /*********************************
  ** Section 4: Additional C code

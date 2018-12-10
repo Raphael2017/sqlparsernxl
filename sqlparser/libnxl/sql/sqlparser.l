@@ -318,6 +318,7 @@ FALSE   {
 }
 
 {comment}   { /* ignore */ }
+[ \t\r\n]+  { /* ignore */ }
 
 [-+&~|^/%*(),.;!] { return yytext[0];}
 
@@ -336,7 +337,7 @@ FALSE   {
     return QUESTIONMARK;
 }
 
-[ \t\r\n]    {}
+
 <<EOF>>    { return END_P; }
 
 .   {
