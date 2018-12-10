@@ -45,6 +45,10 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 // Tell bison to create a reentrant parser
 %define api.pure full
 
+/*
+  1. We do not accept any reduce/reduce conflicts, shift/reduce conflicts
+*/
+
 
 %define parse.error verbose
 %locations
@@ -132,12 +136,12 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token MEDIUMINT MEMORY MOD MODIFYTIME MASTER
 %token NATURAL NOT NUMERIC
 %token OFFSET ON OR ORDER OPTION OUTER
-%token PARAMETERS PASSWORD PRECISION PREPARE PRIMARY
+%token PARAMETERS PERCENT PASSWORD PRECISION PREPARE PRIMARY
 %token READ_STATIC REAL RENAME REPLACE RESTRICT PRIVILEGES REVOKE RIGHT
        ROLLBACK KILL READ_CONSISTENCY
 %token SCHEMA SCOPE SELECT SESSION SESSION_ALIAS
        SET SHOW SMALLINT SNAPSHOT SPFILE START STATIC SYSTEM STRONG SET_MASTER_CLUSTER SET_SLAVE_CLUSTER SLAVE
-%token TABLE TABLES THEN TIME TIMESTAMP TINYINT TRAILING TRANSACTION TO TOP
+%token TABLE TABLES THEN TIES TIME TIMESTAMP TINYINT TRAILING TRANSACTION TO TOP
 %token UNION UPDATE USER USING
 %token VALUES VARCHAR VARBINARY
 %token WHERE WHEN WITH WORK PROCESSLIST QUERY CONNECTION WEAK
@@ -161,7 +165,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> column_ref
 %type <node> case_expr func_expr in_expr
 %type <node> case_arg when_clause_list when_clause case_default
-
+%type <node> top_count top_percent
 
 %start sql_stmt
 %%
@@ -242,10 +246,10 @@ select_no_parens:
 ;
 
 no_table_select:
-    SELECT opt_hint opt_top opt_distinct select_expr_list opt_select_limit
+    SELECT opt_hint opt_distinct opt_top select_expr_list opt_select_limit
 {
     $$ = Node::makeNonTerminalNode(E_SELECT, 16,
-            $4,             /* E_SELECT_DISTINCT 0 */
+            $3,             /* E_SELECT_DISTINCT 0 */
             $5,             /* E_SELECT_SELECT_EXPR_LIST 1 */
             nullptr,        /* E_SELECT_FROM_LIST 2 */
             nullptr,        /* E_SELECT_OPT_WHERE 3 */
@@ -260,15 +264,15 @@ no_table_select:
             nullptr,        /* E_SELECT_FOR_UPDATE 12 */
             $2,             /* E_SELECT_HINTS 13 */
             nullptr,        /* E_SELECT_WHEN 14 */
-            $3              /* E_SELECT_OPT_TOP 15 */
+            $4              /* E_SELECT_OPT_TOP 15 */
             );
     $$->serialize_format = SELECT_SERIALIZE_FORMAT;
 }
-    |   SELECT opt_hint opt_top opt_distinct select_expr_list
+    |   SELECT opt_hint opt_distinct opt_top select_expr_list
             from_dual opt_where opt_select_limit
 {
     $$ = Node::makeNonTerminalNode(E_SELECT, 16,
-                $4,             /* E_SELECT_DISTINCT 0 */
+                $3,             /* E_SELECT_DISTINCT 0 */
                 $5,             /* E_SELECT_SELECT_EXPR_LIST 1 */
                 $6,             /* E_SELECT_FROM_LIST 2 */
                 $7,             /* E_SELECT_OPT_WHERE 3 */
@@ -283,7 +287,7 @@ no_table_select:
                 nullptr,        /* E_SELECT_FOR_UPDATE 12 */
                 $2,             /* E_SELECT_HINTS 13 */
                 nullptr,        /* E_SELECT_WHEN 14 */
-                $3              /* E_SELECT_OPT_TOP 15 */
+                $4              /* E_SELECT_OPT_TOP 15 */
                 );
     $$->serialize_format = SELECT_SERIALIZE_FORMAT;
 }
@@ -295,12 +299,12 @@ select_clause:
 ;
 
 simple_select:
-    SELECT opt_hint opt_top opt_distinct select_expr_list
+    SELECT opt_hint opt_distinct opt_top select_expr_list
     from_clause
     opt_where opt_groupby opt_having
 {
     $$ = Node::makeNonTerminalNode(E_SELECT, 16,
-                    $4,             /* E_SELECT_DISTINCT 0 */
+                    $3,             /* E_SELECT_DISTINCT 0 */
                     $5,             /* E_SELECT_SELECT_EXPR_LIST 1 */
                     $6,             /* E_SELECT_FROM_LIST 2 */
                     $7,             /* E_SELECT_OPT_WHERE 3 */
@@ -315,7 +319,7 @@ simple_select:
                     nullptr,        /* E_SELECT_FOR_UPDATE 12 */
                     $2,             /* E_SELECT_HINTS 13 */
                     nullptr,        /* E_SELECT_WHEN 14 */
-                    $3              /* E_SELECT_OPT_TOP 15 */
+                    $4              /* E_SELECT_OPT_TOP 15 */
                     );
     $$->serialize_format = SELECT_SERIALIZE_FORMAT;
 }
@@ -340,7 +344,7 @@ simple_select:
                         nullptr,             /* E_SELECT_WHEN 14 */
                         nullptr              /* E_SELECT_OPT_TOP 15 */
                         );
-    $$->serialize_format = SELECT_SERIALIZE_FORMAT;
+    $$->serialize_format = {"{8}", " UNION ", "{7}", " ", "{9}"};
 }
     | select_clause INTERSECT opt_distinct select_clause
 {
@@ -363,7 +367,7 @@ simple_select:
                         nullptr,             /* E_SELECT_WHEN 14 */
                         nullptr              /* E_SELECT_OPT_TOP 15 */
                         );
-    $$->serialize_format = SELECT_SERIALIZE_FORMAT;
+    $$->serialize_format = {"{8}", " INTERSECT ", "{7}", " ", "{9}"};
 }
     | select_clause EXCEPT opt_distinct select_clause
 {
@@ -386,7 +390,7 @@ simple_select:
                         nullptr,             /* E_SELECT_WHEN 14 */
                         nullptr              /* E_SELECT_OPT_TOP 15 */
                         );
-    $$->serialize_format = SELECT_SERIALIZE_FORMAT;
+    $$->serialize_format = {"{8}", " EXCEPT ", "{7}", " ", "{9}"};
 }
 ;
 
@@ -395,11 +399,44 @@ opt_top:
 {
     $$ = nullptr;
 }
-    | TOP INTNUM
+    | TOP top_count
 {
-    $$ = Node::makeNonTerminalNode(E_TOP_CLAUSE, 1, $2);
+    $$ = Node::makeNonTerminalNode(E_TOP_CNT, 1, $2);
     $$->serialize_format = {"TOP ", "{0}"};
 }
+    | TOP top_count WITH TIES
+{
+    $$ = Node::makeNonTerminalNode(E_TOP_CNT_TIES, 1, $2);
+    $$->serialize_format = {"TOP ", "{0}", " WITH TIES"};
+}
+    | TOP top_percent PERCENT
+{
+    $$ = Node::makeNonTerminalNode(E_TOP_PCT, 1, $2);
+    $$->serialize_format = {"TOP ", "{0}", " PERCENT"};
+}
+    | TOP top_percent PERCENT WITH TIES
+{
+    $$ = Node::makeNonTerminalNode(E_TOP_PCT, 1, $2);
+    $$->serialize_format = {"TOP ", "{0}", " PERCENT WITH TIES"};
+}
+;
+
+top_count:  INTNUM
+    | '(' expr ')'
+{
+    $$ = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, $2);
+    $$->serialize_format = {"(", "{0}", ")"};
+}
+;
+
+top_percent:    APPROXNUM
+    | INTNUM
+    | '(' expr ')'
+{
+    $$ = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, $2);
+    $$->serialize_format = {"(", "{0}", ")"};
+}
+;
 
 opt_where:
     /* EMPTY */

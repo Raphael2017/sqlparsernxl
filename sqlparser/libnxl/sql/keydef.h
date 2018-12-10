@@ -209,12 +209,15 @@ enum NodeType
 
     E_WHEN_LIST,
 
-    E_TOP_CLAUSE,
+    E_TOP_CNT,
+    E_TOP_PCT,
+    E_TOP_CNT_TIES,
+    E_TOP_PCT_TIES,
 
     E_NODETYPE_END
 };
 
-#define SELECT_SERIALIZE_FORMAT  {"SELECT ", "{13}", " ", "{15}", " ", "{0}", " ", "{1}", " ", "{2}", " ", "{3}",  " ",  \
+#define SELECT_SERIALIZE_FORMAT  {"SELECT ", "{13}", " ", "{0}", " ", "{15}", " ", "{1}", " ", "{2}", " ", "{3}",  " ",  \
     "{4}", " ", "{5}", " ", "{8}", " ", "{6}", " ", "{7}", " ", "{9}", " ", "{10}", " ", "{11}", " ", "{12}", " ", "{14}"}
 
 #ifndef YYtypeDEF_YY_SCANNER_T

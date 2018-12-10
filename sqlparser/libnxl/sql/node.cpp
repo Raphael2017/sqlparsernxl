@@ -335,7 +335,7 @@ void Node::find_node_non_recursive(Node* root, NodeType target, std::list<Node*>
     }
 }
 
-void Node::find_table_direct_ref(Node* root, std::list<std::string>& ret)
+void Node::find_table_direct_ref(Node* root, std::list<Node*>& ret)
 {
     if (!root)  return;
     switch (root->nodeType_)
@@ -358,11 +358,7 @@ void Node::find_table_direct_ref(Node* root, std::list<std::string>& ret)
             break;
         case E_ALIAS:
         {
-            // skip child select
-            if (!(root->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS)->nodeType_ == E_SELECT_WITH_PARENS))
-            {
-                find_table_direct_ref(root->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS), ret);
-            }
+            ret.push_back(root);
         }
             break;
         case E_JOINED_TABLE:
@@ -378,7 +374,7 @@ void Node::find_table_direct_ref(Node* root, std::list<std::string>& ret)
             break;
         case E_IDENTIFIER:
         {
-            ret.push_back(root->terminalToken_.str);
+            ret.push_back(root);
         }
             break;
         default:
@@ -386,7 +382,7 @@ void Node::find_table_direct_ref(Node* root, std::list<std::string>& ret)
     }
 }
 
-void Node::find_table_direct_ref_non_recursive(Node* root, std::list<std::string>& ret)
+void Node::find_table_direct_ref_non_recursive(Node* root, std::list<Node*>& ret)
 {
     if (!root)
         return;
@@ -400,9 +396,9 @@ void Node::find_table_direct_ref_non_recursive(Node* root, std::list<std::string
         lpNode = stack.top();
         stack.pop();
 
-        if (lpNode->nodeType_ == E_IDENTIFIER)
+        if (lpNode->nodeType_ == E_IDENTIFIER || lpNode->nodeType_ == E_ALIAS)
         {
-            ret.push_back(lpNode->terminalToken_.str);
+            ret.push_back(root);
             continue;
         }
 
@@ -426,13 +422,6 @@ void Node::find_table_direct_ref_non_recursive(Node* root, std::list<std::string
                 if ((tmp = lpNode->getChild(E_LIST_NEXT)))
                     stack.push(tmp);
                 if ((tmp = lpNode->getChild(E_LIST_ITEM)))
-                    stack.push(tmp);
-            }
-                break;
-            case E_ALIAS:
-            {
-                // skip child select
-                if ((tmp = lpNode->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS)) && tmp->nodeType_ != E_SELECT_WITH_PARENS)
                     stack.push(tmp);
             }
                 break;

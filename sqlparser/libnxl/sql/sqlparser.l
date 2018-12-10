@@ -226,6 +226,8 @@ MASTER            { return MASTER; }
 SLAVE             { return SLAVE;  }
 FORCE             { return FORCE;  }
 TOP               { return TOP; }
+PERCENT           { return PERCENT; }
+TIES              { return TIES; }
 
 NULL    {
     yylval->node = Node::makeTerminalNode(E_NULL, yytext);
