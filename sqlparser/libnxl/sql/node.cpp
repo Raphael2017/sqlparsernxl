@@ -284,6 +284,14 @@ Node* Node::getChild(int key)
         return nullptr;
 }
 
+Node** Node::getChildRef(int key)
+{
+    if (0 <= key && key < children_.size())
+        return &children_[key];
+    else
+        return nullptr;
+}
+
 bool Node::setChild(int key, Node* newchild)
 {
     if (0 <= key && key < children_.size())
@@ -442,6 +450,53 @@ void Node::find_table_direct_ref_non_recursive(Node* root, std::list<Node*>& ret
             default:
                 break;
         }
+    }
+}
+
+void Node::find_table_direct_ref(Node** root, std::list<Node**>& ret)
+{
+    if (!root || !*root)  return;
+    switch ((*root)->nodeType_)
+    {
+        case E_SELECT:
+        {
+            find_table_direct_ref((*root)->getChildRef(E_SELECT_FROM_LIST), ret);
+        }
+            break;
+        case E_FROM_CLAUSE:
+        {
+            find_table_direct_ref((*root)->getChildRef(E_FROM_CLAUSE_FROM_LIST), ret);
+        }
+            break;
+        case E_FROM_LIST:
+        {
+            find_table_direct_ref((*root)->getChildRef(E_LIST_ITEM), ret);
+            find_table_direct_ref((*root)->getChildRef(E_LIST_NEXT), ret);
+        }
+            break;
+        case E_ALIAS:
+        {
+            ret.push_back(root);
+        }
+            break;
+        case E_JOINED_TABLE:
+        {
+            find_table_direct_ref((*root)->getChildRef(E_JOINED_TABLE_TABLE_FACTOR_L), ret);
+            find_table_direct_ref((*root)->getChildRef(E_JOINED_TABLE_TABLE_FACTOR_R), ret);
+        }
+            break;
+        case E_JOINED_TABLE_WITH_PARENS:
+        {
+            find_table_direct_ref((*root)->getChildRef(E_JOINED_TABLE_WITH_PARENS_JOINED_TABLE), ret);
+        }
+            break;
+        case E_IDENTIFIER:
+        {
+            ret.push_back(root);
+        }
+            break;
+        default:
+            break;
     }
 }
 

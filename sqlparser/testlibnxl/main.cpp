@@ -39,7 +39,43 @@ Node* protect_exp(const std::string& tableName, bool isWithParens)
     return ret;
 }
 
-void protect(Node* root, const std::string& protect_table);
+Node* protect_sel(const std::string& tableName_, const std::string& aliasName, Node*& node)
+{
+    std::string tableName = tableName_;
+    std::transform(tableName_.begin(), tableName_.end(), tableName.begin(), ::toupper);
+    if (tableName == "EMPLOYEES")
+    {
+        // SELECT * from tableName where tableName.NXLFIELD1 >= 10 AND tableName.NXLFIELD2 <> 5
+        std::string sql = "(SELECT * FROM " + tableName + " WHERE " + tableName + ".NXLFIELD1 >= 10 AND " + tableName + ".NXLFIELD2 <> 5)";
+        ParseResult ret;
+        parser::parse(sql, &ret);
+        Node* nm = Node::makeTerminalNode(E_IDENTIFIER, aliasName.c_str());
+        Node* result = Node::makeNonTerminalNode(E_ALIAS, 2, ret.result_tree_, nm);
+        result->serialize_format = {"{0}", " AS ", "{1}"};
+        Node* ori = node;
+        node = result;
+        return ori;
+    }
+    else if (tableName == "BOSSES")
+    {
+        // SELECT * from tableName where tableName.NXLFIELD3 < 3 AND tableName.NXLFIELD4 > 4
+        std::string sql = "(SELECT * FROM " + tableName + " WHERE " + tableName + ".NXLFIELD3 >= 10 AND " + tableName + ".NXLFIELD4 <> 5)";
+        ParseResult ret;
+        parser::parse(sql, &ret);
+        Node* nm = Node::makeTerminalNode(E_IDENTIFIER, aliasName.c_str());
+        Node* result = Node::makeNonTerminalNode(E_ALIAS, 2, ret.result_tree_, nm);
+        result->serialize_format = {"{0}", " AS ", "{1}"};
+        Node* ori = node;
+        node = result;
+        return ori;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+void protect(Node* root);
 
 void ffd_(Node* root, NodeType target, std::list<Node*>& ret);
 
@@ -247,6 +283,39 @@ int main()
         "  L_SHIPDATE < dateadd(yy,1,'1994-01-01'))) AND S_NATIONKEY = N_NATIONKEY AND N_NAME = 'CANADA'\n"
         "ORDER BY S_NAME;";
 
+    a = "-- TPC_H Query 13 - Customer Distribution\n"
+        "SELECT C_COUNT, COUNT(*) AS CUSTDIST\n"
+        "FROM (SELECT C_CUSTKEY, COUNT(O_ORDERKEY)\n"
+        " FROM CUSTOMER left outer join ORDERS on C_CUSTKEY = O_CUSTKEY\n"
+        " AND O_COMMENT not like '%%special%%requests%%'\n"
+        " GROUP BY C_CUSTKEY) AS C_ORDERS\n"
+        "GROUP BY C_COUNT\n"
+        "ORDER BY CUSTDIST DESC, C_COUNT DESC;";
+
+
+
+    a = "-- TPC_H Query 13 - Customer Distribution\n"
+        "SELECT C_COUNT, COUNT(*) AS CUSTDIST\n"
+        "FROM (SELECT C_CUSTKEY, COUNT(O_ORDERKEY)\n"
+        " FROM CUSTOMER left outer join ORDERS on C_CUSTKEY = O_CUSTKEY\n"
+        " AND O_COMMENT not like '%%special%%requests%%'\n"
+        " GROUP BY C_CUSTKEY) AS C_ORDERS\n"
+        "GROUP BY C_COUNT\n"
+        "ORDER BY CUSTDIST DESC, C_COUNT DESC;";
+
+    a = "SELECT alpha1 from beta1 union all (select alpha2 from gamma2) EXCEPT SELECT alpha1 from beta1";
+
+    a = "SELECT last_name, \n"
+        "       job_id, \n"
+        "       salary \n"
+        "FROM   employees, bosses\n"
+        "WHERE  job_id = (SELECT job_id \n"
+        "                 FROM   employees as employees_new \n"
+        "                 WHERE  employees_new.employee_id = 141) \n"
+        "       AND salary > (SELECT salary \n"
+        "                     FROM   employees \n"
+        "                     WHERE  employee_id = 141);\n"
+            ;
 
 
     ParseResult result;
@@ -257,19 +326,16 @@ int main()
         return 1;
 
     Node* root = result.result_tree_;
-    protect(root, "NATION");
+    protect(root);
 
-    printf("before: %s\n", a.c_str());
-    printf("after : %s", Node::SerializeNonRecursive(root).c_str());
+    printf("before: \n%s\n", a.c_str());
+    printf("after : \n%s", Node::SerializeNonRecursive(root).c_str());
 
-    std::list<Node*> ret,ret1;
-    ffd_(root, E_SELECT, ret);
-    Node::find_node_non_recursive(root, E_SELECT, ret1);
-
+    delete(root);
     return 0;
 }
 
-void protect(Node* root, const std::string& protect_table)
+void protect(Node* root)
 {
     if (!root)
         return;
@@ -279,31 +345,33 @@ void protect(Node* root, const std::string& protect_table)
 
     for (auto selit : ss)
     {
-        std::list<std::string> table_direct_ref;
-        Node::find_table_direct_ref_non_recursive(selit, table_direct_ref);
-        auto fd = std::find(table_direct_ref.begin(), table_direct_ref.end(), protect_table);
-        if (fd == table_direct_ref.end())
-            continue;
-
-        Node* where = nullptr;
-        if ((where = selit->getChild(E_SELECT_OPT_WHERE)))
+        std::list<Node**> table_direct_ref;
+        Node::find_table_direct_ref(&selit, table_direct_ref);
+        for (auto tb : table_direct_ref)
         {
-            Node* exp_old = where->getChild(E_WHERE_CLAUSE_EXPR);
-            Node* exp_old_with_parens = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, exp_old);
-            exp_old_with_parens->serialize_format = {"(", "{0}", ")"};
-
-            Node* exp_new = Node::makeNonTerminalNode(E_OP_AND, 2, exp_old_with_parens, protect_exp(protect_table, true));
-            exp_new->serialize_format = {"{0}", " AND ", "{1}"};
-            where->setChild(E_WHERE_CLAUSE_EXPR, exp_new);
+            switch ((*tb)->nodeType_)
+            {
+                case E_ALIAS:
+                {
+                    Node* tbname = (*tb)->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS);
+                    if (tbname->nodeType_ == E_IDENTIFIER)
+                    {
+                        std::string aliasName = (*tb)->getChild(E_ALIAS_RELATION_NAME)->terminalToken_.str;
+                        Node* ori = protect_sel(tbname->terminalToken_.str, aliasName, *tb);
+                        delete(ori);
+                    }
+                }
+                    break;
+                case E_IDENTIFIER:
+                {
+                    Node* ori = protect_sel((*tb)->terminalToken_.str, (*tb)->terminalToken_.str, *tb);
+                    delete(ori);
+                }
+                    break;
+                default:
+                    break;
+            }
         }
-        else
-        {
-            Node* exp_new = protect_exp(protect_table, false);
-            where = Node::makeNonTerminalNode(E_WHERE_CLAUSE, 1, exp_new);
-            where->serialize_format = {"WHERE ", "{0}"};
-            selit->setChild(E_SELECT_OPT_WHERE, where);
-        }
-
     }
 
 }

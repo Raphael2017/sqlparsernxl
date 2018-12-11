@@ -149,13 +149,13 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> sql_stmt stmt_list stmt
 %type <node> select_stmt
 
-%type <node> from_dual from_clause table_factor_non_join data_type opt_when opt_hint
+%type <node> from_dual from_clause table_factor_non_join data_type opt_hint
 %type <node> column_name relation_name function_name column_label
 
 %type <node> select_with_parens select_no_parens select_clause
 %type <node> simple_select no_table_select select_limit select_expr_list
 %type <node> opt_where opt_groupby opt_order_by order_by opt_having opt_top
-%type <node> opt_select_limit limit_expr opt_for_update
+%type <node> opt_select_limit limit_expr
 %type <node> sort_list sort_key opt_asc_desc
 %type <node> opt_distinct distinct_or_all projection
 %type <node> from_list table_factor relation_factor joined_table
@@ -199,10 +199,9 @@ stmt:
 
 /* SELECT GRAMMAR */
 select_stmt:
-    select_no_parens opt_when   %prec UMINUS
+    select_no_parens    %prec UMINUS
 {
     $$ = $1;
-    $$->setChild(E_SELECT_WHEN, $2);
 }
     |   select_with_parens  %prec UMINUS
 {
@@ -225,23 +224,17 @@ select_with_parens:
 
 select_no_parens:
     no_table_select
-    |   simple_select opt_for_update
-{
-    $$ = $1;
-    $1->setChild(E_SELECT_FOR_UPDATE, $2);
-}
-    |   select_clause order_by opt_for_update
+    |   simple_select
+    |   select_clause order_by
 {
     $$ = $1;
     $$->setChild(E_SELECT_ORDER_BY, $2);
-    $$->setChild(E_SELECT_FOR_UPDATE, $3);
 }
-    |   select_clause opt_order_by select_limit opt_for_update
+    |   select_clause opt_order_by select_limit
 {
     $$ = $1;
     $$->setChild(E_SELECT_ORDER_BY, $2);
     $$->setChild(E_SELECT_LIMIT, $3);
-    $$->setChild(E_SELECT_FOR_UPDATE, $4);
 }
 ;
 
@@ -519,16 +512,6 @@ opt_select_limit:
 { $$ = $1; }
 ;
 
-opt_for_update:
-    /* EMPTY */
-{ $$ = nullptr; }
-  | FOR UPDATE
-{
-    $$ = Node::makeTerminalNode(E_BOOL, "FOR UPDATE");
-    $$->terminalToken_.i = 1;
-}
-;
-
 opt_groupby:
     /* EMPTY */
 { $$ = nullptr; }
@@ -782,15 +765,6 @@ join_outer:
   | /* EMPTY */                 { $$ = nullptr; }
 ;
 
-opt_when:
-    /* EMPTY */
-    { $$ = NULL; }
-  | WHEN expr
-{
-    $$ = Node::makeNonTerminalNode(E_WHEN, 1, $2);
-    $$->serialize_format = {"WHEN ", "{0}"};
-}
-;
 
 /* expression grammar */
 expr_list:  expr

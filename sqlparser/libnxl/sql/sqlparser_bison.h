@@ -231,7 +231,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 73 "sqlparser.y" /* yacc.c:1909  */
+#line 77 "sqlparser.y" /* yacc.c:1909  */
 
     struct Node* node;
     int    ival;
