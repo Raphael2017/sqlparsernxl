@@ -15,6 +15,40 @@ typedef std::map<Token, bool> Nullable;
 typedef std::map<Token, FirSet> First;
 typedef std::map<Token, FolSet> Follow;
 
+struct Item
+{
+    Rule rule;
+    int dot;
+    Token x;
+    bool operator<(const Item& r) const
+    {
+        if (rule < r.rule)
+            return true;
+        else if (rule > r.rule)
+            return false;
+        else
+        {
+            if (dot < r.dot)
+                return true;
+            else if (dot > r.dot)
+                return false;
+            else
+            {
+                if (x < r.x)
+                    return true;
+                else
+                    return false;
+            }
+        }
+    }
+    bool operator==(const Item& r) const
+    {
+        return rule == r.rule && dot == r.dot && x == r.x;
+    }
+};
+
+typedef std::set<Item> LRState;
+
 std::list<Token> g_tokens;
 
 Rules g_rules;
@@ -35,6 +69,7 @@ bool IsTerminal(Token t)
 
 void scan_input()
 {
+    /*
     // if 1, then 2, else 3, begin 4, print 5, end 6, ; 7, numm 8, = 9, E 1001, L 1002, S 1003
     // gramma 3-5
     g_tokens = {1, 2, 3, 4, 5, 6, 7, 8, 9, 1001, 1002, 1003};
@@ -45,7 +80,7 @@ void scan_input()
     g_rules.push_back({1003, 5, 1001});
     g_rules.push_back({1002, 6});
     g_rules.push_back({1002, 7, 1003, 1002});
-    g_rules.push_back({1001, 8, 9, 8});
+    g_rules.push_back({1001, 8, 9, 8});*/
     /*
     // a 1, c 2, d 3, X 1001, Y 1002, Z 1003
     // gramma 3-6
@@ -58,6 +93,18 @@ void scan_input()
     g_rules.push_back({1002, 2});
     g_rules.push_back({1001, 1002});
     g_rules.push_back({1001, 1}); */
+
+    // $ 0, x 1, * 2, = 3, V 1001, E 1002, S 1003, S1 1004
+    // gramma 3-10
+    g_tokens = {0,1,2,3,1001,1002,1003,1004};
+    g_token_to_string_map = {{0,"$"},{1, "x"},{2, "*"},{3, "="},{1001, "V"},{1002, "E"},{1003, "S"},{1004, "S1"}};
+    g_rules.push_back({1004,1003,0});
+    g_rules.push_back({1003,1001,3,1002});
+    g_rules.push_back({1003,1002});
+    g_rules.push_back({1002,1001});
+    g_rules.push_back({1001,1});
+    g_rules.push_back({1001,2,1002});
+
 }
 
 std::string token_to_string(Token t)
@@ -244,6 +291,87 @@ void print_rule(const Rule& rul)
     printf(tmp.c_str());
 }
 
+void Closure(LRState& state)
+{
+    LRState tmp;
+    do
+    {
+        auto ori = state;
+
+        tmp.clear();
+        for (auto& item : state)
+        {
+            if (item.dot >= item.rule.size())
+                continue;
+            auto X = item.rule[item.dot];
+            std::vector<Token> beta;
+            for (size_t m = item.dot; m < item.rule.size(); ++m)
+                beta.push_back(item.rule[m]);
+
+            beta.push_back(item.x);
+            FirSet fir;
+            first(beta, fir);
+
+            for (auto& rule:g_rules)
+            {
+                if (X == rule.front())
+                {
+                    for (auto omega : fir)
+                    {
+                        tmp.insert({rule, 1, omega});
+                    }
+                }
+            }
+        }
+        state.insert(tmp.begin(), tmp.end());
+        if (ori == state)
+            break;
+    }
+    while (true);
+}
+
+void Goto(const LRState& I, Token X, LRState& J)
+{
+    for (const Item& item : I)
+    {
+        if (item.dot >= item.rule.size())
+            continue;
+        auto K = item.rule[item.dot];
+        if (X == K)
+        {
+            J.insert({item.rule, 1+item.dot, item.x});
+        }
+    }
+    Closure(J);
+}
+
+void print_item(const Item& item)
+{
+    auto& rul = item.rule;
+    auto it = rul.begin();
+    int idx = 0;
+    char sss[64] = { 0 };
+    sprintf(sss, "%-4s", token_to_string(rul.front()).c_str());
+    std::string tmp = sss;
+    tmp += "->";
+
+    std::string kk = "";
+    while ((++it) != rul.end())
+    {
+        ++idx;
+        if (idx == item.dot)
+            kk += ".";
+        kk += token_to_string(*it) + " ";
+    }
+    char ss[64] = { 0 };
+    sprintf(ss, "%-8s", kk.c_str());
+    tmp += ss;
+
+    tmp += "\t," + token_to_string(item.x);
+    tmp += "\n";
+    printf(tmp.c_str());
+}
+
 int main()
 {
     scan_input();
@@ -267,5 +395,36 @@ int main()
         }
     }
 
+    LRState state1;
+    state1.insert({g_rules[0], 1, 0});
+    Closure(state1);
+
+    std::set<LRState> LR;
+    LR.insert(state1);
+    std::set<LRState> ttmp;
+    do
+    {
+        auto ori = LR;
+
+        ttmp.clear();
+        for (const LRState& state : LR)
+        {
+            for (const Item& item : state)
+            {
+                if (item.dot >= item.rule.size())
+                    continue;
+                auto X = item.rule[item.dot];
+                LRState J;
+                Goto(state, X, J);
+                ttmp.insert(J);
+            }
+        }
+
+        LR.insert(ttmp.begin(), ttmp.end());
+        if (LR == ori)
+            break;
+    }
+    while (true);
     return 0;
 }
+
