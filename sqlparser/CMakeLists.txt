@@ -11,3 +11,5 @@ add_subdirectory(calculatorpro)
 add_subdirectory(calculatorprox)
 add_subdirectory(libnxl/sql)
 add_subdirectory(testlibnxl)
+
+add_subdirectory(LR)
