@@ -35,7 +35,20 @@ bool IsTerminal(Token t)
 
 void scan_input()
 {
+    // if 1, then 2, else 3, begin 4, print 5, end 6, ; 7, numm 8, = 9, E 1001, L 1002, S 1003
+    // gramma 3-5
+    g_tokens = {1, 2, 3, 4, 5, 6, 7, 8, 9, 1001, 1002, 1003};
+    g_token_to_string_map = {{1,"if"},{2,"then"},{3,"else"},{4,"begin"},{5,"print"},{6,"end"},
+                             {7,";"},{8,"num"},{9,"="},{1001,"E"},{1002,"L"},{1003,"S"}};
+    g_rules.push_back({1003, 1, 1001, 2, 1003, 3, 1003});
+    g_rules.push_back({1003, 4, 1003, 1002});
+    g_rules.push_back({1003, 5, 1001});
+    g_rules.push_back({1002, 6});
+    g_rules.push_back({1002, 7, 1003, 1002});
+    g_rules.push_back({1001, 8, 9, 8});
+    /*
     // a 1, c 2, d 3, X 1001, Y 1002, Z 1003
+    // gramma 3-6
     g_tokens = {1, 2, 3, 1001, 1002, 1003};
     g_token_to_string_map = {{1, "a"}, {2, "c"}, {3, "d"}, {1001, "X"}, {1002, "Y"}, {1003, "Z"}};
 
@@ -44,7 +57,7 @@ void scan_input()
     g_rules.push_back({1002});
     g_rules.push_back({1002, 2});
     g_rules.push_back({1001, 1002});
-    g_rules.push_back({1001, 1});
+    g_rules.push_back({1001, 1}); */
 }
 
 std::string token_to_string(Token t)
