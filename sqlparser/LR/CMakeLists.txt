@@ -1,1 +1,1 @@
-add_executable(LR main.cpp LR.cpp)
+add_executable(LR main.cpp LR.cpp LRAnalysis.cpp)
