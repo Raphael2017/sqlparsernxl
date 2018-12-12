@@ -409,7 +409,7 @@ opt_top:
 }
     | TOP top_percent PERCENT WITH TIES
 {
-    $$ = Node::makeNonTerminalNode(E_TOP_PCT, 1, $2);
+    $$ = Node::makeNonTerminalNode(E_TOP_PCT_TIES, 1, $2);
     $$->serialize_format = {"TOP ", "{0}", " PERCENT WITH TIES"};
 }
 ;
@@ -597,7 +597,7 @@ select_expr_list:
     projection
     |   projection ',' select_expr_list
 {
-    $$ = Node::makeNonTerminalNode(SELECT_EXPR_LIST, 2, $1, $3);
+    $$ = Node::makeNonTerminalNode(E_SELECT_EXPR_LIST, 2, $1, $3);
     $$->serialize_format = {"{0}", ", ", "{1}"};
 }
 ;

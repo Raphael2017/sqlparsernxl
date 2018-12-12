@@ -2524,7 +2524,7 @@ yyreduce:
   case 27:
 #line 411 "sqlparser.y" /* yacc.c:1646  */
     {
-    (yyval.node) = Node::makeNonTerminalNode(E_TOP_PCT, 1, (yyvsp[-3].node));
+    (yyval.node) = Node::makeNonTerminalNode(E_TOP_PCT_TIES, 1, (yyvsp[-3].node));
     (yyval.node)->serialize_format = {"TOP ", "{0}", " PERCENT WITH TIES"};
 }
 #line 2531 "sqlparser_bison.cpp" /* yacc.c:1646  */
@@ -2790,7 +2790,7 @@ yyreduce:
   case 64:
 #line 599 "sqlparser.y" /* yacc.c:1646  */
     {
-    (yyval.node) = Node::makeNonTerminalNode(SELECT_EXPR_LIST, 2, (yyvsp[-2].node), (yyvsp[0].node));
+    (yyval.node) = Node::makeNonTerminalNode(E_SELECT_EXPR_LIST, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = {"{0}", ", ", "{1}"};
 }
 #line 2797 "sqlparser_bison.cpp" /* yacc.c:1646  */

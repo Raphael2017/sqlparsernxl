@@ -39,7 +39,7 @@ bool Node::IsList(Node* root)
     {
         case E_STMT_LIST:
         case E_SORT_LIST:
-        case SELECT_EXPR_LIST:
+        case E_SELECT_EXPR_LIST:
         case E_EXPR_LIST:
         case E_WHEN_LIST:
         case E_FROM_LIST:
@@ -406,7 +406,7 @@ void Node::find_table_direct_ref_non_recursive(Node* root, std::list<Node*>& ret
 
         if (lpNode->nodeType_ == E_IDENTIFIER || lpNode->nodeType_ == E_ALIAS)
         {
-            ret.push_back(root);
+            ret.push_back(lpNode);
             continue;
         }
 
@@ -497,6 +497,69 @@ void Node::find_table_direct_ref(Node** root, std::list<Node**>& ret)
             break;
         default:
             break;
+    }
+}
+
+void Node::find_table_direct_ref_non_recursive(Node** root, std::list<Node**>& ret)
+{
+    if (!root || !*root)
+        return;
+
+    std::stack<Node**> stack;
+    stack.push(root);
+    Node** lpNode = nullptr;
+
+    while (stack.size() > 0)
+    {
+        lpNode = stack.top();
+        stack.pop();
+
+        if ((*lpNode)->nodeType_ == E_IDENTIFIER || (*lpNode)->nodeType_ == E_ALIAS)
+        {
+            ret.push_back(lpNode);
+            continue;
+        }
+
+        Node** tmp;
+        switch ((*lpNode)->nodeType_)
+        {
+            case E_SELECT:
+            {
+                if ((tmp = (*lpNode)->getChildRef(E_SELECT_FROM_LIST)))
+                    stack.push(tmp);
+            }
+                break;
+            case E_FROM_CLAUSE:
+            {
+                if ((tmp = (*lpNode)->getChildRef(E_FROM_CLAUSE_FROM_LIST)))
+                    stack.push(tmp);
+            }
+                break;
+            case E_FROM_LIST:
+            {
+                if ((tmp = (*lpNode)->getChildRef(E_LIST_NEXT)))
+                    stack.push(tmp);
+                if ((tmp = (*lpNode)->getChildRef(E_LIST_ITEM)))
+                    stack.push(tmp);
+            }
+                break;
+            case E_JOINED_TABLE:
+            {
+                if ((tmp = (*lpNode)->getChildRef(E_JOINED_TABLE_TABLE_FACTOR_R)))
+                    stack.push(tmp);
+                if ((tmp = (*lpNode)->getChildRef(E_JOINED_TABLE_TABLE_FACTOR_L)))
+                    stack.push(tmp);
+            }
+                break;
+            case E_JOINED_TABLE_WITH_PARENS:
+            {
+                if ((tmp = (*lpNode)->getChildRef(E_JOINED_TABLE_WITH_PARENS_JOINED_TABLE)))
+                    stack.push(tmp);
+            }
+                break;
+            default:
+                break;
+        }
     }
 }
 

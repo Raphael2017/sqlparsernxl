@@ -154,7 +154,7 @@ enum NodeType
 
     E_SORT_KEY,
 
-    SELECT_EXPR_LIST,
+    E_SELECT_EXPR_LIST,
 
     E_PROJECT_STRING,
     E_ALIAS,
