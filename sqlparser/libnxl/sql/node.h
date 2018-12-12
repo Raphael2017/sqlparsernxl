@@ -69,7 +69,7 @@ struct Node
     bool isTerminalToken;
     TerminalToken terminalToken_;
     std::vector<Node*> children_;
-    std::list<std::string> serialize_format;
+    const std::list<std::string>* serialize_format;
     // ["function ", "{1}", "(", "{2}", ")", "{3}", "end"]
 
 private:

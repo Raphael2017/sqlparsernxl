@@ -157,7 +157,7 @@ void Node::ToListNonRecursive(Node* root, std::list<Node*>& ret)
     }
 }
 
-Node::Node()
+Node::Node() : serialize_format(nullptr)
 {
 
 }
@@ -205,7 +205,7 @@ std::string Node::SerializeNonRecursive(Node* root)
             }
             else
             {
-                for (auto rit = lpNode.node->serialize_format.rbegin(); rit != lpNode.node->serialize_format.rend(); ++rit)
+                for (auto rit = lpNode.node->serialize_format->rbegin(); rit != lpNode.node->serialize_format->rend(); ++rit)
                 {
                     auto str = *rit;
                     int key = GetKey(str);
@@ -243,7 +243,7 @@ std::string Node::serialize()
     std::string ret = "";
     if (!isTerminalToken)
     {
-        for (auto str : serialize_format)
+        for (auto str : *serialize_format)
         {
             int key = GetKey(str);
             if (-1 != key)

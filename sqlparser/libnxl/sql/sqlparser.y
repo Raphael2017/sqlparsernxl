@@ -188,7 +188,7 @@ stmt_list:  stmt
     |   stmt ';' stmt_list
 {
     $$ = Node::makeNonTerminalNode(E_STMT_LIST, 2, $1, $3);
-    $$->serialize_format = {"{0}", "; ", "{1}"};
+    $$->serialize_format = &STMT_LIST_SERIALIZE_FORMAT;
 }
 ;
 
@@ -213,12 +213,12 @@ select_with_parens:
     '(' select_no_parens ')'
 {
     $$ = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, 1, $2);
-    $$->serialize_format = {"( ", "{0}", " )"};
+    $$->serialize_format = &SELECT_WITH_PARENS_SERIALIZE_FORMAT;
 }
     |   '(' select_with_parens ')'
 {
     $$ = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, 1, $2);
-    $$->serialize_format = {"( ", "{0}", " )"};
+    $$->serialize_format = &SELECT_WITH_PARENS_SERIALIZE_FORMAT;
 }
 ;
 
@@ -259,7 +259,7 @@ no_table_select:
             nullptr,        /* E_SELECT_WHEN 14 */
             $4              /* E_SELECT_OPT_TOP 15 */
             );
-    $$->serialize_format = SELECT_SERIALIZE_FORMAT;
+    $$->serialize_format = &SELECT_SERIALIZE_FORMAT;
 }
     |   SELECT opt_hint opt_distinct opt_top select_expr_list
             from_dual opt_where opt_select_limit
@@ -282,7 +282,7 @@ no_table_select:
                 nullptr,        /* E_SELECT_WHEN 14 */
                 $4              /* E_SELECT_OPT_TOP 15 */
                 );
-    $$->serialize_format = SELECT_SERIALIZE_FORMAT;
+    $$->serialize_format = &SELECT_SERIALIZE_FORMAT;
 }
 ;
 
@@ -314,7 +314,7 @@ simple_select:
                     nullptr,        /* E_SELECT_WHEN 14 */
                     $4              /* E_SELECT_OPT_TOP 15 */
                     );
-    $$->serialize_format = SELECT_SERIALIZE_FORMAT;
+    $$->serialize_format = &SELECT_SERIALIZE_FORMAT;
 }
     |   select_clause UNION opt_distinct select_clause
 {
@@ -337,7 +337,7 @@ simple_select:
                         nullptr,             /* E_SELECT_WHEN 14 */
                         nullptr              /* E_SELECT_OPT_TOP 15 */
                         );
-    $$->serialize_format = {"{8}", " UNION ", "{7}", " ", "{9}"};
+    $$->serialize_format = &SELECT_UNION_SERIALIZE_FORMAT;
 }
     | select_clause INTERSECT opt_distinct select_clause
 {
@@ -360,7 +360,7 @@ simple_select:
                         nullptr,             /* E_SELECT_WHEN 14 */
                         nullptr              /* E_SELECT_OPT_TOP 15 */
                         );
-    $$->serialize_format = {"{8}", " INTERSECT ", "{7}", " ", "{9}"};
+    $$->serialize_format = &SELECT_INTERSECT_SERIALIZE_FORMAT;
 }
     | select_clause EXCEPT opt_distinct select_clause
 {
@@ -383,7 +383,7 @@ simple_select:
                         nullptr,             /* E_SELECT_WHEN 14 */
                         nullptr              /* E_SELECT_OPT_TOP 15 */
                         );
-    $$->serialize_format = {"{8}", " EXCEPT ", "{7}", " ", "{9}"};
+    $$->serialize_format = &SELECT_EXCEPT_SERIALIZE_FORMAT;
 }
 ;
 
@@ -395,22 +395,22 @@ opt_top:
     | TOP top_count
 {
     $$ = Node::makeNonTerminalNode(E_TOP_CNT, 1, $2);
-    $$->serialize_format = {"TOP ", "{0}"};
+    $$->serialize_format = &TOP_SERIALIZE_FORMAT;
 }
     | TOP top_count WITH TIES
 {
     $$ = Node::makeNonTerminalNode(E_TOP_CNT_TIES, 1, $2);
-    $$->serialize_format = {"TOP ", "{0}", " WITH TIES"};
+    $$->serialize_format = &TOP_TIES_SERIALIZE_FORMAT;
 }
     | TOP top_percent PERCENT
 {
     $$ = Node::makeNonTerminalNode(E_TOP_PCT, 1, $2);
-    $$->serialize_format = {"TOP ", "{0}", " PERCENT"};
+    $$->serialize_format = &TOP_PCT_SERIALIZE_FORMAT;
 }
     | TOP top_percent PERCENT WITH TIES
 {
     $$ = Node::makeNonTerminalNode(E_TOP_PCT_TIES, 1, $2);
-    $$->serialize_format = {"TOP ", "{0}", " PERCENT WITH TIES"};
+    $$->serialize_format = &TOP_PCT_TIES_SERIALIZE_FORMAT;
 }
 ;
 
@@ -418,7 +418,7 @@ top_count:  INTNUM
     | '(' expr ')'
 {
     $$ = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, $2);
-    $$->serialize_format = {"(", "{0}", ")"};
+    $$->serialize_format = &EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT;
 }
 ;
 
@@ -427,7 +427,7 @@ top_percent:    APPROXNUM
     | '(' expr ')'
 {
     $$ = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, $2);
-    $$->serialize_format = {"(", "{0}", ")"};
+    $$->serialize_format = &EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT;
 }
 ;
 
@@ -439,7 +439,7 @@ opt_where:
     | WHERE expr
 {
     $$ = Node::makeNonTerminalNode(E_WHERE_CLAUSE, 1, $2);
-    $$->serialize_format = {"WHERE ", "{0}"};
+    $$->serialize_format = &WHERE_SERIALIZE_FORMAT;
 }
 ;
 
@@ -447,7 +447,7 @@ from_dual:
     FROM DUAL
 {
     $$ = Node::makeNonTerminalNode(E_FROM_CLAUSE, 0);
-    $$->serialize_format = {"FROM ", "DUAL"};
+    $$->serialize_format = &FROM_DUAL_SERIALIZE_FORMAT;
 }
 ;
 
@@ -455,7 +455,7 @@ from_clause:
     FROM from_list
 {
     $$ = Node::makeNonTerminalNode(E_FROM_CLAUSE, 1, $2);
-    $$->serialize_format = {"FROM ", "{0}"};
+    $$->serialize_format = &FROM_SERIALIZE_FORMAT;
 }
 ;
 
@@ -463,27 +463,27 @@ select_limit:
     LIMIT limit_expr OFFSET limit_expr
 {
     $$ = Node::makeNonTerminalNode(E_LIMIT_CLAUSE, 2, $2, $4);
-    $$->serialize_format = {"LIMIT ", "{0}", " OFFSET ", "{1}"};
+    $$->serialize_format = &LIMIT_1_SERIALIZE_FORMAT;
 }
     |   OFFSET limit_expr LIMIT limit_expr
 {
     $$ = Node::makeNonTerminalNode(E_LIMIT_CLAUSE, 2, $4, $2);
-    $$->serialize_format = {"OFFSET ", "{1}", " LIMIT ", "{0}"};
+    $$->serialize_format = &LIMIT_2_SERIALIZE_FORMAT;
 }
     |   LIMIT limit_expr
 {
     $$ = Node::makeNonTerminalNode(E_LIMIT_CLAUSE, 2, $2, nullptr);
-    $$->serialize_format = {"LIMIT ", "{0}"};
+    $$->serialize_format = &LIMIT_3_SERIALIZE_FORMAT;
 }
     |   OFFSET limit_expr
 {
     $$ = Node::makeNonTerminalNode(E_LIMIT_CLAUSE, 2, nullptr, $2);
-    $$->serialize_format = {"OFFSET ", "{1}"};
+    $$->serialize_format = &LIMIT_4_SERIALIZE_FORMAT;
 }
     |   LIMIT limit_expr ',' limit_expr
 {
     $$ = Node::makeNonTerminalNode(E_LIMIT_CLAUSE, 2, $4, $2);
-    $$->serialize_format = {"LIMIT ", "{1}", ", ", "{0}"};
+    $$->serialize_format = &LIMIT_5_SERIALIZE_FORMAT;
 }
 ;
 
@@ -518,7 +518,7 @@ opt_groupby:
   | GROUP BY expr_list
 {
     $$ = Node::makeNonTerminalNode(E_GROUP_BY, 1, $3);
-    $$->serialize_format = {"GROUP", " BY ", "{0}"};
+    $$->serialize_format = &GROUP_BY_SERIALIZE_FORMAT;
 }
 ;
 
@@ -531,7 +531,7 @@ order_by:
   	ORDER BY sort_list
 {
     $$ = Node::makeNonTerminalNode(E_ORDER_BY, 1, $3);
-    $$->serialize_format = {"ORDER", " BY ", "{0}"};
+    $$->serialize_format = &ORDER_BY_SERIALIZE_FORMAT;
 }
 ;
 
@@ -541,7 +541,7 @@ sort_list:
   | sort_key ',' sort_list
 {
     $$ = Node::makeNonTerminalNode(E_SORT_LIST, 2, $1, $3);
-    $$->serialize_format = {"{0}", ", ", "{1}"};
+    $$->serialize_format = &SORT_LIST_SERIALIZE_FORMAT;
 }
 ;
 
@@ -549,7 +549,7 @@ sort_key:
     expr opt_asc_desc
 {
     $$ = Node::makeNonTerminalNode(E_SORT_KEY, 2, $1, $2);
-    $$->serialize_format = {"{0}", " ", "{1}"};
+    $$->serialize_format = &SORT_KEY_SERIALIZE_FORMAT;
 }
 ;
 
@@ -574,7 +574,7 @@ opt_having:
   | HAVING expr
 {
   $$ = Node::makeNonTerminalNode(E_HAVING, 1, $2);
-  $$->serialize_format = {"HAVING ", "{0}"};
+  $$->serialize_format = &HAVING_SERIALIZE_FORMAT;
 }
 ;
 
@@ -598,7 +598,7 @@ select_expr_list:
     |   projection ',' select_expr_list
 {
     $$ = Node::makeNonTerminalNode(E_SELECT_EXPR_LIST, 2, $1, $3);
-    $$->serialize_format = {"{0}", ", ", "{1}"};
+    $$->serialize_format = &SELECT_EXPR_LIST_SERIALIZE_FORMAT;
 }
 ;
 
@@ -606,29 +606,29 @@ projection:
     expr
 {
     $$ = Node::makeNonTerminalNode(E_PROJECT_STRING, 1, $1);
-    $$->serialize_format = {"{0}"};
+    $$->serialize_format = &PROJECTION_SERIALIZE_FORMAT;
 }
   | expr column_label
 {
     Node* alias_node = Node::makeNonTerminalNode(E_ALIAS, 2, $1, $2);
-    alias_node->serialize_format = {"{0}", " ", "{1}"};
+    alias_node->serialize_format = &ALIAS_1_SERIALIZE_FORMAT;
 
     $$ = Node::makeNonTerminalNode(E_PROJECT_STRING, 1, alias_node);
-    $$->serialize_format = {"{0}"};
+    $$->serialize_format = &PROJECTION_SERIALIZE_FORMAT;
 }
   | expr AS column_label
 {
     Node* alias_node = Node::makeNonTerminalNode(E_ALIAS, 2, $1, $3);
-    alias_node->serialize_format = {"{0}", " AS ", "{1}"};
+    alias_node->serialize_format = &ALIAS_2_SERIALIZE_FORMAT;
 
     $$ = Node::makeNonTerminalNode(E_PROJECT_STRING, 1, alias_node);
-    $$->serialize_format = {"{0}"};
+    $$->serialize_format = &PROJECTION_SERIALIZE_FORMAT;
 }
   | '*'
 {
     Node* star_node = Node::makeTerminalNode(E_STAR, "*");
     $$ = Node::makeNonTerminalNode(E_PROJECT_STRING, 1, star_node);
-    $$->serialize_format = {"{0}"};
+    $$->serialize_format = &PROJECTION_SERIALIZE_FORMAT;
 }
 ;
 
@@ -638,7 +638,7 @@ from_list:
   | table_factor ',' from_list
 {
     $$ = Node::makeNonTerminalNode(E_FROM_LIST, 2, $1, $3);
-    $$->serialize_format = {"{0}", ", ", "{1}"};
+    $$->serialize_format = &FORM_LIST_SERIALIZE_FORMAT;
 }
 ;
 
@@ -657,22 +657,22 @@ table_factor_non_join:
   | relation_factor AS relation_name
 {
     $$ = Node::makeNonTerminalNode(E_ALIAS, 2, $1, $3);
-    $$->serialize_format = {"{0}", " AS ", "{1}"};
+    $$->serialize_format = &ALIAS_2_SERIALIZE_FORMAT;
 }
   | relation_factor relation_name
 {
     $$ = Node::makeNonTerminalNode(E_ALIAS, 2, $1, $2);
-    $$->serialize_format = {"{0}", " ", "{1}"};
+    $$->serialize_format = &ALIAS_1_SERIALIZE_FORMAT;
 }
   | select_with_parens AS relation_name
 {
     $$ = Node::makeNonTerminalNode(E_ALIAS, 2, $1, $3);
-    $$->serialize_format = {"{0}", " AS ", "{1}"};
+    $$->serialize_format = &ALIAS_2_SERIALIZE_FORMAT;
 }
   | select_with_parens relation_name
 {
     $$ = Node::makeNonTerminalNode(E_ALIAS, 2, $1, $2);
-    $$->serialize_format = {"{0}", " ", "{1}"};
+    $$->serialize_format = &ALIAS_1_SERIALIZE_FORMAT;
 }
 
 relation_factor:
@@ -684,35 +684,35 @@ joined_table:
     '(' joined_table ')'
 {
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE_WITH_PARENS, 1, $2);
-    $$->serialize_format = {"(", "{0}", ")"};
+    $$->serialize_format = &JOINED_TB_WITH_PARENS_SERIALIZE_FORMAT;
 }
   | table_factor join_type JOIN table_factor ON expr
 {
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, $2, $1, $4, $6);
-    $$->serialize_format = {"{1}", " ", "{0}", " JOIN ", "{2}", " ON ", "{3}"};
+    $$->serialize_format = &JOINED_TB_1_SERIALIZE_FORMAT;
 }
   | table_factor JOIN table_factor ON expr
 {
     Node* nd = Node::makeTerminalNode(E_JOIN_INNER, "");
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $3, $5);
-    $$->serialize_format = {"{1}", " ", "{0}", " JOIN ", "{2}", " ON ", "{3}"};
+    $$->serialize_format = &JOINED_TB_1_SERIALIZE_FORMAT;
 }
   | table_factor NATURAL JOIN table_factor_non_join
 {
     Node* nd = Node::makeTerminalNode(E_JOIN_NATURAL, "NATURAL");
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $4, nullptr);
-    $$->serialize_format = {"{1}", " ", "{0}", " JOIN ", "{2}"};
+    $$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
 }
   | table_factor join_type JOIN table_factor USING '(' column_ref ')'
 {
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, $2, $1, $4, $7);
-    $$->serialize_format = {"{1}", " ", "{0}", " JOIN ", "{2}", " USING ", "(", "{3}", ")"};
+    $$->serialize_format = &JOINED_TB_3_SERIALIZE_FORMAT;
 }
   | table_factor JOIN table_factor USING '(' column_ref ')'
 {
     Node* nd = Node::makeTerminalNode(E_JOIN_INNER, "");
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $3, $6);
-    $$->serialize_format = {"{1}", " ", "{0}", " JOIN ", "{2}", " USING ", "(", "{3}", ")"};
+    $$->serialize_format = &JOINED_TB_3_SERIALIZE_FORMAT;
 }
 ;
 
@@ -771,7 +771,7 @@ expr_list:  expr
     |   expr ',' expr_list
 {
     $$ = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $1, $3);
-    $$->serialize_format = {"{0}", ", ", "{1}"};
+    $$->serialize_format = &EXPR_LIST_SERIALIZE_FORMAT;
 }
 ;
 
@@ -779,13 +779,13 @@ column_ref: column_name
     |   relation_name '.' column_name
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 2, $1, $3);
-    $$->serialize_format = {"{0}", ".", "{1}"};
+    $$->serialize_format = &NAME_FIELD_SERIALIZE_FORMAT;
 }
     |   relation_name '.' '*'
 {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 2, $1, nd);
-    $$->serialize_format = {"{0}", ".", "{1}"};
+    $$->serialize_format = &NAME_FIELD_SERIALIZE_FORMAT;
 }
 ;
 
@@ -804,7 +804,7 @@ simple_expr:    column_ref
 {
     // expect cover '(' expr ')'
     $$ = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, $2);
-    $$->serialize_format = {"(", "{0}", ")"};
+    $$->serialize_format = &EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT;
 }
     |   case_expr
     |   func_expr
@@ -812,7 +812,7 @@ simple_expr:    column_ref
     |   EXISTS select_with_parens
 {
     $$ = Node::makeNonTerminalNode(E_OP_EXISTS, 1, $2);
-    $$->serialize_format = {"EXISTS ", "{0}"};
+    $$->serialize_format = &OP_EXISTS_SERIALIZE_FORMAT;
 }
 ;
 
@@ -821,47 +821,47 @@ arith_expr: simple_expr
     |   '+' arith_expr %prec UMINUS
 {
     $$ = Node::makeNonTerminalNode(E_OP_POS, 1, $2);
-    $$->serialize_format = {"+", "{0}"};
+    $$->serialize_format = &OP_POS_SERIALIZE_FORMAT;
 }
     |   '-' arith_expr %prec UMINUS
 {
     $$ = Node::makeNonTerminalNode(E_OP_NEG, 1, $2);
-    $$->serialize_format = {"-", "{0}"};
+    $$->serialize_format = &OP_NEG_SERIALIZE_FORMAT;
 }
     |   arith_expr '+' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_ADD, 2, $1, $3);
-    $$->serialize_format = {"{0}", " + ", "{1}"};
+    $$->serialize_format = &OP_ADD_SERIALIZE_FORMAT;
 }
     |   arith_expr '-' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_MINUS, 2, $1, $3);
-    $$->serialize_format = {"{0}", " - ", "{1}"};
+    $$->serialize_format = &OP_MINUS_SERIALIZE_FORMAT;
 }
     |   arith_expr '*' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_MUL, 2, $1, $3);
-    $$->serialize_format = {"{0}", " * ", "{1}"};
+    $$->serialize_format = &OP_MUL_SERIALIZE_FORMAT;
 }
     |   arith_expr '/' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_DIV, 2, $1, $3);
-    $$->serialize_format = {"{0}", " / ", "{1}"};
+    $$->serialize_format = &OP_DIV_SERIALIZE_FORMAT;
 }
     |   arith_expr '%' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_REM, 2, $1, $3);
-    $$->serialize_format = {"{0}", " % ", "{1}"};
+    $$->serialize_format = &OP_REM_SERIALIZE_FORMAT;
 }
     |   arith_expr '^' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_POW, 2, $1, $3);
-    $$->serialize_format = {"{0}", " ^ ", "{1}"};
+    $$->serialize_format = &OP_POW_SERIALIZE_FORMAT;
 }
     |   arith_expr MOD arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_MOD, 2, $1, $3);
-    $$->serialize_format = {"{0}", " MOD ", "{1}"};
+    $$->serialize_format = &OP_MOD_SERIALIZE_FORMAT;
 }
 ;
 
@@ -869,112 +869,112 @@ expr:   arith_expr
     |   expr COMP_LE expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_LE, 2, $1, $3);
-    $$->serialize_format = {"{0}", " <= ", "{1}"};
+    $$->serialize_format = &OP_LE_SERIALIZE_FORMAT;
 }
     |   expr COMP_LT expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_LT, 2, $1, $3);
-    $$->serialize_format = {"{0}", " < ", "{1}"};
+    $$->serialize_format = &OP_LT_SERIALIZE_FORMAT;
 }
     |   expr COMP_EQ expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_EQ, 2, $1, $3);
-    $$->serialize_format = {"{0}", " = ", "{1}"};
+    $$->serialize_format = &OP_EQ_SERIALIZE_FORMAT;
 }
     |   expr COMP_GE expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_GE, 2, $1, $3);
-    $$->serialize_format = {"{0}", " >= ", "{1}"};
+    $$->serialize_format = &OP_GE_SERIALIZE_FORMAT;
 }
     |   expr COMP_GT expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_GT, 2, $1, $3);
-    $$->serialize_format = {"{0}", " > ", "{1}"};
+    $$->serialize_format = &OP_GT_SERIALIZE_FORMAT;
 }
     |   expr COMP_NE expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NE, 2, $1, $3);
-    $$->serialize_format = {"{0}", " <> ", "{1}"};
+    $$->serialize_format = &OP_NE_SERIALIZE_FORMAT;
 }
     |   expr LIKE expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_LIKE, 2, $1, $3);
-    $$->serialize_format = {"{0}", " LIKE ", "{1}"};
+    $$->serialize_format = &OP_LIKE_SERIALIZE_FORMAT;
 }
     |   expr NOT LIKE expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NOT_LIKE, 2, $1, $4);
-    $$->serialize_format = {"{0}", " NOT LIKE ", "{1}"};
+    $$->serialize_format = &OP_NOT_LIKE_SERIALIZE_FORMAT;
 }
     |   expr AND expr %prec AND
 {
     $$ = Node::makeNonTerminalNode(E_OP_AND, 2, $1, $3);
-    $$->serialize_format = {"{0}", " AND ", "{1}"};
+    $$->serialize_format = &OP_AND_SERIALIZE_FORMAT;
 }
     |   expr OR expr %prec OR
 {
     $$ = Node::makeNonTerminalNode(E_OP_OR, 2, $1, $3);
-    $$->serialize_format = {"{0}", " OR ", "{1}"};
+    $$->serialize_format = &OP_OR_SERIALIZE_FORMAT;
 }
     |   NOT expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NOT, 1, $2);
-    $$->serialize_format = {"NOT ", "{0}"};
+    $$->serialize_format = &OP_NOT_SERIALIZE_FORMAT;
 }
     |   expr IS NULLX
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS, 2, $1, $3);
-    $$->serialize_format = {"{0}", " IS ", "{1}"};
+    $$->serialize_format = &OP_IS_SERIALIZE_FORMAT;
 }
     |   expr IS NOT NULLX
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS_NOT, 2, $1, $4);
-    $$->serialize_format = {"{0}", " IS NOT ", "{1}"};
+    $$->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
 }
     |   expr IS BOOL
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS, 2, $1, $3);
-    $$->serialize_format = {"{0}", " IS ", "{1}"};
+    $$->serialize_format = &OP_IS_SERIALIZE_FORMAT;
 }
     |   expr IS NOT BOOL
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS_NOT, 2, $1, $4);
-    $$->serialize_format = {"{0}", " IS NOT ", "{1}"};
+    $$->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
 }
     |   expr IS UNKNOWN
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS, 2, $1, $3);
-    $$->serialize_format = {"{0}", " IS ", "{1}"};
+    $$->serialize_format = &OP_IS_SERIALIZE_FORMAT;
 }
     |   expr IS NOT UNKNOWN
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS_NOT, 2, $1, $4);
-    $$->serialize_format = {"{0}", " IS NOT ", "{1}"};
+    $$->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
 }
     |   expr BETWEEN arith_expr AND arith_expr	    %prec BETWEEN
 {
     $$ = Node::makeNonTerminalNode(E_OP_BTW, 3, $1, $3, $5);
-    $$->serialize_format = {"{0}", " BETWEEN ", "{1}", " AND ", "{2}"};
+    $$->serialize_format = &OP_BETWEEN_SERIALIZE_FORMAT;
 }
     |   expr NOT BETWEEN arith_expr AND arith_expr	  %prec BETWEEN
 {
     $$ = Node::makeNonTerminalNode(E_OP_NOT_BTW, 3, $1, $4, $6);
-    $$->serialize_format = {"{0}", " NOT BETWEEN ", "{1}", " AND ", "{2}"};
+    $$->serialize_format = &OP_NOT_BETWEEN_SERIALIZE_FORMAT;
 }
     |   expr IN in_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_IN, 2, $1, $3);
-    $$->serialize_format = {"{0}", " IN ", "{1}"};
+    $$->serialize_format = &OP_IN_SERIALIZE_FORMAT;
 }
     |   expr NOT IN in_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NOT_IN, 2, $1, $4);
-    $$->serialize_format = {"{0}", " NOT IN ", "{1}"};
+    $$->serialize_format = &OP_NOT_IN_SERIALIZE_FORMAT;
 }
     |   expr CNNOP expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_CNN, 2, $1, $3);
-    $$->serialize_format = {"{0}", " || ", "{1}"};
+    $$->serialize_format = &OP_CNN_SERIALIZE_FORMAT;
 }
 ;
 
@@ -982,14 +982,14 @@ in_expr:    select_with_parens
     |   '(' expr_list ')'
 {
     $$ = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, $2);
-    $$->serialize_format = {"(", "{0}", ")"};
+    $$->serialize_format = &EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT;
 }
 ;
 
 case_expr:  CASE case_arg when_clause_list case_default END
 {
     $$ = Node::makeNonTerminalNode(E_CASE, 3, $2, $3, $4);
-    $$->serialize_format = {"CASE ", "{0}", " ", "{1}", " ", "{2}", " END"};
+    $$->serialize_format = &CASE_SERIALIZE_FORMAT;
 }
 ;
 
@@ -1004,21 +1004,21 @@ when_clause_list:   when_clause
     |   when_clause when_clause_list
 {
     $$ = Node::makeNonTerminalNode(E_WHEN_LIST, 2, $1, $2);
-    $$->serialize_format = {"{0}", " ", "{1}"};
+    $$->serialize_format = &WHEN_LIST_SERIALIZE_FORMAT;
 }
 ;
 
 when_clause:    WHEN expr THEN expr
 {
     $$ = Node::makeNonTerminalNode(E_WHEN, 2, $2, $4);
-    $$->serialize_format = {"WHEN ", "{0}", " THEN ", "{1}"};
+    $$->serialize_format = &WHEN_SERIALIZE_FORMAT;
 }
 ;
 
 case_default:   ELSE expr
 {
     $$ = Node::makeNonTerminalNode(E_CASE_DEFAULT, 1, $2);
-    $$->serialize_format = {"ELSE ", "{0}"};
+    $$->serialize_format = &ELSE_SERIALIZE_FORMAT;
 }
     |   /*EMPTY*/
 {
@@ -1030,27 +1030,27 @@ func_expr:  function_name '(' '*' ')'
 {
     Node* star = Node::makeTerminalNode(E_STAR, "*");
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, $1, star);
-    $$->serialize_format = {"{0}", "(", "{1}", ")"};
+    $$->serialize_format = &FUN_CALL_1_SERIALIZE_FORMAT;
 }
     |   function_name '(' distinct_or_all expr ')'
 {
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, $1, $4, $3);
-    $$->serialize_format = {"{0}", "(", "{2}", " ", "{1}", ")"};
+    $$->serialize_format = &FUN_CALL_2_SERIALIZE_FORMAT;
 }
     |   function_name '(' expr_list ')'
 {
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, $1, $3);
-    $$->serialize_format = {"{0}", "(", "{1}", ")"};
+    $$->serialize_format = &FUN_CALL_1_SERIALIZE_FORMAT;
 }
     |   function_name '(' expr AS data_type ')'
 {
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, $1, $3, $5);
-    $$->serialize_format = {"{0}", "(", "{1}", " AS ", "{2}", ")"};
+    $$->serialize_format = &FUN_CALL_3_SERIALIZE_FORMAT;
 }
     |   function_name '(' ')'
 {
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, $1);
-    $$->serialize_format = {"{0}", "()"};
+    $$->serialize_format = &FUN_CALL_4_SERIALIZE_FORMAT;
 }
 ;
 

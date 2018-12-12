@@ -1,5 +1,6 @@
 #include "parser.h"
 #include <algorithm>
+#include <time.h>
 
 Node* protect_exp(const std::string& tableName, bool isWithParens)
 {
@@ -7,25 +8,25 @@ Node* protect_exp(const std::string& tableName, bool isWithParens)
     Node* f1 = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 2,
             Node::makeTerminalNode(E_IDENTIFIER, tableName.c_str()),
             Node::makeTerminalNode(E_IDENTIFIER, "NXLFIELD1"));
-    f1->serialize_format = {"{0}", ".", "{1}"};
+    f1->serialize_format = &NAME_FIELD_SERIALIZE_FORMAT;
     Node* f2 = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 2,
              Node::makeTerminalNode(E_IDENTIFIER, tableName.c_str()),
              Node::makeTerminalNode(E_IDENTIFIER, "NXLFIELD2"));
-    f2->serialize_format = {"{0}", ".", "{1}"};
+    f2->serialize_format = &NAME_FIELD_SERIALIZE_FORMAT;
 
     Node* c1 = Node::makeNonTerminalNode(E_OP_GE, 2,
             f1,
             Node::makeTerminalNode(E_INT, "10"));
-    c1->serialize_format = {"{0}", " >= ", "{1}"};
+    c1->serialize_format = &OP_GE_SERIALIZE_FORMAT;
 
     Node* c2 = Node::makeNonTerminalNode(E_OP_NE, 2,
             f2,
             Node::makeTerminalNode(E_INT, "5"));
-    c2->serialize_format = {"{0}", " <> ", "{1}"};
+    c2->serialize_format = &OP_NE_SERIALIZE_FORMAT;
 
 
     Node* exp = Node::makeNonTerminalNode(E_OP_AND, 2, c1, c2);
-    exp->serialize_format = {"{0}", " AND ", "{1}"};
+    exp->serialize_format = &OP_AND_SERIALIZE_FORMAT;
 
     if (!isWithParens)
     {
@@ -33,7 +34,7 @@ Node* protect_exp(const std::string& tableName, bool isWithParens)
     }
 
     Node* ret = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, exp);
-    ret->serialize_format = {"(", "{0}", ")"};
+    ret->serialize_format = &EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT;
 
 
     return ret;
@@ -85,6 +86,38 @@ int main()
     printf("after : \n%s", Node::SerializeNonRecursive(root).c_str());
 
     delete(root);
+
+    {
+        fprintf(stdout, "\n\n");
+        ::fflush(stdout);
+        std::string a = "SELECT CNTRYCODE, COUNT(*) AS NUMCUST, SUM(C_ACCTBAL) AS TOTACCTBAL\n"
+                        "FROM (SELECT SUBSTRING(C_PHONE,1,2) AS CNTRYCODE, C_ACCTBAL\n"
+                        " FROM CUSTOMER WHERE SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17') AND\n"
+                        " C_ACCTBAL > (SELECT AVG(C_ACCTBAL) FROM CUSTOMER WHERE C_ACCTBAL > 0.00 AND\n"
+                        "  SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17')) AND\n"
+                        " NOT EXISTS ( SELECT * FROM ORDERS WHERE O_CUSTKEY = C_CUSTKEY)) AS CUSTSALE\n"
+                        "GROUP BY CNTRYCODE\n"
+                        "ORDER BY CNTRYCODE;";
+        clock_t start, end;
+        start = clock();
+        size_t frequency = 10000;
+        for (size_t i = 0; i < frequency; ++i)
+        {
+            ParseResult result1;
+            parser::parse(a, &result1);
+            //protect(result1.result_tree_);
+            //Node::SerializeNonRecursive(result1.result_tree_);
+            //result1.result_tree_->serialize();
+            delete(result1.result_tree_);
+        }
+        end = clock();
+        double seconds  =(double)(end - start)/CLOCKS_PER_SEC;
+        fprintf(stdout, "Frequency %d,Use time is: %.8f\n", frequency, seconds);
+    }
+
+
+
+
     return 0;
 }
 
@@ -100,7 +133,7 @@ Node* protect_sel(const std::string& tableName_, const std::string& aliasName, N
         parser::parse(sql, &ret);
         Node* nm = Node::makeTerminalNode(E_IDENTIFIER, aliasName.c_str());
         Node* result = Node::makeNonTerminalNode(E_ALIAS, 2, ret.result_tree_, nm);
-        result->serialize_format = {"{0}", " AS ", "{1}"};
+        result->serialize_format = &ALIAS_2_SERIALIZE_FORMAT;
         Node* ori = node;
         node = result;
         return ori;
@@ -113,7 +146,7 @@ Node* protect_sel(const std::string& tableName_, const std::string& aliasName, N
         parser::parse(sql, &ret);
         Node* nm = Node::makeTerminalNode(E_IDENTIFIER, aliasName.c_str());
         Node* result = Node::makeNonTerminalNode(E_ALIAS, 2, ret.result_tree_, nm);
-        result->serialize_format = {"{0}", " AS ", "{1}"};
+        result->serialize_format = &ALIAS_2_SERIALIZE_FORMAT;
         Node* ori = node;
         node = result;
         return ori;
