@@ -197,11 +197,13 @@ std::string Node::SerializeNonRecursive(Node* root)
     {
         lpNode = stack.top();
         stack.pop();
+        std::string tmp = "";
         if (lpNode.node)
         {
+
             if (lpNode.node->isTerminalToken)
             {
-                ret += lpNode.node->terminalToken_.yytex;
+                tmp = lpNode.node->terminalToken_.yytex;
             }
             else
             {
@@ -230,9 +232,10 @@ std::string Node::SerializeNonRecursive(Node* root)
         }
         else
         {
-            ret += lpNode.str;
+            tmp = lpNode.str;
         }
-
+        if (tmp.length() > 0)
+            ret += tmp;
     }
     return ret;
 }
