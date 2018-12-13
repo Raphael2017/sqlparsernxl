@@ -27,6 +27,7 @@ struct TerminalToken
     // before convert
     std::string yytex;
 };
+
 struct Node
 {
     static Node* makeTerminalNode(NodeType tp, const char*);
