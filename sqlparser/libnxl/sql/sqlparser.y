@@ -166,6 +166,8 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> case_expr func_expr in_expr
 %type <node> case_arg when_clause_list when_clause case_default
 %type <node> top_count top_percent
+%type <node> with_clause with_list common_table_expr opt_derived_column_list
+%type <node> simple_ident_list simple_ident_list_with_parens
 
 %start sql_stmt
 %%
@@ -236,12 +238,30 @@ select_no_parens:
     $$->setChild(E_SELECT_ORDER_BY, $2);
     $$->setChild(E_SELECT_LIMIT, $3);
 }
+    |   with_clause simple_select
+{
+    $$ = $2;
+    $$->setChild(E_SELECT_OPT_WITH, $1);
+}
+    |   with_clause select_clause order_by
+{
+    $$ = $2;
+    $$->setChild(E_SELECT_ORDER_BY, $3);
+    $$->setChild(E_SELECT_OPT_WITH, $1);
+}
+    |   with_clause select_clause opt_order_by select_limit
+{
+    $$ = $2;
+    $$->setChild(E_SELECT_ORDER_BY, $3);
+    $$->setChild(E_SELECT_LIMIT, $4);
+    $$->setChild(E_SELECT_OPT_WITH, $1);
+}
 ;
 
 no_table_select:
     SELECT opt_hint opt_distinct opt_top select_expr_list opt_select_limit
 {
-    $$ = Node::makeNonTerminalNode(E_SELECT, 16,
+    $$ = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
             $3,             /* E_SELECT_DISTINCT 0 */
             $5,             /* E_SELECT_SELECT_EXPR_LIST 1 */
             nullptr,        /* E_SELECT_FROM_LIST 2 */
@@ -257,14 +277,15 @@ no_table_select:
             nullptr,        /* E_SELECT_FOR_UPDATE 12 */
             $2,             /* E_SELECT_HINTS 13 */
             nullptr,        /* E_SELECT_WHEN 14 */
-            $4              /* E_SELECT_OPT_TOP 15 */
+            $4,             /* E_SELECT_OPT_TOP 15 */
+            nullptr         /* E_SELECT_OPT_WITH 16 */
             );
     $$->serialize_format = &SELECT_SERIALIZE_FORMAT;
 }
     |   SELECT opt_hint opt_distinct opt_top select_expr_list
             from_dual opt_where opt_select_limit
 {
-    $$ = Node::makeNonTerminalNode(E_SELECT, 16,
+    $$ = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
                 $3,             /* E_SELECT_DISTINCT 0 */
                 $5,             /* E_SELECT_SELECT_EXPR_LIST 1 */
                 $6,             /* E_SELECT_FROM_LIST 2 */
@@ -280,7 +301,8 @@ no_table_select:
                 nullptr,        /* E_SELECT_FOR_UPDATE 12 */
                 $2,             /* E_SELECT_HINTS 13 */
                 nullptr,        /* E_SELECT_WHEN 14 */
-                $4              /* E_SELECT_OPT_TOP 15 */
+                $4,             /* E_SELECT_OPT_TOP 15 */
+                nullptr         /* E_SELECT_OPT_WITH 16 */
                 );
     $$->serialize_format = &SELECT_SERIALIZE_FORMAT;
 }
@@ -296,7 +318,7 @@ simple_select:
     from_clause
     opt_where opt_groupby opt_having
 {
-    $$ = Node::makeNonTerminalNode(E_SELECT, 16,
+    $$ = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
                     $3,             /* E_SELECT_DISTINCT 0 */
                     $5,             /* E_SELECT_SELECT_EXPR_LIST 1 */
                     $6,             /* E_SELECT_FROM_LIST 2 */
@@ -312,14 +334,15 @@ simple_select:
                     nullptr,        /* E_SELECT_FOR_UPDATE 12 */
                     $2,             /* E_SELECT_HINTS 13 */
                     nullptr,        /* E_SELECT_WHEN 14 */
-                    $4              /* E_SELECT_OPT_TOP 15 */
+                    $4,             /* E_SELECT_OPT_TOP 15 */
+                    nullptr         /* E_SELECT_OPT_WITH 16 */
                     );
     $$->serialize_format = &SELECT_SERIALIZE_FORMAT;
 }
     |   select_clause UNION opt_distinct select_clause
 {
     Node* set_op = Node::makeTerminalNode(E_SET_UNION, "UNION");
-    $$ = Node::makeNonTerminalNode(E_SELECT, 16,
+    $$ = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
                         nullptr,             /* E_SELECT_DISTINCT 0 */
                         nullptr,             /* E_SELECT_SELECT_EXPR_LIST 1 */
                         nullptr,             /* E_SELECT_FROM_LIST 2 */
@@ -335,14 +358,15 @@ simple_select:
                         nullptr,             /* E_SELECT_FOR_UPDATE 12 */
                         nullptr,             /* E_SELECT_HINTS 13 */
                         nullptr,             /* E_SELECT_WHEN 14 */
-                        nullptr              /* E_SELECT_OPT_TOP 15 */
+                        nullptr,             /* E_SELECT_OPT_TOP 15 */
+                        nullptr              /* E_SELECT_OPT_WITH 16 */
                         );
     $$->serialize_format = &SELECT_UNION_SERIALIZE_FORMAT;
 }
     | select_clause INTERSECT opt_distinct select_clause
 {
     Node* set_op = Node::makeTerminalNode(E_SET_INTERSECT, "INTERSECT");
-    $$ = Node::makeNonTerminalNode(E_SELECT, 16,
+    $$ = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
                         nullptr,             /* E_SELECT_DISTINCT 0 */
                         nullptr,             /* E_SELECT_SELECT_EXPR_LIST 1 */
                         nullptr,             /* E_SELECT_FROM_LIST 2 */
@@ -358,14 +382,15 @@ simple_select:
                         nullptr,             /* E_SELECT_FOR_UPDATE 12 */
                         nullptr,             /* E_SELECT_HINTS 13 */
                         nullptr,             /* E_SELECT_WHEN 14 */
-                        nullptr              /* E_SELECT_OPT_TOP 15 */
+                        nullptr,             /* E_SELECT_OPT_TOP 15 */
+                        nullptr              /* E_SELECT_OPT_WITH 16 */
                         );
     $$->serialize_format = &SELECT_INTERSECT_SERIALIZE_FORMAT;
 }
     | select_clause EXCEPT opt_distinct select_clause
 {
     Node* set_op = Node::makeTerminalNode(E_SET_EXCEPT, "EXCEPT");
-    $$ = Node::makeNonTerminalNode(E_SELECT, 16,
+    $$ = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
                         nullptr,             /* E_SELECT_DISTINCT 0 */
                         nullptr,             /* E_SELECT_SELECT_EXPR_LIST 1 */
                         nullptr,             /* E_SELECT_FROM_LIST 2 */
@@ -381,7 +406,8 @@ simple_select:
                         nullptr,             /* E_SELECT_FOR_UPDATE 12 */
                         nullptr,             /* E_SELECT_HINTS 13 */
                         nullptr,             /* E_SELECT_WHEN 14 */
-                        nullptr              /* E_SELECT_OPT_TOP 15 */
+                        nullptr,             /* E_SELECT_OPT_TOP 15 */
+                        nullptr              /* E_SELECT_OPT_WITH 16 */
                         );
     $$->serialize_format = &SELECT_EXCEPT_SERIALIZE_FORMAT;
 }
@@ -577,6 +603,54 @@ opt_having:
   $$->serialize_format = &HAVING_SERIALIZE_FORMAT;
 }
 ;
+
+with_clause:
+    WITH with_list
+{
+    $$ = Node::makeNonTerminalNode(E_OPT_WITH_CLAUSE, 1, $2);
+    $$->serialize_format = &WITH_CLAUSE_SERIALIZE_FORMAT;
+}
+;
+
+with_list:
+      common_table_expr
+    | common_table_expr ',' with_list
+{
+    $$ = Node::makeNonTerminalNode(E_WITH_LIST, 2, $1, $3);
+    $$->serialize_format = &EXPR_LIST_SERIALIZE_FORMAT;
+}
+;
+
+common_table_expr:
+    NAME opt_derived_column_list AS select_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_COMMON_TABLE_EXPR, 3, $1, $2, $4);
+    $$->serialize_format = &COMMON_TABLE_EXPR_SERIALIZE_FORMAT;
+}
+;
+
+opt_derived_column_list:
+      /* EMPTY */ { $$ = nullptr; }
+    | simple_ident_list_with_parens
+;
+
+simple_ident_list_with_parens:
+    '(' simple_ident_list ')'
+{
+    $$ = Node::makeNonTerminalNode(E_SIMPLE_IDENT_LIST_WITH_PARENS, 1, $2);
+    $$->serialize_format = &EXPR_WITH_PARENS_SERIALIZE_FORMAT;
+}
+;
+
+simple_ident_list:
+      NAME
+    | NAME ',' simple_ident_list
+{
+    $$ = Node::makeNonTerminalNode(E_SIMPLE_IDENT_LIST, 2, $1, $3);
+    $$->serialize_format = &EXPR_LIST_SERIALIZE_FORMAT;
+}
+;
+
 
 opt_distinct:
     /* EMPTY */

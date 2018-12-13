@@ -9,6 +9,8 @@
 #define E_LIST_NEXT 1
 
 //  E_SELECT
+#define E_SELECT_PROPERTY_CNT           17
+
 #define E_SELECT_DISTINCT               0
 #define E_SELECT_SELECT_EXPR_LIST       1
 #define E_SELECT_FROM_LIST              2
@@ -25,6 +27,7 @@
 #define E_SELECT_HINTS                  13
 #define E_SELECT_WHEN                   14
 #define E_SELECT_OPT_TOP                15
+#define E_SELECT_OPT_WITH               16
 
 //  E_SELECT_WITH_PARENS
 #define E_SELECT_WITH_PARENS_SELECT 0
@@ -94,6 +97,11 @@
 
 //  E_EXPR_LIST_WITH_PARENS
 #define E_EXPR_LIST_WITH_PARENS_EXPR_LIST 0
+
+//  E_COMMON_TABLE_EXPR
+#define E_COMMON_TABLE_EXPR_TABLE 0
+#define E_COMMON_TABLE_EXPR_COLUMNS 1
+#define E_COMMON_TABLE_EXPR_SUBQUERY 2
 
 enum NodeType
 {
@@ -217,12 +225,19 @@ enum NodeType
     E_TOP_CNT_TIES,
     E_TOP_PCT_TIES,
 
+    E_SIMPLE_IDENT_LIST,
+    E_SIMPLE_IDENT_LIST_WITH_PARENS,
+    E_OPT_DERIVED_COLUMN_LIST,
+    E_COMMON_TABLE_EXPR,
+    E_WITH_LIST,
+    E_OPT_WITH_CLAUSE,
+
     E_NODETYPE_END
 };
 
 typedef const std::list<std::string> Form;
 
-Form SELECT_SERIALIZE_FORMAT                    {"SELECT ", "{13}", " ", "{0}", " ", "{15}", " ", "{1}", " ", "{2}", " ", "{3}",  " ",  \
+Form SELECT_SERIALIZE_FORMAT                    {"{16}", " ", "SELECT ", "{13}", " ", "{0}", " ", "{15}", " ", "{1}", " ", "{2}", " ", "{3}",  " ",  \
     "{4}", " ", "{5}", " ", "{8}", " ", "{6}", " ", "{7}", " ", "{9}", " ", "{10}", " ", "{11}", " ", "{12}", " ", "{14}"};
 Form STMT_LIST_SERIALIZE_FORMAT                 {"{0}", "; ", "{1}"};
 Form SELECT_WITH_PARENS_SERIALIZE_FORMAT        {"( ", "{0}", " )"};
@@ -295,6 +310,8 @@ Form FUN_CALL_1_SERIALIZE_FORMAT                {"{0}", "(", "{1}", ")"};
 Form FUN_CALL_2_SERIALIZE_FORMAT                {"{0}", "(", "{2}", " ", "{1}", ")"};
 Form FUN_CALL_3_SERIALIZE_FORMAT                {"{0}", "(", "{1}", " AS ", "{2}", ")"};
 Form FUN_CALL_4_SERIALIZE_FORMAT                {"{0}", "()"};
+Form WITH_CLAUSE_SERIALIZE_FORMAT               {"WITH ", "{0}"};
+Form COMMON_TABLE_EXPR_SERIALIZE_FORMAT         {"{0}", "{1}", " AS ", "{2}"};
 
 #ifndef YYtypeDEF_YY_SCANNER_T
 #define YYtypeDEF_YY_SCANNER_T

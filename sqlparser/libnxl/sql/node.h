@@ -56,6 +56,7 @@ struct Node
     static void find_table_direct_ref(Node** root, std::list<Node**>& ret);
     static void find_table_direct_ref_non_recursive(Node** root, std::list<Node**>& ret);
 
+
     Node();
     ~Node();
     void print(int) const;      // debug info

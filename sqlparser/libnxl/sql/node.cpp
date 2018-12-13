@@ -514,6 +514,7 @@ void Node::find_table_direct_ref_non_recursive(Node** root, std::list<Node**>& r
         lpNode = stack.top();
         stack.pop();
 
+        if (!lpNode || !*lpNode) continue;
         if ((*lpNode)->nodeType_ == E_IDENTIFIER || (*lpNode)->nodeType_ == E_ALIAS)
         {
             ret.push_back(lpNode);
