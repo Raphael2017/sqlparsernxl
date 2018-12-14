@@ -169,7 +169,7 @@ Node::~Node()
     children_.clear();
 }
 
-void Node::print(int lvl) const
+void Node::print(int lvl)
 {
 
 }
@@ -209,6 +209,7 @@ std::string Node::SerializeNonRecursive(Node* root)
             {
                 for (auto rit = lpNode.node->serialize_format->rbegin(); rit != lpNode.node->serialize_format->rend(); ++rit)
                 {
+                    /*
                     auto str = *rit;
                     int key = GetKey(str);
                     if (-1 != key)
@@ -216,16 +217,38 @@ std::string Node::SerializeNonRecursive(Node* root)
                         Node* child = lpNode.node->getChild(key);
                         if (child)
                         {
-                            Item ii;
-                            ii.node = child;
-                            stack.push(ii);
+                            stack.push({child, ""});
                         }
                     }
                     else
                     {
-                        Item ii;
-                        ii.str = str;
-                        stack.push(ii);
+                        stack.push({nullptr, str});
+                    }
+                     */
+
+                    std::vector<std::string> ss;
+                    auto str = *rit;
+                    if (Divide(str, ss))
+                    {
+                        int key = GetKey(ss[1]);
+                        if (-1 != key)
+                        {
+                            Node* child = lpNode.node->getChild(key);
+                            if (child)
+                            {
+                                stack.push({nullptr, ss[2]});
+                                stack.push({child, ""});
+                                stack.push({nullptr, ss[0]});
+                            }
+                        }
+                        else
+                        {
+                            stack.push({nullptr, str});
+                        }
+                    }
+                    else
+                    {
+                        stack.push({nullptr, str});
                     }
                 }
             }
@@ -235,7 +258,9 @@ std::string Node::SerializeNonRecursive(Node* root)
             tmp = lpNode.str;
         }
         if (tmp.length() > 0)
+        {
             ret += tmp;
+        }
     }
     return ret;
 }
@@ -248,14 +273,24 @@ std::string Node::serialize()
     {
         for (auto str : *serialize_format)
         {
-            int key = GetKey(str);
-            if (-1 != key)
+            std::vector<std::string> ss;
+            if (Divide(str, ss))
             {
-                Node* child = getChild(key);
-                if (child)
+                int key = GetKey(ss[1]);
+                if (-1 != key)
                 {
-                    std::string tmp = child->serialize();
-                    ret += tmp;
+                    Node* child = getChild(key);
+                    if (child)
+                    {
+                        std::string tmp = child->serialize();
+                        ret += ss[0];
+                        ret += tmp;
+                        ret += ss[2];
+                    }
+                }
+                else
+                {
+                    ret += str;
                 }
             }
             else
@@ -567,12 +602,34 @@ void Node::find_table_direct_ref_non_recursive(Node** root, std::list<Node**>& r
     }
 }
 
-int Node::GetKey(std::string f)
+// todo
+int Node::GetKey(const std::string& f)
 {
     if (f.length() < 3 || f.front() != '{' || f.back() != '}')
         return -1;
     std::string n(f.begin()+1, f.end()-1);
     return std::atoi(n.c_str());
+}
+
+bool Node::Divide(const std::string& f, std::vector<std::string>& ret)
+{
+    auto l = f.find("{");
+    auto r = f.find("}");
+    if (l == std::string::npos || r == std::string::npos)
+        return false;
+    else
+    {
+        if (l != 0)
+            ret.push_back(f.substr(0, l));
+        else
+            ret.push_back("");
+        ret.push_back(f.substr(l, r - l + 1));
+        if (r != (f.length() - 1))
+            ret.push_back(f.substr(r + 1));
+        else
+            ret.push_back("");
+    }
+    return true;
 }
 
 

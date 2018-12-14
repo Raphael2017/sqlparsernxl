@@ -50,9 +50,16 @@ int main()
 {
     std::string a = "";
 
-    a = "SELECT alpha1 from beta1 union all (select alpha2 from gamma2) EXCEPT SELECT alpha1 from beta1";
+    a = "SELECT CNTRYCODE, COUNT(*) AS NUMCUST, SUM(C_ACCTBAL) AS TOTACCTBAL\n"
+        "FROM (SELECT SUBSTRING(C_PHONE,1,2) AS CNTRYCODE, C_ACCTBAL\n"
+        " FROM CUSTOMER WHERE SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17') AND\n"
+        " C_ACCTBAL > (SELECT AVG(C_ACCTBAL) FROM CUSTOMER WHERE C_ACCTBAL > 0.00 AND\n"
+        "  SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17')) AND\n"
+        " NOT EXISTS ( SELECT * FROM ORDERS WHERE O_CUSTKEY = C_CUSTKEY)) AS CUSTSALE\n"
+        "GROUP BY CNTRYCODE\n"
+        "ORDER BY CNTRYCODE;";
 
-    a = "SELECT last_name, \n"
+    a += "SELECT last_name, \n"
         "       job_id, \n"
         "       salary \n"
         "FROM   employees, bosses\n"
@@ -63,15 +70,6 @@ int main()
         "                     FROM   employees \n"
         "                     WHERE  employee_id = 141);\n"
             ;
-
-    a = "SELECT CNTRYCODE, COUNT(*) AS NUMCUST, SUM(C_ACCTBAL) AS TOTACCTBAL\n"
-        "FROM (SELECT SUBSTRING(C_PHONE,1,2) AS CNTRYCODE, C_ACCTBAL\n"
-        " FROM CUSTOMER WHERE SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17') AND\n"
-        " C_ACCTBAL > (SELECT AVG(C_ACCTBAL) FROM CUSTOMER WHERE C_ACCTBAL > 0.00 AND\n"
-        "  SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17')) AND\n"
-        " NOT EXISTS ( SELECT * FROM ORDERS WHERE O_CUSTKEY = C_CUSTKEY)) AS CUSTSALE\n"
-        "GROUP BY CNTRYCODE\n"
-        "ORDER BY CNTRYCODE;";
     ParseResult result;
     parser::parse(a, &result);
 
@@ -84,6 +82,7 @@ int main()
 
     printf("before: \n%s\n", a.c_str());
     printf("after : \n%s", Node::SerializeNonRecursive(root).c_str());
+    //printf("after : \n%s", root->serialize().c_str());
 
     delete(root);
 

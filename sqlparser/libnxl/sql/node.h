@@ -44,6 +44,9 @@ struct Node
     static void ToList(Node*, std::list<Node*>&);
     static void ToListNonRecursive(Node*, std::list<Node*>&);
 
+    /*
+     * compact format
+     * */
     static std::string SerializeNonRecursive(Node* root);
     std::string serialize();
 
@@ -59,7 +62,10 @@ struct Node
 
     Node();
     ~Node();
-    void print(int) const;      // debug info
+    /*
+     * todo read format
+     * */
+    void print(int);
 
 
     double eval();
@@ -75,7 +81,8 @@ struct Node
     // ["function ", "{1}", "(", "{2}", ")", "{3}", "end"]
 
 private:
-    static int GetKey(std::string);
+    static int GetKey(const std::string&);
+    static bool Divide(const std::string&, std::vector<std::string>&);  // "abc{12}XYZ"
 };
 
 #endif
