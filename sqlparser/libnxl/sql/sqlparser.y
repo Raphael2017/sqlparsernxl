@@ -162,8 +162,8 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> sort_list sort_key opt_asc_desc
 %type <node> opt_distinct distinct_or_all projection
 %type <node> from_list table_factor relation_factor joined_table
-%type <node> join_type join_outer
-
+%type <node> join_type
+%type <ival> join_outer
 %type <node> expr_list expr expr_const arith_expr simple_expr
 %type <node> column_ref
 %type <node> case_expr func_expr in_expr
@@ -848,8 +848,8 @@ join_type:
 ;
 
 join_outer:
-    OUTER                       { $$ = (Node*)1; /*this is a flag*/}
-  | /* EMPTY */                 { $$ = nullptr; }
+    OUTER                       { $$ = 1; /*this is a flag*/}
+  | /* EMPTY */                 { $$ = 0; }
 ;
 
 

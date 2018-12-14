@@ -20,10 +20,13 @@ Node* Node::makeNonTerminalNode(NodeType tp, int num, ...)
     ret->isTerminalToken = false;
 
     va_list va;
-    ret->children_.resize(num);
+    //ret->children_.resize(num);
     va_start(va, num);
     for (size_t i = 0; i < num; ++i)
-        ret->children_[i] = va_arg(va, Node*);
+    {
+        Node* tmp = va_arg(va, Node*);
+        ret->children_.push_back(tmp);
+    }
     va_end(va);
 
     return ret;
@@ -167,7 +170,11 @@ Node::Node() : serialize_format(nullptr)
 Node::~Node()
 {
     for (auto& nd : children_)
+    {
         delete(nd);
+        nd = nullptr;
+    }
+
     children_.clear();
 }
 

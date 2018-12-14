@@ -8,7 +8,7 @@ bool parser::parse(const std::string& sql, ParseResult* result)
     yyscan_t scanner;
     YY_BUFFER_STATE state;
 
-    if (yylex_init(&scanner) || yylex_init_extra(result, &scanner)) {
+    if (yylex_init_extra(result, &scanner)) {
         fprintf(stderr, "SQLParser: Error when initializing lexer!\n");
         return false;
     }
@@ -20,6 +20,8 @@ bool parser::parse(const std::string& sql, ParseResult* result)
     // If parsing fails, the result will contain an error object.
     int ret = yyparse(result, scanner);
     bool success = (ret == 0);
+    yy_delete_buffer(state, scanner);
+    yylex_destroy(scanner);
 
     return true;
 }
@@ -28,7 +30,7 @@ bool parser::tokenize(const std::string& sql, std::vector<yytokentype>* tokens)
 {
     ParseResult result;
     yyscan_t scanner;
-    if (yylex_init(&scanner) || yylex_init_extra(&result, &scanner)) {
+    if (yylex_init_extra(&result, &scanner)) {
         fprintf(stderr, "SQLParser: Error when initializing lexer!\n");
         return false;
     }
@@ -47,6 +49,8 @@ bool parser::tokenize(const std::string& sql, std::vector<yytokentype>* tokens)
         token = yylex(&yylval, &yylloc, scanner);
     }
 
+    yy_delete_buffer(state, scanner);
+    yylex_destroy(scanner);
     return true;
 }
 
