@@ -43,6 +43,9 @@ bool Node::IsList(Node* root)
         case E_EXPR_LIST:
         case E_WHEN_LIST:
         case E_FROM_LIST:
+        case E_SIMPLE_IDENT_LIST:
+        case E_OPT_DERIVED_COLUMN_LIST:
+        case E_WITH_LIST:
         {
             ret = true;
         }
