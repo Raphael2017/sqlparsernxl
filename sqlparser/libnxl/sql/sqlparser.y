@@ -19,7 +19,10 @@
 
 
 int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *msg) {
-
+    result->accept = false;
+    result->errFirstLine = llocp->first_line;
+    result->errFirstColumn = llocp->first_column;
+    result->errDetail = msg;
 	return 0;
 }
 
@@ -747,6 +750,16 @@ table_factor_non_join:
 {
     $$ = Node::makeNonTerminalNode(E_ALIAS, 2, $1, $2);
     $$->serialize_format = &ALIAS_1_SERIALIZE_FORMAT;
+}
+  | relation_factor AS relation_name simple_ident_list_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 3, $1, $3, $4);
+    $$->serialize_format = &ALIAS_3_SERIALIZE_FORMAT;
+}
+  | select_with_parens AS relation_name simple_ident_list_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 3, $1, $3, $4);
+    $$->serialize_format = &ALIAS_3_SERIALIZE_FORMAT;
 }
 
 relation_factor:

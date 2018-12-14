@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 33 "sqlparser.y" /* yacc.c:1909  */
+#line 36 "sqlparser.y" /* yacc.c:1909  */
 
 // %code requires block
 
@@ -231,7 +231,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 77 "sqlparser.y" /* yacc.c:1909  */
+#line 80 "sqlparser.y" /* yacc.c:1909  */
 
     struct Node* node;
     int    ival;

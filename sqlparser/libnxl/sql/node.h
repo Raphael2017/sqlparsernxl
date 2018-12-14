@@ -11,9 +11,13 @@
 struct Node;
 struct ParseResult
 {
+    ParseResult() : result_tree_(nullptr), accept(false), errFirstLine(0), errFirstColumn(0) {}
+    ~ParseResult() { delete(result_tree_); }
     Node* result_tree_;
-    bool accept = false;
-
+    bool accept;
+    size_t errFirstLine;
+    size_t errFirstColumn;
+    std::string errDetail;
     std::stringstream buf_;
 };
 

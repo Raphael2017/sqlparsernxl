@@ -13,3 +13,5 @@ add_subdirectory(libnxl/sql)
 add_subdirectory(testlibnxl)
 
 add_subdirectory(LR)
+
+add_subdirectory(libnxl_unit_test)

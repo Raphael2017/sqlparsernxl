@@ -84,8 +84,6 @@ int main()
     printf("after : \n%s", Node::SerializeNonRecursive(root).c_str());
     //printf("after : \n%s", root->serialize().c_str());
 
-    delete(root);
-
     {
         fprintf(stdout, "\n\n");
         ::fflush(stdout);
@@ -107,7 +105,6 @@ int main()
             //protect(result1.result_tree_);
             //Node::SerializeNonRecursive(result1.result_tree_);
             //result1.result_tree_->serialize();
-            delete(result1.result_tree_);
         }
         end = clock();
         double seconds  =(double)(end - start)/CLOCKS_PER_SEC;

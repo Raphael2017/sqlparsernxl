@@ -2,7 +2,6 @@
 #include "math.h"
 #include <stdarg.h>
 #include "sqlparser_bison.h"
-#include "../../calculatorprox/node.h"
 #include <stack>
 
 Node* Node::makeTerminalNode(NodeType tp, const char* yytext)
