@@ -12,7 +12,6 @@ struct Node;
 struct ParseResult
 {
     ParseResult() : result_tree_(nullptr), accept(false), errFirstLine(0), errFirstColumn(0) {}
-    ~ParseResult() { delete(result_tree_); }
     Node* result_tree_;
     bool accept;
     size_t errFirstLine;
@@ -80,7 +79,9 @@ struct Node
     NodeType nodeType_;
     bool isTerminalToken;
     TerminalToken terminalToken_;
-    std::vector<Node*> children_;
+    //std::vector<Node*> children_;
+    Node** children_;
+    int childrenCount_;
     const std::list<std::string>* serialize_format;
     // ["function ", "{1}", "(", "{2}", ")", "{3}", "end"]
 

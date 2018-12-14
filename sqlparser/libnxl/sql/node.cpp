@@ -20,12 +20,12 @@ Node* Node::makeNonTerminalNode(NodeType tp, int num, ...)
     ret->isTerminalToken = false;
 
     va_list va;
-    //ret->children_.resize(num);
+    ret->children_ = new Node*[num];
+    ret->childrenCount_ = num;
     va_start(va, num);
     for (size_t i = 0; i < num; ++i)
     {
-        Node* tmp = va_arg(va, Node*);
-        ret->children_.push_back(tmp);
+        ret->children_[i] = va_arg(va, Node*);
     }
     va_end(va);
 
@@ -65,8 +65,10 @@ int Node::ListLength(Node* root)
     if (!IsList(root))
         return 1;
     int cnt = 0;
-    for (auto child : root->children_)
+    //for (auto child : root->children_)
+    for (size_t i = 0; i < root->childrenCount_; ++i)
     {
+        auto child = root->children_[i];
         if (child->nodeType_ == root->nodeType_)
         {
             cnt += ListLength(child);
@@ -103,7 +105,7 @@ int Node::ListLengthNonRecursive(Node* root)
             continue;
         }
 
-        for (int i=0 ;i<lpNode->children_.size(); i++)
+        for (int i=0 ;i<lpNode->childrenCount_; i++)
         {
             stack.push(lpNode->children_[i]);
         }
@@ -118,8 +120,9 @@ void Node::ToList(Node* root, std::list<Node*>& ret)
         return;
     if (!IsList(root))
         return ret.push_back(root);
-    for (auto child : root->children_)
+    for (size_t i = 0; i < root->childrenCount_; ++i)
     {
+        auto child = root->children_[i];
         if (!child) continue;
         if (child->nodeType_ == root->nodeType_)
         {
@@ -155,27 +158,29 @@ void Node::ToListNonRecursive(Node* root, std::list<Node*>& ret)
             continue;
         }
 
-        for (int i=lpNode->children_.size() - 1 ; i >= 0; i--)
+        for (int i=lpNode->childrenCount_ - 1 ; i >= 0; i--)
         {
             stack.push(lpNode->children_[i]);
         }
     }
 }
 
-Node::Node() : serialize_format(nullptr)
+Node::Node() : serialize_format(nullptr), children_(nullptr), childrenCount_(0)
 {
 
 }
 
 Node::~Node()
 {
-    for (auto& nd : children_)
+    //for (auto& nd : children_)
+    for (size_t i = 0; i < childrenCount_; ++i)
     {
+        auto& nd = children_[i];
         delete(nd);
         nd = nullptr;
     }
 
-    children_.clear();
+    delete[] children_;
 }
 
 void Node::print(int lvl)
@@ -325,7 +330,7 @@ double Node::eval()
 
 Node* Node::getChild(int key)
 {
-    if (0 <= key && key < children_.size())
+    if (0 <= key && key < childrenCount_)
         return children_[key];
     else
         return nullptr;
@@ -333,7 +338,7 @@ Node* Node::getChild(int key)
 
 Node** Node::getChildRef(int key)
 {
-    if (0 <= key && key < children_.size())
+    if (0 <= key && key < childrenCount_)
         return &children_[key];
     else
         return nullptr;
@@ -341,7 +346,7 @@ Node** Node::getChildRef(int key)
 
 bool Node::setChild(int key, Node* newchild)
 {
-    if (0 <= key && key < children_.size())
+    if (0 <= key && key < childrenCount_)
     {
         children_[key] = newchild;
         return true;
@@ -358,8 +363,9 @@ void Node::find_node(Node* root, NodeType target, std::list<Node*>& ret)
         ret.push_back(root);
     if (root->isTerminalToken)
         return;
-    for (auto it : root->children_)
+    for (size_t i = 0; i < root->childrenCount_; ++i)
     {
+        auto it = root->children_[i];
         find_node(it, target, ret);
     }
 }
@@ -382,10 +388,12 @@ void Node::find_node_non_recursive(Node* root, NodeType target, std::list<Node*>
         if (lpNode->isTerminalToken)
             continue;
 
-        for (auto rit = lpNode->children_.rbegin(); rit != lpNode->children_.rend(); ++rit)
+        //for (auto rit = lpNode->children_.rbegin(); rit != lpNode->children_.rend(); ++rit)
+        for (size_t i = lpNode->childrenCount_ - 1; i >= 0; --i)
         {
-            if (*rit)
-                stack.push(*rit);
+            auto rit = lpNode->children_[i];
+            if (rit)
+                stack.push(rit);
         }
     }
 }

@@ -59,7 +59,7 @@ int main()
         "GROUP BY CNTRYCODE\n"
         "ORDER BY CNTRYCODE;";
 
-    a += "SELECT last_name, \n"
+    a += "SELE1CT last_name, \n"
         "       job_id, \n"
         "       salary \n"
         "FROM   employees, bosses\n"
@@ -70,46 +70,16 @@ int main()
         "                     FROM   employees \n"
         "                     WHERE  employee_id = 141);\n"
             ;
-    ParseResult result;
-    parser::parse(a, &result);
-
-
-    if (!result.accept)
-        return 1;
-
-    Node* root = result.result_tree_;
-    protect(root);
-
-    printf("before: \n%s\n", a.c_str());
-    printf("after : \n%s", Node::SerializeNonRecursive(root).c_str());
-    //printf("after : \n%s", root->serialize().c_str());
 
     {
-        fprintf(stdout, "\n\n");
-        ::fflush(stdout);
-        std::string a = "SELECT CNTRYCODE, COUNT(*) AS NUMCUST, SUM(C_ACCTBAL) AS TOTACCTBAL\n"
-                        "FROM (SELECT SUBSTRING(C_PHONE,1,2) AS CNTRYCODE, C_ACCTBAL\n"
-                        " FROM CUSTOMER WHERE SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17') AND\n"
-                        " C_ACCTBAL > (SELECT AVG(C_ACCTBAL) FROM CUSTOMER WHERE C_ACCTBAL > 0.00 AND\n"
-                        "  SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17')) AND\n"
-                        " NOT EXISTS ( SELECT * FROM ORDERS WHERE O_CUSTKEY = C_CUSTKEY)) AS CUSTSALE\n"
-                        "GROUP BY CNTRYCODE\n"
-                        "ORDER BY CNTRYCODE;";
-        clock_t start, end;
-        start = clock();
-        size_t frequency = 10000;
-        for (size_t i = 0; i < frequency; ++i)
-        {
-            ParseResult result1;
-            parser::parse(a, &result1);
-            //protect(result1.result_tree_);
-            //Node::SerializeNonRecursive(result1.result_tree_);
-            //result1.result_tree_->serialize();
-        }
-        end = clock();
-        double seconds  =(double)(end - start)/CLOCKS_PER_SEC;
-        fprintf(stdout, "Frequency %d,Use time is: %.8f\n", frequency, seconds);
+        ParseResult result;
+        std::vector<yytokentype> tks;
+        parser::parse(a, &result);
+        if (result.accept)
+            printf("%s\n", result.result_tree_->serialize().c_str());
+        delete(result.result_tree_);
     }
+
 
 
 
@@ -194,81 +164,3 @@ void protect(Node* root)
 
 }
 
-void ffd(Node* root, NodeType target, std::list<Node*>& ret)
-{
-    if (!root)
-        return;
-    if (target == root->nodeType_)
-        ret.push_back(root);
-    if (root->isTerminalToken)
-        return;
-    for (auto it : root->children_)
-    {
-        ffd(it, target, ret);
-    }
-}
-
-void ffd_(Node* root, NodeType target, std::list<Node*>& ret)
-{
-    int stackmax = 0;
-    if (!root) return;
-    struct
-    {
-        Node* node;
-        std::vector<Node*>::iterator it;
-        int state = 0;
-    } stack[100];
-
-    Node* node = root;
-    std::vector<Node*>::iterator it;
-    if (!node->isTerminalToken)
-        it = node->children_.begin();
-    int top = 0, state = 0;
-    while (true)
-    {
-        if (top >= stackmax) stackmax = top;
-        if (!node)
-        {
-            if (top == 0)
-                break;
-            top--;
-            node = stack[top].node;
-            it = stack[top].it;
-            state = stack[top].state;
-        }
-        else
-        {
-            if (0 == state)
-            {
-                if (node->nodeType_ == target)
-                    ret.push_back(node);
-            }
-            else if (1 == state)
-            {
-                ++it;
-            }
-            if (it == node->children_.end() || (0 == state && node->isTerminalToken))
-            {
-                if (top == 0)
-                    break;
-                top--;
-                node = stack[top].node;
-                it = stack[top].it;
-                state = stack[top].state;
-                continue;
-            }
-
-            // call
-            stack[top].node = node;
-            stack[top].it = it;
-            stack[top].state = 1;
-            top++;
-
-            node = *it;
-            if (node && !node->isTerminalToken)
-                it = node->children_.begin();
-            state = 0;
-        }
-    }
-    return;
-}

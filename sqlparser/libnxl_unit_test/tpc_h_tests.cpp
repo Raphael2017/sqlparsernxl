@@ -59,7 +59,7 @@ TEST(TPCHQueryGrammarTests)
         {
             mt::printOk(file_path.c_str());
         }
-
+        delete(result.result_tree_);
     }
 
     ParseResult result;
@@ -74,6 +74,7 @@ TEST(TPCHQueryGrammarTests)
     {
         mt::printOk("TPCHAllConcatenated");
     }
+    delete(result.result_tree_);
     ASSERT_EQ(testsFailed, 0);
 }
 
