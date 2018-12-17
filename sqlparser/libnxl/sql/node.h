@@ -8,10 +8,13 @@
 #include <sstream>
 #include "keydef.h"
 
+//#define NODE_CHILDREN_DEBUG
+
 struct Node;
 struct ParseResult
 {
-    ParseResult() : result_tree_(nullptr), accept(false), errFirstLine(0), errFirstColumn(0) {}
+    ParseResult();
+    ~ParseResult();
     Node* result_tree_;
     bool accept;
     int errFirstLine;
@@ -65,26 +68,26 @@ struct Node
 
     Node();
     ~Node();
-    /*
-     * todo read format
-     * */
-    void print(int);
 
-
-    double eval();
     Node* getChild(int key);
     Node** getChildRef(int key);
     bool setChild(int key, Node*);
+    int getChildrenCount() const;
 
     NodeType nodeType_;
     bool isTerminalToken;
     TerminalToken terminalToken_;
-    //std::vector<Node*> children_;
+    const std::list<std::string>* serialize_format;     // ["function ", "{1}", "(", "{2}", ")", "{3}", "end"]
+private:
+    void print(int);
+    double eval();
+private:
+#ifdef NODE_CHILDREN_DEBUG
+    std::vector<Node*> children_;
+#else
     Node** children_;
+#endif
     int childrenCount_;
-    const std::list<std::string>* serialize_format;
-    // ["function ", "{1}", "(", "{2}", ")", "{3}", "end"]
-
 private:
     static int GetKey(const std::string&);
     static bool Divide(const std::string&, std::vector<std::string>&);  // "abc{12}XYZ"

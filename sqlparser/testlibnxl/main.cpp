@@ -50,16 +50,8 @@ int main()
 {
     std::string a = "";
 
-    a = "SELECT CNTRYCODE, COUNT(*) AS NUMCUST, SUM(C_ACCTBAL) AS TOTACCTBAL\n"
-        "FROM (SELECT SUBSTRING(C_PHONE,1,2) AS CNTRYCODE, C_ACCTBAL\n"
-        " FROM CUSTOMER WHERE SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17') AND\n"
-        " C_ACCTBAL > (SELECT AVG(C_ACCTBAL) FROM CUSTOMER WHERE C_ACCTBAL > 0.00 AND\n"
-        "  SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17')) AND\n"
-        " NOT EXISTS ( SELECT * FROM ORDERS WHERE O_CUSTKEY = C_CUSTKEY)) AS CUSTSALE\n"
-        "GROUP BY CNTRYCODE\n"
-        "ORDER BY CNTRYCODE;";
 
-    a += "SELE1CT last_name, \n"
+    a = "SELECT last_name, \n"
         "       job_id, \n"
         "       salary \n"
         "FROM   employees, bosses\n"
@@ -70,6 +62,14 @@ int main()
         "                     FROM   employees \n"
         "                     WHERE  employee_id = 141);\n"
             ;
+    a = "SELECT CNTRYCODE, COUNT(*) AS NUMCUST, SUM(C_ACCTBAL) AS TOTACCTBAL\n"
+        "FROM (SELECT SUBSTRING(C_PHONE,1,2) AS CNTRYCODE, C_ACCTBAL\n"
+        " FROM CUSTOMER WHERE SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17') AND\n"
+        " C_ACCTBAL > (SELECT AVG(C_ACCTBAL) FROM CUSTOMER WHERE C_ACCTBAL > 0.00 AND\n"
+        "  SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17')) AND\n"
+        " NOT EXISTS ( SELECT * FROM ORDERS WHERE O_CUSTKEY = C_CUSTKEY)) AS CUSTSALE\n"
+        "GROUP BY CNTRYCODE\n"
+        "ORDER BY CNTRYCODE;";
 
     {
         ParseResult result;
@@ -77,10 +77,21 @@ int main()
         parser::parse(a, &result);
         if (result.accept)
             printf("%s\n", result.result_tree_->serialize().c_str());
-        delete(result.result_tree_);
     }
 
-
+    {
+        clock_t start, end;
+        start = clock();
+        size_t frequency = 10000;
+        for (size_t i = 0; i < frequency; ++i)
+        {
+            ParseResult result;
+            parser::parse(a, &result);
+        }
+        end = clock();
+        double seconds  =(double)(end - start)/CLOCKS_PER_SEC;
+        fprintf(stdout, "Frequency %d,Use time is: %.8f\n", frequency, seconds);
+    }
 
 
 

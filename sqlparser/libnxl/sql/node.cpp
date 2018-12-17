@@ -1,8 +1,18 @@
 #include "node.h"
 #include "math.h"
 #include <stdarg.h>
-#include "sqlparser_bison.h"
+#include <regex>
 #include <stack>
+#include "sqlparser_bison.h"
+
+ParseResult::ParseResult() : result_tree_(nullptr), accept(false),
+    errFirstLine(0), errFirstColumn(0) {}
+
+ParseResult::~ParseResult()
+{
+    delete(result_tree_);
+    result_tree_ = nullptr;
+}
 
 Node* Node::makeTerminalNode(NodeType tp, const char* yytext)
 {
@@ -20,7 +30,11 @@ Node* Node::makeNonTerminalNode(NodeType tp, int num, ...)
     ret->isTerminalToken = false;
 
     va_list va;
+#ifdef NODE_CHILDREN_DEBUG
+    ret->children_.resize(num);
+#else
     ret->children_ = new Node*[num];
+#endif
     ret->childrenCount_ = num;
     va_start(va, num);
     for (size_t i = 0; i < num; ++i)
@@ -165,7 +179,12 @@ void Node::ToListNonRecursive(Node* root, std::list<Node*>& ret)
     }
 }
 
-Node::Node() : serialize_format(nullptr), children_(nullptr), childrenCount_(0)
+Node::Node() : serialize_format(nullptr),
+#ifdef NODE_CHILDREN_DEBUG
+#else
+        children_(nullptr),
+#endif
+childrenCount_(0)
 {
 
 }
@@ -179,8 +198,13 @@ Node::~Node()
         delete(nd);
         nd = nullptr;
     }
-
+#ifdef NODE_CHILDREN_DEBUG
+    children_.clear();
+#else
     delete[] children_;
+    children_ = nullptr;
+#endif
+    childrenCount_ = 0;
 }
 
 void Node::print(int lvl)
@@ -221,25 +245,9 @@ std::string Node::SerializeNonRecursive(Node* root)
             }
             else
             {
-                for (auto rit = lpNode.node->serialize_format->rbegin(); rit != lpNode.node->serialize_format->rend(); ++rit)
+                for (auto rit = lpNode.node->serialize_format->rbegin();
+                        rit != lpNode.node->serialize_format->rend(); ++rit)
                 {
-                    /*
-                    auto str = *rit;
-                    int key = GetKey(str);
-                    if (-1 != key)
-                    {
-                        Node* child = lpNode.node->getChild(key);
-                        if (child)
-                        {
-                            stack.push({child, ""});
-                        }
-                    }
-                    else
-                    {
-                        stack.push({nullptr, str});
-                    }
-                     */
-
                     std::vector<std::string> ss;
                     auto str = *rit;
                     if (Divide(str, ss))
@@ -353,6 +361,11 @@ bool Node::setChild(int key, Node* newchild)
     }
     else
         return false;
+}
+
+int Node::getChildrenCount() const
+{
+    return childrenCount_;
 }
 
 void Node::find_node(Node* root, NodeType target, std::list<Node*>& ret)
@@ -619,7 +632,6 @@ void Node::find_table_direct_ref_non_recursive(Node** root, std::list<Node**>& r
     }
 }
 
-// todo
 int Node::GetKey(const std::string& f)
 {
     if (f.length() < 3 || f.front() != '{' || f.back() != '}')
@@ -628,6 +640,7 @@ int Node::GetKey(const std::string& f)
     return std::atoi(n.c_str());
 }
 
+#if 0
 bool Node::Divide(const std::string& f, std::vector<std::string>& ret)
 {
     auto l = f.find("{");
@@ -648,6 +661,24 @@ bool Node::Divide(const std::string& f, std::vector<std::string>& ret)
     }
     return true;
 }
+#else
+bool Node::Divide(const std::string& f, std::vector<std::string>& ret)
+{
+    std::string text(f);
+    std::regex express("\\{[0-9]+\\}");
+    std::match_results<std::string::iterator> results1;
+    if(!std::regex_search(text.begin(), text.end(), results1, express) || 1 != results1.size())
+        return false;
+
+    auto l = results1.position(0);
+    auto r = l + results1.length();
+    ret.push_back(f.substr(0, l));
+    ret.push_back(results1[0].str());
+    ret.push_back(f.substr(r));
+    return true;
+}
+#endif
+
 
 
 
