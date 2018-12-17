@@ -14,8 +14,8 @@ struct ParseResult
     ParseResult() : result_tree_(nullptr), accept(false), errFirstLine(0), errFirstColumn(0) {}
     Node* result_tree_;
     bool accept;
-    size_t errFirstLine;
-    size_t errFirstColumn;
+    int errFirstLine;
+    int errFirstColumn;
     std::string errDetail;
     std::stringstream buf_;
 };
