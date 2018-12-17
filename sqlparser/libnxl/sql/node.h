@@ -7,8 +7,11 @@
 #include <map>
 #include <sstream>
 #include "keydef.h"
+#include <functional>
 
 //#define NODE_CHILDREN_DEBUG
+
+std::string NodeTypeToString(NodeType tp);
 
 struct Node;
 struct ParseResult
@@ -65,10 +68,12 @@ struct Node
     static void find_table_direct_ref(Node** root, std::list<Node**>& ret);
     static void find_table_direct_ref_non_recursive(Node** root, std::list<Node**>& ret);
 
+    static void visit(Node* root, const std::function<void(Node*)>&);
 
     Node();
     ~Node();
-
+    Node* getParent();
+    Node* setParent(Node*);
     Node* getChild(int key);
     Node** getChildRef(int key);
     bool setChild(int key, Node*);
@@ -88,6 +93,7 @@ private:
     Node** children_;
 #endif
     int childrenCount_;
+    Node* parent_;
 private:
     static int GetKey(const std::string&);
     static bool Divide(const std::string&, std::vector<std::string>&);  // "abc{12}XYZ"

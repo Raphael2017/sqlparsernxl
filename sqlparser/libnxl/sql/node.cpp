@@ -4,6 +4,192 @@
 #include <regex>
 #include <stack>
 #include "sqlparser_bison.h"
+#include <assert.h>
+
+std::string NodeTypeToString(NodeType tp)
+{
+    switch (tp)
+    {
+        case E_NULL:
+            return "E_NULL";
+        case E_INT:
+            return "E_INT";
+        case E_DOUBLE:
+            return "E_DOUBLE";
+        case E_BOOL:
+            return "E_BOOL";
+        case E_STRING:
+            return "E_STRING";
+        case E_IDENTIFIER:
+            return "E_IDENTIFIER";
+        case E_QUESTIONMARK:
+            return "E_QUESTIONMARK";
+        case E_ALL:
+            return "E_ALL";
+        case E_DISTINCT:
+            return "E_DISTINCT";
+        case E_STAR:
+            return "E_STAR";
+        case E_TYPE_INTEGER:
+            return "E_TYPE_INTEGER";
+        case E_TYPE_BOOLEAN:
+            return "E_TYPE_BOOLEAN";
+        case E_TYPE_DOUBLE:
+            return "E_TYPE_DOUBLE";
+        case E_TYPE_DATETIME:
+            return "E_TYPE_DATETIME";
+        case E_SET_UNION:
+            return "E_SET_UNION";
+        case E_SET_INTERSECT:
+            return "E_SET_INTERSECT";
+        case E_SET_EXCEPT:
+            return "E_SET_EXCEPT";
+        case E_SORT_ASC:
+            return "E_SORT_ASC";
+        case E_SORT_DESC:
+            return "E_SORT_DESC";
+        case E_JOIN_INNER:
+            return "E_JOIN_INNER";
+        case E_JOIN_FULL:
+            return "E_JOIN_FULL";
+        case E_JOIN_LEFT:
+            return "E_JOIN_LEFT";
+        case E_JOIN_RIGHT:
+            return "E_JOIN_RIGHT";
+        case E_JOIN_CROSS:
+            return "E_JOIN_CROSS";
+        case E_JOIN_NATURAL:
+            return "E_JOIN_NATURAL";
+        case E_STMT_LIST:
+            return "E_STMT_LIST";
+        case E_SELECT:
+            return "E_SELECT";
+        case E_SELECT_WITH_PARENS:
+            return "E_SELECT_WITH_PARENS";
+        case E_FROM_CLAUSE:
+            return "E_FROM_CLAUSE";
+        case E_WHERE_CLAUSE:
+            return "E_WHERE_CLAUSE";
+        case E_LIMIT_CLAUSE:
+            return "E_LIMIT_CLAUSE";
+        case E_GROUP_BY:
+            return "E_GROUP_BY";
+        case E_ORDER_BY:
+            return "E_ORDER_BY";
+        case E_HAVING:
+            return "E_HAVING";
+        case E_WHEN:
+            return "E_WHEN";
+        case E_SORT_LIST:
+            return "E_SORT_LIST";
+        case E_SORT_KEY:
+            return "E_SORT_KEY";
+        case E_SELECT_EXPR_LIST:
+            return "E_SELECT_EXPR_LIST";
+        case E_PROJECT_STRING:
+            return "E_PROJECT_STRING";
+        case E_ALIAS:
+            return "E_ALIAS";
+        case E_FROM_LIST:
+            return "E_FROM_LIST";
+        case E_JOINED_TABLE:
+            return "E_JOINED_TABLE";
+        case E_JOINED_TABLE_WITH_PARENS:
+            return "E_JOINED_TABLE_WITH_PARENS";
+        case E_OP_NAME_FIELD:
+            return "E_OP_NAME_FIELD";
+        case E_OP_EXISTS:
+            return "E_OP_EXISTS";
+        case E_OP_POS:
+            return "E_OP_POS";
+        case E_OP_NEG:
+            return "E_OP_NEG";
+        case E_OP_ADD:
+            return "E_OP_ADD";
+        case E_OP_MINUS:
+            return "E_OP_MINUS";
+        case E_OP_MUL:
+            return "E_OP_MUL";
+        case E_OP_DIV:
+            return "E_OP_DIV";
+        case E_OP_REM:
+            return "E_OP_REM";
+        case E_OP_POW:
+            return "E_OP_POW";
+        case E_OP_MOD:
+            return "E_OP_MOD";
+        case E_OP_LE:
+            return "E_OP_LE";
+        case E_OP_LT:
+            return "E_OP_LT";
+        case E_OP_EQ:
+            return "E_OP_EQ";
+        case E_OP_GE:
+            return "E_OP_GE";
+        case E_OP_GT:
+            return "E_OP_GT";
+        case E_OP_NE:
+            return "E_OP_NE";
+        case E_OP_LIKE:
+            return "E_OP_LIKE";
+        case E_OP_NOT_LIKE:
+            return "E_OP_NOT_LIKE";
+        case E_OP_AND:
+            return "E_OP_AND";
+        case E_OP_OR:
+            return "E_OP_OR";
+        case E_OP_NOT:
+            return "E_OP_NOT";
+        case E_OP_IS:
+            return "E_OP_IS";
+        case E_OP_IS_NOT:
+            return "E_OP_IS_NOT";
+        case E_OP_BTW:
+            return "E_OP_BTW";
+        case E_OP_NOT_BTW:
+            return "E_OP_NOT_BTW";
+        case E_OP_IN:
+            return "E_OP_IN";
+        case E_OP_NOT_IN:
+            return "E_OP_NOT_IN";
+        case E_OP_CNN:
+            return "E_OP_CNN";
+        case E_EXPR_LIST:
+            return "E_EXPR_LIST";
+        case E_EXPR_LIST_WITH_PARENS:
+            return "E_EXPR_LIST_WITH_PARENS";
+        case E_CASE:
+            return "E_CASE";
+        case E_CASE_DEFAULT:
+            return "E_CASE_DEFAULT";
+        case E_FUN_CALL:
+            return "E_FUN_CALL";
+        case E_WHEN_LIST:
+            return "E_WHEN_LIST";
+        case E_TOP_CNT:
+            return "E_TOP_CNT";
+        case E_TOP_PCT:
+            return "E_TOP_PCT";
+        case E_TOP_CNT_TIES:
+            return "E_TOP_CNT_TIES";
+        case E_TOP_PCT_TIES:
+            return "E_TOP_PCT_TIES";
+        case E_SIMPLE_IDENT_LIST:
+            return "E_SIMPLE_IDENT_LIST";
+        case E_SIMPLE_IDENT_LIST_WITH_PARENS:
+            return "E_SIMPLE_IDENT_LIST_WITH_PARENS";
+        case E_OPT_DERIVED_COLUMN_LIST:
+            return "E_OPT_DERIVED_COLUMN_LIST";
+        case E_COMMON_TABLE_EXPR:
+            return "E_COMMON_TABLE_EXPR";
+        case E_WITH_LIST:
+            return "E_WITH_LIST";
+        case E_OPT_WITH_CLAUSE:
+            return "E_OPT_WITH_CLAUSE";
+        default:
+            return "";
+    }
+}
 
 ParseResult::ParseResult() : result_tree_(nullptr), accept(false),
     errFirstLine(0), errFirstColumn(0) {}
@@ -39,7 +225,10 @@ Node* Node::makeNonTerminalNode(NodeType tp, int num, ...)
     va_start(va, num);
     for (size_t i = 0; i < num; ++i)
     {
-        ret->children_[i] = va_arg(va, Node*);
+        Node* child = va_arg(va, Node*);
+        if (child)
+            child->parent_ = ret;
+        ret->children_[i] = child;
     }
     va_end(va);
 
@@ -184,7 +373,8 @@ Node::Node() : serialize_format(nullptr),
 #else
         children_(nullptr),
 #endif
-childrenCount_(0)
+childrenCount_(0),
+parent_(nullptr)
 {
 
 }
@@ -336,6 +526,17 @@ double Node::eval()
     return ret;
 }
 
+Node* Node::getParent()
+{
+    return parent_;
+}
+
+Node* Node::setParent(Node* p)
+{
+    assert(nullptr != p);
+    parent_ = p;
+}
+
 Node* Node::getChild(int key)
 {
     if (0 <= key && key < childrenCount_)
@@ -357,6 +558,8 @@ bool Node::setChild(int key, Node* newchild)
     if (0 <= key && key < childrenCount_)
     {
         children_[key] = newchild;
+        if (newchild)
+            newchild->setParent(this);
         return true;
     }
     else
@@ -678,6 +881,20 @@ bool Node::Divide(const std::string& f, std::vector<std::string>& ret)
     return true;
 }
 #endif
+
+void Node::visit(Node* root, const std::function<void(Node*)>& f)
+{
+    if (!root)
+        return;
+    f(root);
+    if (!root->isTerminalToken)
+    {
+        for (size_t i = 0; i < root->childrenCount_; ++i)
+        {
+            visit(root->children_[i], f);
+        }
+    }
+}
 
 
 

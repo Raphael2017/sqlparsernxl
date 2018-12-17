@@ -71,12 +71,76 @@ int main()
         "GROUP BY CNTRYCODE\n"
         "ORDER BY CNTRYCODE;";
 
+    a = "-- COMMON TABLE EXPRESSION\n"
+        "WITH cte1 (avg_c_acctbal)\n"
+        "     AS (SELECT Avg(c_acctbal)\n"
+        "         FROM   customer\n"
+        "         WHERE  c_acctbal > 0.00\n"
+        "                AND Substring(c_phone, 1, 2) IN ( '13', '31', '23', '29',\n"
+        "                                                  '30', '18', '17' )),\n"
+        "     cte2\n"
+        "     AS (SELECT *\n"
+        "         FROM   orders\n"
+        "         WHERE  o_custkey = c_custkey),\n"
+        "     cte3 (cntrycode, c_acctbal)\n"
+        "     AS (SELECT Substring(c_phone, 1, 2) AS CNTRYCODE,\n"
+        "                c_acctbal\n"
+        "         FROM   customer\n"
+        "         WHERE  Substring(c_phone, 1, 2) IN ( '13', '31', '23', '29',\n"
+        "                                              '30', '18', '17' )\n"
+        "                AND c_acctbal > (SELECT avg_c_acctbal\n"
+        "                                 FROM   cte1)\n"
+        "                AND NOT EXISTS (SELECT *\n"
+        "                                FROM   cte2))\n"
+        "SELECT cntrycode,\n"
+        "       Count(*)       AS NUMCUST,\n"
+        "       Sum(c_acctbal) AS TOTACCTBAL\n"
+        "FROM   cte3 AS CUSTSALE,\n"
+        "       NXLDIY\n "
+        "GROUP  BY cntrycode\n"
+        "ORDER  BY cntrycode;";
+
     {
         ParseResult result;
         std::vector<yytokentype> tks;
         parser::parse(a, &result);
         if (result.accept)
             printf("%s\n", result.result_tree_->serialize().c_str());
+        if (result.accept)
+        {
+            Node::visit(result.result_tree_, [](Node* nd){
+                /*
+                std::list<NodeType> ls;
+                Node* cur = nd;
+                while (nullptr != nd)
+                {
+                    ls.push_front(nd->nodeType_);
+                    nd = nd->getParent();
+                }
+                for (auto it : ls)
+                {
+                    //printf("%s, ", NodeTypeToString(it).c_str());
+                }*/
+                if (!nd) return;
+                if (nd->nodeType_ == E_IDENTIFIER )
+                {
+                    if (nd->getParent()->nodeType_ == E_FROM_LIST || nd->getParent()->nodeType_ == E_FROM_CLAUSE)
+                    {
+                        printf("  %s\n", nd->terminalToken_.str.c_str());
+                    }
+                }
+                else if (nd->nodeType_ == E_ALIAS)
+                {
+                    if (nd->getParent()->nodeType_ == E_FROM_LIST || nd->getParent()->nodeType_ == E_FROM_CLAUSE)
+                    {
+                        Node* tmp = nd->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS);
+                        if (tmp && tmp->nodeType_ == E_IDENTIFIER);
+                            printf("  %s\n", tmp->terminalToken_.str.c_str());
+                    }
+                }
+                //printf("\n");
+            });
+        }
     }
 
     {

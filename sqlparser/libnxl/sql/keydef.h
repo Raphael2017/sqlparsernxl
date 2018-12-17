@@ -236,6 +236,8 @@ enum NodeType
     E_NODETYPE_END
 };
 
+
+
 #ifndef YYtypeDEF_YY_SCANNER_T
 #define YYtypeDEF_YY_SCANNER_T
 typedef void* yyscan_t;
