@@ -863,6 +863,10 @@ expr_list:  expr
 ;
 
 column_ref: column_name
+{
+    $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 2, nullptr, $1);
+    $$->serialize_format = &NAME_FIELD_SERIALIZE_FORMAT_0;
+}
     |   relation_name '.' column_name
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 2, $1, $3);

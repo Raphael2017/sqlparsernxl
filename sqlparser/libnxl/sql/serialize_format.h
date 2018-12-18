@@ -124,6 +124,7 @@ Form JOINED_TB_2_SERIALIZE_FORMAT               {"{1}", " ", "{0}", " JOIN ", "{
 Form JOINED_TB_3_SERIALIZE_FORMAT               {"{1}", " ", "{0}", " JOIN ", "{2}", " USING ", "(", "{3}", ")"};
 Form EXPR_LIST_SERIALIZE_FORMAT                 {"{0}", ", ", "{1}"};
 Form NAME_FIELD_SERIALIZE_FORMAT                {"{0}", ".", "{1}"};
+Form NAME_FIELD_SERIALIZE_FORMAT_0              {"{1}"};
 Form EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT     {"(", "{0}", ")"};
 Form OP_EXISTS_SERIALIZE_FORMAT                 {"EXISTS ", "{0}"};
 Form OP_POS_SERIALIZE_FORMAT                    {"+", "{0}"};

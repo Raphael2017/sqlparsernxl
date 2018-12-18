@@ -68,6 +68,7 @@ struct Node
     /*
      * Node* curNode
      * Entry environment_list
+     * Order preOrder
      * */
     static void visit(Node* root, const std::function<void(Node*, Entry)>&);
 
@@ -88,7 +89,7 @@ struct Node
     const std::list<std::string>* serialize_format;     // ["function ", "{1}", "(", "{2}", ")", "{3}", "end"]
 private:
     void print(int);
-    double eval();
+    VirtualTable* eval();
 private:
 #ifdef NODE_CHILDREN_DEBUG
     std::vector<Node*> children_;
@@ -108,6 +109,8 @@ private:
 
     static void find_table_direct_ref(Node** root, std::list<Node**>& ret);
     static void find_table_direct_ref_non_recursive(Node** root, std::list<Node**>& ret);
+
+    static VirtualTable* procSelect(Node* sel);
 };
 
 #endif
