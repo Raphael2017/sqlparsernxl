@@ -6,6 +6,7 @@
 #include "sqlparser_bison.h"
 #include <assert.h>
 
+
 std::string NodeTypeToString(NodeType tp)
 {
     switch (tp)
@@ -882,17 +883,30 @@ bool Node::Divide(const std::string& f, std::vector<std::string>& ret)
 }
 #endif
 
-void Node::visit(Node* root, const std::function<void(Node*)>& f)
+void Node::visit(Node* root, const std::function<void(Node*, Entry)>& f)
 {
     if (!root)
         return;
-    f(root);
-    if (!root->isTerminalToken)
+    Entry ety = nullptr;
+    std::set<Entry> etys;
+    _visit(root, ety, etys, f);
+    for (auto it : etys)
+        delete(it);
+    etys.clear();
+}
+
+void Node::_visit(Node* root, Entry ety, std::set<Entry>& etys, const std::function<void(Node*, Entry)>& f)
+{
+    if (!root) return;
+    if (root->nodeType_ == E_SELECT)
     {
-        for (size_t i = 0; i < root->childrenCount_; ++i)
-        {
-            visit(root->children_[i], f);
-        }
+        ety = new Environment{root, ety};
+        etys.insert(ety);
+    }
+    f(root, ety);
+    for (size_t i = 0; i < root->childrenCount_; ++i)
+    {
+        _visit(root->children_[i], ety, etys, f);
     }
 }
 

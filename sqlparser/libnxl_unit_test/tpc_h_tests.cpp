@@ -38,6 +38,7 @@ TEST(TPCHQueryGrammarTests)
         "test/queries/tpc-h-21.sql",
         "test/queries/tpc-h-22.sql",
         "test/queries/tpc-h-23.sql",
+        "test/queries/tpc-h-24.sql",
     };
 
     int testsFailed = 0;

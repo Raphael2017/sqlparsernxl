@@ -1,5 +1,6 @@
 #include "node.h"
 #include "sqlparser_flex.h"
+
 struct parser
 {
     static bool parse(const std::string& sql, ParseResult* result);
