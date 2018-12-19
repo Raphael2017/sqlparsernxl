@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <time.h>
 #include <assert.h>
+#include "resolve.h"
 
 bool IsFromTable(Node* nd);
 bool CompareIgnoreCase(const std::string& l, const std::string& r);
@@ -11,11 +12,21 @@ int main()
 {
     std::string a = "";
 
+    a = "-- TPC_H Query 22 - Global Sales Opportunity */\n"
+        "SELECT CNTRYCODE, COUNT(*) AS NUMCUST, SUM(C_ACCTBAL) AS TOTACCTBAL\n"
+        "FROM (SELECT SUBSTRING(C_PHONE,1,2) AS CNTRYCODE, C_ACCTBAL\n"
+        " FROM CUSTOMER WHERE SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17') AND\n"
+        " C_ACCTBAL > (SELECT AVG(C_ACCTBAL) FROM CUSTOMER WHERE C_ACCTBAL > 0.00 AND\n"
+        "  SUBSTRING(C_PHONE,1,2) IN ('13', '31', '23', '29', '30', '18', '17')) AND\n"
+        " NOT EXISTS ( SELECT * FROM ORDERS WHERE O_CUSTKEY = C_CUSTKEY)) AS CUSTSALE\n"
+        "GROUP BY CNTRYCODE\n"
+        "ORDER BY CNTRYCODE;";
+
     a = "WITH cte1\n"
         "     AS (SELECT *\n"
         "         FROM   abc)\n"
         "SELECT *\n"
-        "FROM   (WITH cte1\n"
+        "FROM   (WITH cte2\n"
         "             AS (SELECT *\n"
         "                 FROM   umd)\n"
         "        SELECT *\n"
@@ -29,8 +40,9 @@ int main()
             printf("%s\n", result.result_tree_->serialize().c_str());
         if (result.accept)
         {
+            /*
             std::set<std::string> tbs;
-            Node::visit(result.result_tree_, [&tbs](Node* nd, Entry ety){
+            Node::TreePreOrderVisit(result.result_tree_, [&tbs](Node* nd, Entry ety){
                 if (!IsFromTable(nd))
                     return;
                 std::string name;
@@ -44,6 +56,18 @@ int main()
             {
                 printf("%s\n", tb.c_str());
             }
+            printf("analyze fields:\n");
+            Node::TreePreOrderVisit(result.result_tree_,[](Node* nd, Entry ety){
+                if (E_OP_NAME_FIELD == nd->nodeType_)
+                {
+                    printf("%s\n", nd->getChild(E_OP_NAME_FIELD_COLUMN_NAME)->terminalToken_.str.c_str());
+                }
+            });*/
+            resolve::ResultPlan resultPlan;
+            resultPlan.logicPlan_ = new resolve::LogicPlan;
+            uint64_t query_id;
+            resolve::resolve_select_statement(&resultPlan, result.result_tree_, query_id, nullptr);
+            return 0;
         }
     }
 

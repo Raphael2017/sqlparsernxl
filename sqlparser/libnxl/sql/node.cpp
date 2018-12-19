@@ -520,107 +520,6 @@ std::string Node::serialize()
     return ret;
 }
 
-VirtualTable* Node::eval()
-{
-    switch (nodeType_)
-    {
-        case E_NULL:
-        case E_INT:
-        case E_DOUBLE:
-        case E_BOOL:
-        case E_STRING:
-        case E_IDENTIFIER:
-        case E_QUESTIONMARK:
-        case E_ALL:
-        case E_DISTINCT:
-        case E_STAR:
-        case E_TYPE_INTEGER:
-        case E_TYPE_BOOLEAN:
-        case E_TYPE_DOUBLE:
-        case E_TYPE_DATETIME:
-        case E_SET_UNION:
-        case E_SET_INTERSECT:
-        case E_SET_EXCEPT:
-        case E_SORT_ASC:
-        case E_SORT_DESC:
-        case E_JOIN_INNER:
-        case E_JOIN_FULL:
-        case E_JOIN_LEFT:
-        case E_JOIN_RIGHT:
-        case E_JOIN_CROSS:
-        case E_JOIN_NATURAL:
-        case E_STMT_LIST:
-            return nullptr;
-        case E_SELECT:
-        {
-            return proc(this);
-        }
-        case E_SELECT_WITH_PARENS:
-        case E_FROM_CLAUSE:
-        case E_WHERE_CLAUSE:
-        case E_LIMIT_CLAUSE:
-        case E_GROUP_BY:
-        case E_ORDER_BY:
-        case E_HAVING:
-        case E_WHEN:
-        case E_SORT_LIST:
-        case E_SORT_KEY:
-        case E_SELECT_EXPR_LIST:
-        case E_PROJECT_STRING:
-        case E_ALIAS:
-        case E_FROM_LIST:
-        case E_JOINED_TABLE:
-        case E_JOINED_TABLE_WITH_PARENS:
-        case E_OP_NAME_FIELD:
-        case E_OP_EXISTS:
-        case E_OP_POS:
-        case E_OP_NEG:
-        case E_OP_ADD:
-        case E_OP_MINUS:
-        case E_OP_MUL:
-        case E_OP_DIV:
-        case E_OP_REM:
-        case E_OP_POW:
-        case E_OP_MOD:
-        case E_OP_LE:
-        case E_OP_LT:
-        case E_OP_EQ:
-        case E_OP_GE:
-        case E_OP_GT:
-        case E_OP_NE:
-        case E_OP_LIKE:
-        case E_OP_NOT_LIKE:
-        case E_OP_AND:
-        case E_OP_OR:
-        case E_OP_NOT:
-        case E_OP_IS:
-        case E_OP_IS_NOT:
-        case E_OP_BTW:
-        case E_OP_NOT_BTW:
-        case E_OP_IN:
-        case E_OP_NOT_IN:
-        case E_OP_CNN:
-        case E_EXPR_LIST:
-        case E_EXPR_LIST_WITH_PARENS:
-        case E_CASE:
-        case E_CASE_DEFAULT:
-        case E_FUN_CALL:
-        case E_WHEN_LIST:
-        case E_TOP_CNT:
-        case E_TOP_PCT:
-        case E_TOP_CNT_TIES:
-        case E_TOP_PCT_TIES:
-        case E_SIMPLE_IDENT_LIST:
-        case E_SIMPLE_IDENT_LIST_WITH_PARENS:
-        case E_OPT_DERIVED_COLUMN_LIST:
-        case E_COMMON_TABLE_EXPR:
-        case E_WITH_LIST:
-        case E_OPT_WITH_CLAUSE:
-        default:
-            return nullptr;
-    }
-}
-
 Node* Node::getParent()
 {
     return parent_;
@@ -977,7 +876,7 @@ bool Node::Divide(const std::string& f, std::vector<std::string>& ret)
 }
 #endif
 
-void Node::visit(Node* root, const std::function<void(Node*, Entry)>& f)
+void Node::TreePreOrderVisit(Node* root, const std::function<void(Node*, Entry)>& f)
 {
     if (!root)
         return;
@@ -1002,39 +901,4 @@ void Node::_visit(Node* root, Entry ety, std::set<Entry>& etys, const std::funct
     {
         _visit(root->children_[i], ety, etys, f);
     }
-}
-
-VirtualTable* Node::procSelect(Node* sel)
-{
-    if (!sel)
-        return nullptr;
-    Node* from = sel->getChild(E_SELECT_FROM_LIST);
-    VirtualTable* ret = new VirtualTable{};
-
-    VirtualTable* fromVT = nullptr;
-    if (from)
-        fromVT = from->eval();
-
-    Node* selexprs = sel->getChild(E_SELECT_SELECT_EXPR_LIST);
-    std::list<Node*> lsselexprs;
-    ToList(selexprs, lsselexprs);
-
-    for (auto fd : lsselexprs)
-    {
-        assert(fd != nullptr);
-        assert(fd->nodeType_ == E_PROJECT_STRING);
-
-        Node* tmp = fd->getChild(E_PROJECT_STRING_EXPR_OR_ALIAS);
-        if (E_ALIAS == tmp->nodeType_)
-        {
-            ret->fields.insert({ret, tmp->getChild(E_ALIAS_RELATION_NAME)->terminalToken_.str, });
-        }
-        else
-        {
-
-        }
-    }
-
-
-    return ret;
 }

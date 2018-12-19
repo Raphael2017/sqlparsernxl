@@ -70,7 +70,7 @@ struct Node
      * Entry environment_list
      * Order preOrder
      * */
-    static void visit(Node* root, const std::function<void(Node*, Entry)>&);
+    static void TreePreOrderVisit(Node* root, const std::function<void(Node*, Entry)>&);
 
 
 
@@ -89,7 +89,6 @@ struct Node
     const std::list<std::string>* serialize_format;     // ["function ", "{1}", "(", "{2}", ")", "{3}", "end"]
 private:
     void print(int);
-    VirtualTable* eval();
 private:
 #ifdef NODE_CHILDREN_DEBUG
     std::vector<Node*> children_;
@@ -109,8 +108,112 @@ private:
 
     static void find_table_direct_ref(Node** root, std::list<Node**>& ret);
     static void find_table_direct_ref_non_recursive(Node** root, std::list<Node**>& ret);
-
-    static VirtualTable* procSelect(Node* sel);
 };
+
+
+// for copy
+/*
+{
+switch (nodeType_)
+{
+case E_NULL:
+case E_INT:
+case E_DOUBLE:
+case E_BOOL:
+case E_STRING:
+case E_IDENTIFIER:
+case E_QUESTIONMARK:
+case E_ALL:
+case E_DISTINCT:
+case E_STAR:
+case E_TYPE_INTEGER:
+case E_TYPE_BOOLEAN:
+case E_TYPE_DOUBLE:
+case E_TYPE_DATETIME:
+case E_SET_UNION:
+case E_SET_INTERSECT:
+case E_SET_EXCEPT:
+case E_SORT_ASC:
+case E_SORT_DESC:
+case E_JOIN_INNER:
+case E_JOIN_FULL:
+case E_JOIN_LEFT:
+case E_JOIN_RIGHT:
+case E_JOIN_CROSS:
+case E_JOIN_NATURAL:
+case E_STMT_LIST:
+return nullptr;
+case E_SELECT:
+{
+return proc(this);
+}
+case E_SELECT_WITH_PARENS:
+case E_FROM_CLAUSE:
+case E_WHERE_CLAUSE:
+case E_LIMIT_CLAUSE:
+case E_GROUP_BY:
+case E_ORDER_BY:
+case E_HAVING:
+case E_WHEN:
+case E_SORT_LIST:
+case E_SORT_KEY:
+case E_SELECT_EXPR_LIST:
+case E_PROJECT_STRING:
+case E_ALIAS:
+case E_FROM_LIST:
+case E_JOINED_TABLE:
+case E_JOINED_TABLE_WITH_PARENS:
+case E_OP_NAME_FIELD:
+case E_OP_EXISTS:
+case E_OP_POS:
+case E_OP_NEG:
+case E_OP_ADD:
+case E_OP_MINUS:
+case E_OP_MUL:
+case E_OP_DIV:
+case E_OP_REM:
+case E_OP_POW:
+case E_OP_MOD:
+case E_OP_LE:
+case E_OP_LT:
+case E_OP_EQ:
+case E_OP_GE:
+case E_OP_GT:
+case E_OP_NE:
+case E_OP_LIKE:
+case E_OP_NOT_LIKE:
+case E_OP_AND:
+case E_OP_OR:
+case E_OP_NOT:
+case E_OP_IS:
+case E_OP_IS_NOT:
+case E_OP_BTW:
+case E_OP_NOT_BTW:
+case E_OP_IN:
+case E_OP_NOT_IN:
+case E_OP_CNN:
+case E_EXPR_LIST:
+case E_EXPR_LIST_WITH_PARENS:
+case E_CASE:
+case E_CASE_DEFAULT:
+case E_FUN_CALL:
+case E_WHEN_LIST:
+case E_TOP_CNT:
+case E_TOP_PCT:
+case E_TOP_CNT_TIES:
+case E_TOP_PCT_TIES:
+case E_SIMPLE_IDENT_LIST:
+case E_SIMPLE_IDENT_LIST_WITH_PARENS:
+case E_OPT_DERIVED_COLUMN_LIST:
+case E_COMMON_TABLE_EXPR:
+case E_WITH_LIST:
+case E_OPT_WITH_CLAUSE:
+default:
+return nullptr;
+}
+}*/
+
+
+
 
 #endif
