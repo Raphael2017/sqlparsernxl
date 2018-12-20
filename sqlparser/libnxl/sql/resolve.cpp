@@ -4,7 +4,17 @@
 
 namespace resolve
 {
-    uint64_t OB_INVALID_ID = 0;
+    ObStmt* LogicPlan::get_query(uint64_t query_id)
+    {
+        for (auto stmt : stmts_)
+        {
+            assert(stmt != nullptr);
+            if (query_id == stmt->query_id_)
+                return stmt;
+        }
+        return nullptr;
+    }
+
     int ObStmt::add_table_item(
             ResultPlan* resultPlan,
             const std::string& table_name,
@@ -29,11 +39,14 @@ namespace resolve
     {
         assert(tbtype == TableItem::CTE_TABLE);
         return _add_table_item(cte_items_, resultPlan,
-                               table_name, alias_name, tbtype, ref_id, out_table_id, cte_at_query_id);
+                table_name, alias_name, tbtype, ref_id, out_table_id, cte_at_query_id);
     }
 
 
-    bool ObStmt::check_in_cte(const std::string& table_name, uint64_t& out_query_id, uint64_t& out_table_id)
+    bool ObStmt::check_in_cte(
+            const std::string& table_name,
+            uint64_t& out_query_id,
+            uint64_t& out_table_id)
     {
         assert(table_name.length() > 0);
         ObStmt* cur = this;
@@ -46,6 +59,242 @@ namespace resolve
                 {
                     out_table_id = cte.table_id;
                     out_query_id = cur->query_id_;
+                    return true;
+                }
+            }
+            cur = cur->parent_;
+        }
+        return false;
+    }
+
+    bool ObStmt::check_table_item(
+            const std::string& table_name,
+            uint64_t& out_query_id,
+            uint64_t& out_table_id)
+    {
+        assert(table_name.length() > 0);
+        ObStmt* cur = this;
+        while (cur != nullptr)
+        {
+            for (const TableItem& tbi : cur->table_items_)
+            {
+                if (tbi.table_name_ == table_name ||
+                    tbi.alias_name_ == table_name)
+                {
+                    out_table_id = tbi.table_id;
+                    out_query_id = cur->query_id_;
+                    return true;
+                }
+            }
+            cur = cur->parent_;
+        }
+        return false;
+    }
+
+    bool ObStmt::check_table_item(uint64_t table_id, uint64_t& out_query_id)
+    {
+        ObStmt* cur = this;
+        while (cur != nullptr)
+        {
+            for (const TableItem& tbi : cur->table_items_)
+            {
+                if (tbi.table_id == table_id)
+                {
+                    out_query_id = cur->query_id_;
+                    return true;
+                }
+            }
+            cur = cur->parent_;
+        }
+        return false;
+    }
+
+    bool ObStmt::check_table_column(
+            ResultPlan* plan,
+            const std::string& column_name,
+            const TableItem& table_item,
+            uint64_t& column_id)
+    {
+        column_id = OB_INVALID_ID;
+        assert(plan && plan->logicPlan_);
+        switch (table_item.type_)
+        {
+            case TableItem::BASE_TABLE:
+            case TableItem::ALIAS_TABLE:
+            {
+                column_id = LocalTableMgr::
+                        Ins()->get_local_table_column_id(
+                                table_item.table_name_,
+                                column_name);
+                if (column_id == OB_INVALID_ID)
+                {
+                    //column_id = LocalTableMgr::Ins()->add_local_table_column(
+                    //        table_item.table_name_, column_name);
+                }
+            }
+                break;
+            case TableItem::CTE_TABLE:
+            case TableItem::GENERATED_TABLE:
+            {
+                ObStmt* stmt = plan->logicPlan_->get_query(table_item.ref_id_);
+                assert(stmt != nullptr);
+                int i = 0;
+                for (const SelectItem& select_item : stmt->select_items_)
+                {
+                    std::string l = select_item.alias_name_;
+                    std::string r = column_name;
+                    std::transform(l.begin(), l.end(), l.begin(), ::toupper);
+                    std::transform(r.begin(), r.end(), r.begin(), ::toupper);
+                    if (l == r)
+                    {
+                        assert(column_id == OB_INVALID_ID);
+                        column_id = i + OB_APP_MIN_COLUMN_ID;
+                    }
+                    ++i;
+                }
+            }
+                break;
+            case TableItem::USE_CTE_TABLE:
+            {
+                uint64_t qid = table_item.cte_at_query_id_;
+                uint64_t tid = table_item.ref_id_;
+                ObStmt* stmt = plan->logicPlan_->get_query(qid);
+                assert(stmt != nullptr);
+                TableItem cte_target;
+                bool find = false;
+                for (auto cte : stmt->cte_items_)
+                {
+                    if (cte.table_id == tid)
+                    {
+                        find = true;
+                        cte_target = cte;
+                        break;
+                    }
+                }
+                assert(find);
+                return check_table_column(plan, column_name, cte_target, column_id);
+            }
+                break;
+            default:
+                /*unreachable*/
+                assert(false);
+        }
+        return column_id != OB_INVALID_ID;
+    }
+
+    int ObStmt::add_column_item(
+            ResultPlan* plan,
+            const std::string column_name,
+            ColumnItem& out_column_item)
+    {
+        // here ignore correlated subquery, only search this stmt
+        bool flag = false;
+        TableItem tbi;
+        uint64_t column_id = OB_INVALID_ID;
+        for (const TableItem& it : table_items_)
+        {
+            bool checkColumn = check_table_column(plan, column_name, it, column_id);
+            if (checkColumn)
+            {
+                flag = true;
+                tbi = it;
+                break;
+            }
+        }
+        if (flag)
+        {
+            out_column_item.query_id_ = query_id_;
+            out_column_item.table_id_ = tbi.table_id;
+            out_column_item.column_name_ = column_name;
+            out_column_item.column_id_ = column_id;
+            push_back_(column_items_, out_column_item);
+        }
+        else
+        {
+            for (const TableItem& it : table_items_)
+            {
+                if (it.type_ == TableItem::BASE_TABLE ||
+                    it.type_ == TableItem::ALIAS_TABLE)
+                {
+                    out_column_item.query_id_ = query_id_;
+                    out_column_item.table_id_ = it.table_id;
+                    out_column_item.column_name_ = column_name;
+                    out_column_item.column_id_ = LocalTableMgr::Ins()->add_local_table_column(it.table_name_, column_name);
+                    push_back_(column_items_, out_column_item);
+                    break;
+                }
+            }
+        }
+        // todo
+        //assert(out_column_item.column_id_ != OB_INVALID_ID);
+        return 0;
+    }
+    int ObStmt::add_column_item(
+            ResultPlan* plan,
+            const std::string table_name,
+            const std::string& column_name,
+            ColumnItem& out_column_item)
+    {
+        uint64_t query_id = OB_INVALID_ID;
+        uint64_t table_id = OB_INVALID_ID;
+        TableItem tbi;
+        bool findtb = get_table_item(table_name, query_id, table_id, tbi);
+        assert(findtb);
+        ObStmt* stmt = plan->logicPlan_->get_query(query_id);
+        ColumnItem cli{OB_INVALID_ID, "", OB_INVALID_ID, OB_INVALID_ID};
+        bool checkColumn = check_table_column(plan, column_name, tbi, cli.column_id_);
+        if (!checkColumn && (tbi.type_ == TableItem::BASE_TABLE || tbi.type_ == TableItem::ALIAS_TABLE))
+        {
+            cli.column_id_ = LocalTableMgr::Ins()->add_local_table_column(tbi.table_name_, column_name);
+        }
+
+
+        cli.column_name_ = column_name;
+        cli.table_id_ = tbi.table_id;
+        cli.query_id_ = query_id;
+        push_back_(column_items_, cli);
+        out_column_item = cli;
+    }
+
+    bool ObStmt::get_table_item(
+            const std::string& table_name,
+            uint64_t& out_query_id,
+            uint64_t& out_table_id,
+            TableItem& out_table_item)
+    {
+        assert(table_name.length() > 0);
+        ObStmt* cur = this;
+        while (cur != nullptr)
+        {
+            for (const TableItem& tbi : cur->table_items_)
+            {
+                if (tbi.table_name_ == table_name ||
+                    tbi.alias_name_ == table_name)
+                {
+                    out_table_id = tbi.table_id;
+                    out_query_id = cur->query_id_;
+                    out_table_item = tbi;
+                    return true;
+                }
+            }
+            cur = cur->parent_;
+        }
+        return false;
+    }
+    bool ObStmt::get_table_item(
+            uint64_t table_id,
+            uint64_t& out_query_id,
+            TableItem& out_table_item)
+    {
+        ObStmt* cur = this;
+        while (cur != nullptr)
+        {
+            for (const TableItem& tbi : cur->table_items_)
+            {
+                if (tbi.table_id == table_id)
+                {
+                    out_query_id = cur->query_id_;
+                    out_table_item = tbi;
                     return true;
                 }
             }
@@ -70,13 +319,16 @@ namespace resolve
         {
             case TableItem::BASE_TABLE:
             {
-                item.ref_id_ = get_local_table_id(table_name);
+
+                item.ref_id_ = LocalTableMgr::
+                        Ins()->get_local_table_id(table_name);
                 item.table_id = item.ref_id_;
             }
                 break;
             case TableItem::ALIAS_TABLE:
             {
-                item.ref_id_ = get_local_table_id(table_name);
+                item.ref_id_ = LocalTableMgr::
+                        Ins()->get_local_table_id(table_name);
                 item.table_id = resultPlan->logicPlan_->generate_table_id();
             }
                 break;
@@ -112,16 +364,45 @@ namespace resolve
 
 
     int resolve_expr(ResultPlan *plan, Node *node, ObStmt* parent) {
-        if (!node) return -1;
-        switch (node->nodeType_) {
-            case E_OP_NAME_FIELD: {
-
+        if (!node)
+            return 0;
+        if (node->nodeType_ == E_OP_NAME_FIELD)
+        {
+            Node* tb = node->getChild(E_OP_NAME_FIELD_RELATION_NAME);
+            Node* cl = node->getChild(E_OP_NAME_FIELD_COLUMN_NAME);
+            assert(cl != nullptr);
+            if (tb)
+            {
+                ColumnItem cli{OB_INVALID_ID, "", OB_INVALID_ID, OB_INVALID_ID};
+                parent->add_column_item(plan, tb->terminalToken_.str,
+                        cl->terminalToken_.str, cli);
             }
-                break;
+            else
+            {
+                ColumnItem cli{OB_INVALID_ID, "", OB_INVALID_ID, OB_INVALID_ID};
+                parent->add_column_item(plan, cl->terminalToken_.str, cli);
+            }
+            return 0;
+        }
+        if (node->nodeType_ == E_SELECT)
+        {
+            uint64_t query_id = OB_INVALID_ID;
+            resolve_select_statement(plan, node, query_id, parent);
+            return 0;
+        }
+        for (int i = 0; i < node->getChildrenCount(); ++i)
+        {
+            Node* child = node->getChild(i);
+            if (child)
+                resolve_expr(plan, child, parent);
         }
     }
 
-    int resolve_select_statement(ResultPlan *plan, Node* node, uint64_t& queryID, ObStmt* parent) {
+    int resolve_select_statement(
+            ResultPlan *plan,
+            Node* node,
+            uint64_t& queryID,
+            ObStmt* parent) {
         assert(node && node->nodeType_ == E_SELECT);
         queryID = plan->logicPlan_->generate_query_id();
         ObStmt* select_stmt = new ObStmt;
@@ -138,11 +419,17 @@ namespace resolve
         resolve_cte_clause(plan, node->getChild(E_SELECT_OPT_WITH), select_stmt);
         resolve_from_clause(plan, node->getChild(E_SELECT_FROM_LIST), select_stmt);
 
+        resolve_select_clause(plan, node->getChild(E_SELECT_SELECT_EXPR_LIST), select_stmt);
+        resolve_where_clause(plan, node->getChild(E_SELECT_OPT_WHERE), select_stmt);
 
+        resolve_select_items(plan, node->getChild(E_SELECT_SELECT_EXPR_LIST), select_stmt);
 
     }
 
-    int resolve_cte_clause(ResultPlan* plan, Node* node, ObStmt* parent)
+    int resolve_cte_clause(
+            ResultPlan* plan,
+            Node* node,
+            ObStmt* parent)
     {
         if (!node)
             return 0;
@@ -192,6 +479,43 @@ namespace resolve
 
     }
 
+    int resolve_where_clause(ResultPlan* plan, Node* node, ObStmt* parent)
+    {
+        if (!node)
+            return 0;
+        assert(node->nodeType_ == E_WHERE_CLAUSE);
+        Node* expr = node->getChild(E_WHERE_CLAUSE_EXPR);
+        resolve_expr(plan, expr, parent);
+    }
+
+    int resolve_select_clause(ResultPlan* plan, Node* node, ObStmt* parent)
+    {
+        assert(node != nullptr);
+        resolve_expr(plan, node, parent);
+    }
+
+    int resolve_select_items(ResultPlan* plan, Node* node, ObStmt* parent)
+    {
+        assert(node != nullptr);
+        std::list<Node*> ls;
+        Node::ToList(node, ls);
+        for (auto child : ls)
+        {
+            assert(child->nodeType_ == E_PROJECT_STRING);
+            Node* nd = child->getChild(E_PROJECT_STRING_EXPR_OR_ALIAS);
+            std::string alias_name = "";
+            if (nd->nodeType_ == E_ALIAS)
+            {
+                alias_name = nd->getChild(E_ALIAS_RELATION_NAME)->terminalToken_.str;
+            }
+            else
+            {
+                alias_name = nd->serialize();
+            }
+            parent->select_items_.push_back({OB_INVALID_ID, "", alias_name});
+        }
+    }
+
     int resolve_table(ResultPlan* plan, Node* node, ObStmt* parent, uint64_t& out_table_id)
     {
         assert(node != nullptr);
@@ -209,7 +533,7 @@ namespace resolve
         }
         else if (table_node->nodeType_ == E_JOINED_TABLE_WITH_PARENS)
         {
-            table_node = table_node->getChild(E_JOINED_TABLE_WITH_PARENS_JOINED_TABLE);
+            table_node = remove_joined_parens(table_node);
         }
 
         switch (table_node->nodeType_)
@@ -267,34 +591,62 @@ namespace resolve
             case E_JOINED_TABLE:
             {
                 /*todo*/
+                resolve_joined_table(plan, table_node, parent);
             }
                 break;
             default:
                 /*unreachable*/
                 assert(false);
         }
+        return 0;
     }
 
-
-
-    uint64_t  get_local_table_id(const std::string& table_name)
+    int resolve_joined_table(ResultPlan* plan, Node* node, ObStmt* parent)
     {
-        static uint64_t local_table_id_begin = 200;
-        static std::map<std::string, uint64_t > local_table{};
-        std::string tb = table_name;
-        std::transform(tb.begin(), tb.end(), tb.begin(), ::toupper);
-        auto fd = local_table.find(tb);
-        if (fd == local_table.end())
+        int ret = 0;
+        assert(node->nodeType_ == E_JOINED_TABLE);
+        Node* table_node = nullptr;
+        for (int i = 0; i < node->getChildrenCount(); ++i)
         {
-            local_table[tb] = local_table_id_begin;
-            ++local_table_id_begin;
+            table_node = node->getChild(i);
+            if (E_JOINED_TABLE_TABLE_FACTOR_L == i ||
+                E_JOINED_TABLE_TABLE_FACTOR_R == i)
+            {
+                switch (table_node->nodeType_)
+                {
+                    case E_IDENTIFIER:
+                    case E_SELECT:
+                    case E_ALIAS:
+                    {
+                        uint64_t tid = OB_INVALID_ID;
+                        ret = resolve_table(plan, table_node, parent, tid);
+                    }
+                        break;
+                    case E_JOINED_TABLE:
+                    {
+                        ret = resolve_joined_table(plan, table_node, parent);
+                    }
+                        break;
+                    case E_SELECT_WITH_PARENS:
+                    {
+                        table_node = remove_select_parens(table_node);
+                        uint64_t tid = OB_INVALID_ID;
+                        ret = resolve_table(plan, table_node, parent, tid);
+                    }
+                        break;
+                    case E_JOINED_TABLE_WITH_PARENS:
+                    {
+                        table_node = remove_joined_parens(table_node);
+                        uint64_t tid = OB_INVALID_ID;
+                        ret = resolve_table(plan, table_node, parent, tid);
+                    }
+                        break;
+                }
+            }
         }
-        else
-        {
-            return fd->second;
-        }
+        resolve_expr(plan, node->getChild(E_JOINED_TABLE_ON_EXPR), parent);
+        return ret;
     }
-
 
     Node* remove_select_parens(Node* node)
     {
@@ -306,4 +658,17 @@ namespace resolve
         while (node->nodeType_ == E_SELECT_WITH_PARENS);
         return node;
     }
+
+    Node* remove_joined_parens(Node* node)
+    {
+        assert(node && node->nodeType_ == E_JOINED_TABLE_WITH_PARENS);
+        do
+        {
+            node = node->getChild(E_SELECT_WITH_PARENS_SELECT);
+        }
+        while (node->nodeType_ == E_JOINED_TABLE_WITH_PARENS);
+        return node;
+    }
+
+    LocalTableMgr* LocalTableMgr::ins_ = nullptr;
 }
