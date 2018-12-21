@@ -1,5 +1,6 @@
 #include "resolve.h"
 #include "node.h"
+#include "expr.h"
 #include <assert.h>
 
 namespace resolve
@@ -11,6 +12,18 @@ namespace resolve
             assert(stmt != nullptr);
             if (query_id == stmt->query_id_)
                 return stmt;
+        }
+        return nullptr;
+    }
+
+    SqlRawExpr* LogicPlan::get_expr(uint64_t expr_id)
+    {
+        for (auto sql_expr : exprs_)
+        {
+            if (sql_expr->get_expr_id() == expr_id)
+            {
+                return sql_expr;
+            }
         }
         return nullptr;
     }
@@ -451,7 +464,7 @@ namespace resolve
         assert(subquery && subquery->nodeType_ == E_SELECT_WITH_PARENS);
         subquery = remove_select_parens(subquery);
         assert(subquery->nodeType_ == E_SELECT);
-        uint64_t query_id;
+        uint64_t query_id = OB_INVALID_ID;
         resolve_select_statement(plan, subquery, query_id, parent);
 
         Node* tb = node->getChild(E_COMMON_TABLE_EXPR_TABLE);

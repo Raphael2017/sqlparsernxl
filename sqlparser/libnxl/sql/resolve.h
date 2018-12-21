@@ -15,6 +15,13 @@ struct Node;
 
 namespace resolve
 {
+    typedef uint64_t TableID;
+    typedef uint64_t QueryID;
+    typedef uint64_t ColumnID;
+    typedef uint64_t ExprID;
+    typedef uint64_t CteID;
+
+
     struct TableItem
     {
         enum TableType
@@ -26,13 +33,13 @@ namespace resolve
             USE_CTE_TABLE,
         };
 
-        uint64_t table_id;
+        TableID table_id;
         std::string table_name_;
         std::string alias_name_;
         TableType   type_;
 
-        uint64_t ref_id_;   // for subquery
-        uint64_t cte_at_query_id_; // for find cte
+        QueryID ref_id_;          // for GENERATED_TABLE, CTE_TABLE, ref_id_ link to a (select XXX)
+        QueryID cte_at_query_id_; // for USE_CTE_TABLE  <cte_at_query_id_, ref_id_> link to cte definition
     };
 
     struct ColumnItem
@@ -53,6 +60,7 @@ namespace resolve
     typedef TableItem CteItem;
 
     struct ObStmt;
+    struct SqlRawExpr;
     struct LogicPlan
     {
         uint64_t generate_table_id()
@@ -68,7 +76,9 @@ namespace resolve
             stmts_.push_back(s);
         }
         ObStmt* get_query(uint64_t query_id);
+        SqlRawExpr* get_expr(uint64_t expr_id);
         std::vector<ObStmt*> stmts_;
+        std::vector<SqlRawExpr*> exprs_;
         uint64_t new_gen_tid_ = UINT16_MAX;
         uint64_t  new_gen_qid_ = 1;
     };
@@ -84,6 +94,7 @@ namespace resolve
         std::vector<TableItem> table_items_;
         std::vector<ColumnItem> column_items_;
         std::vector<CteItem> cte_items_;
+        //std::vector<>
         int add_table_item(ResultPlan*, const std::string& table_name,
                 const std::string alias_name, TableItem::TableType tbtype,
                 uint64_t ref_id, uint64_t& out_table_id, uint64_t cte_at_query_id);
@@ -122,12 +133,14 @@ namespace resolve
                 uint64_t ref_id, uint64_t& out_table_id, uint64_t cte_at_query_id);
         static void push_back_(std::vector<ColumnItem>& src, const ColumnItem& it)
         {
-            std::vector<ColumnItem>::iterator find = std::find_if(src.begin(), src.end(), [it](ColumnItem cur){
-                if (cur.column_id_ == it.column_id_ && cur.column_name_ == it.column_name_ &&
-                    cur.table_id_ == it.table_id_ && cur.query_id_ == it.query_id_)
-                    return true;
-                return false;
-            });
+            std::vector<ColumnItem>::iterator find = std::find_if(src.begin(), src.end(),
+                    [it](ColumnItem cur)
+                    {
+                        if (cur.column_id_ == it.column_id_ && cur.column_name_ == it.column_name_ &&
+                            cur.table_id_ == it.table_id_ && cur.query_id_ == it.query_id_)
+                            return true;
+                        return false;
+                    });
             if (find == src.end())
             {
                 src.push_back(it);

@@ -5,6 +5,9 @@
 
 bool parser::parse(const std::string& sql, ParseResult* result)
 {
+    std::string sql_up = sql;
+    std::transform(sql_up.begin(), sql_up.end(), sql_up.begin(), ::toupper);
+
     yyscan_t scanner;
     YY_BUFFER_STATE state;
 

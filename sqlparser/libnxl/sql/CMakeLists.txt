@@ -4,6 +4,7 @@ set(SRCS
         sqlparser_bison.cpp
         sqlparser_flex.cpp
         parser.cpp
-        resolve.cpp)
+        resolve.cpp
+        expr.cpp)
 
 add_library(libnxl ${SRCS})
