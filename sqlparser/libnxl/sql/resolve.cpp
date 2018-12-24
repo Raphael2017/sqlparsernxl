@@ -139,11 +139,6 @@ namespace resolve
                         Ins()->get_local_table_column_id(
                                 table_item.table_name_,
                                 column_name);
-                if (column_id == OB_INVALID_ID)
-                {
-                    //column_id = LocalTableMgr::Ins()->add_local_table_column(
-                    //        table_item.table_name_, column_name);
-                }
             }
                 break;
             case TableItem::CTE_TABLE:
@@ -200,7 +195,6 @@ namespace resolve
             const std::string column_name,
             ColumnItem& out_column_item)
     {
-        // here ignore correlated subquery, only search this stmt
         bool flag = false;
         TableItem tbi;
         uint64_t column_id = OB_INVALID_ID;
