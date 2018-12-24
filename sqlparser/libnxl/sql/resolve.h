@@ -96,10 +96,10 @@ namespace resolve
         std::vector<CteItem> cte_items_;
         //std::vector<>
         int add_table_item(ResultPlan*, const std::string& table_name,
-                const std::string alias_name, TableItem::TableType tbtype,
+                const std::string& alias_name, TableItem::TableType tbtype,
                 uint64_t ref_id, uint64_t& out_table_id, uint64_t cte_at_query_id);
         int add_cte_item(ResultPlan*, const std::string& table_name,
-                 const std::string alias_name, TableItem::TableType tbtype,
+                 const std::string& alias_name, TableItem::TableType tbtype,
                  uint64_t ref_id, uint64_t& out_table_id, uint64_t cte_at_query_id);
         bool check_in_cte(const std::string& name, uint64_t& out_query_id, uint64_t& out_table_id);
 
@@ -112,8 +112,8 @@ namespace resolve
 
         bool check_table_column(ResultPlan*, const std::string& column_name,
                                 const TableItem& table_item, uint64_t& column_id);
-        int add_column_item(ResultPlan* plan, const std::string column_name, ColumnItem& out_column_item);
-        int add_column_item(ResultPlan* plan, const std::string table_name, const std::string& column_name,
+        int add_column_item(ResultPlan* plan, const std::string& column_name, ColumnItem& out_column_item);
+        int add_column_item(ResultPlan* plan, const std::string& table_name, const std::string& column_name,
                 ColumnItem& out_column_item);
 
 
@@ -129,7 +129,7 @@ namespace resolve
     private:
         int _add_table_item(std::vector<TableItem>& tbs, ResultPlan*,
                 const std::string& table_name,
-                const std::string alias_name, TableItem::TableType tbtype,
+                const std::string& alias_name, TableItem::TableType tbtype,
                 uint64_t ref_id, uint64_t& out_table_id, uint64_t cte_at_query_id);
         static void push_back_(std::vector<ColumnItem>& src, const ColumnItem& it)
         {

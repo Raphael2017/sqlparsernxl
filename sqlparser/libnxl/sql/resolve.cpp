@@ -31,7 +31,7 @@ namespace resolve
     int ObStmt::add_table_item(
             ResultPlan* resultPlan,
             const std::string& table_name,
-            const std::string alias_name,
+            const std::string& alias_name,
             TableItem::TableType tbtype,
             uint64_t ref_id,
             uint64_t& out_table_id,
@@ -44,7 +44,7 @@ namespace resolve
     int ObStmt::add_cte_item(
             ResultPlan* resultPlan,
             const std::string& table_name,
-            const std::string alias_name,
+            const std::string& alias_name,
             TableItem::TableType tbtype,
             uint64_t ref_id,
             uint64_t& out_table_id,
@@ -192,7 +192,7 @@ namespace resolve
 
     int ObStmt::add_column_item(
             ResultPlan* plan,
-            const std::string column_name,
+            const std::string& column_name,
             ColumnItem& out_column_item)
     {
         bool flag = false;
@@ -238,7 +238,7 @@ namespace resolve
     }
     int ObStmt::add_column_item(
             ResultPlan* plan,
-            const std::string table_name,
+            const std::string& table_name,
             const std::string& column_name,
             ColumnItem& out_column_item)
     {
@@ -314,7 +314,7 @@ namespace resolve
             std::vector<TableItem>& tbs,
             ResultPlan* resultPlan,
             const std::string& table_name,
-            const std::string alias_name,
+            const std::string& alias_name,
             TableItem::TableType tbtype,
             uint64_t ref_id,
             uint64_t& out_table_id,
