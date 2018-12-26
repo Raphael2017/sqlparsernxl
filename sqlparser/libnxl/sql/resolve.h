@@ -7,6 +7,7 @@
 #include <set>
 #include <algorithm>
 #include <assert.h>
+#include <functional>
 
 #define OB_INVALID_ID  0
 #define OB_APP_MIN_COLUMN_ID  500
@@ -40,6 +41,8 @@ namespace resolve
 
         QueryID ref_id_;          // for GENERATED_TABLE, CTE_TABLE, ref_id_ link to a (select XXX)
         QueryID cte_at_query_id_; // for USE_CTE_TABLE  <cte_at_query_id_, ref_id_> link to cte definition
+
+        bool is_recursive_cte_{false};  // for CTE_TABLE
     };
 
     struct ColumnItem
@@ -63,6 +66,7 @@ namespace resolve
     struct SqlRawExpr;
     struct LogicPlan
     {
+        ~LogicPlan();
         uint64_t generate_table_id()
         {
             return new_gen_tid_--;
@@ -85,11 +89,19 @@ namespace resolve
     struct ResultPlan
     {
         LogicPlan* logicPlan_;
+        std::function<void(
+                Node* node,
+                TableItem::TableType table_type,
+                const std::string& table_name,
+                const std::string& alias_name)> base_table_callback_ = nullptr;
     };
 
     struct ObStmt
     {
-        uint64_t query_id_;
+        uint64_t left_query_id_ = OB_INVALID_ID;
+        uint64_t right_query_id_ = OB_INVALID_ID;
+
+        uint64_t query_id_ = OB_INVALID_ID;
         ObStmt* parent_ = nullptr;
         std::vector<TableItem> table_items_;
         std::vector<ColumnItem> column_items_;
@@ -186,6 +198,11 @@ namespace resolve
                 }
             }
         }
+        void reset()
+        {
+            delete(ins_);
+            ins_ = nullptr;
+        }
         static LocalTableMgr* Ins()
         {
             if (!ins_)
@@ -250,8 +267,7 @@ namespace resolve
         std::map<uint64_t , std::map<std::string, uint64_t >> local_table_column_;
         uint64_t local_table_id_begin_;
     };
-    Node* remove_select_parens(Node* node);
-    Node* remove_joined_parens(Node* node);
+
 }
 
 #endif

@@ -152,7 +152,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> sql_stmt stmt_list stmt
 %type <node> select_stmt
 
-%type <node> from_dual from_clause table_factor_non_join data_type opt_hint
+%type <node> from_clause table_factor_non_join data_type opt_hint
 %type <node> column_name relation_name function_name column_label
 
 %type <node> select_with_parens select_no_parens select_clause
@@ -283,30 +283,6 @@ no_table_select:
             $4,             /* E_SELECT_OPT_TOP 15 */
             nullptr         /* E_SELECT_OPT_WITH 16 */
             );
-    $$->serialize_format = &SELECT_SERIALIZE_FORMAT;
-}
-    |   SELECT opt_hint opt_distinct opt_top select_expr_list
-            from_dual opt_where opt_select_limit
-{
-    $$ = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
-                $3,             /* E_SELECT_DISTINCT 0 */
-                $5,             /* E_SELECT_SELECT_EXPR_LIST 1 */
-                $6,             /* E_SELECT_FROM_LIST 2 */
-                $7,             /* E_SELECT_OPT_WHERE 3 */
-                nullptr,        /* E_SELECT_GROUP_BY 4 */
-                nullptr,        /* E_SELECT_HAVING 5 */
-                nullptr,        /* E_SELECT_SET_OPERATION 6 */
-                nullptr,        /* E_SELECT_ALL_SPECIFIED 7 */
-                nullptr,        /* E_SELECT_FORMER_SELECT_STMT 8 */
-                nullptr,        /* E_SELECT_LATER_SELECT_STMT 9 */
-                nullptr,        /* E_SELECT_ORDER_BY 10 */
-                $8,             /* E_SELECT_LIMIT 11 */
-                nullptr,        /* E_SELECT_FOR_UPDATE 12 */
-                $2,             /* E_SELECT_HINTS 13 */
-                nullptr,        /* E_SELECT_WHEN 14 */
-                $4,             /* E_SELECT_OPT_TOP 15 */
-                nullptr         /* E_SELECT_OPT_WITH 16 */
-                );
     $$->serialize_format = &SELECT_SERIALIZE_FORMAT;
 }
 ;
@@ -469,14 +445,6 @@ opt_where:
 {
     $$ = Node::makeNonTerminalNode(E_WHERE_CLAUSE, 1, $2);
     $$->serialize_format = &WHERE_SERIALIZE_FORMAT;
-}
-;
-
-from_dual:
-    FROM DUAL
-{
-    $$ = Node::makeNonTerminalNode(E_FROM_CLAUSE, 0);
-    $$->serialize_format = &FROM_DUAL_SERIALIZE_FORMAT;
 }
 ;
 

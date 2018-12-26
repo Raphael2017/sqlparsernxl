@@ -1,5 +1,6 @@
 #include "thirdparty/microtest.h"
 #include "parser.h"
+#include "resolve.h"
 
 #include <fstream>
 #include <iostream>
@@ -46,8 +47,7 @@ TEST(TPCHQueryGrammarTests)
     for (const std::string& file_path : files)
     {
         std::string query = readFileContents(file_path);
-        concatenated += query;
-        if (concatenated.back() != ';') concatenated += ";";
+
 
         ParseResult result;
         parser::parse(query, &result);
@@ -60,6 +60,11 @@ TEST(TPCHQueryGrammarTests)
         else
         {
             mt::printOk(file_path.c_str());
+        }
+        if (result.accept)
+        {
+            concatenated += query;
+            if (concatenated.back() != ';') concatenated += ";";
         }
     }
 
@@ -76,7 +81,28 @@ TEST(TPCHQueryGrammarTests)
         mt::printOk("TPCHAllConcatenated");
     }
 
-
+    if (result.accept)
+    {
+        std::list<Node*> stmts;
+        Node::ToList(result.result_tree_, stmts);
+        for (auto stmt : stmts)
+        {
+            resolve::ResultPlan resultPlan;
+            resultPlan.logicPlan_ = new resolve::LogicPlan;
+            printf("\n");
+            resultPlan.base_table_callback_ = [](
+                    Node* node,
+                    resolve::TableItem::TableType tp,
+                    const std::string& table_name,
+                    const std::string& alias_name
+            ){
+                printf("base_table_name: %s\n", table_name.c_str());
+            };
+            uint64_t query_id = OB_INVALID_ID;
+            resolve::resolve_select_statement(&resultPlan, stmt, query_id, nullptr);
+            delete(resultPlan.logicPlan_);
+        }
+    }
 
 
 
