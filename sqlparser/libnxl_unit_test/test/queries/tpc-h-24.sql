@@ -1,9 +1,11 @@
-WITH cte1
-     AS (SELECT *
-         FROM   abc)
-SELECT *
-FROM   (WITH cte1
-             AS (SELECT *
-                 FROM   umd)
-        SELECT *
-         FROM   cte1) AS CMM
+-- SIMPLE CTE
+WITH DirReps(ManagerID, DirectReports) AS
+(
+    SELECT ManagerID, COUNT(*)
+    FROM Employee AS e
+    WHERE ManagerID IS NOT NULL
+    GROUP BY ManagerID
+)
+SELECT ManagerID, DirectReports
+FROM DirReps
+ORDER BY ManagerID;

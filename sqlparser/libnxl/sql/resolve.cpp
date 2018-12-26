@@ -412,6 +412,8 @@ namespace resolve
 
 
     int resolve_expr(ResultPlan *plan, Node *node, ObStmt* parent) {
+        if (true)
+            return 0;
         if (!node)
             return 0;
         if (node->nodeType_ == E_OP_NAME_FIELD)

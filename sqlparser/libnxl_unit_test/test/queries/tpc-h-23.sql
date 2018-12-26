@@ -1,4 +1,4 @@
--- COMMON TABLE EXPRESSION
+-- LIST CTE
 WITH cte1 (avg_c_acctbal)
      AS (SELECT Avg(c_acctbal)
          FROM   customer

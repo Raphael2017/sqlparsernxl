@@ -152,13 +152,13 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> sql_stmt stmt_list stmt
 %type <node> select_stmt
 
-%type <node> from_clause table_factor_non_join data_type opt_hint
+%type <node> opt_from_clause table_factor_non_join data_type opt_hint
 %type <node> column_name relation_name function_name column_label
 
 %type <node> select_with_parens select_no_parens select_clause
-%type <node> simple_select no_table_select select_limit select_expr_list
+%type <node> simple_select select_limit select_expr_list
 %type <node> opt_where opt_groupby opt_order_by order_by opt_having opt_top
-%type <node> opt_select_limit limit_expr
+%type <node> limit_expr
 %type <node> sort_list sort_key opt_asc_desc
 %type <node> opt_distinct distinct_or_all projection
 %type <node> from_list table_factor relation_factor joined_table
@@ -228,8 +228,7 @@ select_with_parens:
 ;
 
 select_no_parens:
-    no_table_select
-    |   simple_select
+    simple_select
     |   select_clause order_by
 {
     $$ = $1;
@@ -261,31 +260,7 @@ select_no_parens:
 }
 ;
 
-no_table_select:
-    SELECT opt_hint opt_distinct opt_top select_expr_list opt_select_limit
-{
-    $$ = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
-            $3,             /* E_SELECT_DISTINCT 0 */
-            $5,             /* E_SELECT_SELECT_EXPR_LIST 1 */
-            nullptr,        /* E_SELECT_FROM_LIST 2 */
-            nullptr,        /* E_SELECT_OPT_WHERE 3 */
-            nullptr,        /* E_SELECT_GROUP_BY 4 */
-            nullptr,        /* E_SELECT_HAVING 5 */
-            nullptr,        /* E_SELECT_SET_OPERATION 6 */
-            nullptr,        /* E_SELECT_ALL_SPECIFIED 7 */
-            nullptr,        /* E_SELECT_FORMER_SELECT_STMT 8 */
-            nullptr,        /* E_SELECT_LATER_SELECT_STMT 9 */
-            nullptr,        /* E_SELECT_ORDER_BY 10 */
-            $6,             /* E_SELECT_LIMIT 11 */
-            nullptr,        /* E_SELECT_FOR_UPDATE 12 */
-            $2,             /* E_SELECT_HINTS 13 */
-            nullptr,        /* E_SELECT_WHEN 14 */
-            $4,             /* E_SELECT_OPT_TOP 15 */
-            nullptr         /* E_SELECT_OPT_WITH 16 */
-            );
-    $$->serialize_format = &SELECT_SERIALIZE_FORMAT;
-}
-;
+
 
 select_clause:
     simple_select
@@ -294,8 +269,7 @@ select_clause:
 
 simple_select:
     SELECT opt_hint opt_distinct opt_top select_expr_list
-    from_clause
-    opt_where opt_groupby opt_having
+    opt_from_clause opt_where opt_groupby opt_having
 {
     $$ = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
                     $3,             /* E_SELECT_DISTINCT 0 */
@@ -448,8 +422,12 @@ opt_where:
 }
 ;
 
-from_clause:
-    FROM from_list
+opt_from_clause:
+    /* EMPTY */
+{
+    $$ = nullptr;
+}
+    | FROM from_list
 {
     $$ = Node::makeNonTerminalNode(E_FROM_CLAUSE, 1, $2);
     $$->serialize_format = &FROM_SERIALIZE_FORMAT;
@@ -500,13 +478,6 @@ limit_expr:
 {
     $$ = $1;
 }
-;
-
-opt_select_limit:
-    /* EMPTY */
-{ $$ = nullptr; }
-  | select_limit
-{ $$ = $1; }
 ;
 
 opt_groupby:
