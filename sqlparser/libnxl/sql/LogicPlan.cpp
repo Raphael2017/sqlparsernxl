@@ -13,11 +13,28 @@ namespace resolve
 
     LogicPlan::~LogicPlan()
     {
+        release();
+    }
+
+    void LogicPlan::reset()
+    {
+        new_gen_qid_ = UINT16_MAX;
+        new_gen_qid_ = 1;
+        release();
+    }
+
+    void LogicPlan::release()
+    {
         for (auto stmt : stmts_)
         {
             delete(stmt);
         }
         stmts_.clear();
+        for (auto expr : exprs_)
+        {
+            delete(expr);
+        }
+        exprs_.clear();
     }
 
     uint64_t LogicPlan::generate_table_id()

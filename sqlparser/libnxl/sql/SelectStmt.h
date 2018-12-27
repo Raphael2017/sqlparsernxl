@@ -52,12 +52,16 @@ namespace resolve
     struct LocalTableMgr;
     struct ResultPlan
     {
-        LogicPlan* logicPlan_{nullptr};
-        LocalTableMgr* local_table_mgr{nullptr};
-        std::function<void(Node* node,
+        typedef std::function<void(Node* node,
                 TableItem::TableType table_type,
                 const std::string& table_name,
-                const std::string& alias_name)> base_table_visit_{nullptr};
+                const std::string& alias_name)> TableVisit;
+        explicit ResultPlan(const TableVisit& visit);
+        ~ResultPlan();
+        void reset();
+        LogicPlan* logicPlan_{nullptr};
+        LocalTableMgr* local_table_mgr{nullptr};
+        TableVisit base_table_visit_;
     };
 
     struct SelectStmt
@@ -136,13 +140,11 @@ namespace resolve
                 const std::string& column_name,
                 ColumnItem& out_column_item);
 
-        // for select
-        int add_select_item(uint64_t eid, const std::string& alias_name,
-                            const std::string& name)
-        {
-            select_items_.push_back({eid, name, alias_name});
-        }
-        // for select
+
+        int add_select_item(
+                uint64_t eid,
+                const std::string& alias_name,
+                const std::string& name);       // for select
 
     private:
         uint64_t left_query_id_;
@@ -156,9 +158,6 @@ namespace resolve
 
         std::vector<SelectItem> select_items_;  // just for select
 
-        friend int resolve_cte(ResultPlan*, Node*, SelectStmt*, uint64_t&);
-        friend struct RawExprUnaryRef;
-
     private:
         static int _add_table_item(
                 std::vector<TableItem>& tbs,
@@ -170,21 +169,10 @@ namespace resolve
                 uint64_t& out_table_id,
                 uint64_t cte_at_query_id);
 
-        static void push_back_(std::vector<ColumnItem>& src, const ColumnItem& it)
-        {
-            std::vector<ColumnItem>::iterator find = std::find_if(src.begin(), src.end(),
-                  [it](ColumnItem cur)
-                  {
-                      if (cur.column_id_ == it.column_id_ && cur.column_name_ == it.column_name_ &&
-                          cur.table_id_ == it.table_id_ && cur.query_id_ == it.query_id_)
-                          return true;
-                      return false;
-                  });
-            if (find == src.end())
-            {
-                src.push_back(it);
-            }
-        }
+        static void push_back_(std::vector<ColumnItem>& src, const ColumnItem& it);
+
+        friend int resolve_cte(ResultPlan*, Node*, SelectStmt*, uint64_t&);
+        friend struct RawExprUnaryRef;
     };
 }
 

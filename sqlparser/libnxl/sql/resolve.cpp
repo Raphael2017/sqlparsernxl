@@ -12,7 +12,7 @@ namespace resolve
             ResultPlan *plan,
             Node* node,
             uint64_t& query_id,
-            SelectStmt* parent)
+            SelectStmt* parent /* = nullptr*/)
     {
         if (node->nodeType_ == E_SELECT_WITH_PARENS)
             node = Node::remove_parens(node);
@@ -63,7 +63,11 @@ namespace resolve
         }
     }
 
-    int resolve_cte(ResultPlan* plan, Node* node, SelectStmt* parent, uint64_t& out_table_id)
+    int resolve_cte(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent,
+            uint64_t& out_table_id)
     {
         assert(node && node->nodeType_ == E_COMMON_TABLE_EXPR);
         Node* subquery = node->getChild(E_COMMON_TABLE_EXPR_SUBQUERY);
@@ -81,7 +85,10 @@ namespace resolve
         parent->cte_items_.back().ref_id_ = query_id;
     }
 
-    int resolve_from_clause(ResultPlan* plan, Node* node, SelectStmt* parent)
+    int resolve_from_clause(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent)
     {
         if (!node)
         return 0;
@@ -97,7 +104,10 @@ namespace resolve
         }
     }
 
-    int resolve_where_clause(ResultPlan* plan, Node* node, SelectStmt* parent)
+    int resolve_where_clause(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent)
     {
         if (!node)
             return 0;
@@ -106,13 +116,19 @@ namespace resolve
         resolve_expr(plan, expr, parent);
     }
 
-    int resolve_select_clause(ResultPlan* plan, Node* node, SelectStmt* parent)
+    int resolve_select_clause(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent)
     {
         assert(node != nullptr);
         resolve_expr(plan, node, parent);
     }
 
-    int resolve_select_items(ResultPlan* plan, Node* node, SelectStmt* parent)
+    int resolve_select_items(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent)
     {
         assert(node != nullptr);
         std::list<Node*> ls;
@@ -145,7 +161,11 @@ namespace resolve
         }
     }
 
-    int resolve_table(ResultPlan* plan, Node* node, SelectStmt* parent, uint64_t& out_table_id)
+    int resolve_table(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent,
+            uint64_t& out_table_id)
     {
         assert(node != nullptr);
         out_table_id = OB_INVALID_ID;
@@ -235,7 +255,10 @@ namespace resolve
         return 0;
     }
 
-    int resolve_joined_table(ResultPlan* plan, Node* node, SelectStmt* parent)
+    int resolve_joined_table(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent)
     {
         int ret = 0;
         assert(node->nodeType_ == E_JOINED_TABLE);
@@ -282,7 +305,10 @@ namespace resolve
         return ret;
     }
 
-    int resolve_expr(ResultPlan *plan, Node *node, SelectStmt* parent)
+    int resolve_expr(
+            ResultPlan *plan,
+            Node *node,
+            SelectStmt* parent)
     {
         if (true)
             return 0;

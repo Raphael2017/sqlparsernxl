@@ -11,6 +11,7 @@ namespace resolve
     {
         LocalTableMgr();
         void report();
+        void reset();
 
         uint64_t  get_local_table_id(const std::string& table_name);
 

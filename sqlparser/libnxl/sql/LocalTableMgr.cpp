@@ -33,6 +33,13 @@ namespace resolve
         }
     }
 
+    void LocalTableMgr::reset()
+    {
+        local_table_id_begin_ = 200;
+        local_table_.clear();
+        local_table_column_.clear();
+    }
+
     uint64_t  LocalTableMgr::get_local_table_id(const std::string& table_name)
     {
         std::string tb = table_name;

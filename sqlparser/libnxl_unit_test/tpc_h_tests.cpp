@@ -1,6 +1,7 @@
 #include "thirdparty/microtest.h"
 #include "parser.h"
 #include "resolve.h"
+#include "SelectStmt.h"
 
 #include <fstream>
 #include <iostream>
@@ -86,28 +87,27 @@ TEST(TPCHQueryGrammarTests)
 
     if (result.accept)
     {
+        resolve::ResultPlan resultPlan([](
+                Node* node,
+                resolve::TableItem::TableType tp,
+                const std::string& table_name,
+                const std::string& alias_name
+        ){
+            printf("base_table_name: %s\n", table_name.c_str());
+        });
+
+        uint64_t query_id;
         std::list<Node*> stmts;
         Node::ToList(result.result_tree_, stmts);
         for (auto stmt : stmts)
         {
-            resolve::ResultPlan resultPlan;
-            resultPlan.logicPlan_ = new resolve::LogicPlan;
+            resultPlan.reset();
+            printf("%s\n", stmt->serialize().c_str());
+            printf("table analyze:\n");
+            resolve::resolve_select_statement(&resultPlan, stmt, query_id);
             printf("\n");
-            resultPlan.base_table_callback_ = [](
-                    Node* node,
-                    resolve::TableItem::TableType tp,
-                    const std::string& table_name,
-                    const std::string& alias_name
-            ){
-                printf("base_table_name: %s\n", table_name.c_str());
-            };
-            uint64_t query_id = OB_INVALID_ID;
-            resolve::resolve_select_statement(&resultPlan, stmt, query_id, nullptr);
-            delete(resultPlan.logicPlan_);
         }
     }
-
-
 
     ASSERT_EQ(testsFailed, 0);
 }

@@ -22,18 +22,67 @@ namespace resolve
     struct ResultPlan;
 
 
-    int resolve_select_statement(ResultPlan*, Node*, uint64_t& query_id, SelectStmt*);
+    int resolve_select_statement(
+            ResultPlan *plan,
+            Node* node,
+            uint64_t& query_id,
+            SelectStmt* parent = nullptr);
 
-    int resolve_cte_clause(ResultPlan*, Node*, SelectStmt*);
-    int resolve_cte(ResultPlan*, Node*, SelectStmt*, uint64_t&);
-    int resolve_from_clause(ResultPlan*, Node*, SelectStmt*);
-    int resolve_table(ResultPlan*, Node*, SelectStmt*, uint64_t&);
-    int resolve_joined_table(ResultPlan*, Node*, SelectStmt*);
+    int resolve_cte_clause(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent
+            );
 
-    int resolve_where_clause(ResultPlan*, Node*, SelectStmt*);  // not use
-    int resolve_select_clause(ResultPlan*, Node*, SelectStmt*); // not use
-    int resolve_select_items(ResultPlan*, Node*, SelectStmt*);  // not use
-    int resolve_expr(ResultPlan *plan, Node *node, SelectStmt* parent);  // not use
+    int resolve_cte(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent,
+            uint64_t& out_table_id
+            );
+
+    int resolve_from_clause(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent
+            );
+
+    int resolve_table(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent,
+            uint64_t& out_table_id
+            );
+
+    int resolve_joined_table(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent
+            );
+
+    int resolve_where_clause(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent
+            );  // not use
+
+    int resolve_select_clause(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent
+            ); // not use
+
+    int resolve_select_items(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent
+            );  // not use
+
+    int resolve_expr(
+            ResultPlan *plan,
+            Node *node,
+            SelectStmt* parent
+            );  // not use
 }
 
 #endif

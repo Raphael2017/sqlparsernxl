@@ -6,6 +6,27 @@
 
 namespace resolve
 {
+    ResultPlan::ResultPlan(const TableVisit& visit):
+                        base_table_visit_(visit),
+                        logicPlan_(new LogicPlan),
+                        local_table_mgr(new LocalTableMgr)
+    {
+
+    }
+    ResultPlan::~ResultPlan()
+    {
+        delete(logicPlan_);
+        delete(local_table_mgr);
+    }
+
+    void ResultPlan::reset()
+    {
+        if (logicPlan_)
+            logicPlan_->reset();
+        if (local_table_mgr)
+            local_table_mgr->reset();
+    }
+
     SelectStmt::SelectStmt() : query_id_(OB_INVALID_ID),
                                left_query_id_(OB_INVALID_ID),
                                right_query_id_(OB_INVALID_ID),
@@ -432,5 +453,27 @@ namespace resolve
 
         out_table_id = item.table_id;
         return 0;
+    }
+
+    void SelectStmt::push_back_(std::vector<ColumnItem>& src, const ColumnItem& it)
+    {
+        std::vector<ColumnItem>::iterator find = std::find_if(src.begin(), src.end(),
+                                                              [it](ColumnItem cur)
+                                                              {
+                                                                  if (cur.column_id_ == it.column_id_ && cur.column_name_ == it.column_name_ &&
+                                                                      cur.table_id_ == it.table_id_ && cur.query_id_ == it.query_id_)
+                                                                      return true;
+                                                                  return false;
+                                                              });
+        if (find == src.end())
+        {
+            src.push_back(it);
+        }
+    }
+
+    int SelectStmt::add_select_item(uint64_t eid, const std::string& alias_name,
+                        const std::string& name)
+    {
+        select_items_.push_back({eid, name, alias_name});
     }
 }
