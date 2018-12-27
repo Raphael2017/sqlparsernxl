@@ -125,8 +125,10 @@ namespace resolve
         SelectStmt* cur = this;
         while (cur != nullptr)
         {
-            for (TableItem& cte : cur->cte_items_)
+            // reverse traversal to find the nearby cte definition
+            for (auto rit = cur->cte_items_.rbegin(); rit != cur->cte_items_.rend(); ++rit)
             {
+                auto cte = *rit;
                 if (cte.table_name_ == table_name ||
                     cte.alias_name_ == table_name)
                 {
@@ -145,7 +147,7 @@ namespace resolve
                 }
             }
             /*
-             * If no match in the WITH clause of 'select', maybe this is a subquery,
+             * If no match in this WITH clause of 'select', maybe this is a subquery,
              * so look up in the outer query's WITH clause
              * */
             cur = cur->parent_;
@@ -172,6 +174,10 @@ namespace resolve
                     return true;
                 }
             }
+            /*
+             * Since correlated subquery is supported, if no match in this query,
+             * maybe this is a subquery, so look up in the outer query
+             * */
             cur = cur->parent_;
         }
         return false;
@@ -190,6 +196,66 @@ namespace resolve
                     return true;
                 }
             }
+            /*
+             * Since correlated subquery is supported, if no match in this query,
+             * maybe this is a subquery, so look up in the outer query
+             * */
+            cur = cur->parent_;
+        }
+        return false;
+    }
+
+    bool SelectStmt::get_table_item(
+            const std::string& table_name,
+            uint64_t& out_query_id,
+            uint64_t& out_table_id,
+            TableItem& out_table_item)
+    {
+        assert(table_name.length() > 0);
+        SelectStmt* cur = this;
+        while (cur != nullptr)
+        {
+            for (const TableItem& tbi : cur->table_items_)
+            {
+                if (tbi.table_name_ == table_name ||
+                    tbi.alias_name_ == table_name)
+                {
+                    out_table_id = tbi.table_id;
+                    out_query_id = cur->query_id_;
+                    out_table_item = tbi;
+                    return true;
+                }
+            }
+            /*
+             * Since correlated subquery is supported, if no match in this query,
+             * maybe this is a subquery, so look up in the outer query
+             * */
+            cur = cur->parent_;
+        }
+        return false;
+    }
+
+    bool SelectStmt::get_table_item(
+            uint64_t table_id,
+            uint64_t& out_query_id,
+            TableItem& out_table_item)
+    {
+        SelectStmt* cur = this;
+        while (cur != nullptr)
+        {
+            for (const TableItem& tbi : cur->table_items_)
+            {
+                if (tbi.table_id == table_id)
+                {
+                    out_query_id = cur->query_id_;
+                    out_table_item = tbi;
+                    return true;
+                }
+            }
+            /*
+             * Since correlated subquery is supported, if no match in this query,
+             * maybe this is a subquery, so look up in the outer query
+             * */
             cur = cur->parent_;
         }
         return false;
@@ -344,54 +410,10 @@ namespace resolve
         cli.query_id_ = query_id;
         push_back_(column_items_, cli);
         out_column_item = cli;
+        return 0;
     }
 
-    bool SelectStmt::get_table_item(
-            const std::string& table_name,
-            uint64_t& out_query_id,
-            uint64_t& out_table_id,
-            TableItem& out_table_item)
-    {
-        assert(table_name.length() > 0);
-        SelectStmt* cur = this;
-        while (cur != nullptr)
-        {
-            for (const TableItem& tbi : cur->table_items_)
-            {
-                if (tbi.table_name_ == table_name ||
-                    tbi.alias_name_ == table_name)
-                {
-                    out_table_id = tbi.table_id;
-                    out_query_id = cur->query_id_;
-                    out_table_item = tbi;
-                    return true;
-                }
-            }
-            cur = cur->parent_;
-        }
-        return false;
-    }
-    bool SelectStmt::get_table_item(
-            uint64_t table_id,
-            uint64_t& out_query_id,
-            TableItem& out_table_item)
-    {
-        SelectStmt* cur = this;
-        while (cur != nullptr)
-        {
-            for (const TableItem& tbi : cur->table_items_)
-            {
-                if (tbi.table_id == table_id)
-                {
-                    out_query_id = cur->query_id_;
-                    out_table_item = tbi;
-                    return true;
-                }
-            }
-            cur = cur->parent_;
-        }
-        return false;
-    }
+
 
     int SelectStmt::_add_table_item(
             std::vector<TableItem>& tbs,
@@ -409,13 +431,16 @@ namespace resolve
         {
             case TableItem::BASE_TABLE:
             {
-
                 item.ref_id_ = resultPlan->local_table_mgr->get_local_table_id(table_name);
                 item.table_id = item.ref_id_;
             }
                 break;
             case TableItem::ALIAS_TABLE:
             {
+                /*
+                 * FROM NATION AS N1, NATION N2
+                 * this means we need generate different table_id, and they link to a same base table
+                 * */
                 item.ref_id_ = resultPlan->local_table_mgr->get_local_table_id(table_name);
                 item.table_id = resultPlan->logicPlan_->generate_table_id();
             }
@@ -458,13 +483,13 @@ namespace resolve
     void SelectStmt::push_back_(std::vector<ColumnItem>& src, const ColumnItem& it)
     {
         std::vector<ColumnItem>::iterator find = std::find_if(src.begin(), src.end(),
-                                                              [it](ColumnItem cur)
-                                                              {
-                                                                  if (cur.column_id_ == it.column_id_ && cur.column_name_ == it.column_name_ &&
-                                                                      cur.table_id_ == it.table_id_ && cur.query_id_ == it.query_id_)
-                                                                      return true;
-                                                                  return false;
-                                                              });
+              [it](ColumnItem cur)
+              {
+                  if (cur.column_id_ == it.column_id_ && cur.column_name_ == it.column_name_ &&
+                      cur.table_id_ == it.table_id_ && cur.query_id_ == it.query_id_)
+                      return true;
+                  return false;
+              });
         if (find == src.end())
         {
             src.push_back(it);
@@ -475,5 +500,6 @@ namespace resolve
                         const std::string& name)
     {
         select_items_.push_back({eid, name, alias_name});
+        return 0;
     }
 }

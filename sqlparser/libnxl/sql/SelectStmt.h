@@ -25,7 +25,11 @@ namespace resolve
         std::string alias_name_;
         TableType   type_;
 
-        uint64_t ref_id_;          // for GENERATED_TABLE, CTE_TABLE, ref_id_ link to a (select XXX)
+        /*
+         * for GENERATED_TABLE, CTE_TABLE, ref_id_ link to a query_id
+         * for BASE_TABLE, ALIAS_TABLE, ref_id_ link to a base table_id
+         * */
+        uint64_t ref_id_;
         uint64_t cte_at_query_id_; // for USE_CTE_TABLE  <cte_at_query_id_, ref_id_> link to cte definition
 
         bool is_recursive_cte_{false};  // for CTE_TABLE
@@ -140,7 +144,7 @@ namespace resolve
                 const std::string& column_name,
                 ColumnItem& out_column_item);
 
-
+        /*not use*/
         int add_select_item(
                 uint64_t eid,
                 const std::string& alias_name,

@@ -102,8 +102,9 @@ TEST(TPCHQueryGrammarTests)
         for (auto stmt : stmts)
         {
             resultPlan.reset();
+            printf("SQL:\n");
             printf("%s\n", stmt->serialize().c_str());
-            printf("table analyze:\n");
+            printf("TABLE ANALYZE:\n");
             resolve::resolve_select_statement(&resultPlan, stmt, query_id);
             printf("\n");
         }

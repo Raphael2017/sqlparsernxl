@@ -25,6 +25,7 @@ namespace resolve
         Node* set_op = node->getChild(E_SELECT_SET_OPERATION);
         if (set_op != nullptr)
         {
+            /*select with set operation*/
             Node* former = node->getChild(E_SELECT_FORMER_SELECT_STMT);
             uint64_t left_query_id = OB_INVALID_ID;
             resolve_select_statement(plan, former, left_query_id, select_stmt);
@@ -36,6 +37,7 @@ namespace resolve
         }
         else
         {
+            /*simple select*/
             resolve_cte_clause(plan, node->getChild(E_SELECT_OPT_WITH), select_stmt);
             resolve_from_clause(plan, node->getChild(E_SELECT_FROM_LIST), select_stmt);
 
@@ -43,6 +45,7 @@ namespace resolve
             resolve_where_clause(plan, node->getChild(E_SELECT_OPT_WHERE), select_stmt);
             resolve_select_items(plan, node->getChild(E_SELECT_SELECT_EXPR_LIST), select_stmt);
         }
+        return 0;
     }
 
     int resolve_cte_clause(
@@ -61,6 +64,7 @@ namespace resolve
             uint64_t table_id = OB_INVALID_ID;
             resolve_cte(plan, cte, parent, table_id);
         }
+        return 0;
     }
 
     int resolve_cte(
@@ -80,9 +84,19 @@ namespace resolve
         assert(tb && tb->nodeType_ == E_IDENTIFIER);
         std::string table_name = tb->terminalToken_.str;
         std::string alias_name;
+        /*
+         * Since recursive common table expression is supported,
+         * so call add_cte_item before resolve the cte definition
+         *
+         * */
         parent->add_cte_item(plan, table_name, alias_name, TableItem::CTE_TABLE, query_id, out_table_id, OB_INVALID_ID);
         resolve_select_statement(plan, subquery, query_id, parent);
+        /*
+         * Since recursive common table expression is supported,
+         * so this cte's definition query_id need to be set up
+         * */
         parent->cte_items_.back().ref_id_ = query_id;
+        return 0;
     }
 
     int resolve_from_clause(
@@ -91,7 +105,7 @@ namespace resolve
             SelectStmt* parent)
     {
         if (!node)
-        return 0;
+            return 0;
 
         assert(node->nodeType_ == E_FROM_CLAUSE);
         node = node->getChild(E_FROM_CLAUSE_FROM_LIST);
@@ -102,6 +116,7 @@ namespace resolve
             uint64_t table_id = OB_INVALID_ID;
             resolve_table(plan, child_node, parent, table_id);
         }
+        return 0;
     }
 
     int resolve_where_clause(
@@ -114,6 +129,7 @@ namespace resolve
         assert(node->nodeType_ == E_WHERE_CLAUSE);
         Node* expr = node->getChild(E_WHERE_CLAUSE_EXPR);
         resolve_expr(plan, expr, parent);
+        return 0;
     }
 
     int resolve_select_clause(
@@ -123,6 +139,7 @@ namespace resolve
     {
         assert(node != nullptr);
         resolve_expr(plan, node, parent);
+        return 0;
     }
 
     int resolve_select_items(
@@ -159,6 +176,7 @@ namespace resolve
             }
             parent->add_select_item(OB_INVALID_ID, alias_name, "");
         }
+        return 0;
     }
 
     int resolve_table(
@@ -196,6 +214,10 @@ namespace resolve
                     alias_name = alias_node->terminalToken_.str;
                     uint64_t table_id = OB_INVALID_ID;
                     uint64_t query_id = OB_INVALID_ID;
+                    /*
+                     * Since common table expression is supported, so check this
+                     * table_name as a cte ref
+                     * */
                     bool isCte = parent->check_in_cte(table_name, query_id, table_id);
                     if (isCte)
                     {
@@ -215,6 +237,10 @@ namespace resolve
                 {
                     uint64_t table_id = OB_INVALID_ID;
                     uint64_t query_id = OB_INVALID_ID;
+                    /*
+                     * Since common table expression is supported, so check this
+                     * table_name as a cte ref
+                     * */
                     bool isCte = parent->check_in_cte(table_name, query_id, table_id);
                     if (isCte)
                     {
@@ -244,7 +270,6 @@ namespace resolve
                 break;
             case E_JOINED_TABLE:
             {
-                /*todo*/
                 resolve_joined_table(plan, table_node, parent);
             }
                 break;
@@ -357,5 +382,6 @@ namespace resolve
             if (child)
                 resolve_expr(plan, child, parent);
         }
+        return 0;
     }
 }
