@@ -837,7 +837,8 @@ int Node::GetKey(const std::string& f)
     return std::atoi(n.c_str());
 }
 
-#if 0
+#if 1
+//High efficiency
 bool Node::Divide(const std::string& f, std::vector<std::string>& ret)
 {
     auto l = f.find("{");
@@ -859,6 +860,7 @@ bool Node::Divide(const std::string& f, std::vector<std::string>& ret)
     return true;
 }
 #else
+// has efficiency problem why ? maybe std::regex
 bool Node::Divide(const std::string& f, std::vector<std::string>& ret)
 {
     std::string text(f);
