@@ -5,6 +5,9 @@ set(SRCS
         sqlparser_flex.cpp
         parser.cpp
         resolve.cpp
-        expr.cpp)
+        expr.cpp
+        SelectStmt.cpp
+        LogicPlan.cpp
+        LocalTableMgr.cpp)
 
 add_library(libnxl ${SRCS})

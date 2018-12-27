@@ -72,6 +72,8 @@ struct Node
      * */
     static void TreePreOrderVisit(Node* root, const std::function<void(Node*, Entry)>&);
 
+    static Node* remove_parens(Node* node);
+    static bool is_with_parens(Node* node);
 
 
     Node();

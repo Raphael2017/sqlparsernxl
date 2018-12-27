@@ -700,6 +700,16 @@ table_factor_non_join:
     $$ = Node::makeNonTerminalNode(E_ALIAS, 3, $1, $3, $4);
     $$->serialize_format = &ALIAS_3_SERIALIZE_FORMAT;
 }
+  | relation_factor relation_name simple_ident_list_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 3, $1, $2, $3);
+    $$->serialize_format = &ALIAS_3_SERIALIZE_FORMAT;
+}
+  | select_with_parens relation_name simple_ident_list_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 3, $1, $2, $3);
+    $$->serialize_format = &ALIAS_3_SERIALIZE_FORMAT;
+}
 
 relation_factor:
     relation_name

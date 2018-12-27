@@ -888,6 +888,34 @@ void Node::TreePreOrderVisit(Node* root, const std::function<void(Node*, Entry)>
     etys.clear();
 }
 
+Node* Node::remove_parens(Node* node)
+{
+    while (is_with_parens(node))
+    {
+        node = node->getChild(0);
+    }
+    return node;
+}
+
+bool Node::is_with_parens(Node* node)
+{
+    assert(node);
+    bool ret = false;
+    switch (node->nodeType_)
+    {
+        case E_SELECT_WITH_PARENS:
+        case E_JOINED_TABLE_WITH_PARENS:
+        case E_EXPR_LIST_WITH_PARENS:
+        case E_SIMPLE_IDENT_LIST_WITH_PARENS:
+            ret = true;
+            break;
+        default:
+            ret = false;
+
+    }
+    return ret;
+}
+
 void Node::_visit(Node* root, Entry ety, std::set<Entry>& etys, const std::function<void(Node*, Entry)>& f)
 {
     if (!root) return;

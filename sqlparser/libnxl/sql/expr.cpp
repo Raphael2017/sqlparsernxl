@@ -1,4 +1,6 @@
 #include "expr.h"
+#include "LogicPlan.h"
+#include "SelectStmt.h"
 
 namespace resolve
 {
@@ -7,7 +9,7 @@ namespace resolve
             std::vector<TableColumnRef>& out_table_column_ref)
     {
         assert(logic != nullptr && id_ != OB_INVALID_ID);
-        ObStmt* stmt = logic->get_query(id_);
+        SelectStmt* stmt = logic->get_query(id_);
         assert(stmt != nullptr);
         for (const SelectItem& sli : stmt->select_items_)
         {
