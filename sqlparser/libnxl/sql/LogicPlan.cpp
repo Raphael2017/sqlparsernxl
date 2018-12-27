@@ -47,9 +47,11 @@ namespace resolve
         return new_gen_qid_++;
     }
 
-    void LogicPlan::add_query(SelectStmt* s)
+    SelectStmt* LogicPlan::add_query()
     {
+        SelectStmt* s = new SelectStmt;
         stmts_.push_back(s);
+        return s;
     }
 
     SelectStmt* LogicPlan::get_query(uint64_t query_id)

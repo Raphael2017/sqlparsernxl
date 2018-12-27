@@ -60,9 +60,11 @@ int main()
                 Node* node,
                 resolve::TableItem::TableType tp,
                 const std::string& table_name,
-                const std::string& alias_name
+                const std::string& alias_name,
+                uint64_t query_id
             ){
                 printf("base_table_name: %s\n", table_name.c_str());
+                auto k = node;
             });
 
             uint64_t query_id;

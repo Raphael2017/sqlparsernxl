@@ -320,6 +320,8 @@ FALSE   {
     Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
     yylval->node = nd;
     nd->terminalToken_.str = std::string(yytext+1, yytext + strlen(yytext) - 1);
+    nd->terminalToken_.line = yylloc->first_line;
+    nd->terminalToken_.column = yylloc->first_column;
     return NAME;
 }
 
@@ -327,6 +329,8 @@ FALSE   {
 	Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
 	yylval->node = nd;
 	nd->terminalToken_.str = yytext;
+	nd->terminalToken_.line = yylloc->first_line;
+    nd->terminalToken_.column = yylloc->first_column;
 	return NAME;
 }
 

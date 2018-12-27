@@ -37,6 +37,9 @@ struct TerminalToken
 
     // before convert
     std::string yytex;
+    // for E_IDENTIFIER
+    int line{0};
+    int column{0};
 };
 
 struct Node

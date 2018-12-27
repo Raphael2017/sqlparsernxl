@@ -59,7 +59,8 @@ namespace resolve
         typedef std::function<void(Node* node,
                 TableItem::TableType table_type,
                 const std::string& table_name,
-                const std::string& alias_name)> TableVisit;
+                const std::string& alias_name,
+                uint64_t query_id)> TableVisit;
         explicit ResultPlan(const TableVisit& visit);
         ~ResultPlan();
         void reset();

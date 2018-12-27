@@ -58,7 +58,7 @@ TEST(TPCHQueryGrammarTests)
         if (!result.accept)
         {
             mt::printFailed(file_path.c_str());
-            printf("%s           %s (L%d:%d)%s\n", mt::red(), result.errDetail.c_str(), result.errFirstLine, result.errFirstColumn, mt::def());
+            printf("%s           %s (L%d:%d)%s\n", mt::red(), result.errDetail.c_str(), result.errFirstLine + 1, result.errFirstColumn, mt::def());
             ++testsFailed;
         }
         else
@@ -68,7 +68,10 @@ TEST(TPCHQueryGrammarTests)
         if (result.accept)
         {
             concatenated += query;
-            if (concatenated.back() != ';') concatenated += ";";
+            if (concatenated.back() != ';')
+                concatenated += ";\n";
+            else
+                concatenated += "\n";
         }
     }
 
@@ -77,7 +80,7 @@ TEST(TPCHQueryGrammarTests)
     if (!result.accept)
     {
         mt::printFailed("TPCHAllConcatenated");
-        printf("%s           %s (L%d:%d)%s\n", mt::red(), result.errDetail.c_str(), result.errFirstLine, result.errFirstColumn, mt::def());
+        printf("%s           %s (L%d:%d)%s\n", mt::red(), result.errDetail.c_str(), result.errFirstLine + 1, result.errFirstColumn, mt::def());
         ++testsFailed;
     }
     else
@@ -87,13 +90,40 @@ TEST(TPCHQueryGrammarTests)
 
     if (result.accept)
     {
+        printf("%s\n", concatenated.c_str());
         resolve::ResultPlan resultPlan([](
                 Node* node,
                 resolve::TableItem::TableType tp,
                 const std::string& table_name,
-                const std::string& alias_name
+                const std::string& alias_name,
+                uint64_t query_id
         ){
-            printf("base_table_name: %s\n", table_name.c_str());
+            int line = 0;
+            int column = 0;
+            switch (tp)
+            {
+                case resolve::TableItem::BASE_TABLE:
+                {
+                    assert(node->nodeType_ == E_IDENTIFIER);
+                    line = node->terminalToken_.line;
+                    column = node->terminalToken_.column;
+                }
+                    break;
+                case resolve::TableItem::ALIAS_TABLE:
+                {
+                    assert(node->nodeType_ == E_ALIAS);
+                    node = node->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS);
+                    assert(node->nodeType_ == E_IDENTIFIER);
+                    line = node->terminalToken_.line;
+                    column = node->terminalToken_.column;
+                }
+                    break;
+                default:
+                    /*unreachable*/
+                    break;
+            }
+
+            printf("access base table: %-30s at (L%d:%d)\n", table_name.c_str(), line + 1, column);
         });
 
         uint64_t query_id;
@@ -108,6 +138,7 @@ TEST(TPCHQueryGrammarTests)
             resolve::resolve_select_statement(&resultPlan, stmt, query_id);
             printf("\n");
         }
+        mt::printOk("TPCHAllConcatenated Semantics Detail");
     }
 
     ASSERT_EQ(testsFailed, 0);

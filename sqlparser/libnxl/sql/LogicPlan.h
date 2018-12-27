@@ -15,7 +15,7 @@ namespace resolve
         void reset();
         uint64_t generate_table_id();
         uint64_t generate_query_id();
-        void add_query(SelectStmt* s);
+        SelectStmt* add_query();
         SelectStmt* get_query(uint64_t query_id);
         SqlRawExpr* get_expr(uint64_t expr_id);
 

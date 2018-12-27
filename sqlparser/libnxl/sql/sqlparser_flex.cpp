@@ -2313,79 +2313,83 @@ YY_RULE_SETUP
     Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
     yylval->node = nd;
     nd->terminalToken_.str = std::string(yytext+1, yytext + strlen(yytext) - 1);
+    nd->terminalToken_.line = yylloc->first_line;
+    nd->terminalToken_.column = yylloc->first_column;
     return NAME;
 }
 	YY_BREAK
 case 167:
 YY_RULE_SETUP
-#line 326 "sqlparser.l"
+#line 328 "sqlparser.l"
 {
 	Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
 	yylval->node = nd;
 	nd->terminalToken_.str = yytext;
+	nd->terminalToken_.line = yylloc->first_line;
+    nd->terminalToken_.column = yylloc->first_column;
 	return NAME;
 }
 	YY_BREAK
 case 168:
 /* rule 168 can match eol */
 YY_RULE_SETUP
-#line 333 "sqlparser.l"
+#line 337 "sqlparser.l"
 { /* ignore */ }
 	YY_BREAK
 case 169:
 /* rule 169 can match eol */
 YY_RULE_SETUP
-#line 334 "sqlparser.l"
+#line 338 "sqlparser.l"
 { /* ignore */ }
 	YY_BREAK
 case 170:
 YY_RULE_SETUP
-#line 336 "sqlparser.l"
+#line 340 "sqlparser.l"
 { return yytext[0];}
 	YY_BREAK
 case 171:
 YY_RULE_SETUP
-#line 338 "sqlparser.l"
+#line 342 "sqlparser.l"
 { return CNNOP; }
 	YY_BREAK
 case 172:
 YY_RULE_SETUP
-#line 339 "sqlparser.l"
+#line 343 "sqlparser.l"
 { return COMP_EQ; }
 	YY_BREAK
 case 173:
 YY_RULE_SETUP
-#line 340 "sqlparser.l"
+#line 344 "sqlparser.l"
 { return COMP_GE; }
 	YY_BREAK
 case 174:
 YY_RULE_SETUP
-#line 341 "sqlparser.l"
+#line 345 "sqlparser.l"
 { return COMP_GT; }
 	YY_BREAK
 case 175:
 YY_RULE_SETUP
-#line 342 "sqlparser.l"
+#line 346 "sqlparser.l"
 { return COMP_LE; }
 	YY_BREAK
 case 176:
 YY_RULE_SETUP
-#line 343 "sqlparser.l"
+#line 347 "sqlparser.l"
 { return COMP_LT; }
 	YY_BREAK
 case 177:
 YY_RULE_SETUP
-#line 344 "sqlparser.l"
+#line 348 "sqlparser.l"
 { return COMP_NE; }
 	YY_BREAK
 case 178:
 YY_RULE_SETUP
-#line 345 "sqlparser.l"
+#line 349 "sqlparser.l"
 { return COMP_NE; }
 	YY_BREAK
 case 179:
 YY_RULE_SETUP
-#line 347 "sqlparser.l"
+#line 351 "sqlparser.l"
 {
     Node* nd = Node::makeTerminalNode(E_QUESTIONMARK, yytext);
     yylval->node = nd;
@@ -2394,12 +2398,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(hint):
-#line 354 "sqlparser.l"
+#line 358 "sqlparser.l"
 { return END_P; }
 	YY_BREAK
 case 180:
 YY_RULE_SETUP
-#line 356 "sqlparser.l"
+#line 360 "sqlparser.l"
 {
     fprintf(stderr, "[SQL-Lexer-Error] Unknown Character: %c\n", yytext[0]);
     return ERROR;
@@ -2407,10 +2411,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 181:
 YY_RULE_SETUP
-#line 360 "sqlparser.l"
+#line 364 "sqlparser.l"
 ECHO;
 	YY_BREAK
-#line 2414 "sqlparser_flex.cpp"
+#line 2418 "sqlparser_flex.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -3564,7 +3568,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 360 "sqlparser.l"
+#line 364 "sqlparser.l"
 
 /***************************
  ** Section 3: User code
