@@ -833,8 +833,7 @@ int Node::GetKey(const std::string& f)
 {
     if (f.length() < 3 || f.front() != '{' || f.back() != '}')
         return -1;
-    std::string n(f.begin()+1, f.end()-1);
-    return std::atoi(n.c_str());
+    return std::atoi(f.substr(1, f.length() - 2).c_str());
 }
 
 #if 1
@@ -847,15 +846,9 @@ bool Node::Divide(const std::string& f, std::vector<std::string>& ret)
         return false;
     else
     {
-        if (l != 0)
-            ret.push_back(f.substr(0, l));
-        else
-            ret.push_back("");
+        ret.push_back(f.substr(0, l));
         ret.push_back(f.substr(l, r - l + 1));
-        if (r != (f.length() - 1))
-            ret.push_back(f.substr(r + 1));
-        else
-            ret.push_back("");
+        ret.push_back(f.substr(r + 1));
     }
     return true;
 }

@@ -88,12 +88,14 @@ int main()
     {
         clock_t start, end;
         start = clock();
-        size_t frequency = 100;
+        size_t frequency = 1000;
         for (size_t i = 0; i < frequency; ++i)
         {
             ParseResult result;
             parser::parse(a, &result);
             result.result_tree_->serialize();
+
+            //result.result_tree_->SerializeNonRecursive(result.result_tree_);
         }
         end = clock();
         double seconds  =(double)(end - start)/CLOCKS_PER_SEC;
