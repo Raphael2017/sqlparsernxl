@@ -918,6 +918,34 @@ bool Node::is_with_parens(Node* node)
     return ret;
 }
 
+bool Node::IS_CAN_WITH_STAR_FUNCTION(const std::string& func)
+{
+    std::string func_name = func;
+    std::transform(func_name.begin(), func_name.end(), func_name.begin(), ::toupper);
+    return FUNCTION_CAN_WITH_PARAM_STAR.find(func_name) != FUNCTION_CAN_WITH_PARAM_STAR.end();
+}
+
+bool Node::IS_AGGREGATE_FUNCTION(const std::string& func)
+{
+    std::string func_name = func;
+    std::transform(func_name.begin(), func_name.end(), func_name.begin(), ::toupper);
+    return AGGREGATE_FUNCTIONS.find(func_name) != AGGREGATE_FUNCTIONS.end();
+}
+
+bool Node::IS_ONE_PARAM_FUNCTION(const std::string& func)
+{
+    std::string func_name = func;
+    std::transform(func_name.begin(), func_name.end(), func_name.begin(), ::toupper);
+    return FUNCTIONS_ONLY_CAN_WITH_ONE_PARAM.find(func_name) != FUNCTIONS_ONLY_CAN_WITH_ONE_PARAM.end();
+}
+
+bool Node::IS_CAN_WITH_AS_FUNCTION(const std::string& func)
+{
+    std::string func_name = func;
+    std::transform(func_name.begin(), func_name.end(), func_name.begin(), ::toupper);
+    return FUNCTIONS_CAN_WITH_OPTION_AS.find(func_name) != FUNCTIONS_CAN_WITH_OPTION_AS.end();
+}
+
 void Node::_visit(Node* root, Entry ety, std::set<Entry>& etys, const std::function<void(Node*, Entry)>& f)
 {
     if (!root) return;

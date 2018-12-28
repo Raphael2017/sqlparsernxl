@@ -16,7 +16,7 @@
 
 #include <stdio.h>
 #include <string.h>
-
+#include <strings.h>
 
 int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *msg) {
     result->accept = false;
@@ -1068,22 +1068,47 @@ case_default:   ELSE expr
 
 func_expr:  function_name '(' '*' ')'
 {
+    if (!Node::IS_CAN_WITH_STAR_FUNCTION($1->terminalToken_.str))
+    {
+    	yyerror(&@1, result, scanner, "Only COUNT function can be with parameter '*'");
+    	YYABORT;
+    }
     Node* star = Node::makeTerminalNode(E_STAR, "*");
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, $1, star);
     $$->serialize_format = &FUN_CALL_1_SERIALIZE_FORMAT;
 }
     |   function_name '(' distinct_or_all expr ')'
 {
+    if (!Node::IS_AGGREGATE_FUNCTION($1->terminalToken_.str))
+    {
+    	yyerror(&@1, result, scanner, "Only aggregate function can be with option distinct, all");
+    	YYABORT;
+    }
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, $1, $4, $3);
     $$->serialize_format = &FUN_CALL_2_SERIALIZE_FORMAT;
 }
     |   function_name '(' expr_list ')'
 {
+    if (Node::ListLength($3) > 1 &&
+    	Node::IS_ONE_PARAM_FUNCTION($1->terminalToken_.str))
+    {
+    	std::string err = $1->terminalToken_.str;
+    	err += " function only support 1 parameter";
+	yyerror(&@1, result, scanner, err.c_str());
+	YYABORT;
+    }
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, $1, $3);
     $$->serialize_format = &FUN_CALL_1_SERIALIZE_FORMAT;
 }
     |   function_name '(' expr AS data_type ')'
 {
+    if (!Node::IS_CAN_WITH_AS_FUNCTION($1->terminalToken_.str))
+    {
+    	std::string err = $1->terminalToken_.str;
+	err += " function not support as option";
+	yyerror(&@1, result, scanner, err.c_str());
+	YYABORT;
+    }
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, $1, $3, $5);
     $$->serialize_format = &FUN_CALL_3_SERIALIZE_FORMAT;
 }

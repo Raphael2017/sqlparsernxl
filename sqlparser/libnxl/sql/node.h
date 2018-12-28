@@ -78,6 +78,11 @@ struct Node
     static Node* remove_parens(Node* node);
     static bool is_with_parens(Node* node);
 
+    static bool IS_CAN_WITH_STAR_FUNCTION(const std::string& func);
+    static bool IS_AGGREGATE_FUNCTION(const std::string& func);
+    static bool IS_ONE_PARAM_FUNCTION(const std::string& func);
+    static bool IS_CAN_WITH_AS_FUNCTION(const std::string& func);
+
 
     Node();
     ~Node();

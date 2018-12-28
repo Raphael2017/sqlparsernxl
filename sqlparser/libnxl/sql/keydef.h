@@ -3,6 +3,7 @@
 
 #include <list>
 #include <string>
+#include <set>
 #include "serialize_format.h"
 
 //  XXX_LIST
@@ -239,7 +240,21 @@ enum NodeType
     E_NODETYPE_END
 };
 
+const std::set<std::string> FUNCTION_CAN_WITH_PARAM_STAR{
+    "COUNT"
+};
 
+const std::set<std::string> AGGREGATE_FUNCTIONS{
+        "COUNT", "SUM", "MAX", "MIN", "AVG"
+};
+
+const std::set<std::string> FUNCTIONS_ONLY_CAN_WITH_ONE_PARAM{
+    "COUNT", "SUM", "MAX", "MIN", "AVG"
+};
+
+const std::set<std::string> FUNCTIONS_CAN_WITH_OPTION_AS{
+    "CAST"
+};
 
 #ifndef YYtypeDEF_YY_SCANNER_T
 #define YYtypeDEF_YY_SCANNER_T
