@@ -23,7 +23,7 @@ int main()
         ")\n"
         "SELECT ManagerID, DirectReports\n"
         "FROM DirReps\n"
-        "ORDER BY ManagerID; select 1 from umd;";
+        "ORDER BY ManagerID;";
 
     {
         ParseResult result;
@@ -33,38 +33,43 @@ int main()
             printf("%s\n", result.result_tree_->serialize().c_str());
         if (result.accept)
         {
-            /*
-            std::set<std::string> tbs;
-            Node::TreePreOrderVisit(result.result_tree_, [&tbs](Node* nd, Entry ety){
-                if (!IsFromTable(nd))
-                    return;
-                std::string name;
-                if (!CheckCTE(ety, nd, name))
-                {
-                    tbs.insert(name);
-                }
-            });
-            printf("analyze table:\n");
-            for (auto tb : tbs)
-            {
-                printf("%s\n", tb.c_str());
-            }
-            printf("analyze fields:\n");
-            Node::TreePreOrderVisit(result.result_tree_,[](Node* nd, Entry ety){
-                if (E_OP_NAME_FIELD == nd->nodeType_)
-                {
-                    printf("%s\n", nd->getChild(E_OP_NAME_FIELD_COLUMN_NAME)->terminalToken_.str.c_str());
-                }
-            });*/
             resolve::ResultPlan resultPlan([](
-                Node* node,
-                resolve::TableItem::TableType tp,
-                const std::string& table_name,
-                const std::string& alias_name,
-                uint64_t query_id
+                    Node* node,
+                    resolve::TableItem::TableType tp,
+                    const std::string& table_name,
+                    const std::string& alias_name,
+                    uint64_t query_id
             ){
-                printf("base_table_name: %s\n", table_name.c_str());
-                auto k = node;
+                int line = 0;
+                int column = 0;
+                switch (tp)
+                {
+                    case resolve::TableItem::BASE_TABLE:
+                    {
+                        assert(node->nodeType_ == E_IDENTIFIER);
+                        line = node->terminalToken_.line;
+                        column = node->terminalToken_.column;
+
+                        printf("access base table: %-25s at (L%+3d:%-2d)\n", table_name.c_str(),
+                                line + 1, column);
+                    }
+                        break;
+                    case resolve::TableItem::ALIAS_TABLE:
+                    {
+                        assert(node->nodeType_ == E_ALIAS);
+                        node = node->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS);
+                        assert(node->nodeType_ == E_IDENTIFIER);
+                        line = node->terminalToken_.line;
+                        column = node->terminalToken_.column;
+
+                        printf("access base table: %-25s at (L%+3d:%-2d) alias: %-10s\n", table_name.c_str(),
+                                line + 1, column, alias_name.c_str());
+                    }
+                        break;
+                    default:
+                        /*unreachable*/
+                        break;
+                }
             });
 
             uint64_t query_id;
@@ -73,22 +78,22 @@ int main()
             for (auto stmt : stmts)
             {
                 resultPlan.reset();
-                printf("table analyze:\n");
+                printf("TABLE ANALYZE:\n");
                 resolve::resolve_select_statement(&resultPlan, stmt, query_id);
+                printf("\n");
             }
-
-            return 0;
         }
     }
 
     {
         clock_t start, end;
         start = clock();
-        size_t frequency = 10;
+        size_t frequency = 100;
         for (size_t i = 0; i < frequency; ++i)
         {
             ParseResult result;
             parser::parse(a, &result);
+            result.result_tree_->serialize();
         }
         end = clock();
         double seconds  =(double)(end - start)/CLOCKS_PER_SEC;

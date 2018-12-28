@@ -337,8 +337,6 @@ namespace resolve
             Node *node,
             SelectStmt* parent)
     {
-        if (true)
-            return 0;
         if (!node)
             return 0;
         if (node->nodeType_ == E_OP_NAME_FIELD)
@@ -367,8 +365,10 @@ namespace resolve
             {
                 if (tbi.type_ == TableItem::BASE_TABLE || tbi.type_ == TableItem::ALIAS_TABLE)
                 {
+                    /*
                     ColumnItem cli{OB_INVALID_ID, "", OB_INVALID_ID, OB_INVALID_ID};
                     parent->add_column_item(plan, tbi.table_name_, "*", cli);
+                     */
                 }
             }
         }

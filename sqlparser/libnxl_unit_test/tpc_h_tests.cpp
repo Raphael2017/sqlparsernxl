@@ -107,6 +107,8 @@ TEST(TPCHQueryGrammarTests)
                     assert(node->nodeType_ == E_IDENTIFIER);
                     line = node->terminalToken_.line;
                     column = node->terminalToken_.column;
+
+                    printf("access base table: %-25s at (L%+3d:%-2d)\n", table_name.c_str(), line + 1, column);
                 }
                     break;
                 case resolve::TableItem::ALIAS_TABLE:
@@ -116,29 +118,30 @@ TEST(TPCHQueryGrammarTests)
                     assert(node->nodeType_ == E_IDENTIFIER);
                     line = node->terminalToken_.line;
                     column = node->terminalToken_.column;
+
+                    printf("access base table: %-25s at (L%+3d:%-2d) alias: %-10s\n", table_name.c_str(), line + 1, column, alias_name.c_str());
                 }
                     break;
                 default:
                     /*unreachable*/
                     break;
             }
-
-            printf("access base table: %-30s at (L%d:%d)\n", table_name.c_str(), line + 1, column);
         });
 
         uint64_t query_id;
         std::list<Node*> stmts;
         Node::ToList(result.result_tree_, stmts);
+        size_t index = 1;
         for (auto stmt : stmts)
         {
             resultPlan.reset();
-            printf("SQL:\n");
-            printf("%s\n", stmt->serialize().c_str());
-            printf("TABLE ANALYZE:\n");
+            printf("STATEMENT %-3d ANALYZE:\n", index++);
             resolve::resolve_select_statement(&resultPlan, stmt, query_id);
             printf("\n");
         }
         mt::printOk("TPCHAllConcatenated Semantics Detail");
+
+        printf("Compact Sql:\n%s\n", result.result_tree_->serialize().c_str());
     }
 
     ASSERT_EQ(testsFailed, 0);
