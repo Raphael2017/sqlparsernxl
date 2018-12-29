@@ -423,6 +423,7 @@ void Node::print(Node* root, int lvl /*= 0*/)
     }
 }
 
+#ifndef S_F_2
 std::string Node::SerializeNonRecursive(Node* root)
 {
     if (!root)
@@ -496,7 +497,6 @@ std::string Node::SerializeNonRecursive(Node* root)
     return ret;
 }
 
-
 std::string Node::serialize()
 {
     std::string ret = "";
@@ -536,6 +536,102 @@ std::string Node::serialize()
 
     return ret;
 }
+#else
+std::string Node::SerializeNonRecursive(Node* root)
+{
+    if (!root)
+        return "";
+    struct Item
+    {
+        Node* node = nullptr;
+        std::string str;
+    };
+
+    std::string ret = "";
+    std::stack<Item> stack;
+    Item lpNode;
+
+    Item tt;
+    tt.node = root;
+    stack.push(tt);
+    while (stack.size() > 0)
+    {
+        lpNode = stack.top();
+        stack.pop();
+        std::string tmp = "";
+        if (lpNode.node)
+        {
+
+            if (lpNode.node->isTerminalToken)
+            {
+                tmp = lpNode.node->terminalToken_.yytex;
+            }
+            else
+            {
+                for (auto rit = lpNode.node->serialize_format->rbegin();
+                     rit != lpNode.node->serialize_format->rend(); ++rit)
+                {
+                    if (rit->is_simple == 1)
+                    {
+                        stack.push({nullptr, rit->s0});
+                    }
+                    else
+                    {
+                        Node* child = lpNode.node->getChild(rit->key);
+                        if (child)
+                        {
+                            if (rit->s2.length() > 0) stack.push({nullptr, rit->s2});
+                            stack.push({child, ""});
+                            if (rit->s0.length() > 0) stack.push({nullptr, rit->s0});
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            tmp = lpNode.str;
+        }
+        if (tmp.length() > 0)
+        {
+            ret += tmp;
+        }
+    }
+    return ret;
+}
+
+std::string Node::serialize()
+{
+    std::string ret = "";
+    if (!isTerminalToken)
+    {
+        for (auto info : *serialize_format)
+        {
+            if (info.is_simple == 1)
+            {
+                ret += info.s0;
+            }
+            else
+            {
+                Node* child = getChild(info.key);
+                if (child)
+                {
+                    ret += info.s0;
+                    ret += child->serialize();
+                    ret += info.s2;
+                }
+            }
+        }
+    }
+    else
+    {
+        ret = terminalToken_.yytex;
+    }
+
+    return ret;
+}
+
+#endif
 
 Node* Node::getParent()
 {

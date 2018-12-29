@@ -98,7 +98,7 @@ struct Node
     NodeType nodeType_;
     bool isTerminalToken;
     TerminalToken terminalToken_;
-    const std::list<std::string>* serialize_format;     // ["function ", "{1}", "(", "{2}", ")", "{3}", "end"]
+    Form* serialize_format;     // ["function ", "{1}", "(", "{2}", ")", "{3}", "end"]
 
 private:
 #ifdef NODE_CHILDREN_DEBUG
