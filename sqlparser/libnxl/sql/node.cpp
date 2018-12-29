@@ -449,9 +449,9 @@ std::string Node::SerializeNonRecursive(Node* root)
                             Node* child = lpNode.node->getChild(key);
                             if (child)
                             {
-                                stack.push({nullptr, ss[2]});
+                                if (ss[2].length() > 0) stack.push({nullptr, ss[2]});
                                 stack.push({child, ""});
-                                stack.push({nullptr, ss[0]});
+                                if (ss[0].length() > 0) stack.push({nullptr, ss[0]});
                             }
                         }
                         else
@@ -495,9 +495,8 @@ std::string Node::serialize()
                     Node* child = getChild(key);
                     if (child)
                     {
-                        std::string tmp = child->serialize();
                         ret += ss[0];
-                        ret += tmp;
+                        ret += child->serialize();
                         ret += ss[2];
                     }
                 }

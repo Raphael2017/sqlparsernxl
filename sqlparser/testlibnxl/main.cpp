@@ -93,9 +93,8 @@ int main()
         {
             ParseResult result;
             parser::parse(a, &result);
-            result.result_tree_->serialize();
-
-            //result.result_tree_->SerializeNonRecursive(result.result_tree_);
+            //result.result_tree_->serialize();
+            result.result_tree_->SerializeNonRecursive(result.result_tree_);
         }
         end = clock();
         double seconds  =(double)(end - start)/CLOCKS_PER_SEC;

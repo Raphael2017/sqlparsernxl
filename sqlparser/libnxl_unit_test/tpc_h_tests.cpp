@@ -2,7 +2,7 @@
 #include "parser.h"
 #include "resolve.h"
 #include "SelectStmt.h"
-
+#include <time.h>
 #include <fstream>
 #include <iostream>
 
@@ -75,6 +75,8 @@ TEST(TPCHQueryGrammarTests)
         }
     }
 
+    clock_t start, end;
+    start = clock();
     ParseResult result;
     parser::parse(concatenated, &result);
     if (!result.accept)
@@ -128,6 +130,8 @@ TEST(TPCHQueryGrammarTests)
             }
         });
 
+
+
         uint64_t query_id;
         std::list<Node*> stmts;
         Node::ToList(result.result_tree_, stmts);
@@ -141,7 +145,11 @@ TEST(TPCHQueryGrammarTests)
         }
         mt::printOk("TPCHAllConcatenated Semantics Detail");
 
-        printf("Compact Sql:\n%s\n", result.result_tree_->serialize().c_str());
+        //printf("Compact Sql:\n%s\n", result.result_tree_->serialize().c_str());
+        //printf("Compact Sql:\n%s\n", result.result_tree_->SerializeNonRecursive(result.result_tree_).c_str());
+        end = clock();
+        double seconds  =(double)(end - start)/CLOCKS_PER_SEC;
+        fprintf(stdout, "Frequency %d,Use time is: %.8f\n", 1, seconds);
     }
 
     ASSERT_EQ(testsFailed, 0);
