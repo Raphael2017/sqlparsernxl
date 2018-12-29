@@ -5,10 +5,6 @@
 #include "resolve.h"
 #include "SelectStmt.h"
 
-bool IsFromTable(Node* nd);
-bool CompareIgnoreCase(const std::string& l, const std::string& r);
-bool CheckCTE(Entry ety, Node* tb, std::string& ret);
-
 int main()
 {
     std::string a = "";
@@ -30,7 +26,12 @@ int main()
         std::vector<yytokentype> tks;
         parser::parse(a, &result);
         if (result.accept)
+        {
             printf("%s\n", result.result_tree_->serialize().c_str());
+            printf("%s\n", result.result_tree_->SerializeNonRecursive(result.result_tree_).c_str());
+            Node::print(result.result_tree_);
+        }
+
         if (result.accept)
         {
             resolve::ResultPlan resultPlan([](
@@ -50,7 +51,7 @@ int main()
                         line = node->terminalToken_.line;
                         column = node->terminalToken_.column;
 
-                        printf("access base table: %-25s at (L%+3d:%-2d)\n", table_name.c_str(),
+                        printf("access base table: %-25s at (L%3d:%-2d)\n", table_name.c_str(),
                                 line + 1, column);
                     }
                         break;
@@ -62,7 +63,7 @@ int main()
                         line = node->terminalToken_.line;
                         column = node->terminalToken_.column;
 
-                        printf("access base table: %-25s at (L%+3d:%-2d) alias: %-10s\n", table_name.c_str(),
+                        printf("access base table: %-25s at (L%3d:%-2d) alias: %-10s\n", table_name.c_str(),
                                 line + 1, column, alias_name.c_str());
                     }
                         break;
@@ -93,8 +94,7 @@ int main()
         {
             ParseResult result;
             parser::parse(a, &result);
-            //result.result_tree_->serialize();
-            result.result_tree_->SerializeNonRecursive(result.result_tree_);
+            result.result_tree_->serialize();
         }
         end = clock();
         double seconds  =(double)(end - start)/CLOCKS_PER_SEC;
@@ -106,28 +106,7 @@ int main()
     return 0;
 }
 
-bool IsFromTable(Node* nd)
-{
-    if (nd->nodeType_ == E_IDENTIFIER || nd->nodeType_ == E_ALIAS)
-    {
-        if (nd->nodeType_ == E_ALIAS &&
-                nd->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS)->nodeType_ != E_IDENTIFIER)
-            return false;
-        if (nd->getParent()->nodeType_ == E_JOINED_TABLE ||
-            nd->getParent()->nodeType_ == E_FROM_LIST ||
-            nd->getParent()->nodeType_ == E_FROM_CLAUSE)
-            return true;
-    }
-    return false;
-}
 
-bool CompareIgnoreCase(const std::string& l, const std::string& r)
-{
-    std::string ll = l,rr = r;
-    std::transform(ll.begin(), ll.end(), ll.begin(), ::toupper);
-    std::transform(rr.begin(), rr.end(), rr.begin(), ::toupper);
-    return ll == rr;
-}
 
 
 

@@ -82,6 +82,7 @@ struct Node
     static bool IS_AGGREGATE_FUNCTION(const std::string& func);
     static bool IS_ONE_PARAM_FUNCTION(const std::string& func);
     static bool IS_CAN_WITH_AS_FUNCTION(const std::string& func);
+    static void print(Node*, int = 0);
 
 
     Node();
@@ -93,12 +94,12 @@ struct Node
     bool setChild(int key, Node*);
     int getChildrenCount() const;
 
+
     NodeType nodeType_;
     bool isTerminalToken;
     TerminalToken terminalToken_;
     const std::list<std::string>* serialize_format;     // ["function ", "{1}", "(", "{2}", ")", "{3}", "end"]
-private:
-    void print(int);
+
 private:
 #ifdef NODE_CHILDREN_DEBUG
     std::vector<Node*> children_;

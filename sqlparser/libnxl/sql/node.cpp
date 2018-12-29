@@ -398,12 +398,30 @@ Node::~Node()
     childrenCount_ = 0;
 }
 
-void Node::print(int lvl)
+void Node::print(Node* root, int lvl /*= 0*/)
 {
-
+    for (int i = 0; i < lvl; ++i)
+    {
+        fprintf(stderr, "    ");
+    }
+    if (!root)
+    {
+        fprintf(stderr, "|-> NIL\n");
+        return;
+    }
+    fprintf(stderr, "|-> %s", NodeTypeToString(root->nodeType_).c_str());
+    if (root->isTerminalToken)
+    {
+        fprintf(stderr , " : %s\n", root->terminalToken_.yytex.c_str());
+    }
+    else
+    {   fprintf(stderr, "\n");
+        for (size_t i = 0; i < root->childrenCount_; ++i)
+        {
+            print(root->getChild(i), 1 + lvl);
+        }
+    }
 }
-
-
 
 std::string Node::SerializeNonRecursive(Node* root)
 {
