@@ -592,7 +592,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  19
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   612
+#define YYLAST   652
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  184
@@ -601,7 +601,7 @@ union yyalloc
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  182
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  306
+#define YYNSTATES  305
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -763,10 +763,10 @@ static const yytype_uint16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF -222
+#define YYPACT_NINF -209
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-222)))
+  (!!((Yystate) == (-209)))
 
 #define YYTABLE_NINF -174
 
@@ -777,37 +777,37 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-     -30,   -30,  -222,     2,    20,   -56,  -130,  -222,   -69,  -222,
-      48,   -35,   -26,    18,    46,    -5,    50,  -222,   -74,  -222,
-    -222,   -30,    -5,    -5,    -5,    64,    35,    49,  -222,    48,
-     -34,  -222,  -222,  -222,  -222,   -37,   131,    99,  -222,     2,
-    -222,   -26,   -26,   -26,   409,    29,    29,  -222,    35,    49,
-     115,   392,   -12,   120,   142,  -222,   167,  -222,   167,  -222,
-      65,  -222,  -222,  -222,  -222,  -222,  -222,   409,   326,   326,
-      22,   409,   142,  -222,  -222,    14,  -222,  -222,  -222,   204,
-     464,  -222,  -222,  -222,   170,   173,  -222,  -222,  -104,    97,
-    -222,   138,  -222,   409,    63,   139,  -222,   177,    77,   495,
-     131,  -222,  -222,   585,  -222,  -222,    87,   228,   203,   573,
-     102,  -222,   409,   326,   326,   326,   326,   326,   326,   326,
-     409,   409,   136,   409,   409,   409,   409,   409,   409,   409,
-     409,   326,   232,   157,  -222,  -222,  -222,    93,   353,    29,
-      29,    29,   525,   137,   122,    37,   125,   392,  -222,   297,
-    -222,  -222,  -222,   409,   409,   223,   102,  -222,   217,   217,
-     268,   268,   268,   268,  -222,   508,   585,   409,   326,   232,
-     247,   247,   247,   247,   247,   247,   175,   188,   225,    22,
-    -222,  -222,  -222,  -222,  -222,   132,  -222,  -222,  -222,   266,
-    -222,  -222,  -222,   267,   168,   409,  -222,  -222,  -222,   181,
-    -222,   147,  -222,     1,     6,  -222,   205,  -222,    13,  -222,
-    -222,   409,   215,  -222,  -222,  -222,   265,   409,   235,  -222,
-     188,   435,  -222,   326,   279,  -222,  -222,  -222,  -222,  -222,
-     164,   549,  -222,    10,   341,   280,   315,    50,  -222,   197,
-    -222,    37,   197,   219,   197,    37,   233,   315,    50,   573,
-     270,   230,   409,   573,  -222,   326,   204,  -222,  -222,  -222,
-    -222,  -222,  -222,  -222,  -222,  -222,   291,  -222,  -222,    50,
-    -222,  -222,  -222,   207,  -222,    68,  -222,  -222,    37,    50,
-    -222,   409,   409,  -222,   573,   204,  -222,  -222,   409,   301,
-    -222,   234,  -222,  -222,   573,   573,   337,   409,   308,   307,
-     309,   573,   337,  -222,   310,  -222
+     -27,   -27,  -209,    19,    25,   -50,  -146,  -209,   -70,  -209,
+       5,   -35,   -25,    36,    84,    -9,     8,  -209,  -127,  -209,
+    -209,   -27,    -9,    -9,    -9,    18,   -49,    35,  -209,     5,
+     -31,  -209,  -209,  -209,  -209,   -81,   123,    96,  -209,    19,
+    -209,   -25,   -25,   -25,   441,     9,     9,  -209,   -49,    35,
+     171,   401,   -56,   109,   138,  -209,   145,  -209,   145,  -209,
+     144,  -209,  -209,  -209,  -209,  -209,  -209,   441,   458,   458,
+     100,   441,   138,  -209,  -209,    32,  -209,  -209,  -209,   488,
+     481,  -209,  -209,  -209,   160,   199,  -209,  -209,  -105,   105,
+    -209,   115,  -209,   441,    67,   120,  -209,   161,    64,   512,
+     123,  -209,  -209,   625,  -209,  -209,    15,   212,   203,   600,
+      75,  -209,   441,   458,   458,   458,   458,   458,   458,   458,
+     441,   441,   136,   441,   441,   441,   441,   441,   441,   441,
+     441,   458,   215,   114,  -209,  -209,  -209,    45,   360,     9,
+       9,     9,   542,   102,    87,    30,    86,   401,  -209,   263,
+    -209,  -209,  -209,   441,   441,   189,    75,  -209,    49,    49,
+     234,   234,   234,   234,  -209,   613,   625,   441,   458,   215,
+     185,   185,   185,   185,   185,   185,   207,   141,   225,   100,
+    -209,  -209,  -209,  -209,  -209,   132,  -209,  -209,  -209,   236,
+    -209,  -209,  -209,   237,   170,   441,  -209,  -209,  -209,   147,
+    -209,   117,  -209,     1,     4,  -209,   208,  -209,    20,  -209,
+    -209,   441,   205,  -209,  -209,  -209,   265,   441,   214,  -209,
+     141,   579,  -209,   458,   264,  -209,  -209,  -209,  -209,  -209,
+       7,   566,  -209,    21,   242,   266,   297,     8,  -209,   183,
+    -209,    30,   183,   202,   183,    30,   209,   297,     8,   600,
+     260,   217,   441,   600,  -209,   458,   488,  -209,  -209,  -209,
+    -209,  -209,  -209,  -209,  -209,  -209,   280,  -209,  -209,     8,
+    -209,  -209,  -209,   210,  -209,    31,  -209,  -209,    30,     8,
+    -209,   441,   441,  -209,   600,   488,  -209,  -209,   441,   283,
+    -209,   233,  -209,  -209,   600,   600,   123,   441,   284,   285,
+     600,   123,  -209,   286,  -209
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -844,19 +844,19 @@ static const yytype_uint8 yydefact[] =
      182,   178,   177,   181,   176,   175,     0,   165,    90,    83,
       88,   101,    96,     0,    97,     0,    98,    77,     0,    81,
       87,     0,     0,    19,   161,   150,   167,    86,     0,     0,
-      93,     0,    85,    46,    57,    92,     0,     0,     0,   171,
-       0,    91,     0,    95,     0,    94
+      93,     0,    85,    46,    57,    92,     0,     0,     0,     0,
+      91,     0,    95,     0,    94
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -222,  -222,   327,  -222,  -222,     0,    23,    94,   113,  -222,
-    -222,  -222,  -222,  -222,   304,  -222,   -13,  -222,   320,   335,
-     253,  -222,  -222,  -222,  -222,   328,  -222,  -222,  -140,   271,
-     220,   221,  -222,   121,  -108,    98,  -222,   169,  -222,   -68,
-    -131,  -221,  -222,  -222,   -51,   -36,   206,  -222,  -222,   218,
-    -222,  -222,  -222,  -222,   239,  -126,  -222,   231,  -222
+    -209,  -209,   304,  -209,  -209,     0,    38,   122,   130,  -209,
+    -209,  -209,  -209,  -209,   279,  -209,    16,  -209,   299,   302,
+     220,  -209,  -209,  -209,  -209,   294,  -209,  -209,  -208,   -97,
+     178,   188,  -209,    92,  -164,    65,  -209,   139,  -209,    -6,
+    -133,  -209,  -209,  -209,   -18,   -36,   176,  -209,  -209,   192,
+    -209,  -209,  -209,  -209,   218,    61,  -209,   211,  -209
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
@@ -875,65 +875,69 @@ static const yytype_int16 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
-       8,    13,   -11,   -14,   202,    16,     1,   193,    80,   202,
-       1,    -8,    28,   202,   139,    99,   202,   104,   105,   210,
-      19,     8,   215,     9,    20,    60,    61,    62,    63,    64,
-      65,   103,    66,    89,    86,   109,    33,   203,    67,    87,
-     202,    28,    28,    28,     9,   -11,   -14,    31,   224,   236,
-      68,    69,    21,   236,   102,    31,   247,   142,    70,    22,
-      23,    24,   158,   159,   160,   161,   162,   163,   164,    34,
-     106,   202,   111,   203,    71,   300,    80,   210,   237,   140,
-     178,   304,   248,    32,   165,   166,    36,   170,   171,   172,
-     173,   174,   175,   176,   177,   234,   186,   270,   -18,   -18,
-     -18,  -173,   194,  -172,     1,    72,    29,   237,   280,    39,
-     269,    99,     2,    -8,    44,   210,     2,   221,   216,   210,
-      91,   279,    92,   187,    31,    30,   196,   197,   198,   287,
-      50,   220,   180,   273,    52,    56,    58,    59,   225,   292,
-     226,   227,    54,     2,    45,   204,     3,   -11,   -14,   210,
-     293,    93,   210,    46,    57,    57,    57,   101,   -47,   231,
-     167,   168,   169,   182,     2,   183,   184,   -47,    25,   180,
-     291,   100,   256,   185,   274,   249,   276,     3,     1,   106,
-      24,   253,   120,   121,   122,   123,   124,   125,   126,   127,
-     128,   129,   130,   131,   132,   133,   -18,   112,     3,   130,
-     131,   132,   133,   233,   285,   -18,   141,   -18,   137,   138,
-     258,   230,   259,   131,   132,   133,   284,   120,   121,   122,
+       8,    13,   -11,   151,   202,   193,   -14,   202,    80,     1,
+      -8,     1,    28,   139,    86,    99,    22,    23,    24,    87,
+     215,     8,    16,   202,   202,    19,   -18,   -18,   -18,   270,
+      20,   103,    33,   202,   202,   109,    21,   203,     9,   234,
+     280,    28,    28,    28,    36,   -11,   224,   236,   186,   -14,
+     104,   105,    31,   258,   102,   259,    39,   142,    31,     9,
+      45,   287,    89,   247,   236,    34,   203,     1,    44,    46,
+     106,   292,   111,    31,   260,   187,    80,   273,   140,   115,
+     116,   117,   118,   119,   165,   166,    50,   170,   171,   172,
+     173,   174,   175,   176,   177,   158,   159,   160,   161,   162,
+     163,   164,   194,    60,    61,    62,    63,    64,    65,   261,
+      66,    99,    -8,   178,   291,     2,    67,     2,   216,   262,
+     182,    32,   183,   184,   -18,    25,    52,   100,    68,    69,
+     185,   220,   180,   -18,    29,   -18,    70,   263,   225,    54,
+     226,   227,    30,     2,   -47,   204,   101,   -11,   293,     3,
+     221,   -14,    71,   -47,   264,   196,   197,   198,    24,   231,
+     167,   168,   169,    56,    58,    59,   131,   132,   133,   180,
+     265,    57,    57,    57,     1,   249,    91,     3,    92,   106,
+    -173,   253,  -172,    72,   120,   121,   122,   123,   124,   125,
+     126,   127,   128,   129,   130,   131,   132,   133,   137,   299,
+      41,    42,    43,   233,   303,   256,   210,    93,   129,   130,
+     131,   132,   133,   230,   141,   112,   284,   120,   121,   122,
      123,   124,   125,   126,   127,   128,   129,   130,   131,   132,
-     133,   260,   113,   114,   115,   116,   117,   118,   119,   143,
-     223,   204,    41,    42,    43,   204,   294,   115,   116,   117,
-     118,   119,   295,   113,   114,   115,   116,   117,   118,   119,
-     147,   301,   -31,   144,   145,   152,   261,   238,   179,   238,
-     129,   130,   131,   132,   133,   204,   262,   154,   204,   120,
+     133,   130,   131,   132,   133,   138,   274,   285,   276,   -31,
+     223,   204,     2,   143,   144,   204,   294,   147,   145,   152,
+     154,   179,   295,   113,   114,   115,   116,   117,   118,   119,
+     211,   300,   200,   201,   210,   237,   148,   217,   119,   248,
+     238,   -32,   238,   228,   229,   204,     3,   232,   204,   120,
      121,   122,   123,   124,   125,   126,   127,   128,   129,   130,
-     131,   132,   133,   239,   263,   239,   238,   200,   201,   211,
-     148,   217,   119,   228,   229,   -32,   240,   232,   240,   250,
-     241,   264,   241,   242,   254,   242,   257,   268,   202,   271,
-     281,   243,   239,   243,   275,   282,   288,   265,   286,    60,
-      61,    62,    63,    64,    65,   240,    66,   296,   278,   241,
-     299,   244,   242,   244,   302,  -172,   303,   305,    40,    48,
-     243,   153,    90,   297,    68,    69,    60,    61,    62,    63,
-      64,    65,    70,    66,    49,   157,   277,    55,   213,    67,
-     244,   151,   235,   290,   219,   222,   188,   289,    71,     0,
-     214,    68,    69,   189,     0,     0,   153,     0,   245,    70,
-     190,     0,     0,     0,   191,    60,    61,    62,    63,    64,
-      65,     0,    66,   238,   298,    71,     0,     0,    67,    72,
-       0,     0,    60,    61,    62,    63,    64,    65,     0,    66,
-      68,    69,    96,     0,   252,    67,     0,   192,    70,   239,
-       0,     0,     0,     0,     0,     0,    72,    68,    69,     0,
-       0,     0,   240,     0,    71,    70,   241,     0,     0,   242,
-     255,     0,     0,     0,     0,     0,     0,   243,     0,     0,
-       0,    71,     0,   113,   114,   115,   116,   117,   118,   119,
-       0,     0,     0,     0,     0,    72,     0,   244,   120,   121,
-     122,   123,   124,   125,   126,   127,   128,   129,   130,   131,
-     132,   133,    72,     0,     0,     0,     0,     0,   148,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,   134,   120,
-     121,   122,   123,   124,   125,   126,   127,   128,   129,   130,
-     131,   132,   133,   121,   122,   123,   124,   125,   126,   127,
-     128,   129,   130,   131,   132,   133,   135,     0,   149,   120,
-     121,   122,   123,   124,   125,   126,   127,   128,   129,   130,
-     131,   132,   133,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,   199,   120,   121,   122,   123,   124,   125,   126,
-     127,   128,   129,   130,   131,   132,   133,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,   267,   120,   121,   122,
+     131,   132,   133,   254,   237,   238,   239,   269,   239,   250,
+     202,   257,   210,   268,   238,   271,   210,   275,   279,   240,
+     281,   240,   282,   241,   278,   241,   242,   286,   242,   296,
+     301,   239,   302,   304,   243,    40,   243,    90,    48,   288,
+     239,    49,   157,    55,   240,   213,   210,   277,   241,   210,
+     290,   242,   235,   240,   244,   222,   244,   241,   219,   243,
+     242,     0,   297,   153,     0,   188,     0,     0,   243,     0,
+     214,     0,     0,    60,    61,    62,    63,    64,    65,   244,
+      66,     0,     0,     0,     0,     0,    67,     0,   244,     0,
+     289,     0,     0,     0,     0,     0,   153,     0,    68,    69,
+     189,   245,     0,     0,     0,     0,    70,   190,     0,     0,
+       0,   191,     0,   298,    60,    61,    62,    63,    64,    65,
+       0,    66,    71,     0,     0,     0,     0,    67,     0,     0,
+       0,     0,     0,     0,   252,     0,     0,     0,     0,    68,
+      69,    96,     0,     0,   192,     0,     0,    70,     0,     0,
+       0,     0,     0,    72,    60,    61,    62,    63,    64,    65,
+       0,    66,     0,    71,     0,     0,     0,    67,     0,     0,
+       0,    60,    61,    62,    63,    64,    65,     0,    66,    68,
+      69,     0,     0,     0,     0,     0,     0,    70,     0,     0,
+       0,     0,     0,     0,    72,     0,    68,    69,     0,     0,
+       0,     0,     0,    71,    70,   120,   121,   122,   123,   124,
+     125,   126,   127,   128,   129,   130,   131,   132,   133,     0,
+      71,     0,     0,     0,     0,   148,   113,   114,   115,   116,
+     117,   118,   119,     0,    72,   134,   120,   121,   122,   123,
+     124,   125,   126,   127,   128,   129,   130,   131,   132,   133,
+       0,    72,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,   135,     0,   149,   120,   121,   122,   123,
+     124,   125,   126,   127,   128,   129,   130,   131,   132,   133,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,   199,
+     120,   121,   122,   123,   124,   125,   126,   127,   128,   129,
+     130,   131,   132,   133,   255,     0,     0,     0,     0,     0,
+       0,     0,     0,   267,     0,     0,     0,   113,   114,   115,
+     116,   117,   118,   119,   120,   121,   122,   123,   124,   125,
+     126,   127,   128,   129,   130,   131,   132,   133,   121,   122,
      123,   124,   125,   126,   127,   128,   129,   130,   131,   132,
      133,   122,   123,   124,   125,   126,   127,   128,   129,   130,
      131,   132,   133
@@ -941,65 +945,69 @@ static const yytype_int16 yytable[] =
 
 static const yytype_int16 yycheck[] =
 {
-       0,     1,    37,    37,     3,     3,    36,   138,    44,     3,
-      36,    80,    12,     3,   118,    51,     3,    68,    69,   145,
-       0,    21,   153,     0,    80,     3,     4,     5,     6,     7,
-       8,    67,    10,    46,     5,    71,    41,    36,    16,    10,
-       3,    41,    42,    43,    21,    80,    80,    37,   179,    43,
-      28,    29,   182,    43,    54,    37,    43,    93,    36,    11,
-      12,    13,   113,   114,   115,   116,   117,   118,   119,    74,
-      70,     3,    72,    36,    52,   296,   112,   203,   204,   183,
-     131,   302,   208,    37,   120,   121,    36,   123,   124,   125,
-     126,   127,   128,   129,   130,   203,     3,   237,    11,    12,
-      13,    36,   138,    38,    36,    83,    12,   233,   248,   183,
-     236,   147,   142,   182,    50,   241,   142,   168,   154,   245,
-       5,   247,     7,    30,    37,    12,   139,   140,   141,   269,
-     167,   167,   132,   241,     3,    41,    42,    43,     6,   279,
-       8,     9,    43,   142,   109,   145,   176,   182,   182,   275,
-     281,    36,   278,   118,    41,    42,    43,    37,   109,   195,
-      24,    25,    26,     6,   142,     8,     9,   118,   120,   169,
-     278,   183,   223,    16,   242,   211,   244,   176,    36,   179,
-      13,   217,    14,    15,    16,    17,    18,    19,    20,    21,
-      22,    23,    24,    25,    26,    27,   109,   183,   176,    24,
-      25,    26,    27,   203,   255,   118,   109,   120,    38,    36,
-      46,    43,    48,    25,    26,    27,   252,    14,    15,    16,
+       0,     1,    37,   100,     3,   138,    37,     3,    44,    36,
+      80,    36,    12,   118,     5,    51,    11,    12,    13,    10,
+     153,    21,     3,     3,     3,     0,    11,    12,    13,   237,
+      80,    67,    41,     3,     3,    71,   182,    36,     0,   203,
+     248,    41,    42,    43,    36,    80,   179,    43,     3,    80,
+      68,    69,    37,    46,    54,    48,   183,    93,    37,    21,
+     109,   269,    46,    43,    43,    74,    36,    36,    50,   118,
+      70,   279,    72,    37,    67,    30,   112,   241,   183,    30,
+      31,    32,    33,    34,   120,   121,   167,   123,   124,   125,
+     126,   127,   128,   129,   130,   113,   114,   115,   116,   117,
+     118,   119,   138,     3,     4,     5,     6,     7,     8,   102,
+      10,   147,   182,   131,   278,   142,    16,   142,   154,   112,
+       6,    37,     8,     9,   109,   120,     3,   183,    28,    29,
+      16,   167,   132,   118,    12,   120,    36,   130,     6,    43,
+       8,     9,    12,   142,   109,   145,    37,   182,   281,   176,
+     168,   182,    52,   118,   147,   139,   140,   141,    13,   195,
+      24,    25,    26,    41,    42,    43,    25,    26,    27,   169,
+     163,    41,    42,    43,    36,   211,     5,   176,     7,   179,
+      36,   217,    38,    83,    14,    15,    16,    17,    18,    19,
+      20,    21,    22,    23,    24,    25,    26,    27,    38,   296,
+      22,    23,    24,   203,   301,   223,   145,    36,    23,    24,
+      25,    26,    27,    43,   109,   183,   252,    14,    15,    16,
       17,    18,    19,    20,    21,    22,    23,    24,    25,    26,
-      27,    67,    28,    29,    30,    31,    32,    33,    34,   176,
-      15,   241,    22,    23,    24,   245,   282,    30,    31,    32,
-      33,    34,   288,    28,    29,    30,    31,    32,    33,    34,
-     183,   297,   124,   124,    87,    37,   102,    62,    36,    62,
-      23,    24,    25,    26,    27,   275,   112,   175,   278,    14,
+      27,    24,    25,    26,    27,    36,   242,   255,   244,   124,
+      15,   241,   142,   176,   124,   245,   282,   183,    87,    37,
+     175,    36,   288,    28,    29,    30,    31,    32,    33,    34,
+     174,   297,   160,   176,   203,   204,     3,    78,    34,   208,
+      62,   124,    62,    37,    37,   275,   176,   160,   278,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    88,   130,    88,    62,   160,   176,   174,
-       3,    78,    34,    37,    37,   124,   101,   160,   101,    94,
-     105,   147,   105,   108,    79,   108,    37,    37,     3,   122,
-      50,   116,    88,   116,   105,    95,   119,   163,    37,     3,
-       4,     5,     6,     7,     8,   101,    10,    36,   105,   105,
-       3,   136,   108,   136,    36,    38,    37,    37,    21,    29,
-     116,   183,    48,   119,    28,    29,     3,     4,     5,     6,
-       7,     8,    36,    10,    29,   112,   245,    39,   147,    16,
-     136,   100,   203,   275,   156,   169,   137,   170,    52,    -1,
-     149,    28,    29,    30,    -1,    -1,   183,    -1,   183,    36,
-      37,    -1,    -1,    -1,    41,     3,     4,     5,     6,     7,
-       8,    -1,    10,    62,   170,    52,    -1,    -1,    16,    83,
-      -1,    -1,     3,     4,     5,     6,     7,     8,    -1,    10,
-      28,    29,    30,    -1,   159,    16,    -1,    74,    36,    88,
-      -1,    -1,    -1,    -1,    -1,    -1,    83,    28,    29,    -1,
-      -1,    -1,   101,    -1,    52,    36,   105,    -1,    -1,   108,
-      15,    -1,    -1,    -1,    -1,    -1,    -1,   116,    -1,    -1,
-      -1,    52,    -1,    28,    29,    30,    31,    32,    33,    34,
-      -1,    -1,    -1,    -1,    -1,    83,    -1,   136,    14,    15,
-      16,    17,    18,    19,    20,    21,    22,    23,    24,    25,
-      26,    27,    83,    -1,    -1,    -1,    -1,    -1,     3,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    44,    14,
-      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    15,    16,    17,    18,    19,    20,    21,
-      22,    23,    24,    25,    26,    27,    72,    -1,    43,    14,
-      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    37,    14,    15,    16,    17,    18,    19,    20,
-      21,    22,    23,    24,    25,    26,    27,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    37,    14,    15,    16,
+      25,    26,    27,    79,   233,    62,    88,   236,    88,    94,
+       3,    37,   241,    37,    62,   122,   245,   105,   247,   101,
+      50,   101,    95,   105,   105,   105,   108,    37,   108,    36,
+      36,    88,    37,    37,   116,    21,   116,    48,    29,   119,
+      88,    29,   112,    39,   101,   147,   275,   245,   105,   278,
+     275,   108,   203,   101,   136,   169,   136,   105,   156,   116,
+     108,    -1,   119,   183,    -1,   137,    -1,    -1,   116,    -1,
+     149,    -1,    -1,     3,     4,     5,     6,     7,     8,   136,
+      10,    -1,    -1,    -1,    -1,    -1,    16,    -1,   136,    -1,
+     170,    -1,    -1,    -1,    -1,    -1,   183,    -1,    28,    29,
+      30,   183,    -1,    -1,    -1,    -1,    36,    37,    -1,    -1,
+      -1,    41,    -1,   170,     3,     4,     5,     6,     7,     8,
+      -1,    10,    52,    -1,    -1,    -1,    -1,    16,    -1,    -1,
+      -1,    -1,    -1,    -1,   159,    -1,    -1,    -1,    -1,    28,
+      29,    30,    -1,    -1,    74,    -1,    -1,    36,    -1,    -1,
+      -1,    -1,    -1,    83,     3,     4,     5,     6,     7,     8,
+      -1,    10,    -1,    52,    -1,    -1,    -1,    16,    -1,    -1,
+      -1,     3,     4,     5,     6,     7,     8,    -1,    10,    28,
+      29,    -1,    -1,    -1,    -1,    -1,    -1,    36,    -1,    -1,
+      -1,    -1,    -1,    -1,    83,    -1,    28,    29,    -1,    -1,
+      -1,    -1,    -1,    52,    36,    14,    15,    16,    17,    18,
+      19,    20,    21,    22,    23,    24,    25,    26,    27,    -1,
+      52,    -1,    -1,    -1,    -1,     3,    28,    29,    30,    31,
+      32,    33,    34,    -1,    83,    44,    14,    15,    16,    17,
+      18,    19,    20,    21,    22,    23,    24,    25,    26,    27,
+      -1,    83,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    72,    -1,    43,    14,    15,    16,    17,
+      18,    19,    20,    21,    22,    23,    24,    25,    26,    27,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    37,
+      14,    15,    16,    17,    18,    19,    20,    21,    22,    23,
+      24,    25,    26,    27,    15,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    37,    -1,    -1,    -1,    28,    29,    30,
+      31,    32,    33,    34,    14,    15,    16,    17,    18,    19,
+      20,    21,    22,    23,    24,    25,    26,    27,    15,    16,
       17,    18,    19,    20,    21,    22,    23,    24,    25,    26,
       27,    16,    17,    18,    19,    20,    21,    22,    23,    24,
       25,    26,    27
@@ -1038,8 +1046,8 @@ static const yytype_uint8 yystos[] =
       67,   102,   112,   130,   147,   163,   242,    37,    37,   239,
      212,   122,   223,   218,   223,   105,   223,   217,   105,   239,
      212,    50,    95,   207,   229,   228,    37,   212,   119,   170,
-     219,   218,   212,   224,   229,   229,    36,   119,   170,     3,
-     225,   229,    36,    37,   225,    37
+     219,   218,   212,   224,   229,   229,    36,   119,   170,   213,
+     229,    36,    37,   213,    37
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -1586,391 +1594,391 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocatio
           case 3: /* NAME  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1590 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1598 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 4: /* STRING  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1596 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1604 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 5: /* INTNUM  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1602 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1610 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 6: /* BOOL  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1608 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1616 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 7: /* APPROXNUM  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1614 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1622 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 8: /* NULLX  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1620 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1628 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 9: /* UNKNOWN  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1626 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1634 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 10: /* QUESTIONMARK  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1632 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1640 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 185: /* sql_stmt  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1638 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1646 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 186: /* stmt_list  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1644 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1652 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 187: /* stmt  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1650 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1658 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 188: /* select_stmt  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1656 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1664 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 189: /* select_with_parens  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1662 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1670 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 190: /* select_no_parens  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1668 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1676 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 191: /* select_clause  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1674 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1682 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 192: /* simple_select  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1680 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1688 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 193: /* opt_top  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1686 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1694 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 194: /* top_count  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1692 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1700 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 195: /* top_percent  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1698 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1706 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 196: /* opt_where  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1704 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1712 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 197: /* opt_from_clause  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1710 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1718 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 198: /* select_limit  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1716 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1724 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 199: /* opt_hint  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1722 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1730 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 200: /* limit_expr  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1728 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1736 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 201: /* opt_groupby  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1734 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1742 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 202: /* opt_order_by  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1740 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1748 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 203: /* order_by  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1746 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1754 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 204: /* sort_list  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1752 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1760 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 205: /* sort_key  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1758 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1766 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 206: /* opt_asc_desc  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1764 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1772 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 207: /* opt_having  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1770 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1778 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 208: /* with_clause  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1776 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1784 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 209: /* with_list  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1782 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1790 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 210: /* common_table_expr  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1788 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1796 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 211: /* opt_derived_column_list  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1794 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1802 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 212: /* simple_ident_list_with_parens  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1800 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1808 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 213: /* simple_ident_list  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1806 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1814 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 214: /* opt_distinct  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1812 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1820 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 215: /* select_expr_list  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1818 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1826 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 216: /* projection  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1824 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1832 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 217: /* from_list  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1830 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1838 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 218: /* table_factor  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1836 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1844 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 219: /* table_factor_non_join  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1842 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1850 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 220: /* relation_factor  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1848 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1856 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 221: /* joined_table  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1854 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1862 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 222: /* join_type  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1860 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1868 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 224: /* expr_list  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1866 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1874 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 225: /* column_ref  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1872 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1880 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 226: /* expr_const  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1878 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1886 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 227: /* simple_expr  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1884 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1892 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 228: /* arith_expr  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1890 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1898 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 229: /* expr  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1896 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1904 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 230: /* in_expr  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1902 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1910 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 231: /* case_expr  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1908 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1916 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 232: /* case_arg  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1914 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1922 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 233: /* when_clause_list  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1920 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1928 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 234: /* when_clause  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1926 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1934 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 235: /* case_default  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1932 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1940 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 236: /* func_expr  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1938 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1946 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 237: /* distinct_or_all  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1944 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1952 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 238: /* column_name  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1950 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1958 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 239: /* relation_name  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1956 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1964 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 240: /* function_name  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1962 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1970 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 241: /* column_label  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1968 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1976 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 242: /* data_type  */
 #line 89 "sqlparser.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 1974 "sqlparser_bison.cpp" /* yacc.c:1257  */
+#line 1982 "sqlparser_bison.cpp" /* yacc.c:1257  */
         break;
 
 
@@ -2087,7 +2095,7 @@ YYLTYPE yylloc = yyloc_default;
 	yylloc.last_line = 0;
 }
 
-#line 2091 "sqlparser_bison.cpp" /* yacc.c:1429  */
+#line 2099 "sqlparser_bison.cpp" /* yacc.c:1429  */
   yylsp[0] = yylloc;
   goto yysetstate;
 
@@ -2281,7 +2289,7 @@ yyreduce:
     result->accept = true;
     YYACCEPT;
 }
-#line 2285 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2293 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 4:
@@ -2290,13 +2298,13 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_STMT_LIST, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &STMT_LIST_SERIALIZE_FORMAT;
 }
-#line 2294 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2302 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 6:
 #line 202 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 2300 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2308 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 7:
@@ -2304,7 +2312,7 @@ yyreduce:
     {
     (yyval.node) = (yyvsp[0].node);
 }
-#line 2308 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2316 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 8:
@@ -2312,7 +2320,7 @@ yyreduce:
     {
     (yyval.node) = (yyvsp[0].node);
 }
-#line 2316 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2324 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 9:
@@ -2321,7 +2329,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, 1, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &SELECT_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 2325 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2333 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 10:
@@ -2330,7 +2338,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, 1, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &SELECT_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 2334 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2342 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 12:
@@ -2339,7 +2347,7 @@ yyreduce:
     (yyval.node) = (yyvsp[-1].node);
     (yyval.node)->setChild(E_SELECT_ORDER_BY, (yyvsp[0].node));
 }
-#line 2343 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2351 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 13:
@@ -2349,7 +2357,7 @@ yyreduce:
     (yyval.node)->setChild(E_SELECT_ORDER_BY, (yyvsp[-1].node));
     (yyval.node)->setChild(E_SELECT_LIMIT, (yyvsp[0].node));
 }
-#line 2353 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2361 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 14:
@@ -2358,7 +2366,7 @@ yyreduce:
     (yyval.node) = (yyvsp[0].node);
     (yyval.node)->setChild(E_SELECT_OPT_WITH, (yyvsp[-1].node));
 }
-#line 2362 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2370 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 15:
@@ -2368,7 +2376,7 @@ yyreduce:
     (yyval.node)->setChild(E_SELECT_ORDER_BY, (yyvsp[0].node));
     (yyval.node)->setChild(E_SELECT_OPT_WITH, (yyvsp[-2].node));
 }
-#line 2372 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2380 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 16:
@@ -2379,7 +2387,7 @@ yyreduce:
     (yyval.node)->setChild(E_SELECT_LIMIT, (yyvsp[0].node));
     (yyval.node)->setChild(E_SELECT_OPT_WITH, (yyvsp[-3].node));
 }
-#line 2383 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2391 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 19:
@@ -2406,7 +2414,7 @@ yyreduce:
                     );
     (yyval.node)->serialize_format = &SELECT_SERIALIZE_FORMAT;
 }
-#line 2410 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2418 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 20:
@@ -2434,7 +2442,7 @@ yyreduce:
                         );
     (yyval.node)->serialize_format = &SELECT_UNION_SERIALIZE_FORMAT;
 }
-#line 2438 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2446 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 21:
@@ -2462,7 +2470,7 @@ yyreduce:
                         );
     (yyval.node)->serialize_format = &SELECT_INTERSECT_SERIALIZE_FORMAT;
 }
-#line 2466 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2474 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 22:
@@ -2490,7 +2498,7 @@ yyreduce:
                         );
     (yyval.node)->serialize_format = &SELECT_EXCEPT_SERIALIZE_FORMAT;
 }
-#line 2494 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2502 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 23:
@@ -2498,7 +2506,7 @@ yyreduce:
     {
     (yyval.node) = nullptr;
 }
-#line 2502 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2510 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 24:
@@ -2507,7 +2515,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_TOP_CNT, 1, (yyvsp[0].node));
     (yyval.node)->serialize_format = &TOP_SERIALIZE_FORMAT;
 }
-#line 2511 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2519 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 25:
@@ -2516,7 +2524,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_TOP_CNT_TIES, 1, (yyvsp[-2].node));
     (yyval.node)->serialize_format = &TOP_TIES_SERIALIZE_FORMAT;
 }
-#line 2520 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2528 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 26:
@@ -2525,7 +2533,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_TOP_PCT, 1, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &TOP_PCT_SERIALIZE_FORMAT;
 }
-#line 2529 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2537 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 27:
@@ -2534,7 +2542,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_TOP_PCT_TIES, 1, (yyvsp[-3].node));
     (yyval.node)->serialize_format = &TOP_PCT_TIES_SERIALIZE_FORMAT;
 }
-#line 2538 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2546 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 29:
@@ -2543,7 +2551,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 2547 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2555 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 32:
@@ -2552,7 +2560,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 2556 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2564 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 33:
@@ -2560,7 +2568,7 @@ yyreduce:
     {
     (yyval.node) = nullptr;
 }
-#line 2564 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2572 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 34:
@@ -2569,7 +2577,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_WHERE_CLAUSE, 1, (yyvsp[0].node));
     (yyval.node)->serialize_format = &WHERE_SERIALIZE_FORMAT;
 }
-#line 2573 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2581 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 35:
@@ -2577,7 +2585,7 @@ yyreduce:
     {
     (yyval.node) = nullptr;
 }
-#line 2581 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2589 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 36:
@@ -2586,7 +2594,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_FROM_CLAUSE, 1, (yyvsp[0].node));
     (yyval.node)->serialize_format = &FROM_SERIALIZE_FORMAT;
 }
-#line 2590 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2598 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 37:
@@ -2595,7 +2603,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_LIMIT_CLAUSE, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &LIMIT_1_SERIALIZE_FORMAT;
 }
-#line 2599 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2607 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 38:
@@ -2604,7 +2612,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_LIMIT_CLAUSE, 2, (yyvsp[0].node), (yyvsp[-2].node));
     (yyval.node)->serialize_format = &LIMIT_2_SERIALIZE_FORMAT;
 }
-#line 2608 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2616 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 39:
@@ -2613,7 +2621,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_LIMIT_CLAUSE, 2, (yyvsp[0].node), nullptr);
     (yyval.node)->serialize_format = &LIMIT_3_SERIALIZE_FORMAT;
 }
-#line 2617 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2625 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 40:
@@ -2622,7 +2630,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_LIMIT_CLAUSE, 2, nullptr, (yyvsp[0].node));
     (yyval.node)->serialize_format = &LIMIT_4_SERIALIZE_FORMAT;
 }
-#line 2626 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2634 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 41:
@@ -2631,7 +2639,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_LIMIT_CLAUSE, 2, (yyvsp[0].node), (yyvsp[-2].node));
     (yyval.node)->serialize_format = &LIMIT_5_SERIALIZE_FORMAT;
 }
-#line 2635 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2643 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 42:
@@ -2639,7 +2647,7 @@ yyreduce:
     {
     (yyval.node) = nullptr;
 }
-#line 2643 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2651 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 43:
@@ -2647,7 +2655,7 @@ yyreduce:
     {
     (yyval.node) = (yyvsp[0].node);
 }
-#line 2651 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2659 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 44:
@@ -2655,13 +2663,13 @@ yyreduce:
     {
     (yyval.node) = (yyvsp[0].node);
 }
-#line 2659 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2667 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 45:
 #line 485 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 2665 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2673 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 46:
@@ -2670,19 +2678,19 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_GROUP_BY, 1, (yyvsp[0].node));
     (yyval.node)->serialize_format = &GROUP_BY_SERIALIZE_FORMAT;
 }
-#line 2674 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2682 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 47:
 #line 494 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node);}
-#line 2680 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2688 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 48:
 #line 495 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 2686 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2694 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 49:
@@ -2691,13 +2699,13 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_ORDER_BY, 1, (yyvsp[0].node));
     (yyval.node)->serialize_format = &ORDER_BY_SERIALIZE_FORMAT;
 }
-#line 2695 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2703 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 50:
 #line 508 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 2701 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2709 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 51:
@@ -2706,7 +2714,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_SORT_LIST, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &SORT_LIST_SERIALIZE_FORMAT;
 }
-#line 2710 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2718 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 52:
@@ -2715,7 +2723,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_SORT_KEY, 2, (yyvsp[-1].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &SORT_KEY_SERIALIZE_FORMAT;
 }
-#line 2719 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2727 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 53:
@@ -2723,7 +2731,7 @@ yyreduce:
     {
     (yyval.node) = Node::makeTerminalNode(E_SORT_ASC, "");
 }
-#line 2727 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2735 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 54:
@@ -2731,7 +2739,7 @@ yyreduce:
     {
     (yyval.node) = Node::makeTerminalNode(E_SORT_ASC, "ASC");
 }
-#line 2735 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2743 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 55:
@@ -2739,13 +2747,13 @@ yyreduce:
     {
     (yyval.node) = Node::makeTerminalNode(E_SORT_DESC, "DESC");
 }
-#line 2743 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2751 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 56:
 #line 541 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 2749 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2757 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 57:
@@ -2754,7 +2762,7 @@ yyreduce:
   (yyval.node) = Node::makeNonTerminalNode(E_HAVING, 1, (yyvsp[0].node));
   (yyval.node)->serialize_format = &HAVING_SERIALIZE_FORMAT;
 }
-#line 2758 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2766 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 58:
@@ -2763,7 +2771,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OPT_WITH_CLAUSE, 1, (yyvsp[0].node));
     (yyval.node)->serialize_format = &WITH_CLAUSE_SERIALIZE_FORMAT;
 }
-#line 2767 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2775 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 60:
@@ -2772,7 +2780,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_WITH_LIST, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &EXPR_LIST_SERIALIZE_FORMAT;
 }
-#line 2776 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2784 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 61:
@@ -2781,13 +2789,13 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_COMMON_TABLE_EXPR, 3, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &COMMON_TABLE_EXPR_SERIALIZE_FORMAT;
 }
-#line 2785 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2793 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 62:
 #line 575 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 2791 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2799 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 64:
@@ -2796,7 +2804,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_SIMPLE_IDENT_LIST_WITH_PARENS, 1, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &EXPR_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 2800 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2808 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 66:
@@ -2805,7 +2813,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_SIMPLE_IDENT_LIST, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &EXPR_LIST_SERIALIZE_FORMAT;
 }
-#line 2809 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2817 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 67:
@@ -2813,7 +2821,7 @@ yyreduce:
     {
     (yyval.node) = nullptr;
 }
-#line 2817 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2825 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 68:
@@ -2821,7 +2829,7 @@ yyreduce:
     {
     (yyval.node) = Node::makeTerminalNode(E_ALL, "ALL");
 }
-#line 2825 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2833 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 69:
@@ -2829,7 +2837,7 @@ yyreduce:
     {
     (yyval.node) = Node::makeTerminalNode(E_DISTINCT, "DISTINCT");
 }
-#line 2833 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2841 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 71:
@@ -2838,7 +2846,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_SELECT_EXPR_LIST, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &SELECT_EXPR_LIST_SERIALIZE_FORMAT;
 }
-#line 2842 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2850 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 72:
@@ -2847,7 +2855,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_PROJECT_STRING, 1, (yyvsp[0].node));
     (yyval.node)->serialize_format = &PROJECTION_SERIALIZE_FORMAT;
 }
-#line 2851 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2859 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 73:
@@ -2859,7 +2867,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_PROJECT_STRING, 1, alias_node);
     (yyval.node)->serialize_format = &PROJECTION_SERIALIZE_FORMAT;
 }
-#line 2863 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2871 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 74:
@@ -2871,7 +2879,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_PROJECT_STRING, 1, alias_node);
     (yyval.node)->serialize_format = &PROJECTION_SERIALIZE_FORMAT;
 }
-#line 2875 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2883 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 75:
@@ -2881,13 +2889,13 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_PROJECT_STRING, 1, star_node);
     (yyval.node)->serialize_format = &PROJECTION_SERIALIZE_FORMAT;
 }
-#line 2885 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2893 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 76:
 #line 653 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 2891 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2899 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 77:
@@ -2896,7 +2904,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_FROM_LIST, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &FORM_LIST_SERIALIZE_FORMAT;
 }
-#line 2900 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2908 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 79:
@@ -2904,7 +2912,7 @@ yyreduce:
     {
     (yyval.node) = (yyvsp[0].node);
 }
-#line 2908 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2916 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 80:
@@ -2912,7 +2920,7 @@ yyreduce:
     {
     (yyval.node) = (yyvsp[0].node);
 }
-#line 2916 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2924 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 81:
@@ -2921,7 +2929,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_ALIAS, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &ALIAS_2_SERIALIZE_FORMAT;
 }
-#line 2925 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2933 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 82:
@@ -2930,7 +2938,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_ALIAS, 2, (yyvsp[-1].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &ALIAS_1_SERIALIZE_FORMAT;
 }
-#line 2934 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2942 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 83:
@@ -2939,7 +2947,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_ALIAS, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &ALIAS_2_SERIALIZE_FORMAT;
 }
-#line 2943 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2951 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 84:
@@ -2948,7 +2956,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_ALIAS, 2, (yyvsp[-1].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &ALIAS_1_SERIALIZE_FORMAT;
 }
-#line 2952 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2960 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 85:
@@ -2957,7 +2965,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_ALIAS, 3, (yyvsp[-3].node), (yyvsp[-1].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &ALIAS_3_SERIALIZE_FORMAT;
 }
-#line 2961 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2969 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 86:
@@ -2966,7 +2974,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_ALIAS, 3, (yyvsp[-3].node), (yyvsp[-1].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &ALIAS_3_SERIALIZE_FORMAT;
 }
-#line 2970 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2978 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 87:
@@ -2975,7 +2983,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_ALIAS, 3, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &ALIAS_3_SERIALIZE_FORMAT;
 }
-#line 2979 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2987 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 88:
@@ -2984,13 +2992,13 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_ALIAS, 3, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &ALIAS_3_SERIALIZE_FORMAT;
 }
-#line 2988 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 2996 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 89:
 #line 716 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = (yyvsp[0].node); }
-#line 2994 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3002 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 90:
@@ -2999,7 +3007,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_JOINED_TABLE_WITH_PARENS, 1, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &JOINED_TB_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 3003 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3011 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 91:
@@ -3008,7 +3016,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, (yyvsp[-4].node), (yyvsp[-5].node), (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &JOINED_TB_1_SERIALIZE_FORMAT;
 }
-#line 3012 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3020 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 92:
@@ -3018,7 +3026,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &JOINED_TB_1_SERIALIZE_FORMAT;
 }
-#line 3022 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3030 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 93:
@@ -3028,7 +3036,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, (yyvsp[-3].node), (yyvsp[0].node), nullptr);
     (yyval.node)->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
 }
-#line 3032 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3040 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 94:
@@ -3037,7 +3045,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, (yyvsp[-6].node), (yyvsp[-7].node), (yyvsp[-4].node), (yyvsp[-1].node));
     (yyval.node)->serialize_format = &JOINED_TB_3_SERIALIZE_FORMAT;
 }
-#line 3041 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3049 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 95:
@@ -3047,7 +3055,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, (yyvsp[-6].node), (yyvsp[-4].node), (yyvsp[-1].node));
     (yyval.node)->serialize_format = &JOINED_TB_3_SERIALIZE_FORMAT;
 }
-#line 3051 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3059 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 96:
@@ -3062,7 +3070,7 @@ yyreduce:
         (yyval.node) = Node::makeTerminalNode(E_JOIN_FULL, "FULL");
     }
 }
-#line 3066 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3074 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 97:
@@ -3077,7 +3085,7 @@ yyreduce:
         (yyval.node) = Node::makeTerminalNode(E_JOIN_LEFT, "LEFT");
     }
 }
-#line 3081 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3089 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 98:
@@ -3092,7 +3100,7 @@ yyreduce:
         (yyval.node) = Node::makeTerminalNode(E_JOIN_RIGHT, "RIGHT");
     }
 }
-#line 3096 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3104 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 99:
@@ -3100,7 +3108,7 @@ yyreduce:
     {
     (yyval.node) = Node::makeTerminalNode(E_JOIN_INNER, "INNER");
 }
-#line 3104 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3112 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 100:
@@ -3108,19 +3116,19 @@ yyreduce:
     {
     (yyval.node) = Node::makeTerminalNode(E_JOIN_CROSS, "CROSS");
 }
-#line 3112 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3120 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 101:
 #line 800 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.ival) = 1; /*this is a flag*/}
-#line 3118 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3126 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 102:
 #line 801 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.ival) = 0; }
-#line 3124 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3132 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 104:
@@ -3129,7 +3137,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_EXPR_LIST, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &EXPR_LIST_SERIALIZE_FORMAT;
 }
-#line 3133 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3141 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 105:
@@ -3138,7 +3146,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 2, nullptr, (yyvsp[0].node));
     (yyval.node)->serialize_format = &NAME_FIELD_SERIALIZE_FORMAT_0;
 }
-#line 3142 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3150 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 106:
@@ -3147,7 +3155,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &NAME_FIELD_SERIALIZE_FORMAT;
 }
-#line 3151 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3159 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 107:
@@ -3157,7 +3165,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 2, (yyvsp[-2].node), nd);
     (yyval.node)->serialize_format = &NAME_FIELD_SERIALIZE_FORMAT;
 }
-#line 3161 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3169 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 116:
@@ -3167,7 +3175,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 3171 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3179 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 120:
@@ -3176,7 +3184,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_EXISTS, 1, (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_EXISTS_SERIALIZE_FORMAT;
 }
-#line 3180 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3188 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 122:
@@ -3185,7 +3193,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_POS, 1, (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_POS_SERIALIZE_FORMAT;
 }
-#line 3189 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3197 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 123:
@@ -3194,7 +3202,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NEG, 1, (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_NEG_SERIALIZE_FORMAT;
 }
-#line 3198 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3206 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 124:
@@ -3203,7 +3211,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_ADD, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_ADD_SERIALIZE_FORMAT;
 }
-#line 3207 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3215 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 125:
@@ -3212,7 +3220,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_MINUS, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_MINUS_SERIALIZE_FORMAT;
 }
-#line 3216 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3224 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 126:
@@ -3221,7 +3229,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_MUL, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_MUL_SERIALIZE_FORMAT;
 }
-#line 3225 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3233 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 127:
@@ -3230,7 +3238,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_DIV, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_DIV_SERIALIZE_FORMAT;
 }
-#line 3234 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3242 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 128:
@@ -3239,7 +3247,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_REM, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_REM_SERIALIZE_FORMAT;
 }
-#line 3243 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3251 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 129:
@@ -3248,7 +3256,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_POW, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_POW_SERIALIZE_FORMAT;
 }
-#line 3252 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3260 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 130:
@@ -3257,7 +3265,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_MOD, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_MOD_SERIALIZE_FORMAT;
 }
-#line 3261 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3269 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 132:
@@ -3266,7 +3274,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_LE, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_LE_SERIALIZE_FORMAT;
 }
-#line 3270 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3278 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 133:
@@ -3275,7 +3283,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_LT, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_LT_SERIALIZE_FORMAT;
 }
-#line 3279 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3287 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 134:
@@ -3284,7 +3292,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_EQ, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_EQ_SERIALIZE_FORMAT;
 }
-#line 3288 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3296 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 135:
@@ -3293,7 +3301,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_GE, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_GE_SERIALIZE_FORMAT;
 }
-#line 3297 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3305 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 136:
@@ -3302,7 +3310,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_GT, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_GT_SERIALIZE_FORMAT;
 }
-#line 3306 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3314 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 137:
@@ -3311,7 +3319,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NE, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_NE_SERIALIZE_FORMAT;
 }
-#line 3315 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3323 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 138:
@@ -3320,7 +3328,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_LIKE, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_LIKE_SERIALIZE_FORMAT;
 }
-#line 3324 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3332 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 139:
@@ -3329,7 +3337,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NOT_LIKE, 2, (yyvsp[-3].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_NOT_LIKE_SERIALIZE_FORMAT;
 }
-#line 3333 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3341 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 140:
@@ -3338,7 +3346,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_AND, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_AND_SERIALIZE_FORMAT;
 }
-#line 3342 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3350 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 141:
@@ -3347,7 +3355,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_OR, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_OR_SERIALIZE_FORMAT;
 }
-#line 3351 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3359 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 142:
@@ -3356,7 +3364,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NOT, 1, (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_NOT_SERIALIZE_FORMAT;
 }
-#line 3360 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3368 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 143:
@@ -3365,7 +3373,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IS, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IS_SERIALIZE_FORMAT;
 }
-#line 3369 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3377 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 144:
@@ -3374,7 +3382,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IS_NOT, 2, (yyvsp[-3].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
 }
-#line 3378 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3386 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 145:
@@ -3383,7 +3391,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IS, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IS_SERIALIZE_FORMAT;
 }
-#line 3387 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3395 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 146:
@@ -3392,7 +3400,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IS_NOT, 2, (yyvsp[-3].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
 }
-#line 3396 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3404 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 147:
@@ -3401,7 +3409,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IS, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IS_SERIALIZE_FORMAT;
 }
-#line 3405 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3413 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 148:
@@ -3410,7 +3418,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IS_NOT, 2, (yyvsp[-3].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
 }
-#line 3414 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3422 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 149:
@@ -3419,7 +3427,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_BTW, 3, (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_BETWEEN_SERIALIZE_FORMAT;
 }
-#line 3423 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3431 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 150:
@@ -3428,7 +3436,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NOT_BTW, 3, (yyvsp[-5].node), (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_NOT_BETWEEN_SERIALIZE_FORMAT;
 }
-#line 3432 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3440 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 151:
@@ -3437,7 +3445,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IN, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IN_SERIALIZE_FORMAT;
 }
-#line 3441 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3449 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 152:
@@ -3446,7 +3454,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NOT_IN, 2, (yyvsp[-3].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_NOT_IN_SERIALIZE_FORMAT;
 }
-#line 3450 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3458 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 153:
@@ -3455,7 +3463,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_OP_CNN, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_CNN_SERIALIZE_FORMAT;
 }
-#line 3459 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3467 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 155:
@@ -3464,7 +3472,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 3468 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3476 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 156:
@@ -3473,7 +3481,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_CASE, 3, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node));
     (yyval.node)->serialize_format = &CASE_SERIALIZE_FORMAT;
 }
-#line 3477 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3485 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 158:
@@ -3481,7 +3489,7 @@ yyreduce:
     {
     (yyval.node) = nullptr;
 }
-#line 3485 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3493 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 160:
@@ -3490,7 +3498,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_WHEN_LIST, 2, (yyvsp[-1].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &WHEN_LIST_SERIALIZE_FORMAT;
 }
-#line 3494 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3502 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 161:
@@ -3499,7 +3507,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_WHEN, 2, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &WHEN_SERIALIZE_FORMAT;
 }
-#line 3503 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3511 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 162:
@@ -3508,7 +3516,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_CASE_DEFAULT, 1, (yyvsp[0].node));
     (yyval.node)->serialize_format = &ELSE_SERIALIZE_FORMAT;
 }
-#line 3512 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3520 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 163:
@@ -3516,7 +3524,7 @@ yyreduce:
     {
     (yyval.node) = nullptr;
 }
-#line 3520 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3528 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 164:
@@ -3531,7 +3539,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, 2, (yyvsp[-3].node), star);
     (yyval.node)->serialize_format = &FUN_CALL_1_SERIALIZE_FORMAT;
 }
-#line 3535 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3543 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 165:
@@ -3545,7 +3553,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, 3, (yyvsp[-4].node), (yyvsp[-1].node), (yyvsp[-2].node));
     (yyval.node)->serialize_format = &FUN_CALL_2_SERIALIZE_FORMAT;
 }
-#line 3549 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3557 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 166:
@@ -3562,7 +3570,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, 2, (yyvsp[-3].node), (yyvsp[-1].node));
     (yyval.node)->serialize_format = &FUN_CALL_1_SERIALIZE_FORMAT;
 }
-#line 3566 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3574 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 167:
@@ -3578,7 +3586,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, 3, (yyvsp[-5].node), (yyvsp[-3].node), (yyvsp[-1].node));
     (yyval.node)->serialize_format = &FUN_CALL_3_SERIALIZE_FORMAT;
 }
-#line 3582 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3590 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 168:
@@ -3587,7 +3595,7 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, 1, (yyvsp[-2].node));
     (yyval.node)->serialize_format = &FUN_CALL_4_SERIALIZE_FORMAT;
 }
-#line 3591 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3599 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 169:
@@ -3595,7 +3603,7 @@ yyreduce:
     {
     (yyval.node) = Node::makeTerminalNode(E_ALL, "ALL");
 }
-#line 3599 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3607 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 170:
@@ -3603,59 +3611,59 @@ yyreduce:
     {
     (yyval.node) = Node::makeTerminalNode(E_DISTINCT, "DISTINCT");
 }
-#line 3607 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3615 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 175:
 #line 1146 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_INTEGER, "TINYINT"); }
-#line 3613 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3621 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 176:
 #line 1148 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_INTEGER, "SMALLINT"); }
-#line 3619 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3627 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 177:
 #line 1150 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_INTEGER, "MEDIUMINT"); }
-#line 3625 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3633 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 178:
 #line 1152 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_INTEGER, "INTEGER"); }
-#line 3631 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3639 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 179:
 #line 1154 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_INTEGER, "BIGINT"); }
-#line 3637 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3645 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 180:
 #line 1156 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_BOOLEAN, "BOOLEAN"); }
-#line 3643 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3651 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 181:
 #line 1158 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_DOUBLE, "REAL"); }
-#line 3649 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3657 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 182:
 #line 1160 "sqlparser.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_TYPE_DATETIME, "DATETIME"); }
-#line 3655 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3663 "sqlparser_bison.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 3659 "sqlparser_bison.cpp" /* yacc.c:1646  */
+#line 3667 "sqlparser_bison.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

@@ -739,12 +739,12 @@ joined_table:
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $4, nullptr);
     $$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
 }
-  | table_factor join_type JOIN table_factor USING '(' column_ref ')'
+  | table_factor join_type JOIN table_factor USING '(' simple_ident_list ')'
 {
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, $2, $1, $4, $7);
     $$->serialize_format = &JOINED_TB_3_SERIALIZE_FORMAT;
 }
-  | table_factor JOIN table_factor USING '(' column_ref ')'
+  | table_factor JOIN table_factor USING '(' simple_ident_list ')'
 {
     Node* nd = Node::makeTerminalNode(E_JOIN_INNER, "");
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $3, $6);

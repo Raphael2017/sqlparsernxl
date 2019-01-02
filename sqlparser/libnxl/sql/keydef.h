@@ -213,7 +213,7 @@ enum NodeType
     E_OP_NOT_BTW,
     E_OP_IN,
     E_OP_NOT_IN,
-    E_OP_CNN,
+    E_OP_CNN,               // STRING CONNECTOR
 
     E_EXPR_LIST,
     E_EXPR_LIST_WITH_PARENS,
