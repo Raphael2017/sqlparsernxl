@@ -1,11 +1,25 @@
--- TPC_H Query 21 - Suppliers Who Kept Orders Waiting
-SELECT TOP 100 S_NAME, COUNT(*) AS NUMWAIT
-FROM SUPPLIER, LINEITEM L1, ORDERS, NATION WHERE S_SUPPKEY = L1.L_SUPPKEY AND
-O_ORDERKEY = L1.L_ORDERKEY AND O_ORDERSTATUS = 'F' AND L1.L_RECEIPTDATE> L1.L_COMMITDATE
-AND EXISTS (SELECT * FROM LINEITEM L2 WHERE L2.L_ORDERKEY = L1.L_ORDERKEY
- AND L2.L_SUPPKEY <> L1.L_SUPPKEY) AND
-NOT EXISTS (SELECT * FROM LINEITEM L3 WHERE L3.L_ORDERKEY = L1.L_ORDERKEY AND
- L3.L_SUPPKEY <> L1.L_SUPPKEY AND L3.L_RECEIPTDATE > L3.L_COMMITDATE) AND
-S_NATIONKEY = N_NATIONKEY AND N_NAME = 'SAUDI ARABIA'
-GROUP BY S_NAME
-ORDER BY NUMWAIT DESC, S_NAME;
+ -- TPC_H Query 21 - Suppliers Who Kept Orders Waiting
+SELECT TOP 100 s_name,
+               Count(*) AS NUMWAIT
+FROM   supplier,
+       lineitem L1,
+       orders,
+       nation
+WHERE  s_suppkey = L1.l_suppkey
+       AND o_orderkey = L1.l_orderkey
+       AND o_orderstatus = 'F'
+       AND L1.l_receiptdate > L1.l_commitdate
+       AND EXISTS (SELECT *
+                   FROM   lineitem L2
+                   WHERE  L2.l_orderkey = L1.l_orderkey
+                          AND L2.l_suppkey <> L1.l_suppkey)
+       AND NOT EXISTS (SELECT *
+                       FROM   lineitem L3
+                       WHERE  L3.l_orderkey = L1.l_orderkey
+                              AND L3.l_suppkey <> L1.l_suppkey
+                              AND L3.l_receiptdate > L3.l_commitdate)
+       AND s_nationkey = n_nationkey
+       AND n_name = 'SAUDI ARABIA'
+GROUP  BY s_name
+ORDER  BY numwait DESC,
+          s_name;

@@ -1,15 +1,25 @@
--- TPC_H Query 15.1 - Create View for Top Supplier Query
-CREATE VIEW REVENUE0 (SUPPLIER_NO, TOTAL_REVENUE) AS
-SELECT L_SUPPKEY, SUM(L_EXTENDEDPRICE*(1-L_DISCOUNT)) FROM LINEITEM
-WHERE L_SHIPDATE >= '1996-01-01' AND L_SHIPDATE < dateadd(mm, 3, cast('1996-01-01' as datetime))
-GROUP BY L_SUPPKEY;
-
+ -- TPC_H Query 15.1 - Create View for Top Supplier Query
+CREATE view revenue0 (supplier_no, total_revenue)
+AS
+  SELECT l_suppkey,
+         Sum(l_extendedprice * ( 1 - l_discount ))
+  FROM   lineitem
+  WHERE  l_shipdate >= '1996-01-01'
+         AND l_shipdate < Dateadd(mm, 3, Cast('1996-01-01' AS datetime))
+  GROUP  BY l_suppkey;
 
 -- TPC_H Query 15.2 - Top Supplier
-SELECT S_SUPPKEY, S_NAME, S_ADDRESS, S_PHONE, TOTAL_REVENUE
-FROM SUPPLIER, REVENUE0
-WHERE S_SUPPKEY = SUPPLIER_NO AND TOTAL_REVENUE = (SELECT MAX(TOTAL_REVENUE) FROM REVENUE0)
-ORDER BY S_SUPPKEY;
+SELECT s_suppkey,
+       s_name,
+       s_address,
+       s_phone,
+       total_revenue
+FROM   supplier,
+       revenue0
+WHERE  s_suppkey = supplier_no
+       AND total_revenue = (SELECT Max(total_revenue)
+                            FROM   revenue0)
+ORDER  BY s_suppkey;
 
 -- TPC_H Query 15.3 - Drop View
-DROP VIEW REVENUE0;
+DROP view revenue0;

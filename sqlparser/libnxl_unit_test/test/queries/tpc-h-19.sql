@@ -1,9 +1,28 @@
--- TPC_H Query 19 - Discounted Revenue
-SELECT SUM(L_EXTENDEDPRICE* (1 - L_DISCOUNT)) AS REVENUE
-FROM LINEITEM, "PART"
-WHERE (P_PARTKEY = L_PARTKEY AND P_BRAND = 'Brand#12' AND P_CONTAINER IN ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG') AND L_QUANTITY >= 1 AND L_QUANTITY <= 1 + 10 AND P_SIZE BETWEEN 1 AND 5
-AND L_SHIPMODE IN ('AIR', 'AIR REG') AND L_SHIPINSTRUCT = 'DELIVER IN PERSON')
-OR (P_PARTKEY = L_PARTKEY AND P_BRAND ='Brand#23' AND P_CONTAINER IN ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK') AND L_QUANTITY >=10 AND L_QUANTITY <=10 + 10 AND P_SIZE BETWEEN 1 AND 10
-AND L_SHIPMODE IN ('AIR', 'AIR REG') AND L_SHIPINSTRUCT = 'DELIVER IN PERSON')
-OR (P_PARTKEY = L_PARTKEY AND P_BRAND = 'Brand#34' AND P_CONTAINER IN ( 'LG CASE', 'LG BOX', 'LG PACK', 'LG PKG') AND L_QUANTITY >=20 AND L_QUANTITY <= 20 + 10 AND P_SIZE BETWEEN 1 AND 15
-AND L_SHIPMODE IN ('AIR', 'AIR REG') AND L_SHIPINSTRUCT = 'DELIVER IN PERSON');
+ -- TPC_H Query 19 - Discounted Revenue
+SELECT Sum(l_extendedprice * ( 1 - l_discount )) AS REVENUE
+FROM   lineitem,
+       "part"
+WHERE  ( p_partkey = l_partkey
+         AND p_brand = 'Brand#12'
+         AND p_container IN ( 'SM CASE', 'SM BOX', 'SM PACK', 'SM PKG' )
+         AND l_quantity >= 1
+         AND l_quantity <= 1 + 10
+         AND p_size BETWEEN 1 AND 5
+         AND l_shipmode IN ( 'AIR', 'AIR REG' )
+         AND l_shipinstruct = 'DELIVER IN PERSON' )
+        OR ( p_partkey = l_partkey
+             AND p_brand = 'Brand#23'
+             AND p_container IN ( 'MED BAG', 'MED BOX', 'MED PKG', 'MED PACK' )
+             AND l_quantity >= 10
+             AND l_quantity <= 10 + 10
+             AND p_size BETWEEN 1 AND 10
+             AND l_shipmode IN ( 'AIR', 'AIR REG' )
+             AND l_shipinstruct = 'DELIVER IN PERSON' )
+        OR ( p_partkey = l_partkey
+             AND p_brand = 'Brand#34'
+             AND p_container IN ( 'LG CASE', 'LG BOX', 'LG PACK', 'LG PKG' )
+             AND l_quantity >= 20
+             AND l_quantity <= 20 + 10
+             AND p_size BETWEEN 1 AND 15
+             AND l_shipmode IN ( 'AIR', 'AIR REG' )
+             AND l_shipinstruct = 'DELIVER IN PERSON' );

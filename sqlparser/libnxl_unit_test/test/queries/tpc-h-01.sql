@@ -1,9 +1,19 @@
--- http://www.sqlserver-dba.com/2011/09/this-is-a-followup-on-my-earlier-post-of-sql-server-test-data-generation-testing-tools-i-had-some-requests-for-my-set-up-pr.html
-SELECT L_RETURNFLAG, L_LINESTATUS, SUM(L_QUANTITY) AS SUM_QTY,
- SUM(L_EXTENDEDPRICE) AS SUM_BASE_PRICE, SUM(L_EXTENDEDPRICE*(1-L_DISCOUNT)) AS SUM_DISC_PRICE,
- SUM(L_EXTENDEDPRICE*(1-L_DISCOUNT)*(1+L_TAX)) AS SUM_CHARGE, AVG(L_QUANTITY) AS AVG_QTY,
- AVG(L_EXTENDEDPRICE) AS AVG_PRICE, AVG(L_DISCOUNT) AS AVG_DISC, COUNT(*) AS COUNT_ORDER
-FROM LINEITEM
-WHERE L_SHIPDATE <= dateadd(dd, -90, cast('1998-12-01' as datetime))
-GROUP BY L_RETURNFLAG, L_LINESTATUS
-ORDER BY L_RETURNFLAG,L_LINESTATUS
+ -- http://www.sqlserver-dba.com/2011/09/this-is-a-followup-on-my-earlier-post-of-sql-server-test-data-generation-testing-tools-i-had-some-requests-for-my-set-up-pr.html
+SELECT l_returnflag,
+       l_linestatus,
+       Sum(l_quantity)                                           AS SUM_QTY,
+       Sum(l_extendedprice)                                      AS
+       SUM_BASE_PRICE,
+       Sum(l_extendedprice * ( 1 - l_discount ))                 AS
+       SUM_DISC_PRICE,
+       Sum(l_extendedprice * ( 1 - l_discount ) * ( 1 + l_tax )) AS SUM_CHARGE,
+       Avg(l_quantity)                                           AS AVG_QTY,
+       Avg(l_extendedprice)                                      AS AVG_PRICE,
+       Avg(l_discount)                                           AS AVG_DISC,
+       Count(*)                                                  AS COUNT_ORDER
+FROM   lineitem
+WHERE  l_shipdate <= Dateadd(dd, -90, Cast('1998-12-01' AS datetime))
+GROUP  BY l_returnflag,
+          l_linestatus
+ORDER  BY l_returnflag,
+          l_linestatus

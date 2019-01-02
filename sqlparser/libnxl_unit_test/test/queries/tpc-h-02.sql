@@ -1,10 +1,35 @@
--- http://www.sqlserver-dba.com/2011/09/this-is-a-followup-on-my-earlier-post-of-sql-server-test-data-generation-testing-tools-i-had-some-requests-for-my-set-up-pr.html
-SELECT TOP 100 S_ACCTBAL, S_NAME, N_NAME, P_PARTKEY, P_MFGR, S_ADDRESS, S_PHONE, S_COMMENT
-FROM PART, SUPPLIER, PARTSUPP, NATION, REGION
-WHERE P_PARTKEY = PS_PARTKEY AND S_SUPPKEY = PS_SUPPKEY AND P_SIZE = 15 AND
-P_TYPE LIKE '%%BRASS' AND S_NATIONKEY = N_NATIONKEY AND N_REGIONKEY = R_REGIONKEY AND
-R_NAME = 'EUROPE' AND
-PS_SUPPLYCOST = (SELECT MIN(PS_SUPPLYCOST) FROM PARTSUPP, SUPPLIER, NATION, REGION
- WHERE P_PARTKEY = PS_PARTKEY AND S_SUPPKEY = PS_SUPPKEY
- AND S_NATIONKEY = N_NATIONKEY AND N_REGIONKEY = R_REGIONKEY AND R_NAME = 'EUROPE')
-ORDER BY S_ACCTBAL DESC, N_NAME, S_NAME, P_PARTKEY
+ -- http://www.sqlserver-dba.com/2011/09/this-is-a-followup-on-my-earlier-post-of-sql-server-test-data-generation-testing-tools-i-had-some-requests-for-my-set-up-pr.html
+SELECT TOP 100 s_acctbal,
+               s_name,
+               n_name,
+               p_partkey,
+               p_mfgr,
+               s_address,
+               s_phone,
+               s_comment
+FROM   part,
+       supplier,
+       partsupp,
+       nation,
+       region
+WHERE  p_partkey = ps_partkey
+       AND s_suppkey = ps_suppkey
+       AND p_size = 15
+       AND p_type LIKE '%%BRASS'
+       AND s_nationkey = n_nationkey
+       AND n_regionkey = r_regionkey
+       AND r_name = 'EUROPE'
+       AND ps_supplycost = (SELECT Min(ps_supplycost)
+                            FROM   partsupp,
+                                   supplier,
+                                   nation,
+                                   region
+                            WHERE  p_partkey = ps_partkey
+                                   AND s_suppkey = ps_suppkey
+                                   AND s_nationkey = n_nationkey
+                                   AND n_regionkey = r_regionkey
+                                   AND r_name = 'EUROPE')
+ORDER  BY s_acctbal DESC,
+          n_name,
+          s_name,
+          p_partkey

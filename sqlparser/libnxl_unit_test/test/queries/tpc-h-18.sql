@@ -1,7 +1,23 @@
--- TPC_H Query 18 - Large Volume Customer
-SELECT TOP 100 C_NAME, C_CUSTKEY, O_ORDERKEY, O_ORDERDATE, O_TOTALPRICE, SUM(L_QUANTITY)
-FROM CUSTOMER, ORDERS, LINEITEM
-WHERE O_ORDERKEY IN (SELECT L_ORDERKEY FROM LINEITEM GROUP BY L_ORDERKEY HAVING
- SUM(L_QUANTITY) > 300) AND C_CUSTKEY = O_CUSTKEY AND O_ORDERKEY = L_ORDERKEY
-GROUP BY C_NAME, C_CUSTKEY, O_ORDERKEY, O_ORDERDATE, O_TOTALPRICE
-ORDER BY O_TOTALPRICE DESC, O_ORDERDATE;
+ -- TPC_H Query 18 - Large Volume Customer
+SELECT TOP 100 c_name,
+               c_custkey,
+               o_orderkey,
+               o_orderdate,
+               o_totalprice,
+               Sum(l_quantity)
+FROM   customer,
+       orders,
+       lineitem
+WHERE  o_orderkey IN (SELECT l_orderkey
+                      FROM   lineitem
+                      GROUP  BY l_orderkey
+                      HAVING Sum(l_quantity) > 300)
+       AND c_custkey = o_custkey
+       AND o_orderkey = l_orderkey
+GROUP  BY c_name,
+          c_custkey,
+          o_orderkey,
+          o_orderdate,
+          o_totalprice
+ORDER  BY o_totalprice DESC,
+          o_orderdate;
