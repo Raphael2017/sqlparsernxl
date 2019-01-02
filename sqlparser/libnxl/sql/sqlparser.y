@@ -726,12 +726,6 @@ joined_table:
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $3, $5);
     $$->serialize_format = &JOINED_TB_1_SERIALIZE_FORMAT;
 }
-  | table_factor NATURAL JOIN table_factor_non_join
-{
-    Node* nd = Node::makeTerminalNode(E_JOIN_NATURAL, "NATURAL");
-    $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $4, nullptr);
-    $$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
-}
   | table_factor join_type JOIN table_factor USING '(' simple_ident_list ')'
 {
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, $2, $1, $4, $7);
