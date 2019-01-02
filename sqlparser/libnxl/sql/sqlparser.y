@@ -103,6 +103,8 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token <node> UNKNOWN
 %token <node> QUESTIONMARK
 
+%left	CONDITIONLESS_JOIN
+%left	CROSS FULL INNER JOIN LEFT NATURAL RIGHT
 %left	UNION EXCEPT
 %left	INTERSECT
 %left	OR
@@ -124,23 +126,22 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token ADD AND ANY ALL ALTER AS ASC
 %token BETWEEN BEGI BIGINT BINARY BOOLEAN BOTH BY
 %token CASCADE CASE CHARACTER CLUSTER CNNOP COMMENT COMMIT
-       CONSISTENT COLUMN COLUMNS CREATE CREATETIME CROSS
+       CONSISTENT COLUMN COLUMNS CREATE CREATETIME
        CURRENT_USER CHANGE_OBI SWITCH_CLUSTER
 %token DATE DATETIME DEALLOCATE DECIMAL DEFAULT DELETE DESC DESCRIBE
        DISTINCT DOUBLE DROP DUAL
 %token ELSE END END_P ERROR EXCEPT EXECUTE EXISTS EXPLAIN
-%token FLOAT FOR FROM FULL FROZEN FORCE
+%token FLOAT FOR FROM FROZEN FORCE
 %token GLOBAL GLOBAL_ALIAS GRANT GROUP
 %token HAVING HINT_BEGIN HINT_END HOTSPOT
-%token IDENTIFIED IF IN INNER INTEGER INTERSECT INSERT INTO IS
-%token JOIN
+%token IDENTIFIED IF IN INTEGER INTERSECT INSERT INTO IS
 %token KEY
-%token LEADING LEFT LIMIT LIKE LOCAL LOCKED
+%token LEADING LIMIT LIKE LOCAL LOCKED
 %token MEDIUMINT MEMORY MOD MODIFYTIME MASTER
-%token NATURAL NOT NUMERIC
+%token NOT NUMERIC
 %token OFFSET ON OR ORDER OPTION OUTER
 %token PARAMETERS PERCENT PASSWORD PRECISION PREPARE PRIMARY
-%token READ_STATIC REAL RENAME REPLACE RESTRICT PRIVILEGES REVOKE RIGHT
+%token READ_STATIC REAL RENAME REPLACE RESTRICT PRIVILEGES REVOKE
        ROLLBACK KILL READ_CONSISTENCY
 %token SCHEMA SCOPE SELECT SESSION SESSION_ALIAS
        SET SHOW SMALLINT SNAPSHOT SPFILE START STATIC SYSTEM STRONG SET_MASTER_CLUSTER SET_SLAVE_CLUSTER SLAVE
@@ -170,7 +171,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> case_arg when_clause_list when_clause case_default
 %type <node> top_count top_percent
 %type <node> with_clause with_list common_table_expr opt_derived_column_list
-%type <node> simple_ident_list simple_ident_list_with_parens
+%type <node> simple_ident_list simple_ident_list_with_parens opt_simple_ident_list_with_parens
 
 %start sql_stmt
 %%
@@ -670,46 +671,38 @@ table_factor_non_join:
 {
     $$ = $1;
 }
-  | relation_factor AS relation_name
-{
-    $$ = Node::makeNonTerminalNode(E_ALIAS, 2, $1, $3);
-    $$->serialize_format = &ALIAS_2_SERIALIZE_FORMAT;
-}
-  | relation_factor relation_name
-{
-    $$ = Node::makeNonTerminalNode(E_ALIAS, 2, $1, $2);
-    $$->serialize_format = &ALIAS_1_SERIALIZE_FORMAT;
-}
-  | select_with_parens AS relation_name
-{
-    $$ = Node::makeNonTerminalNode(E_ALIAS, 2, $1, $3);
-    $$->serialize_format = &ALIAS_2_SERIALIZE_FORMAT;
-}
-  | select_with_parens relation_name
-{
-    $$ = Node::makeNonTerminalNode(E_ALIAS, 2, $1, $2);
-    $$->serialize_format = &ALIAS_1_SERIALIZE_FORMAT;
-}
-  | relation_factor AS relation_name simple_ident_list_with_parens
+  | relation_factor AS relation_name opt_simple_ident_list_with_parens
 {
     $$ = Node::makeNonTerminalNode(E_ALIAS, 3, $1, $3, $4);
     $$->serialize_format = &ALIAS_3_SERIALIZE_FORMAT;
 }
-  | select_with_parens AS relation_name simple_ident_list_with_parens
+  | select_with_parens AS relation_name opt_simple_ident_list_with_parens
 {
     $$ = Node::makeNonTerminalNode(E_ALIAS, 3, $1, $3, $4);
     $$->serialize_format = &ALIAS_3_SERIALIZE_FORMAT;
 }
-  | relation_factor relation_name simple_ident_list_with_parens
+  | relation_factor relation_name opt_simple_ident_list_with_parens
 {
     $$ = Node::makeNonTerminalNode(E_ALIAS, 3, $1, $2, $3);
-    $$->serialize_format = &ALIAS_3_SERIALIZE_FORMAT;
+    $$->serialize_format = &ALIAS_4_SERIALIZE_FORMAT;
 }
-  | select_with_parens relation_name simple_ident_list_with_parens
+  | select_with_parens relation_name opt_simple_ident_list_with_parens
 {
     $$ = Node::makeNonTerminalNode(E_ALIAS, 3, $1, $2, $3);
-    $$->serialize_format = &ALIAS_3_SERIALIZE_FORMAT;
+    $$->serialize_format = &ALIAS_4_SERIALIZE_FORMAT;
 }
+;
+
+opt_simple_ident_list_with_parens:
+    /*EMPTY*/
+{
+    $$ = nullptr;
+}
+  | simple_ident_list_with_parens
+{
+    $$ = $1;
+}
+;
 
 relation_factor:
     relation_name
@@ -750,6 +743,12 @@ joined_table:
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $3, $6);
     $$->serialize_format = &JOINED_TB_3_SERIALIZE_FORMAT;
 }
+  | table_factor CROSS JOIN table_factor	%prec CONDITIONLESS_JOIN
+{
+    Node* nd = Node::makeTerminalNode(E_JOIN_CROSS, "CROSS");
+    $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $4, nullptr);
+    $$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
+}
 ;
 
 join_type:
@@ -789,10 +788,6 @@ join_type:
   | INNER
 {
     $$ = Node::makeTerminalNode(E_JOIN_INNER, "INNER");
-}
-  | CROSS
-{
-    $$ = Node::makeTerminalNode(E_JOIN_CROSS, "CROSS");
 }
 ;
 

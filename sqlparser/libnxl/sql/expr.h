@@ -163,7 +163,13 @@ namespace resolve
     class RawExprAggFun
             : public RawExpr
     {
-
+        RawExpr* get_param_expr() { return param_expr_; };
+        void set_param_expr(RawExpr* param_expr) { param_expr_ = param_expr; }
+        bool get_distinct() { return distinct_; }
+        void set_distinct(bool distinct) { distinct_ = distinct; }
+        virtual void scanf_table_column_ref(
+                LogicPlan* logic,
+                std::vector<TableColumnRef>& out_table_column_ref);
     private:
         RawExpr* param_expr_;   // null means '*'
         bool distinct_;

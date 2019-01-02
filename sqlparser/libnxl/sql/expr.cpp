@@ -92,6 +92,12 @@ namespace resolve
         default_expr_->scanf_table_column_ref(logic, out_table_column_ref);
     }
 
+    void RawExprAggFun::scanf_table_column_ref(
+            LogicPlan* logic,
+            std::vector<TableColumnRef>& out_table_column_ref)
+    {
+
+    }
 
 
 }
