@@ -50,6 +50,11 @@ bool parser::tokenize(const std::string& sql, std::vector<yytokentype>* tokens)
     while (token != END_P) {
         tokens->push_back((yytokentype)token);
         token = yylex(&yylval, &yylloc, scanner);
+        if (yylval.node)
+        {
+            delete(yylval.node);
+            yylval.node = nullptr;
+        }
     }
 
     yy_delete_buffer(state, scanner);

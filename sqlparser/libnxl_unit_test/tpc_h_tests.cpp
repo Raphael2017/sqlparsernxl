@@ -76,6 +76,10 @@ TEST(TPCHQueryGrammarTests)
     }
 
     clock_t start, end;
+    int tks_count = 0;
+    std::vector<yytokentype> tks;
+    parser::tokenize(concatenated, &tks);
+    tks_count = tks.size();
     start = clock();
     ParseResult result;
     parser::parse(concatenated, &result);
@@ -145,11 +149,13 @@ TEST(TPCHQueryGrammarTests)
         }
         mt::printOk("TPCHAllConcatenated Semantics Detail");
 
-        //printf("Compact Sql:\n%s\n", result.result_tree_->serialize().c_str());
+        printf("Compact Sql:\n%s\n", result.result_tree_->serialize().c_str());
         //printf("Compact Sql:\n%s\n", result.result_tree_->SerializeNonRecursive(result.result_tree_).c_str());
         end = clock();
         double seconds  =(double)(end - start)/CLOCKS_PER_SEC;
         fprintf(stdout, "Frequency %d,Use time is: %.8f\n", 1, seconds);
+        seconds = seconds / tks_count *1000;
+        fprintf(stdout, "per 1000 tokens,Use time is: %.8f\n", seconds);
     }
 
     ASSERT_EQ(testsFailed, 0);
