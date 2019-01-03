@@ -119,6 +119,10 @@ private:
 
     static void find_table_direct_ref(Node** root, std::list<Node**>& ret);
     static void find_table_direct_ref_non_recursive(Node** root, std::list<Node**>& ret);
+
+private:
+    static Node* addjust_cross_join(Node* root, Node* cj);
+    friend int yyparse (ParseResult* result, yyscan_t scanner);
 };
 
 

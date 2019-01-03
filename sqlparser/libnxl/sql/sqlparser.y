@@ -104,7 +104,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token <node> QUESTIONMARK
 
 %left	CONDITIONLESS_JOIN
-%left	CROSS FULL INNER JOIN LEFT NATURAL RIGHT
+%left	CROSS FULL INNER JOIN LEFT NATURAL RIGHT ON USING
 %left	UNION EXCEPT
 %left	INTERSECT
 %left	OR
@@ -139,14 +139,14 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token LEADING LIMIT LIKE LOCAL LOCKED
 %token MEDIUMINT MEMORY MOD MODIFYTIME MASTER
 %token NOT NUMERIC
-%token OFFSET ON OR ORDER OPTION OUTER
+%token OFFSET OR ORDER OPTION OUTER
 %token PARAMETERS PERCENT PASSWORD PRECISION PREPARE PRIMARY
 %token READ_STATIC REAL RENAME REPLACE RESTRICT PRIVILEGES REVOKE
        ROLLBACK KILL READ_CONSISTENCY
 %token SCHEMA SCOPE SELECT SESSION SESSION_ALIAS
        SET SHOW SMALLINT SNAPSHOT SPFILE START STATIC SYSTEM STRONG SET_MASTER_CLUSTER SET_SLAVE_CLUSTER SLAVE
 %token TABLE TABLES THEN TIES TIME TIMESTAMP TINYINT TRAILING TRANSACTION TO TOP
-%token UNION UPDATE USER USING
+%token UNION UPDATE USER
 %token VALUES VARCHAR VARBINARY
 %token WHERE WHEN WITH WORK PROCESSLIST QUERY CONNECTION WEAK
 
@@ -739,9 +739,23 @@ joined_table:
 }
   | table_factor CROSS JOIN table_factor	%prec CONDITIONLESS_JOIN
 {
+    //Node* nd = Node::makeTerminalNode(E_JOIN_CROSS, "CROSS");
+    //$$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $4, nullptr);
+    //$$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
     Node* nd = Node::makeTerminalNode(E_JOIN_CROSS, "CROSS");
-    $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $4, nullptr);
-    $$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
+    Node* cj = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, nullptr, nullptr);
+    cj->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
+    $$ = Node::addjust_cross_join($4, cj);
+}
+  | table_factor JOIN table_factor		%prec CONDITIONLESS_JOIN
+{
+    //Node* nd = Node::makeTerminalNode(E_JOIN_CROSS, "");	// mysql seems to support this like a join cross
+    //$$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $3, nullptr);
+    //$$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
+    Node* nd = Node::makeTerminalNode(E_JOIN_CROSS, "");
+    Node* cj = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, nullptr, nullptr);
+    cj->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
+    $$ = Node::addjust_cross_join($3, cj);
 }
 ;
 

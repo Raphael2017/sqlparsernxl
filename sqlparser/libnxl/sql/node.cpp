@@ -1066,3 +1066,32 @@ void Node::_visit(Node* root, Entry ety, std::set<Entry>& etys, const std::funct
         _visit(root->children_[i], ety, etys, f);
     }
 }
+
+#if 1
+Node* Node::addjust_cross_join(Node* root, Node* cj)
+{
+    assert(cj->nodeType_ == E_JOINED_TABLE);
+    assert(cj->getChild(E_JOINED_TABLE_TABLE_FACTOR_R) == nullptr);
+    cj->setChild(E_JOINED_TABLE_TABLE_FACTOR_R, root);
+    return cj;
+}
+#else
+Node* Node::addjust_cross_join(Node* root, Node* cj)
+{
+    assert(cj->nodeType_ == E_JOINED_TABLE);
+    assert(cj->getChild(E_JOINED_TABLE_TABLE_FACTOR_R) == nullptr);
+    if (root->nodeType_ == E_JOINED_TABLE)
+    {
+        Node* l = root->getChild(E_JOINED_TABLE_TABLE_FACTOR_L);
+        assert(l != nullptr);
+        root->setChild(E_JOINED_TABLE_TABLE_FACTOR_L, addjust_cross_join(l, cj));
+        return root;
+    }
+    else
+    {
+        cj->setChild(E_JOINED_TABLE_TABLE_FACTOR_R, root);
+        return cj;
+    }
+}
+#endif
+
