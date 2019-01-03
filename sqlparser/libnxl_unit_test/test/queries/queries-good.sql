@@ -1,3 +1,4 @@
+--https://docs.microsoft.com/zh-cn/sql/t-sql/queries/select-transact-sql?view=sql-server-2017
 # This file contains a list of strings that are NOT valid SQL queries.
 # Each line contains a single SQL query.
 # SELECT statement
