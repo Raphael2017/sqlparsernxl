@@ -273,7 +273,7 @@ query_specification_or_expression:
   $$ = nullptr;
   $1;
 }
-  | query_expression
+  | '(' query_expression ')'
 ;
 
 query_specification:
