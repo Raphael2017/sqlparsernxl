@@ -187,6 +187,10 @@ std::string NodeTypeToString(NodeType tp)
             return "E_WITH_LIST";
         case E_OPT_WITH_CLAUSE:
             return "E_OPT_WITH_CLAUSE";
+        case E_TABLE_IDENT:
+            return "E_TABLE_IDENT";
+        case E_OFFSET_FETCH:
+            return "E_OFFSET_FETCH";
         default:
             return "";
     }
@@ -252,6 +256,7 @@ bool Node::IsList(Node* root)
         case E_SIMPLE_IDENT_LIST:
         case E_OPT_DERIVED_COLUMN_LIST:
         case E_WITH_LIST:
+        case E_TABLE_HINT_LIST:
         {
             ret = true;
         }
@@ -1094,4 +1099,60 @@ Node* Node::addjust_cross_join(Node* root, Node* cj)
     }
 }
 #endif
+
+Node* Node::check_expr_is_column_alias(Node* root)
+{
+    if (root->nodeType_ == E_OP_EQ)
+    {
+        Node* left = root->getChild(E_OP_BINARY_OPERAND_L);
+        Node* right = root->getChild(E_OP_BINARY_OPERAND_R);
+        assert(left != nullptr && right != nullptr);
+        if (left->nodeType_ == E_IDENTIFIER)
+        {
+            // this is a column_alias
+            Node* ret = makeNonTerminalNode(E_ALIAS, 2, right, left);
+            ret->serialize_format = &ALIAS_2_SERIALIZE_FORMAT;
+            root->setChild(E_OP_BINARY_OPERAND_L, nullptr);
+            root->setChild(E_OP_BINARY_OPERAND_R, nullptr);
+            delete(root);
+            return ret;
+        }
+    }
+    return root;
+}
+
+bool  Node::check_expr_table_hint(Node* root)
+{
+    if (root->nodeType_ == E_IDENTIFIER)
+    {
+        std::string word = root->terminalToken_.str;
+        std::transform(word.begin(), word.end(), word.begin(), ::toupper);
+        if (TABLE_HINT_WORDS.find(word) == FUNCTIONS_CAN_WITH_OPTION_AS.end())
+            return false;
+        return true;
+    }
+    else if (root->nodeType_ == E_OP_EQ)
+    {
+        Node* l = root->getChild(E_OP_BINARY_OPERAND_L);
+        assert(l);
+        if (l->nodeType_ != E_IDENTIFIER)
+            return false;
+        std::string word = l->terminalToken_.str;
+        std::transform(word.begin(), word.end(), word.begin(), ::toupper);
+        if ("INDEX" != word && "SPATIAL_WINDOW_MAX_CELLS" != word)
+            return false;
+        return true;
+    }
+    else if (root->nodeType_ == E_FUN_CALL)
+    {
+        Node* l = root->getChild(0);
+        assert(l && l->nodeType_ == E_IDENTIFIER);
+        std::string word = l->terminalToken_.str;
+        std::transform(word.begin(), word.end(), word.begin(), ::toupper);
+        if ("INDEX" != word)
+            return false;
+        return true;
+    }
+    return false;
+}
 

@@ -205,11 +205,11 @@ stmt:
 
 /* SELECT GRAMMAR */
 select_stmt:
-    select_no_parens    %prec UMINUS
+    select_no_parens
 {
     $$ = $1;
 }
-    |   select_with_parens  %prec UMINUS
+    |   select_with_parens
 {
     $$ = $1;
 }
@@ -737,7 +737,7 @@ joined_table:
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $3, $6);
     $$->serialize_format = &JOINED_TB_3_SERIALIZE_FORMAT;
 }
-  | table_factor CROSS JOIN table_factor	%prec CONDITIONLESS_JOIN
+  | table_factor CROSS JOIN table_factor
 {
     //Node* nd = Node::makeTerminalNode(E_JOIN_CROSS, "CROSS");
     //$$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $4, nullptr);
@@ -861,12 +861,12 @@ simple_expr:    column_ref
 
 /* used by the expression that use range value, e.g. between and */
 arith_expr: simple_expr
-    |   '+' arith_expr %prec UMINUS
+    |   '+' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_POS, 1, $2);
     $$->serialize_format = &OP_POS_SERIALIZE_FORMAT;
 }
-    |   '-' arith_expr %prec UMINUS
+    |   '-' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NEG, 1, $2);
     $$->serialize_format = &OP_NEG_SERIALIZE_FORMAT;

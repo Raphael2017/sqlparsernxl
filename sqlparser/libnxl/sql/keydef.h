@@ -237,6 +237,8 @@ enum NodeType
     E_WITH_LIST,
     E_OPT_WITH_CLAUSE,
 
+    E_TABLE_IDENT,
+
     E_NODETYPE_END
 };
 

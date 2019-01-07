@@ -5,21 +5,16 @@
 #include "resolve.h"
 #include "SelectStmt.h"
 
+
 int main()
 {
     std::string a = "";
 
-    a = "-- SIMPLE CTE\n"
-        "WITH DirReps(ManagerID, DirectReports) AS\n"
-        "(\n"
-        "    SELECT ManagerID, COUNT(*)\n"
-        "    FROM Employee AS e\n"
-        "    WHERE ManagerID IS NOT NULL\n"
-        "    GROUP BY ManagerID\n"
-        ")\n"
-        "SELECT ManagerID, DirectReports\n"
-        "FROM DirReps\n"
-        "ORDER BY ManagerID;";
+    a = "select db1..account.salary from db1..account";
+    a = "select ID,Title from Article_Detail order by id OFFSET (15 * (50-1)) ROW FETCH NEXT 15 rows only";
+    a = "select column_alias=sum(field1) alpha from account";
+    a = "select * from acc for browse";
+    a = "select * from acc as tbdelta with(index(1,3,5) NOLOCK,ROWLOCK )";
 
     {
         ParseResult result;
@@ -47,7 +42,10 @@ int main()
                 {
                     case resolve::TableItem::BASE_TABLE:
                     {
-                        assert(node->nodeType_ == E_IDENTIFIER);
+                        if (node->nodeType_ == E_TABLE_IDENT)
+                        {
+                            node = node->getChild(0);
+                        }
                         line = node->terminalToken_.line;
                         column = node->terminalToken_.column;
 
@@ -90,15 +88,25 @@ int main()
         clock_t start, end;
         start = clock();
         size_t frequency = 1000;
+
+        int tks_count = 0;
+        std::vector<yytokentype> tks;
+        parser::tokenize(a, &tks);
+        tks_count = tks.size();
+
         for (size_t i = 0; i < frequency; ++i)
         {
             ParseResult result;
             parser::parse(a, &result);
             result.result_tree_->serialize();
+            //result.result_tree_->SerializeNonRecursive(result.result_tree_);
         }
         end = clock();
         double seconds  =(double)(end - start)/CLOCKS_PER_SEC;
         fprintf(stdout, "Frequency %d,Use time is: %.8f\n", frequency, seconds);
+
+        seconds = seconds / (tks_count * frequency / 1000);
+        fprintf(stdout, "per 1000 tokens,Use time is: %.8f\n", seconds);
     }
 
 

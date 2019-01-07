@@ -154,3 +154,6 @@ FROM worker INNER JOIN depart ON worker.depid=depart.did and dname='人事处'
 )
 SELECT *
 FROM result;
+-- Transact-SQL object ref (4 part)
+SELECT dbo.ACCOUNT.salary
+FROM dbo.ACCOUNT;

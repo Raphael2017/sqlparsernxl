@@ -112,10 +112,6 @@ TEST(TPCHQueryGrammarTests)
             {
                 case resolve::TableItem::BASE_TABLE:
                 {
-                    assert(node->nodeType_ == E_IDENTIFIER);
-                    line = node->terminalToken_.line;
-                    column = node->terminalToken_.column;
-
                     printf("access base table: %-25s at (L%+3d:%-2d)\n", table_name.c_str(), line + 1, column);
                 }
                     break;

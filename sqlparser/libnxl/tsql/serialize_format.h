@@ -206,6 +206,7 @@ Form LIMIT_4_SERIALIZE_FORMAT               {{1,"OFFSET "}, {0,"",1,""}};
 Form LIMIT_5_SERIALIZE_FORMAT               {{1,"LIMIT "}, {0,"",0,""}, {1,", "}, {0,"",1,""}};
 Form GROUP_BY_SERIALIZE_FORMAT              {{1,"GROUP"}, {1," BY "}, {0,"",0,""}};
 Form ORDER_BY_SERIALIZE_FORMAT              {{1,"ORDER"}, {1," BY "}, {0,"",0,""}};
+Form ORDER_BY_SERIALIZE_FORMAT_0            {{1,"ORDER"}, {1," BY "}, {0,"",0,""}, {0,"",1,""}};
 Form SORT_LIST_SERIALIZE_FORMAT             {{0,"",0,""}, {1,", "}, {0,"",1,""}};
 Form SORT_KEY_SERIALIZE_FORMAT              {{0,"",0,""}, {0," ",1,""}};
 Form HAVING_SERIALIZE_FORMAT                {{1,"HAVING "}, {0,"",0,""}};
@@ -213,16 +214,14 @@ Form SELECT_EXPR_LIST_SERIALIZE_FORMAT      {{0,"",0,""}, {1,", "}, {0,"",1,""}}
 Form PROJECTION_SERIALIZE_FORMAT            {{0,"",0,""}};
 Form ALIAS_1_SERIALIZE_FORMAT               {{0,"",0,""}, {0," ",1,""}};
 Form ALIAS_2_SERIALIZE_FORMAT               {{0,"",0,""}, {1," AS "}, {0,"",1,""}};
-Form ALIAS_3_SERIALIZE_FORMAT               {{0,"",0,""}, {1," AS "}, {0,"",1,""}, {0," ",2,""}};
-Form ALIAS_4_SERIALIZE_FORMAT               {{0,"",0,""}, {1," "}, {0,"",1,""}, {0," ",2,""}};
+Form ALIAS_3_SERIALIZE_FORMAT               {{0,"",0,""}, {1," AS "}, {0,"",1,""}, {0," ",2,""}, {0," ",3,""}};
+Form ALIAS_4_SERIALIZE_FORMAT               {{0,"",0,""}, {0," ",1,""}, {0," ",2,""}, {0," ",3,""}};
 Form FORM_LIST_SERIALIZE_FORMAT             {{0,"",0,""}, {1,", "}, {0,"",1,""}};
 Form JOINED_TB_WITH_PARENS_SERIALIZE_FORMAT {{1,"("}, {0,"",0,""}, {1,")"}};
 Form JOINED_TB_1_SERIALIZE_FORMAT           {{0,"",1," "}, {0,"",0,""}, {1," JOIN "}, {0,"",2,""}, {1," ON "}, {0,"",3,""}};
 Form JOINED_TB_2_SERIALIZE_FORMAT           {{0,"",1," "}, {0,"",0,""}, {1," JOIN "}, {0,"",2,""}};
 Form JOINED_TB_3_SERIALIZE_FORMAT           {{0,"",1," "}, {0,"",0,""}, {1," JOIN "}, {0,"",2,""}, {1, " USING ("}, {0,"",3,""},{1,")"}};
 Form EXPR_LIST_SERIALIZE_FORMAT             {{0,"",0,""}, {1,", "}, {0,"",1,""}};
-Form NAME_FIELD_SERIALIZE_FORMAT            {{0,"",0,""}, {1,"."}, {0,"",1,""}};
-Form NAME_FIELD_SERIALIZE_FORMAT_0          {{0,"",1,""}};
 Form EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT {{1,"("}, {0,"",0,""}, {1,")"}};
 Form OP_EXISTS_SERIALIZE_FORMAT             {{1,"EXISTS "}, {0,"",0,""}};
 Form OP_POS_SERIALIZE_FORMAT                {{1,"+"}, {0,"",0,""}};
@@ -262,6 +261,30 @@ Form FUN_CALL_3_SERIALIZE_FORMAT            {{0,"",0,""}, {1,"("}, {0,"",1,""}, 
 Form FUN_CALL_4_SERIALIZE_FORMAT            {{0,"",0,""}, {1,"("}, {1,")"}};
 Form WITH_CLAUSE_SERIALIZE_FORMAT           {{1,"WITH "}, {0,"",0,""}};
 Form COMMON_TABLE_EXPR_SERIALIZE_FORMAT     {{0,"",0,""}, {0,"",1,""}, {1," AS "}, {0,"",2,""}};
+Form TABLE_IDENT_SERIALIZE_FORMAT_1         {{0,"",1,""}, {1,"."}, {0,"",0,""}};
+Form TABLE_IDENT_SERIALIZE_FORMAT_2         {{0,"",2,""}, {1,"."}, {0,"",1,""}, {1,"."}, {0,"",0,""}};
+Form TABLE_IDENT_SERIALIZE_FORMAT_3         {{0,"",3,""}, {1,"."}, {0,"",2,""}, {1,"."}, {0,"",1,""}, {1,"."}, {0,"",0,""}};
+
+Form OP_NAME_FIELD_SERIALIZE_FORMAT_1       {{0,"",1,""}, {1,"."}, {0,"",0,""}};
+Form OP_NAME_FIELD_SERIALIZE_FORMAT_2       {{0,"",2,""}, {1,"."}, {0,"",1,""}, {1,"."}, {0,"",0,""}};
+Form OP_NAME_FIELD_SERIALIZE_FORMAT_3       {{0,"",3,""}, {1,"."}, {0,"",2,""}, {1,"."}, {0,"",1,""}, {1,"."}, {0,"",0,""}};
+Form OP_NAME_FIELD_SERIALIZE_FORMAT_4       {{0,"",4,""}, {1,"."}, {0,"",3,""}, {1,"."}, {0,"",2,""}, {1,"."}, {0,"",1,""}, {1,"."}, {0,"",0,""}};
+
+Form OFFSET_FETCH_SERIALIZE_FORMAT_1        {{1,"OFFSET "}, {0,"",0,""}, {1," ROW"}};
+Form OFFSET_FETCH_SERIALIZE_FORMAT_2        {{1,"OFFSET "}, {0,"",0,""}, {1," ROWS"}};
+Form OFFSET_FETCH_SERIALIZE_FORMAT_3        {{1,"OFFSET "}, {0,"",0,""}, {1," ROW FETCH FIRST "},  {0,"",1,""}, {1," ROW ONLY"}};
+Form OFFSET_FETCH_SERIALIZE_FORMAT_4        {{1,"OFFSET "}, {0,"",0,""}, {1," ROW FETCH NEXT "},   {0,"",1,""}, {1," ROW ONLY"}};
+Form OFFSET_FETCH_SERIALIZE_FORMAT_5        {{1,"OFFSET "}, {0,"",0,""}, {1," ROW FETCH FIRST "},  {0,"",1,""}, {1," ROWS ONLY"}};
+Form OFFSET_FETCH_SERIALIZE_FORMAT_6        {{1,"OFFSET "}, {0,"",0,""}, {1," ROW FETCH NEXT "},   {0,"",1,""}, {1," ROWS ONLY"}};
+Form OFFSET_FETCH_SERIALIZE_FORMAT_7        {{1,"OFFSET "}, {0,"",0,""}, {1," ROWS FETCH FIRST "}, {0,"",1,""}, {1," ROW ONLY"}};
+Form OFFSET_FETCH_SERIALIZE_FORMAT_8        {{1,"OFFSET "}, {0,"",0,""}, {1," ROWS FETCH NEXT "},  {0,"",1,""}, {1," ROW ONLY"}};
+Form OFFSET_FETCH_SERIALIZE_FORMAT_9        {{1,"OFFSET "}, {0,"",0,""}, {1," ROWS FETCH FIRST "}, {0,"",1,""}, {1," ROWS ONLY"}};
+Form OFFSET_FETCH_SERIALIZE_FORMAT_10       {{1,"OFFSET "}, {0,"",0,""}, {1," ROWS FETCH NEXT "},  {0,"",1,""}, {1," ROWS ONLY"}};
+
+Form FOR_CLAUSE_1_SERIALIZE_FORMAT          {{1,"FOR BROWSE"}};
+Form WITH_TABLE_HINT_SERIALIZE_FORMAT       {{1,"WITH("}, {0,"",0,""}, {1,")"}};
+Form TABLE_HINT_NOEXPAND_SERIALIZE_FORMAT   {{1,"NOEXPAND "}, {0,"",0,""}};
+
 #endif
 
 

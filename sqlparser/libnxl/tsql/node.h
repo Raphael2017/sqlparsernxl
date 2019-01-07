@@ -122,6 +122,9 @@ private:
 
 private:
     static Node* addjust_cross_join(Node* root, Node* cj);
+private:
+    static Node* check_expr_is_column_alias(Node* root);  // transact sql support column_alias=expr
+    static bool  check_expr_table_hint(Node* root);       // transact sql support table hint
     friend int yyparse (ParseResult* result, yyscan_t scanner);
 };
 

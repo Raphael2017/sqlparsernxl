@@ -194,6 +194,12 @@ namespace resolve
             table_node = node->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS);
             alias_node = node->getChild(E_ALIAS_RELATION_NAME);
         }
+        else if (node->nodeType_ == E_TABLE_IDENT)
+        {
+            table_node = node->getChild(E_TABLE_IDENT_OBJECT);
+        }
+
+
         if (table_node->nodeType_ == E_SELECT_WITH_PARENS)
         {
             table_node = Node::remove_parens(table_node);
@@ -201,6 +207,10 @@ namespace resolve
         else if (table_node->nodeType_ == E_JOINED_TABLE_WITH_PARENS)
         {
             table_node = Node::remove_parens(table_node);
+        }
+        else if (table_node->nodeType_ == E_TABLE_IDENT)
+        {
+            table_node = table_node->getChild(E_TABLE_IDENT_OBJECT);
         }
 
         switch (table_node->nodeType_)

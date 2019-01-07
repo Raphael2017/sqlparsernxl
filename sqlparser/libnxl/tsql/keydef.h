@@ -11,7 +11,7 @@
 #define E_LIST_NEXT 1
 
 //  E_SELECT
-#define E_SELECT_PROPERTY_CNT           18
+#define E_SELECT_PROPERTY_CNT           17
 
 #define E_SELECT_DISTINCT               0
 #define E_SELECT_SELECT_EXPR_LIST       1
@@ -25,7 +25,7 @@
 #define E_SELECT_LATER_SELECT_STMT      9
 #define E_SELECT_ORDER_BY               10
 #define E_SELECT_LIMIT                  11
-#define E_SELECT_FOR_UPDATE             12
+#define E_SELECT_FOR_CLAUSE             12
 #define E_SELECT_HINTS                  13
 #define E_SELECT_WHEN                   14
 #define E_SELECT_OPT_TOP                15
@@ -50,6 +50,7 @@
 
 //  E_ORDER_BY
 #define E_ORDER_BY_SORT_LIST 0
+#define E_ORDER_BY_OFFSET_FETCH 1
 
 //  E_HAVING
 #define E_HAVING_EXPR 0
@@ -78,8 +79,11 @@
 #define E_JOINED_TABLE_WITH_PARENS_JOINED_TABLE 0
 
 //  E_OP_NAME_FIELD
-#define E_OP_NAME_FIELD_RELATION_NAME 0
-#define E_OP_NAME_FIELD_COLUMN_NAME 1
+#define E_OP_NAME_FIELD_COLUMN_NAME 0
+#define E_OP_NAME_FIELD_RELATION_NAME 1
+#define E_OP_NAME_FIELD_SCHEMA_NAME 2
+#define E_OP_NAME_FIELD_DATABASE_NAME 3
+#define E_OP_NAME_FIELD_SERVER_NAME 4
 
 //  E_OP_EXISTS
 #define E_OP_EXISTS_SELECT_WITH_PARENS 0
@@ -108,6 +112,12 @@
 #define E_COMMON_TABLE_EXPR_TABLE 0
 #define E_COMMON_TABLE_EXPR_COLUMNS 1
 #define E_COMMON_TABLE_EXPR_SUBQUERY 2
+
+//  E_TABLE_IDENT
+#define E_TABLE_IDENT_OBJECT 0
+#define E_TABLE_IDENT_SCHEMA 1
+#define E_TABLE_IDENT_data_base 2
+#define E_TABLE_IDENT_SERVER 3
 
 enum NodeType
 {
@@ -238,6 +248,13 @@ enum NodeType
     E_WITH_LIST,
     E_OPT_WITH_CLAUSE,
 
+    E_TABLE_IDENT,
+    E_OFFSET_FETCH,
+    E_FOR_CLAUSE,
+    E_WITH_TABLE_HINT,
+    E_TABLE_HINT_LIST,
+    E_TABLE_HINT_NOEXPAND,
+
     E_NODETYPE_END
 };
 
@@ -255,6 +272,14 @@ const std::set<std::string> FUNCTIONS_ONLY_CAN_WITH_ONE_PARAM{
 
 const std::set<std::string> FUNCTIONS_CAN_WITH_OPTION_AS{
     "CAST"
+};
+
+const std::set<std::string> TABLE_HINT_WORDS{
+    "INDEX", "FORCESEEK", "FORCESCAN", "HOLDLOCK", "NOLOCK",
+    "NOWAIT", "PAGLOCK", "READCOMMITTED", "READCOMMITTEDLOCK",
+    "READPAST", "READUNCOMMITTED", "REPEATABLEREAD", "ROWLOCK",
+    "SERIALIZABLE", "SNAPSHOT", "SPATIAL_WINDOW_MAX_CELLS",
+    "TABLOCK", "TABLOCKX", "UPDLOCK", "XLOCK"
 };
 
 #ifndef YYtypeDEF_YY_SCANNER_T

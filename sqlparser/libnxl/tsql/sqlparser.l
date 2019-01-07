@@ -101,6 +101,7 @@ BIGINT            { return BIGINT; }
 BINARY            { return BINARY; }
 BOOL(EAN)?        { return BOOLEAN; }
 BOTH              { return BOTH; }
+BROWSE            { return BROWSE; }
 BY                { return BY; }
 CASCADE           { return CASCADE; }
 CASE              { return CASE; }
@@ -133,6 +134,9 @@ EXCEPT            { return EXCEPT; }
 EXECUTE           { return EXECUTE; }
 EXISTS            { return EXISTS; }
 EXPLAIN           { return EXPLAIN; }
+FETCH             { return FETCH; }
+FIRST             { return FIRST; }
+NEXT              { return NEXT; }
 FLOAT             { return FLOAT; }
 FLOAT4            { return FLOAT; }
 FLOAT8            { return DOUBLE; }
@@ -170,6 +174,7 @@ NOT               { return NOT; }
 NUMERIC           { return NUMERIC; }
 OFFSET            { return OFFSET; }
 ON                { return ON; }
+ONLY              { return ONLY; }
 OPTION            { return OPTION; }
 OR                { return OR; }
 ORDER             { return ORDER; }
@@ -187,6 +192,8 @@ RESTRICT          { return RESTRICT; }
 REVOKE            { return REVOKE; }
 RIGHT             { return RIGHT; }
 ROLLBACK          { return ROLLBACK; }
+ROW               { return ROW; }
+ROWS              { return ROWS; }
 PRIVILEGES        { return PRIVILEGES; }
 SELECT            { return SELECT; }
 SCHEMA            { return SCHEMA; }
