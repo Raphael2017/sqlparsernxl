@@ -120,8 +120,10 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %left '*' '/' '%' MOD
 %left '^'
 %right UMINUS
+%nonassoc WITH
 %left '(' ')'
 %left '.'
+%left ';'
 
 %token ADD AND ANY ALL ALTER AS ASC
 %token BETWEEN BEGI BIGINT BINARY BOOLEAN BOTH BROWSE BY
@@ -159,7 +161,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> select_stmt
 
 %type <node> opt_from_clause table_factor_non_join data_type opt_hint
-%type <node> relation_name function_name column_label
+%type <node> relation_name column_label
 
 %type <node> select_with_parens select_no_parens select_clause
 %type <node> simple_select select_expr_list
@@ -199,16 +201,17 @@ sql_stmt:
 
 stmt_list:
     stmt
-  | stmt ';' stmt_list
+  | stmt  stmt_list
 {
-    $$ = Node::makeNonTerminalNode(E_STMT_LIST, 2, $1, $3);
+    $$ = Node::makeNonTerminalNode(E_STMT_LIST, 2, $1, $2);
     $$->serialize_format = &STMT_LIST_SERIALIZE_FORMAT;
 }
 ;
 
 stmt:
-    /*EMPTY*/	{ $$ = nullptr; }
-  | select_stmt
+    ';' { $$ = nullptr; }
+  | select_stmt ';'
+  | select_stmt %prec UMINUS
 ;
 
 /* SELECT GRAMMAR */
@@ -747,7 +750,7 @@ table_factor_non_join:
 ;
 
 opt_with_table_hint:
-    /*EMPTY*/	{ $$ = nullptr; }
+    /*EMPTY*/ %prec UMINUS	{ $$ = nullptr; }
   | WITH '(' table_hint_list ')'
 {
     $$ = Node::makeNonTerminalNode(E_WITH_TABLE_HINT, 1, $3);
@@ -804,7 +807,7 @@ table_hint_expr:
 ;
 
 opt_simple_ident_list_with_parens:
-    /*EMPTY*/	{ $$ = nullptr; }
+    /*EMPTY*/ %prec UMINUS	{ $$ = nullptr; }
   | simple_ident_list_with_parens
 ;
 
@@ -953,7 +956,7 @@ expr_list:
 ;
 
 column_ref:
-		 			    NAME
+		 			    NAME	%prec UMINUS
     |   		           NAME '.' NAME
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 2, $3, $1);
@@ -1286,7 +1289,7 @@ case_default:
 ;
 
 func_expr:
-    function_name '(' '*' ')'
+    NAME '(' '*' ')'
 {
     if (!Node::IS_CAN_WITH_STAR_FUNCTION($1->terminalToken_.str))
     {
@@ -1297,7 +1300,7 @@ func_expr:
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, $1, star);
     $$->serialize_format = &FUN_CALL_1_SERIALIZE_FORMAT;
 }
-  | function_name '(' distinct_or_all expr ')'
+  | NAME '(' distinct_or_all expr ')'
 {
     if (!Node::IS_AGGREGATE_FUNCTION($1->terminalToken_.str))
     {
@@ -1307,7 +1310,7 @@ func_expr:
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, $1, $4, $3);
     $$->serialize_format = &FUN_CALL_2_SERIALIZE_FORMAT;
 }
-  | function_name '(' expr_list ')'
+  | NAME '(' expr_list ')'
 {
     if (Node::ListLength($3) > 1 &&
     	Node::IS_ONE_PARAM_FUNCTION($1->terminalToken_.str))
@@ -1320,7 +1323,7 @@ func_expr:
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, $1, $3);
     $$->serialize_format = &FUN_CALL_1_SERIALIZE_FORMAT;
 }
-  | function_name '(' expr AS data_type ')'
+  | NAME '(' expr AS data_type ')'
 {
     if (!Node::IS_CAN_WITH_AS_FUNCTION($1->terminalToken_.str))
     {
@@ -1332,7 +1335,7 @@ func_expr:
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, $1, $3, $5);
     $$->serialize_format = &FUN_CALL_3_SERIALIZE_FORMAT;
 }
-  | function_name '(' ')'
+  | NAME '(' ')'
 {
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, $1);
     $$->serialize_format = &FUN_CALL_4_SERIALIZE_FORMAT;
@@ -1352,10 +1355,6 @@ distinct_or_all:
 
 /* Name classification */
 relation_name:
-    NAME
-;
-
-function_name:
     NAME
 ;
 

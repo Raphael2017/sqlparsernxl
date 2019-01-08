@@ -71,7 +71,7 @@ TEST(TPCHQueryGrammarTests)
         {
             concatenated += query;
             if (concatenated.back() != ';')
-                concatenated += ";\n";
+                concatenated += "\n";
             else
                 concatenated += "\n";
         }
@@ -81,6 +81,7 @@ TEST(TPCHQueryGrammarTests)
     int tks_count = 0;
     std::vector<yytokentype> tks;
     parser::tokenize(concatenated, &tks);
+    printf(concatenated.c_str());
     tks_count = tks.size();
     start = clock();
     ParseResult result;
@@ -108,18 +109,23 @@ TEST(TPCHQueryGrammarTests)
         ){
             int line = 0;
             int column = 0;
+
+            while (!node->isTerminalToken)
+            {
+                node = node->getChild(0);
+            }
+
             switch (tp)
             {
                 case resolve::TableItem::BASE_TABLE:
                 {
+                    line = node->terminalToken_.line;
+                    column = node->terminalToken_.column;
                     printf("access base table: %-25s at (L%+3d:%-2d)\n", table_name.c_str(), line + 1, column);
                 }
                     break;
                 case resolve::TableItem::ALIAS_TABLE:
                 {
-                    assert(node->nodeType_ == E_ALIAS);
-                    node = node->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS);
-                    assert(node->nodeType_ == E_IDENTIFIER);
                     line = node->terminalToken_.line;
                     column = node->terminalToken_.column;
 
