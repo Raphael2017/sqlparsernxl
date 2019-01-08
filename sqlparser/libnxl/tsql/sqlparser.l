@@ -60,6 +60,7 @@
 
 %x hint
 %x sq
+%x sb
 
 space         [ \t\n\r\f]
 non_newline   [^\n\r]
@@ -75,6 +76,7 @@ identifer         ([A-Za-z_][A_Za-z0-9_]*)
 system_variable  (@@[A-Za-z_][A_Za-z0-9_]*)
 temp_variable (@[A-Za-z_][A_Za-z0-9_]*)
 
+
 quote         '
 sqbegin       {quote}
 sqend         {quote}
@@ -83,6 +85,12 @@ sqcontent     [^']*
 sqescape      [\\][^0-7]
 sqoctal       [\\][0-7]{1,3}
 sqnewline     {quote}{whitespace}{quote}
+
+lsqbracket      \[
+rsqbracket      \]
+sbbegin         {lsqbracket}
+sbend           {rsqbracket}
+sbcontent       [^\]]*
 
 /***************************
  ** Section 3: Rules
@@ -146,6 +154,7 @@ FULL              { return FULL; }
 GRANT             { return GRANT; }
 GROUP             { return GROUP; }
 GLOBAL            { return GLOBAL; }
+HASH              { return HASH; }
 HAVING            { return HAVING; }
 IDENTIFIED        { return IDENTIFIED; }
 IF                { return IF; }
@@ -165,8 +174,10 @@ LIMIT             { return LIMIT; }
 LIKE              { return LIKE; }
 LOCAL             { return LOCAL; }
 LOCKED            { return LOCKED; }
+LOOP              { return LOOP; }
 MEDIUMINT         { return MEDIUMINT; }
 MEMORY            { return MEMORY; }
+MERGE             { return MERGE; }
 MOD               { return MOD; }
 MODIFYTIME        { return MODIFYTIME; }
 NATURAL           { return NATURAL; }
@@ -186,6 +197,7 @@ PRECISION         { return PRECISION; }
 PREPARE           { return PREPARE; }
 PRIMARY           { return PRIMARY; }
 REAL              { return REAL; }
+REMOTE            { return REMOTE; }
 RENAME            { return RENAME; }
 REPLACE           { return REPLACE; }
 RESTRICT          { return RESTRICT; }
@@ -246,6 +258,23 @@ FORCE             { return FORCE;  }
 TOP               { return TOP; }
 PERCENT           { return PERCENT; }
 TIES              { return TIES; }
+FAST              { return FAST; }
+DISABLE           { return DISABLE; }
+EXTERNALPUSHDOWN  { return EXTERNALPUSHDOWN; }
+IGNORE_NONCLUSTERED_COLUMNSTORE_INDEX  { return IGNORE_NONCLUSTERED_COLUMNSTORE_INDEX; }
+KEEP              { return KEEP; }
+PLAN              { return PLAN; }
+KEEPFIXED         { return KEEPFIXED; }
+MAX_GRANT_PERCENT { return MAX_GRANT_PERCENT; }
+MIN_GRANT_PERCENT { return MIN_GRANT_PERCENT; }
+MAXDOP            { return MAXDOP; }
+MAXRECURSION      { return MAXRECURSION; }
+NO_PERFORMANCE_SPOOL   { return NO_PERFORMANCE_SPOOL; }
+PARAMETERIZATION       { return PARAMETERIZATION; }
+SIMPLE       { return SIMPLE; }
+FORCED       { return FORCED; }
+RECOMPILE    { return RECOMPILE; }
+ROBUST       { return ROBUST; }
 
 NULL    {
     yylval->node = Node::makeTerminalNode(E_NULL, yytext);
@@ -316,6 +345,26 @@ FALSE   {
     nd->terminalToken_.str = ((ParseResult*)yyextra)->buf_.str();
     yylval->node = nd;
     return STRING;
+}
+
+{sbbegin}   {
+    BEGIN(sb);
+    ((ParseResult*)yyextra)->buf_ = std::stringstream{};
+    ((ParseResult*)yyextra)->buf_ << '[';
+}
+
+<sb>{sbcontent} {
+    ((ParseResult*)yyextra)->buf_ << yytext;
+}
+
+<sb>{sbend} {
+    BEGIN(INITIAL);
+    ((ParseResult*)yyextra)->buf_ << ']';
+    std::string text = ((ParseResult*)yyextra)->buf_.str();
+    Node* nd = Node::makeTerminalNode(E_IDENTIFIER, text.c_str());
+    nd->terminalToken_.str = text.substr(1, text.length() - 2);
+    yylval->node = nd;
+    return NAME;
 }
 
 <sq><<EOF>>  {

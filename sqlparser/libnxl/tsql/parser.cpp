@@ -50,7 +50,8 @@ bool parser::tokenize(const std::string& sql, std::vector<yytokentype>* tokens)
     while (token != END_P) {
         tokens->push_back((yytokentype)token);
         token = yylex(&yylval, &yylloc, scanner);
-        if (yylval.node && yylval.node->nodeType_ != E_NODETYPE_BEGIN)
+        // todo bug fix
+        if (yylval.node && yylval.ival != 1 && yylval.node->nodeType_ != E_NODETYPE_BEGIN)
         {
             delete(yylval.node);
             yylval.node = nullptr;

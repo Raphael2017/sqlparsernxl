@@ -231,7 +231,32 @@ extern int yydebug;
     PROCESSLIST = 433,
     QUERY = 434,
     CONNECTION = 435,
-    WEAK = 436
+    WEAK = 436,
+    LOOP = 437,
+    HASH = 438,
+    MERGE = 439,
+    REMOTE = 440,
+    CONCAT = 441,
+    OPTIMIZE = 442,
+    EXPAND = 443,
+    VIEWS = 444,
+    FAST = 445,
+    DISABLE = 446,
+    EXTERNALPUSHDOWN = 447,
+    IGNORE_NONCLUSTERED_COLUMNSTORE_INDEX = 448,
+    KEEP = 449,
+    PLAN = 450,
+    KEEPFIXED = 451,
+    MAX_GRANT_PERCENT = 452,
+    MIN_GRANT_PERCENT = 453,
+    MAXDOP = 454,
+    MAXRECURSION = 455,
+    NO_PERFORMANCE_SPOOL = 456,
+    PARAMETERIZATION = 457,
+    SIMPLE = 458,
+    FORCED = 459,
+    RECOMPILE = 460,
+    ROBUST = 461
   };
 #endif
 
@@ -245,7 +270,7 @@ union YYSTYPE
     struct Node* node;
     int    ival;
 
-#line 249 "sqlparser_bison.h" /* yacc.c:1909  */
+#line 274 "sqlparser_bison.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

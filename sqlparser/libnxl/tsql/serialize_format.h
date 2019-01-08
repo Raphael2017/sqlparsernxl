@@ -185,7 +185,7 @@ struct FormatDetail
 typedef const std::list<FormatDetail> Form;
 Form SELECT_SERIALIZE_FORMAT                {{0,"",16," "}, {1,"SELECT "}, {0,"",13," "}, {0,"",0," "}, {0,"",15," "}, \
                 {0,"",1," "}, {0,"",2," "}, {0,"",3," "}, {0,"",4," "}, {0,"",5," "}, {0,"",8," "}, {0,"",6," "},\
-                {0,"",7," "}, {0,"",9," "}, {0,"",10," "}, {0,"",11," "}, {0,"",12," "}, {0,"",14,""}};
+                {0,"",7," "}, {0,"",9," "}, {0,"",10," "}, {0,"",11," "}, {0,"",12," "}, {0,"",14," "}, {0,"",17,""}};
 Form STMT_LIST_SERIALIZE_FORMAT             {{0,"",0,""}, {1,"; "}, {0,"",1,""}};
 Form SELECT_WITH_PARENS_SERIALIZE_FORMAT    {{1,"("}, {0,"",0,""}, {1,")"}};
 Form SELECT_UNION_SERIALIZE_FORMAT          {{0,"",8,""}, {1, " UNION "}, {0,"",7," "}, {0,"",9,""}};
@@ -285,6 +285,7 @@ Form FOR_CLAUSE_1_SERIALIZE_FORMAT          {{1,"FOR BROWSE"}};
 Form WITH_TABLE_HINT_SERIALIZE_FORMAT       {{1,"WITH("}, {0,"",0,""}, {1,")"}};
 Form TABLE_HINT_NOEXPAND_SERIALIZE_FORMAT   {{1,"NOEXPAND "}, {0,"",0,""}};
 
+Form OPTION_CLAUSE_SERIALIZE_FORMAT         {{1,"OPTION("}, {0,"",0,""}, {1,")"}};
 #endif
 
 

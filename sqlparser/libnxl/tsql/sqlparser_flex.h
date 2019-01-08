@@ -249,6 +249,7 @@ void yyfree ( void * , yyscan_t yyscanner );
 #define INITIAL 0
 #define hint 1
 #define sq 2
+#define sb 3
 
 #endif
 
@@ -520,9 +521,9 @@ extern int yylex \
 #undef yyTABLES_NAME
 #endif
 
-#line 371 "sqlparser.l"
+#line 420 "sqlparser.l"
 
 
-#line 527 "sqlparser_flex.h"
+#line 528 "sqlparser_flex.h"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

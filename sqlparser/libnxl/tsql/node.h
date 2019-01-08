@@ -44,7 +44,7 @@ struct TerminalToken
 
 struct Node
 {
-    static Node* makeTerminalNode(NodeType tp, const char*);
+    static Node* makeTerminalNode(NodeType tp, const std::string&);
     static Node* makeNonTerminalNode(NodeType tp, int num, ...);
 
     static bool IsList(Node*);
@@ -125,6 +125,9 @@ private:
 private:
     static Node* check_expr_is_column_alias(Node* root);  // transact sql support column_alias=expr
     static bool  check_expr_table_hint(Node* root);       // transact sql support table hint
+    static std::string convert_join_hint(int ival);       // transact sql support join hint
+    static Node* make_query_hint(const std::string&);     // transact sql support query hint
+    static Node* make_query_hint(const std::string&, Node*);
     friend int yyparse (ParseResult* result, yyscan_t scanner);
 };
 

@@ -149,6 +149,11 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token UNION UPDATE USER
 %token VALUES VARCHAR VARBINARY
 %token WHERE WHEN WITH WORK PROCESSLIST QUERY CONNECTION WEAK
+%token LOOP HASH MERGE REMOTE CONCAT OPTIMIZE EXPAND VIEWS
+%token FAST DISABLE EXTERNALPUSHDOWN
+%token IGNORE_NONCLUSTERED_COLUMNSTORE_INDEX KEEP PLAN KEEPFIXED
+%token MAX_GRANT_PERCENT MIN_GRANT_PERCENT MAXDOP MAXRECURSION NO_PERFORMANCE_SPOOL
+%token PARAMETERIZATION SIMPLE FORCED RECOMPILE ROBUST
 
 %type <node> sql_stmt stmt_list stmt
 %type <node> select_stmt
@@ -172,6 +177,8 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> with_clause with_list common_table_expr opt_derived_column_list
 %type <node> simple_ident_list simple_ident_list_with_parens opt_simple_ident_list_with_parens
 %type <node> offset_fetch opt_for_clause opt_with_table_hint table_hint_list table_hint table_hint_expr
+%type <ival> join_hint
+%type <node> opt_option_query_hint query_hint query_hint_list
 
 %start sql_stmt
 %%
@@ -190,8 +197,9 @@ sql_stmt:
 }
 ;
 
-stmt_list:  stmt
-    |   stmt ';' stmt_list
+stmt_list:
+    stmt
+  | stmt ';' stmt_list
 {
     $$ = Node::makeNonTerminalNode(E_STMT_LIST, 2, $1, $3);
     $$->serialize_format = &STMT_LIST_SERIALIZE_FORMAT;
@@ -199,16 +207,13 @@ stmt_list:  stmt
 ;
 
 stmt:
-    select_stmt
-    | /*EMPTY*/   { $$ = nullptr; }
+    /*EMPTY*/	{ $$ = nullptr; }
+  | select_stmt
 ;
 
 /* SELECT GRAMMAR */
 select_stmt:
     select_no_parens
-{
-    $$ = $1;
-}
 ;
 
 select_with_parens:
@@ -217,7 +222,7 @@ select_with_parens:
     $$ = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, 1, $2);
     $$->serialize_format = &SELECT_WITH_PARENS_SERIALIZE_FORMAT;
 }
-    |   '(' select_with_parens ')'
+  | '(' select_with_parens ')'
 {
     $$ = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, 1, $2);
     $$->serialize_format = &SELECT_WITH_PARENS_SERIALIZE_FORMAT;
@@ -225,20 +230,73 @@ select_with_parens:
 ;
 
 select_no_parens:
-    select_clause opt_order_by opt_for_clause
+    select_clause opt_order_by opt_for_clause opt_option_query_hint
 {
     $$ = $1;
     $$->setChild(E_SELECT_ORDER_BY, $2);
     $$->setChild(E_SELECT_FOR_CLAUSE, $3);
+    $$->setChild(E_SELECT_OPT_OPTION, $4);
 }
-    |   with_clause select_clause opt_order_by opt_for_clause
+  | with_clause select_clause opt_order_by opt_for_clause opt_option_query_hint
 {
     $$ = $2;
     $$->setChild(E_SELECT_ORDER_BY, $3);
     $$->setChild(E_SELECT_FOR_CLAUSE, $4);
     $$->setChild(E_SELECT_OPT_WITH, $1);
+    $$->setChild(E_SELECT_OPT_OPTION, $5);
 }
 ;
+
+/*https://docs.microsoft.com/zh-cn/sql/t-sql/queries/hints-transact-sql-query?view=sql-server-2017*/
+opt_option_query_hint:
+    /*EMPTY*/	{ $$ = nullptr; }
+  | OPTION '(' query_hint_list ')'
+{
+    $$ = Node::makeNonTerminalNode(E_OPTION_CLAUSE, 1, $3);
+    $$->serialize_format = &OPTION_CLAUSE_SERIALIZE_FORMAT;
+}
+;
+
+query_hint_list:
+    query_hint
+  | query_hint ',' query_hint_list
+{
+    $$ = Node::makeNonTerminalNode(E_QUERY_HINT_LIST, 2, $1, $3);
+    $$->serialize_format = &SORT_LIST_SERIALIZE_FORMAT;
+}
+;
+
+/* todo wtf */
+query_hint:
+    HASH GROUP			{ $$ = Node::make_query_hint("HASH GROUP"); }
+  | ORDER GROUP			{ $$ = Node::make_query_hint("ORDER GROUP"); }
+  | CONCAT UNION		{ $$ = Node::make_query_hint("CONCAT UNION"); }
+  | HASH UNION			{ $$ = Node::make_query_hint("HASH UNION"); }
+  | MERGE UNION			{ $$ = Node::make_query_hint("MERGE UNION"); }
+  | LOOP JOIN			{ $$ = Node::make_query_hint("LOOP JOIN"); }
+  | MERGE JOIN			{ $$ = Node::make_query_hint("MERGE JOIN"); }
+  | HASH JOIN			{ $$ = Node::make_query_hint("HASH JOIN"); }
+  | EXPAND VIEWS		{ $$ = Node::make_query_hint("EXPAND VIEWS"); }
+  | FAST INTNUM			{ $$ = Node::make_query_hint("FAST", $2); }
+  | FORCE ORDER			{ $$ = Node::make_query_hint("FORCE ORDER"); }
+  | FORCE EXTERNALPUSHDOWN	{ $$ = Node::make_query_hint("FORCE EXTERNALPUSHDOWN"); }
+  | IGNORE_NONCLUSTERED_COLUMNSTORE_INDEX	{ $$ = Node::make_query_hint("IGNORE_NONCLUSTERED_COLUMNSTORE_INDEX"); }
+  | KEEP PLAN			{ $$ = Node::make_query_hint("KEEP PLAN"); }
+  | KEEPFIXED PLAN		{ $$ = Node::make_query_hint("KEEP PLAN"); }
+  | MAX_GRANT_PERCENT COMP_EQ APPROXNUM		{ $$ = Node::make_query_hint("MAX_GRANT_PERCENT =", $3); }
+  | MAX_GRANT_PERCENT COMP_EQ INTNUM		{ $$ = Node::make_query_hint("MAX_GRANT_PERCENT =", $3); }
+  | MIN_GRANT_PERCENT COMP_EQ APPROXNUM		{ $$ = Node::make_query_hint("MIN_GRANT_PERCENT =", $3); }
+  | MIN_GRANT_PERCENT COMP_EQ INTNUM		{ $$ = Node::make_query_hint("MIN_GRANT_PERCENT =", $3); }
+  | MAXDOP INTNUM		{ $$ = Node::make_query_hint("MAXDOP", $2); }
+  | MAXRECURSION INTNUM		{ $$ = Node::make_query_hint("MAXRECURSION", $2); }
+  | NO_PERFORMANCE_SPOOL	{ $$ = Node::make_query_hint("NO_PERFORMANCE_SPOOL"); }
+  | OPTIMIZE FOR UNKNOWN	{ $$ = Node::make_query_hint("OPTIMIZE FOR", $3); }
+  | PARAMETERIZATION SIMPLE	{ $$ = Node::make_query_hint("PARAMETERIZATION SIMPLE"); }
+  | PARAMETERIZATION FORCED	{ $$ = Node::make_query_hint("PARAMETERIZATION FORCED"); }
+  | RECOMPILE			{ $$ = Node::make_query_hint("RECOMPILE"); }
+  | ROBUST PLAN			{ $$ = Node::make_query_hint("ROBUST PLAN"); }
+;
+
 
 select_clause:
     simple_select
@@ -266,11 +324,12 @@ simple_select:
                     $2,             /* E_SELECT_HINTS 13 */
                     nullptr,        /* E_SELECT_WHEN 14 */
                     $4,             /* E_SELECT_OPT_TOP 15 */
-                    nullptr         /* E_SELECT_OPT_WITH 16 */
+                    nullptr,        /* E_SELECT_OPT_WITH 16 */
+                    nullptr	    /* E_SELECT_OPT_OPTION 17 */
                     );
     $$->serialize_format = &SELECT_SERIALIZE_FORMAT;
 }
-    |   select_clause UNION opt_distinct select_clause
+  | select_clause UNION opt_distinct select_clause
 {
     Node* set_op = Node::makeTerminalNode(E_SET_UNION, "UNION");
     $$ = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
@@ -290,11 +349,12 @@ simple_select:
                         nullptr,             /* E_SELECT_HINTS 13 */
                         nullptr,             /* E_SELECT_WHEN 14 */
                         nullptr,             /* E_SELECT_OPT_TOP 15 */
-                        nullptr              /* E_SELECT_OPT_WITH 16 */
+                        nullptr,             /* E_SELECT_OPT_WITH 16 */
+                        nullptr	             /* E_SELECT_OPT_OPTION 17 */
                         );
     $$->serialize_format = &SELECT_UNION_SERIALIZE_FORMAT;
 }
-    | select_clause INTERSECT opt_distinct select_clause
+  | select_clause INTERSECT opt_distinct select_clause
 {
     Node* set_op = Node::makeTerminalNode(E_SET_INTERSECT, "INTERSECT");
     $$ = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
@@ -314,11 +374,12 @@ simple_select:
                         nullptr,             /* E_SELECT_HINTS 13 */
                         nullptr,             /* E_SELECT_WHEN 14 */
                         nullptr,             /* E_SELECT_OPT_TOP 15 */
-                        nullptr              /* E_SELECT_OPT_WITH 16 */
+                        nullptr,             /* E_SELECT_OPT_WITH 16 */
+                        nullptr	             /* E_SELECT_OPT_OPTION 17 */
                         );
     $$->serialize_format = &SELECT_INTERSECT_SERIALIZE_FORMAT;
 }
-    | select_clause EXCEPT opt_distinct select_clause
+  | select_clause EXCEPT opt_distinct select_clause
 {
     Node* set_op = Node::makeTerminalNode(E_SET_EXCEPT, "EXCEPT");
     $$ = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
@@ -338,7 +399,8 @@ simple_select:
                         nullptr,             /* E_SELECT_HINTS 13 */
                         nullptr,             /* E_SELECT_WHEN 14 */
                         nullptr,             /* E_SELECT_OPT_TOP 15 */
-                        nullptr              /* E_SELECT_OPT_WITH 16 */
+                        nullptr,             /* E_SELECT_OPT_WITH 16 */
+                        nullptr	             /* E_SELECT_OPT_OPTION 17 */
                         );
     $$->serialize_format = &SELECT_EXCEPT_SERIALIZE_FORMAT;
 }
@@ -346,43 +408,42 @@ simple_select:
 
 /*https://docs.microsoft.com/zh-cn/sql/t-sql/queries/top-transact-sql?view=sql-server-2017*/
 opt_top:
-    /* EMPTY */
-{
-    $$ = nullptr;
-}
-    | TOP top_count
+    /*EMPTY*/	{ $$ = nullptr; }
+  | TOP top_count
 {
     $$ = Node::makeNonTerminalNode(E_TOP_CNT, 1, $2);
     $$->serialize_format = &TOP_SERIALIZE_FORMAT;
 }
-    | TOP top_count WITH TIES
+  | TOP top_count WITH TIES
 {
     $$ = Node::makeNonTerminalNode(E_TOP_CNT_TIES, 1, $2);
     $$->serialize_format = &TOP_TIES_SERIALIZE_FORMAT;
 }
-    | TOP top_percent PERCENT
+  | TOP top_percent PERCENT
 {
     $$ = Node::makeNonTerminalNode(E_TOP_PCT, 1, $2);
     $$->serialize_format = &TOP_PCT_SERIALIZE_FORMAT;
 }
-    | TOP top_percent PERCENT WITH TIES
+  | TOP top_percent PERCENT WITH TIES
 {
     $$ = Node::makeNonTerminalNode(E_TOP_PCT_TIES, 1, $2);
     $$->serialize_format = &TOP_PCT_TIES_SERIALIZE_FORMAT;
 }
 ;
 
-top_count:  INTNUM
-    | '(' expr ')'
+top_count:
+    INTNUM
+  | '(' expr ')'
 {
     $$ = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, $2);
     $$->serialize_format = &EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT;
 }
 ;
 
-top_percent:    APPROXNUM
-    | INTNUM
-    | '(' expr ')'
+top_percent:
+    APPROXNUM
+  | INTNUM
+  | '(' expr ')'
 {
     $$ = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, $2);
     $$->serialize_format = &EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT;
@@ -391,7 +452,7 @@ top_percent:    APPROXNUM
 
 /*todo JSON XML*/
 opt_for_clause:
-    /* EMPTY */	{ $$ = nullptr; }
+    /*EMPTY*/	{ $$ = nullptr; }
   | FOR BROWSE
 {
     $$ = Node::makeNonTerminalNode(E_FOR_CLAUSE, 1, nullptr);
@@ -400,11 +461,8 @@ opt_for_clause:
 ;
 
 opt_where:
-    /* EMPTY */
-{
-    $$ = nullptr;
-}
-    | WHERE expr
+    /*EMPTY*/	{ $$ = nullptr; }
+  | WHERE expr
 {
     $$ = Node::makeNonTerminalNode(E_WHERE_CLAUSE, 1, $2);
     $$->serialize_format = &WHERE_SERIALIZE_FORMAT;
@@ -412,11 +470,8 @@ opt_where:
 ;
 
 opt_from_clause:
-    /* EMPTY */
-{
-    $$ = nullptr;
-}
-    | FROM from_list
+    /*EMPTY*/	{ $$ = nullptr; }
+  | FROM from_list
 {
     $$ = Node::makeNonTerminalNode(E_FROM_CLAUSE, 1, $2);
     $$->serialize_format = &FROM_SERIALIZE_FORMAT;
@@ -424,15 +479,11 @@ opt_from_clause:
 ;
 
 opt_hint:
-    /* EMPTY */
-{
-    $$ = nullptr;
-}
+    /*EMPTY*/	{ $$ = nullptr; }
 ;
 
 opt_groupby:
-    /* EMPTY */
-{ $$ = nullptr; }
+    /*EMPTY*/	{ $$ = nullptr; }
   | GROUP BY expr_list
 {
     $$ = Node::makeNonTerminalNode(E_GROUP_BY, 1, $3);
@@ -441,12 +492,12 @@ opt_groupby:
 ;
 
 opt_order_by:
-  	order_by	              { $$ = $1;}
-  | /*EMPTY*/             { $$ = nullptr; }
+    /*EMPTY*/	{ $$ = nullptr; }
+  | order_by
 ;
 
 order_by:
-  	ORDER BY sort_list
+    ORDER BY sort_list
 {
     $$ = Node::makeNonTerminalNode(E_ORDER_BY, 1, $3);
     $$->serialize_format = &ORDER_BY_SERIALIZE_FORMAT;
@@ -513,8 +564,7 @@ offset_fetch:
 ;
 
 sort_list:
-  	sort_key
-{ $$ = $1; }
+    sort_key
   | sort_key ',' sort_list
 {
     $$ = Node::makeNonTerminalNode(E_SORT_LIST, 2, $1, $3);
@@ -531,7 +581,7 @@ sort_key:
 ;
 
 opt_asc_desc:
-    /* EMPTY */
+    /*EMPTY*/
 {
     $$ = Node::makeTerminalNode(E_SORT_ASC, "");
 }
@@ -546,8 +596,7 @@ opt_asc_desc:
 ;
 
 opt_having:
-    /* EMPTY */
-{ $$ = nullptr; }
+    /*EMPTY*/	{ $$ = nullptr; }
   | HAVING expr
 {
   $$ = Node::makeNonTerminalNode(E_HAVING, 1, $2);
@@ -564,8 +613,8 @@ with_clause:
 ;
 
 with_list:
-      common_table_expr
-    | common_table_expr ',' with_list
+    common_table_expr
+  | common_table_expr ',' with_list
 {
     $$ = Node::makeNonTerminalNode(E_WITH_LIST, 2, $1, $3);
     $$->serialize_format = &EXPR_LIST_SERIALIZE_FORMAT;
@@ -581,8 +630,8 @@ common_table_expr:
 ;
 
 opt_derived_column_list:
-      /* EMPTY */ { $$ = nullptr; }
-    | simple_ident_list_with_parens
+    /*EMPTY*/ { $$ = nullptr; }
+  | simple_ident_list_with_parens
 ;
 
 simple_ident_list_with_parens:
@@ -594,20 +643,16 @@ simple_ident_list_with_parens:
 ;
 
 simple_ident_list:
-      NAME
-    | NAME ',' simple_ident_list
+    NAME
+  | NAME ',' simple_ident_list
 {
     $$ = Node::makeNonTerminalNode(E_SIMPLE_IDENT_LIST, 2, $1, $3);
     $$->serialize_format = &EXPR_LIST_SERIALIZE_FORMAT;
 }
 ;
 
-
 opt_distinct:
-    /* EMPTY */
-{
-    $$ = nullptr;
-}
+    /*EMPTY*/	{ $$ = nullptr; }
   | ALL
 {
     $$ = Node::makeTerminalNode(E_ALL, "ALL");
@@ -620,7 +665,7 @@ opt_distinct:
 
 select_expr_list:
     projection
-    |   projection ',' select_expr_list
+  | projection ',' select_expr_list
 {
     $$ = Node::makeNonTerminalNode(E_SELECT_EXPR_LIST, 2, $1, $3);
     $$->serialize_format = &SELECT_EXPR_LIST_SERIALIZE_FORMAT;
@@ -660,8 +705,7 @@ projection:
 ;
 
 from_list:
-  	table_factor
-{ $$ = $1; }
+    table_factor
   | table_factor ',' from_list
 {
     $$ = Node::makeNonTerminalNode(E_FROM_LIST, 2, $1, $3);
@@ -669,11 +713,9 @@ from_list:
 }
 ;
 
-table_factor:   table_factor_non_join
+table_factor:
+    table_factor_non_join
   | joined_table
-{
-    $$ = $1;
-}
 ;
 
 table_factor_non_join:
@@ -705,7 +747,7 @@ table_factor_non_join:
 ;
 
 opt_with_table_hint:
-    /* EMPTY */	{ $$ = nullptr; }
+    /*EMPTY*/	{ $$ = nullptr; }
   | WITH '(' table_hint_list ')'
 {
     $$ = Node::makeNonTerminalNode(E_WITH_TABLE_HINT, 1, $3);
@@ -761,23 +803,14 @@ table_hint_expr:
 }
 ;
 
-
-
 opt_simple_ident_list_with_parens:
-    /*EMPTY*/
-{
-    $$ = nullptr;
-}
+    /*EMPTY*/	{ $$ = nullptr; }
   | simple_ident_list_with_parens
-{
-    $$ = $1;
-}
 ;
 
 /* https://docs.microsoft.com/zh-cn/sql/t-sql/language-elements/transact-sql-syntax-conventions-transact-sql?view=sql-server-2017 */
 relation_factor:
     	                         NAME
-{ $$ = $1; }
   |                     NAME '.' NAME
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, 4, $3, $1, nullptr, nullptr);
@@ -856,54 +889,63 @@ joined_table:
 ;
 
 join_type:
-    FULL join_outer
+    FULL join_outer join_hint
 {
     if ($2)
     {
-        $$ = Node::makeTerminalNode(E_JOIN_FULL, "FULL OUTER");
+        $$ = Node::makeTerminalNode(E_JOIN_FULL, "FULL OUTER"+Node::convert_join_hint($3));
     }
     else
     {
-        $$ = Node::makeTerminalNode(E_JOIN_FULL, "FULL");
+        $$ = Node::makeTerminalNode(E_JOIN_FULL, "FULL"+Node::convert_join_hint($3));
     }
 }
-  | LEFT join_outer
+  | LEFT join_outer join_hint
 {
     if ($2)
     {
-        $$ = Node::makeTerminalNode(E_JOIN_LEFT, "LEFT OUTER");
+        $$ = Node::makeTerminalNode(E_JOIN_LEFT, "LEFT OUTER"+Node::convert_join_hint($3));
     }
     else
     {
-        $$ = Node::makeTerminalNode(E_JOIN_LEFT, "LEFT");
+        $$ = Node::makeTerminalNode(E_JOIN_LEFT, "LEFT"+Node::convert_join_hint($3));
     }
 }
-  | RIGHT join_outer
+  | RIGHT join_outer join_hint
 {
     if ($2)
     {
-        $$ = Node::makeTerminalNode(E_JOIN_RIGHT, "RIGHT OUTER");
+        $$ = Node::makeTerminalNode(E_JOIN_RIGHT, "RIGHT OUTER"+Node::convert_join_hint($3));
     }
     else
     {
-        $$ = Node::makeTerminalNode(E_JOIN_RIGHT, "RIGHT");
+        $$ = Node::makeTerminalNode(E_JOIN_RIGHT, "RIGHT"+Node::convert_join_hint($3));
     }
 }
-  | INNER
+  | INNER join_hint
 {
-    $$ = Node::makeTerminalNode(E_JOIN_INNER, "INNER");
+    $$ = Node::makeTerminalNode(E_JOIN_INNER, "INNER"+Node::convert_join_hint($2));
 }
 ;
+
+join_hint:
+    /*EMPTY*/	{ $$ = 0; }
+  | LOOP	{ $$ = 1; }
+  | HASH	{ $$ = 2; }
+  | MERGE	{ $$ = 3; }
+  | REMOTE	{ $$ = 4; }
+;
+
 
 join_outer:
-    OUTER                       { $$ = 1; /*this is a flag*/}
-  | /* EMPTY */                 { $$ = 0; }
+    /* EMPTY */                 { $$ = 0; }
+  | OUTER                       { $$ = 1; /*this is a flag*/}
 ;
 
-
 /* expression grammar */
-expr_list:  expr
-    |   expr ',' expr_list
+expr_list:
+    expr
+  | expr ',' expr_list
 {
     $$ = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $1, $3);
     $$->serialize_format = &EXPR_LIST_SERIALIZE_FORMAT;
@@ -1002,27 +1044,29 @@ column_ref:
 }
 ;
 
-expr_const: STRING
-    |   INTNUM
-    |   APPROXNUM
-    |   BOOL
-    |   NULLX
-    |   QUESTIONMARK
+expr_const:
+    STRING
+  | INTNUM
+  | APPROXNUM
+  | BOOL
+  | NULLX
+  | QUESTIONMARK
 ;
 
 /* todo when_func */
-simple_expr:    column_ref
-    |   expr_const
-    |   '('  expr_list ')'
+simple_expr:
+    column_ref
+  | expr_const
+  | '('  expr_list ')'
 {
     // expect cover '(' expr ')'
     $$ = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, $2);
     $$->serialize_format = &EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT;
 }
-    |   case_expr
-    |   func_expr
-    |   select_with_parens  %prec UMINUS
-    |   EXISTS select_with_parens
+  | case_expr
+  | func_expr
+  | select_with_parens  %prec UMINUS
+  | EXISTS select_with_parens
 {
     $$ = Node::makeNonTerminalNode(E_OP_EXISTS, 1, $2);
     $$->serialize_format = &OP_EXISTS_SERIALIZE_FORMAT;
@@ -1030,216 +1074,219 @@ simple_expr:    column_ref
 ;
 
 /* used by the expression that use range value, e.g. between and */
-arith_expr: simple_expr
-    |   '+' arith_expr
+arith_expr:
+    simple_expr
+  | '+' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_POS, 1, $2);
     $$->serialize_format = &OP_POS_SERIALIZE_FORMAT;
 }
-    |   '-' arith_expr
+  | '-' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NEG, 1, $2);
     $$->serialize_format = &OP_NEG_SERIALIZE_FORMAT;
 }
-    |   arith_expr '+' arith_expr
+  | arith_expr '+' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_ADD, 2, $1, $3);
     $$->serialize_format = &OP_ADD_SERIALIZE_FORMAT;
 }
-    |   arith_expr '-' arith_expr
+  | arith_expr '-' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_MINUS, 2, $1, $3);
     $$->serialize_format = &OP_MINUS_SERIALIZE_FORMAT;
 }
-    |   arith_expr '*' arith_expr
+  | arith_expr '*' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_MUL, 2, $1, $3);
     $$->serialize_format = &OP_MUL_SERIALIZE_FORMAT;
 }
-    |   arith_expr '/' arith_expr
+  | arith_expr '/' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_DIV, 2, $1, $3);
     $$->serialize_format = &OP_DIV_SERIALIZE_FORMAT;
 }
-    |   arith_expr '%' arith_expr
+  | arith_expr '%' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_REM, 2, $1, $3);
     $$->serialize_format = &OP_REM_SERIALIZE_FORMAT;
 }
-    |   arith_expr '^' arith_expr
+  | arith_expr '^' arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_POW, 2, $1, $3);
     $$->serialize_format = &OP_POW_SERIALIZE_FORMAT;
 }
-    |   arith_expr MOD arith_expr
+  | arith_expr MOD arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_MOD, 2, $1, $3);
     $$->serialize_format = &OP_MOD_SERIALIZE_FORMAT;
 }
 ;
 
-expr:   arith_expr
-    |   expr COMP_LE expr
+expr:
+    arith_expr
+  | expr COMP_LE expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_LE, 2, $1, $3);
     $$->serialize_format = &OP_LE_SERIALIZE_FORMAT;
 }
-    |   expr COMP_LT expr
+  | expr COMP_LT expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_LT, 2, $1, $3);
     $$->serialize_format = &OP_LT_SERIALIZE_FORMAT;
 }
-    |   expr COMP_EQ expr
+  | expr COMP_EQ expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_EQ, 2, $1, $3);
     $$->serialize_format = &OP_EQ_SERIALIZE_FORMAT;
 }
-    |   expr COMP_GE expr
+  | expr COMP_GE expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_GE, 2, $1, $3);
     $$->serialize_format = &OP_GE_SERIALIZE_FORMAT;
 }
-    |   expr COMP_GT expr
+  | expr COMP_GT expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_GT, 2, $1, $3);
     $$->serialize_format = &OP_GT_SERIALIZE_FORMAT;
 }
-    |   expr COMP_NE expr
+  | expr COMP_NE expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NE, 2, $1, $3);
     $$->serialize_format = &OP_NE_SERIALIZE_FORMAT;
 }
-    |   expr LIKE expr
+  | expr LIKE expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_LIKE, 2, $1, $3);
     $$->serialize_format = &OP_LIKE_SERIALIZE_FORMAT;
 }
-    |   expr NOT LIKE expr
+  | expr NOT LIKE expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NOT_LIKE, 2, $1, $4);
     $$->serialize_format = &OP_NOT_LIKE_SERIALIZE_FORMAT;
 }
-    |   expr AND expr
+  | expr AND expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_AND, 2, $1, $3);
     $$->serialize_format = &OP_AND_SERIALIZE_FORMAT;
 }
-    |   expr OR expr
+  | expr OR expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_OR, 2, $1, $3);
     $$->serialize_format = &OP_OR_SERIALIZE_FORMAT;
 }
-    |   NOT expr
+  | NOT expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NOT, 1, $2);
     $$->serialize_format = &OP_NOT_SERIALIZE_FORMAT;
 }
-    |   expr IS NULLX
+  | expr IS NULLX
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS, 2, $1, $3);
     $$->serialize_format = &OP_IS_SERIALIZE_FORMAT;
 }
-    |   expr IS NOT NULLX
+  | expr IS NOT NULLX
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS_NOT, 2, $1, $4);
     $$->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
 }
-    |   expr IS BOOL
+  | expr IS BOOL
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS, 2, $1, $3);
     $$->serialize_format = &OP_IS_SERIALIZE_FORMAT;
 }
-    |   expr IS NOT BOOL
+  | expr IS NOT BOOL
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS_NOT, 2, $1, $4);
     $$->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
 }
-    |   expr IS UNKNOWN
+  | expr IS UNKNOWN
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS, 2, $1, $3);
     $$->serialize_format = &OP_IS_SERIALIZE_FORMAT;
 }
-    |   expr IS NOT UNKNOWN
+  | expr IS NOT UNKNOWN
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS_NOT, 2, $1, $4);
     $$->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
 }
-    |   expr BETWEEN arith_expr AND arith_expr
+  | expr BETWEEN arith_expr AND arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_BTW, 3, $1, $3, $5);
     $$->serialize_format = &OP_BETWEEN_SERIALIZE_FORMAT;
 }
-    |   expr NOT BETWEEN arith_expr AND arith_expr
+  | expr NOT BETWEEN arith_expr AND arith_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NOT_BTW, 3, $1, $4, $6);
     $$->serialize_format = &OP_NOT_BETWEEN_SERIALIZE_FORMAT;
 }
-    |   expr IN in_expr
+  | expr IN in_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_IN, 2, $1, $3);
     $$->serialize_format = &OP_IN_SERIALIZE_FORMAT;
 }
-    |   expr NOT IN in_expr
+  | expr NOT IN in_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NOT_IN, 2, $1, $4);
     $$->serialize_format = &OP_NOT_IN_SERIALIZE_FORMAT;
 }
-    |   expr CNNOP expr
+  | expr CNNOP expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_CNN, 2, $1, $3);
     $$->serialize_format = &OP_CNN_SERIALIZE_FORMAT;
 }
 ;
 
-in_expr:    select_with_parens
-    |   '(' expr_list ')'
+in_expr:
+    select_with_parens
+  | '(' expr_list ')'
 {
     $$ = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, 1, $2);
     $$->serialize_format = &EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT;
 }
 ;
 
-case_expr:  CASE case_arg when_clause_list case_default END
+case_expr:
+    CASE case_arg when_clause_list case_default END
 {
     $$ = Node::makeNonTerminalNode(E_CASE, 3, $2, $3, $4);
     $$->serialize_format = &CASE_SERIALIZE_FORMAT;
 }
 ;
 
-case_arg:   expr
-    |   /*EMPTY*/
-{
-    $$ = nullptr;
-}
+case_arg:
+    /*EMPTY*/	{ $$ = nullptr; }
+  | expr
 ;
 
-when_clause_list:   when_clause
-    |   when_clause when_clause_list
+when_clause_list:
+    when_clause
+  | when_clause when_clause_list
 {
     $$ = Node::makeNonTerminalNode(E_WHEN_LIST, 2, $1, $2);
     $$->serialize_format = &WHEN_LIST_SERIALIZE_FORMAT;
 }
 ;
 
-when_clause:    WHEN expr THEN expr
+when_clause:
+    WHEN expr THEN expr
 {
     $$ = Node::makeNonTerminalNode(E_WHEN, 2, $2, $4);
     $$->serialize_format = &WHEN_SERIALIZE_FORMAT;
 }
 ;
 
-case_default:   ELSE expr
+case_default:
+    /*EMPTY*/	{ $$ = nullptr; }
+  | ELSE expr
 {
     $$ = Node::makeNonTerminalNode(E_CASE_DEFAULT, 1, $2);
     $$->serialize_format = &ELSE_SERIALIZE_FORMAT;
 }
-    |   /*EMPTY*/
-{
-    $$ = nullptr;
-}
 ;
 
-func_expr:  function_name '(' '*' ')'
+func_expr:
+    function_name '(' '*' ')'
 {
     if (!Node::IS_CAN_WITH_STAR_FUNCTION($1->terminalToken_.str))
     {
@@ -1250,7 +1297,7 @@ func_expr:  function_name '(' '*' ')'
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, $1, star);
     $$->serialize_format = &FUN_CALL_1_SERIALIZE_FORMAT;
 }
-    |   function_name '(' distinct_or_all expr ')'
+  | function_name '(' distinct_or_all expr ')'
 {
     if (!Node::IS_AGGREGATE_FUNCTION($1->terminalToken_.str))
     {
@@ -1260,7 +1307,7 @@ func_expr:  function_name '(' '*' ')'
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, $1, $4, $3);
     $$->serialize_format = &FUN_CALL_2_SERIALIZE_FORMAT;
 }
-    |   function_name '(' expr_list ')'
+  | function_name '(' expr_list ')'
 {
     if (Node::ListLength($3) > 1 &&
     	Node::IS_ONE_PARAM_FUNCTION($1->terminalToken_.str))
@@ -1273,7 +1320,7 @@ func_expr:  function_name '(' '*' ')'
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, $1, $3);
     $$->serialize_format = &FUN_CALL_1_SERIALIZE_FORMAT;
 }
-    |   function_name '(' expr AS data_type ')'
+  | function_name '(' expr AS data_type ')'
 {
     if (!Node::IS_CAN_WITH_AS_FUNCTION($1->terminalToken_.str))
     {
@@ -1285,48 +1332,53 @@ func_expr:  function_name '(' '*' ')'
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, $1, $3, $5);
     $$->serialize_format = &FUN_CALL_3_SERIALIZE_FORMAT;
 }
-    |   function_name '(' ')'
+  | function_name '(' ')'
 {
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, $1);
     $$->serialize_format = &FUN_CALL_4_SERIALIZE_FORMAT;
 }
 ;
 
-distinct_or_all:    ALL
+distinct_or_all:
+    ALL
 {
     $$ = Node::makeTerminalNode(E_ALL, "ALL");
 }
-    |   DISTINCT
+  | DISTINCT
 {
     $$ = Node::makeTerminalNode(E_DISTINCT, "DISTINCT");
 }
 ;
 
 /* Name classification */
-relation_name:  NAME
+relation_name:
+    NAME
 ;
 
-function_name:  NAME
+function_name:
+    NAME
 ;
 
-column_label:   NAME
+column_label:
+    NAME
 ;
 
-data_type:  TINYINT
+data_type:
+    TINYINT
 { $$ = Node::makeTerminalNode(E_TYPE_INTEGER, "TINYINT"); }
-    |   SMALLINT
+  | SMALLINT
 { $$ = Node::makeTerminalNode(E_TYPE_INTEGER, "SMALLINT"); }
-    |   MEDIUMINT
+  | MEDIUMINT
 { $$ = Node::makeTerminalNode(E_TYPE_INTEGER, "MEDIUMINT"); }
-    |   INTEGER
+  | INTEGER
 { $$ = Node::makeTerminalNode(E_TYPE_INTEGER, "INTEGER"); }
-    |   BIGINT
+  | BIGINT
 { $$ = Node::makeTerminalNode(E_TYPE_INTEGER, "BIGINT"); }
-    |   BOOLEAN
+  | BOOLEAN
 { $$ = Node::makeTerminalNode(E_TYPE_BOOLEAN, "BOOLEAN"); }
-    |   REAL
+  | REAL
 { $$ = Node::makeTerminalNode(E_TYPE_DOUBLE, "REAL"); }
-    |   DATETIME
+  | DATETIME
 { $$ = Node::makeTerminalNode(E_TYPE_DATETIME, "DATETIME"); }
 ;
 

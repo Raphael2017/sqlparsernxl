@@ -205,7 +205,7 @@ ParseResult::~ParseResult()
     result_tree_ = nullptr;
 }
 
-Node* Node::makeTerminalNode(NodeType tp, const char* yytext)
+Node* Node::makeTerminalNode(NodeType tp, const std::string& yytext)
 {
     Node* ret = new Node;
     ret->nodeType_ = tp;
@@ -1154,5 +1154,37 @@ bool  Node::check_expr_table_hint(Node* root)
         return true;
     }
     return false;
+}
+
+std::string Node::convert_join_hint(int ival)
+{
+    switch (ival)
+    {
+        case 0:
+            return "";
+        case 1:
+            return " LOOP";
+        case 2:
+            return " HASH";
+        case 3:
+            return " MERGE";
+        default:
+            return " REMOTE";
+            /*unreachable*/
+            assert(0);
+    }
+}
+
+Node* Node::make_query_hint(const std::string& text)
+{
+    return makeTerminalNode(E_STRING, text);
+}
+
+Node* Node::make_query_hint(const std::string& text, Node* num)
+{
+    Node* nd = makeTerminalNode(E_STRING, text);
+    Node* ret = makeNonTerminalNode(E_QUERY_HINT, 2, nd, num);
+    ret->serialize_format = &ALIAS_1_SERIALIZE_FORMAT;
+    return ret;
 }
 

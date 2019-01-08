@@ -11,7 +11,7 @@
 #define E_LIST_NEXT 1
 
 //  E_SELECT
-#define E_SELECT_PROPERTY_CNT           17
+#define E_SELECT_PROPERTY_CNT           18
 
 #define E_SELECT_DISTINCT               0
 #define E_SELECT_SELECT_EXPR_LIST       1
@@ -254,16 +254,20 @@ enum NodeType
     E_WITH_TABLE_HINT,
     E_TABLE_HINT_LIST,
     E_TABLE_HINT_NOEXPAND,
+    E_OPTION_CLAUSE,
+    E_QUERY_HINT_LIST,
+    E_QUERY_HINT,
 
     E_NODETYPE_END
 };
 
 const std::set<std::string> FUNCTION_CAN_WITH_PARAM_STAR{
-    "COUNT"
+    "COUNT", "COUNT_BIG"
 };
 
 const std::set<std::string> AGGREGATE_FUNCTIONS{
-        "COUNT", "SUM", "MAX", "MIN", "AVG"
+        "COUNT", "SUM", "MAX", "MIN", "AVG", "STDEV",
+        "STDEVP", "VAR", "VARP", "CHECKSUM_AGG", "COUNT_BIG"
 };
 
 const std::set<std::string> FUNCTIONS_ONLY_CAN_WITH_ONE_PARAM{
