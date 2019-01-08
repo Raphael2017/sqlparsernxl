@@ -1,10 +1,12 @@
 %{
 /**
- * bison_parser.y
- * defines bison_parser.h
- * outputs bison_parser.c
+ * This Grammar is designed for Transact-SQL.
+ * Most grammar rules refer to Microsoft's official documents.
+ * sqlparser.y
+ * defines sqlparser_bison.h
+ * outputs sqlparser_bison.cpp
  *
- * Grammar File Spec: http://dinosaur.compilertools.net/bison/bison_6.html
+ * Bison Grammar File Spec: http://dinosaur.compilertools.net/bison/bison_6.html
  *
  */
 /*********************************
@@ -18,6 +20,9 @@
 #include <string.h>
 #include <strings.h>
 
+/*
+ * We provide parse error includes error message, first line, first column of error lex for debug
+ */
 int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *msg) {
     result->accept = false;
     result->errFirstLine = llocp->first_line;
@@ -49,8 +54,9 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %define api.pure full
 
 /*
-  1. We do not accept any reduce/reduce conflicts, shift/reduce conflicts
-*/
+ * 1. We do not accept any reduce/reduce conflicts, shift/reduce conflicts
+ * 2.
+ **/
 
 
 %define parse.error verbose
@@ -208,6 +214,8 @@ stmt_list:
 }
 ;
 
+/*https://docs.microsoft.com/zh-cn/sql/t-sql/language-elements/transact-sql-syntax-conventions-transact-sql?view=sql-server-2017*/
+/*;	Transact-SQL 语句终止符。 虽然在此版本的 SQL Server 中大部分语句不需要分号，但将来的版本需要分号。*/
 stmt:
     ';' { $$ = nullptr; }
   | select_stmt ';'
@@ -299,7 +307,6 @@ query_hint:
   | RECOMPILE			{ $$ = Node::make_query_hint("RECOMPILE"); }
   | ROBUST PLAN			{ $$ = Node::make_query_hint("ROBUST PLAN"); }
 ;
-
 
 select_clause:
     simple_select
