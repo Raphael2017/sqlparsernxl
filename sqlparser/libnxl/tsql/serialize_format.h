@@ -6,7 +6,7 @@
 #define S_F_2
 
 
-
+/* do not use */
 #ifdef S_F_0
 typedef const std::list<std::string> Form;
 Form SELECT_SERIALIZE_FORMAT                    {"{16}", " ", "SELECT ", "{13}", " ", "{0}", " ", "{15}", " ", "{1}", " ", "{2}", " ", "{3}",  " ",  \
@@ -88,6 +88,7 @@ Form WITH_CLAUSE_SERIALIZE_FORMAT               {"WITH ", "{0}"};
 Form COMMON_TABLE_EXPR_SERIALIZE_FORMAT         {"{0}", "{1}", " AS ", "{2}"};
 #endif
 
+/* do not use */
 #ifdef S_F_1
 typedef const std::list<std::string> Form;
 Form SELECT_SERIALIZE_FORMAT                    {"{16} ", "SELECT ", "{13} ", "{0} ", "{15} ", "{1} ", "{2} ", "{3} ",  \
@@ -186,8 +187,8 @@ typedef const std::list<FormatDetail> Form;
 Form SELECT_SERIALIZE_FORMAT                {{0,"",16," "}, {1,"SELECT "}, {0,"",13," "}, {0,"",0," "}, {0,"",15," "}, \
                 {0,"",1," "}, {0,"",2," "}, {0,"",3," "}, {0,"",4," "}, {0,"",5," "}, {0,"",8," "}, {0,"",6," "},\
                 {0,"",7," "}, {0,"",9," "}, {0,"",10," "}, {0,"",11," "}, {0,"",12," "}, {0,"",14," "}, {0,"",17,""}};
-Form STMT_LIST_SERIALIZE_FORMAT             {{0,"",0,""}, {1,"; "}, {0,"",1,""}};
-Form SELECT_WITH_PARENS_SERIALIZE_FORMAT    {{1,"("}, {0,"",0,""}, {1,")"}};
+Form SEMICOLON_LIST_SERIALIZE_FORMAT        {{0,"",0,""}, {1,"; "}, {0,"",1,""}};
+Form SINGLE_WITH_PARENS_SERIALIZE_FORMAT    {{1,"("}, {0,"",0,""}, {1,")"}};
 Form SELECT_UNION_SERIALIZE_FORMAT          {{0,"",8,""}, {1, " UNION "}, {0,"",7," "}, {0,"",9,""}};
 Form SELECT_INTERSECT_SERIALIZE_FORMAT      {{0,"",8,""}, {1, " INTERSECT "}, {0,"",7," "}, {0,"",9,""}};
 Form SELECT_EXCEPT_SERIALIZE_FORMAT         {{0,"",8,""}, {1, " EXCEPT "}, {0,"",7," "}, {0,"",9,""}};
@@ -195,34 +196,21 @@ Form TOP_SERIALIZE_FORMAT                   {{1,"TOP "}, {0,"",0,""}};
 Form TOP_TIES_SERIALIZE_FORMAT              {{1,"TOP "}, {0,"",0,""}, {1," WITH TIES"}};
 Form TOP_PCT_SERIALIZE_FORMAT               {{1,"TOP "}, {0,"",0,""}, {1," PERCENT"}};
 Form TOP_PCT_TIES_SERIALIZE_FORMAT          {{1,"TOP "}, {0,"",0,""}, {1," PERCENT WITH TIES"}};
-Form EXPR_WITH_PARENS_SERIALIZE_FORMAT      {{1,"("}, {0,"",0,""}, {1,")"}};
 Form WHERE_SERIALIZE_FORMAT                 {{1,"WHERE "}, {0,"",0,""}};
-Form FROM_DUAL_SERIALIZE_FORMAT             {{1,"FROM "}, {1, "DUAL"}};
 Form FROM_SERIALIZE_FORMAT                  {{1,"FROM "}, {0,"",0,""}};
-Form LIMIT_1_SERIALIZE_FORMAT               {{1,"LIMIT "}, {0,"",0,""}, {1," OFFSET "}, {0,"",1,""}};
-Form LIMIT_2_SERIALIZE_FORMAT               {{1,"OFFSET "}, {0,"",1,""}, {1," LIMIT "}, {0,"",0,""}};
-Form LIMIT_3_SERIALIZE_FORMAT               {{1,"LIMIT "}, {0,"",0,""}};
-Form LIMIT_4_SERIALIZE_FORMAT               {{1,"OFFSET "}, {0,"",1,""}};
-Form LIMIT_5_SERIALIZE_FORMAT               {{1,"LIMIT "}, {0,"",0,""}, {1,", "}, {0,"",1,""}};
 Form GROUP_BY_SERIALIZE_FORMAT              {{1,"GROUP"}, {1," BY "}, {0,"",0,""}};
-Form ORDER_BY_SERIALIZE_FORMAT              {{1,"ORDER"}, {1," BY "}, {0,"",0,""}};
-Form ORDER_BY_SERIALIZE_FORMAT_0            {{1,"ORDER"}, {1," BY "}, {0,"",0,""}, {0,"",1,""}};
+Form ORDER_BY_SERIALIZE_FORMAT              {{1,"ORDER"}, {1," BY "}, {0,"",0,""}, {0," ",1,""}};
 Form SORT_LIST_SERIALIZE_FORMAT             {{0,"",0,""}, {1,", "}, {0,"",1,""}};
 Form SORT_KEY_SERIALIZE_FORMAT              {{0,"",0,""}, {0," ",1,""}};
 Form HAVING_SERIALIZE_FORMAT                {{1,"HAVING "}, {0,"",0,""}};
-Form SELECT_EXPR_LIST_SERIALIZE_FORMAT      {{0,"",0,""}, {1,", "}, {0,"",1,""}};
-Form PROJECTION_SERIALIZE_FORMAT            {{0,"",0,""}};
-Form ALIAS_1_SERIALIZE_FORMAT               {{0,"",0,""}, {0," ",1,""}};
-Form ALIAS_2_SERIALIZE_FORMAT               {{0,"",0,""}, {1," AS "}, {0,"",1,""}};
-Form ALIAS_3_SERIALIZE_FORMAT               {{0,"",0,""}, {1," AS "}, {0,"",1,""}, {0," ",2,""}, {0," ",3,""}};
-Form ALIAS_4_SERIALIZE_FORMAT               {{0,"",0,""}, {0," ",1,""}, {0," ",2,""}, {0," ",3,""}};
-Form FORM_LIST_SERIALIZE_FORMAT             {{0,"",0,""}, {1,", "}, {0,"",1,""}};
-Form JOINED_TB_WITH_PARENS_SERIALIZE_FORMAT {{1,"("}, {0,"",0,""}, {1,")"}};
+Form COMMA_LIST_SERIALIZE_FORMAT            {{0,"",0,""}, {1,", "}, {0,"",1,""}};
+Form SINGLE_SERIALIZE_FORMAT                {{0,"",0,""}};
+Form DOUBLE_SERIALIZE_FORMAT                {{0,"",0,""}, {0," ",1,""}};
+Form AS_SERIALIZE_FORMAT                    {{0,"",0,""}, {1," AS "}, {0,"",1,""}, {0," ",2,""}, {0," ",3,""}};
+Form QUADRUPLE_SERIALIZE_FORMAT             {{0,"",0,""}, {0," ",1,""}, {0," ",2,""}, {0," ",3,""}};
 Form JOINED_TB_1_SERIALIZE_FORMAT           {{0,"",1," "}, {0,"",0,""}, {1," JOIN "}, {0,"",2,""}, {1," ON "}, {0,"",3,""}};
 Form JOINED_TB_2_SERIALIZE_FORMAT           {{0,"",1," "}, {0,"",0,""}, {1," JOIN "}, {0,"",2,""}};
 Form JOINED_TB_3_SERIALIZE_FORMAT           {{0,"",1," "}, {0,"",0,""}, {1," JOIN "}, {0,"",2,""}, {1, " USING ("}, {0,"",3,""},{1,")"}};
-Form EXPR_LIST_SERIALIZE_FORMAT             {{0,"",0,""}, {1,", "}, {0,"",1,""}};
-Form EXPR_LIST_WITH_PARENS_SERIALIZE_FORMAT {{1,"("}, {0,"",0,""}, {1,")"}};
 Form OP_EXISTS_SERIALIZE_FORMAT             {{1,"EXISTS "}, {0,"",0,""}};
 Form OP_POS_SERIALIZE_FORMAT                {{1,"+"}, {0,"",0,""}};
 Form OP_NEG_SERIALIZE_FORMAT                {{1,"-"}, {0,"",0,""}};
@@ -252,24 +240,20 @@ Form OP_IN_SERIALIZE_FORMAT                 {{0,"",0,""}, {1," IN "}, {0,"",1,""
 Form OP_NOT_IN_SERIALIZE_FORMAT             {{0,"",0,""}, {1," NOT IN "}, {0,"",1,""}};
 Form OP_CNN_SERIALIZE_FORMAT                {{0,"",0,""}, {1," || "}, {0,"",1,""}};
 Form CASE_SERIALIZE_FORMAT                  {{1,"CASE "}, {0,"",0," "}, {0,"",1,""}, {0," ",2,""}, {1," END"}};
-Form WHEN_LIST_SERIALIZE_FORMAT             {{0,"",0,""}, {1," "}, {0,"",1,""}};
 Form WHEN_SERIALIZE_FORMAT                  {{1,"WHEN "}, {0,"",0,""}, {1," THEN "}, {0,"",1,""}};
 Form ELSE_SERIALIZE_FORMAT                  {{1,"ELSE "}, {0,"",0,""}};
-Form FUN_CALL_1_SERIALIZE_FORMAT            {{0,"",0,""}, {1,"("}, {0,"",1,""}, {1,")"}};
-Form FUN_CALL_2_SERIALIZE_FORMAT            {{0,"",0,""}, {1,"("}, {0,"",2," "}, {0,"",1,""}, {1,")"}};
-Form FUN_CALL_3_SERIALIZE_FORMAT            {{0,"",0,""}, {1,"("}, {0,"",1,""}, {1," AS "}, {0,"",2,""}, {1,")"}};
-Form FUN_CALL_4_SERIALIZE_FORMAT            {{0,"",0,""}, {1,"("}, {1,")"}};
+Form FUN_CALL_1_OVER_SERIALIZE_FORMAT       {{0,"",0,""}, {1,"("}, {0,"",1,""}, {1,")"}, {0," ",2,""}};
+Form FUN_CALL_DIS_OVER_SERIALIZE_FORMAT     {{0,"",0,""}, {1,"("}, {0,"",3," "}, {0,"",1,""}, {1,")"}, {0," ",2,""}};
+Form FUN_CALL_AS_SERIALIZE_FORMAT           {{0,"",0,""}, {1,"("}, {0,"",1,""}, {1," AS "}, {0,"",4,""}, {1,")"}};
 Form WITH_CLAUSE_SERIALIZE_FORMAT           {{1,"WITH "}, {0,"",0,""}};
 Form COMMON_TABLE_EXPR_SERIALIZE_FORMAT     {{0,"",0,""}, {0,"",1,""}, {1," AS "}, {0,"",2,""}};
 Form TABLE_IDENT_SERIALIZE_FORMAT_1         {{0,"",1,""}, {1,"."}, {0,"",0,""}};
 Form TABLE_IDENT_SERIALIZE_FORMAT_2         {{0,"",2,""}, {1,"."}, {0,"",1,""}, {1,"."}, {0,"",0,""}};
 Form TABLE_IDENT_SERIALIZE_FORMAT_3         {{0,"",3,""}, {1,"."}, {0,"",2,""}, {1,"."}, {0,"",1,""}, {1,"."}, {0,"",0,""}};
-
 Form OP_NAME_FIELD_SERIALIZE_FORMAT_1       {{0,"",1,""}, {1,"."}, {0,"",0,""}};
 Form OP_NAME_FIELD_SERIALIZE_FORMAT_2       {{0,"",2,""}, {1,"."}, {0,"",1,""}, {1,"."}, {0,"",0,""}};
 Form OP_NAME_FIELD_SERIALIZE_FORMAT_3       {{0,"",3,""}, {1,"."}, {0,"",2,""}, {1,"."}, {0,"",1,""}, {1,"."}, {0,"",0,""}};
 Form OP_NAME_FIELD_SERIALIZE_FORMAT_4       {{0,"",4,""}, {1,"."}, {0,"",3,""}, {1,"."}, {0,"",2,""}, {1,"."}, {0,"",1,""}, {1,"."}, {0,"",0,""}};
-
 Form OFFSET_FETCH_SERIALIZE_FORMAT_1        {{1,"OFFSET "}, {0,"",0,""}, {1," ROW"}};
 Form OFFSET_FETCH_SERIALIZE_FORMAT_2        {{1,"OFFSET "}, {0,"",0,""}, {1," ROWS"}};
 Form OFFSET_FETCH_SERIALIZE_FORMAT_3        {{1,"OFFSET "}, {0,"",0,""}, {1," ROW FETCH FIRST "},  {0,"",1,""}, {1," ROW ONLY"}};
@@ -280,12 +264,11 @@ Form OFFSET_FETCH_SERIALIZE_FORMAT_7        {{1,"OFFSET "}, {0,"",0,""}, {1," RO
 Form OFFSET_FETCH_SERIALIZE_FORMAT_8        {{1,"OFFSET "}, {0,"",0,""}, {1," ROWS FETCH NEXT "},  {0,"",1,""}, {1," ROW ONLY"}};
 Form OFFSET_FETCH_SERIALIZE_FORMAT_9        {{1,"OFFSET "}, {0,"",0,""}, {1," ROWS FETCH FIRST "}, {0,"",1,""}, {1," ROWS ONLY"}};
 Form OFFSET_FETCH_SERIALIZE_FORMAT_10       {{1,"OFFSET "}, {0,"",0,""}, {1," ROWS FETCH NEXT "},  {0,"",1,""}, {1," ROWS ONLY"}};
-
 Form FOR_CLAUSE_1_SERIALIZE_FORMAT          {{1,"FOR BROWSE"}};
 Form WITH_TABLE_HINT_SERIALIZE_FORMAT       {{1,"WITH("}, {0,"",0,""}, {1,")"}};
 Form TABLE_HINT_NOEXPAND_SERIALIZE_FORMAT   {{1,"NOEXPAND "}, {0,"",0,""}};
-
 Form OPTION_CLAUSE_SERIALIZE_FORMAT         {{1,"OPTION("}, {0,"",0,""}, {1,")"}};
+Form OVER_CLAUSE_SERIALIZE_FORMAT           {{1,"OVER("}, {0,"PARTITION BY ",0,""}, {0," ",1,""}, {0," ",2,""}, {1, ")"}};
 #endif
 
 

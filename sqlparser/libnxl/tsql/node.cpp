@@ -1111,7 +1111,7 @@ Node* Node::check_expr_is_column_alias(Node* root)
         {
             // this is a column_alias
             Node* ret = makeNonTerminalNode(E_ALIAS, 2, right, left);
-            ret->serialize_format = &ALIAS_2_SERIALIZE_FORMAT;
+            ret->serialize_format = &AS_SERIALIZE_FORMAT;
             root->setChild(E_OP_BINARY_OPERAND_L, nullptr);
             root->setChild(E_OP_BINARY_OPERAND_R, nullptr);
             delete(root);
@@ -1184,7 +1184,7 @@ Node* Node::make_query_hint(const std::string& text, Node* num)
 {
     Node* nd = makeTerminalNode(E_STRING, text);
     Node* ret = makeNonTerminalNode(E_QUERY_HINT, 2, nd, num);
-    ret->serialize_format = &ALIAS_1_SERIALIZE_FORMAT;
+    ret->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
     return ret;
 }
 

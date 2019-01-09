@@ -256,7 +256,54 @@ extern int yydebug;
     SIMPLE = 458,
     FORCED = 459,
     RECOMPILE = 460,
-    ROBUST = 461
+    ROBUST = 461,
+    CHECKSUM = 462,
+    BINARY_CHECKSUM = 463,
+    RANK = 464,
+    DENSE_RANK = 465,
+    ROW_NUMBER = 466,
+    NTILE = 467,
+    PARTITION = 468,
+    RANGE = 469,
+    UNBOUNDED = 470,
+    PRECEDING = 471,
+    CURRENT = 472,
+    FOLLOWING = 473,
+    OVER = 474,
+    VARP = 475,
+    VAR = 476,
+    SUM = 477,
+    STDEVP = 478,
+    STDEV = 479,
+    MIN = 480,
+    MAX = 481,
+    LEAD = 482,
+    LAST_VALUE = 483,
+    LAG = 484,
+    GROUPING_ID = 485,
+    GROUPING = 486,
+    FIRST_VALUE = 487,
+    COUNT_BIG = 488,
+    COUNT = 489,
+    CHECKSUM_AGG = 490,
+    AVG = 491,
+    SYSTEM_USER = 492,
+    STUFF = 493,
+    SESSION_USER = 494,
+    NULLIF = 495,
+    MIN_ACTIVE_ROWVERSION = 496,
+    ISNULL = 497,
+    IDENTITY = 498,
+    GETUTCDATE = 499,
+    GETDATE = 500,
+    DATEPART = 501,
+    DATENAME = 502,
+    DATEDIFF = 503,
+    DATEADD = 504,
+    CURRENT_TIMESTAMP = 505,
+    CONVERT = 506,
+    COALESCE = 507,
+    CAST = 508
   };
 #endif
 
@@ -270,7 +317,7 @@ union YYSTYPE
     struct Node* node;
     int    ival;
 
-#line 274 "sqlparser_bison.h" /* yacc.c:1909  */
+#line 321 "sqlparser_bison.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

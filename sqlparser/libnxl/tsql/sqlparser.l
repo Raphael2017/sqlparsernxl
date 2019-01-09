@@ -275,6 +275,55 @@ SIMPLE       { return SIMPLE; }
 FORCED       { return FORCED; }
 RECOMPILE    { return RECOMPILE; }
 ROBUST       { return ROBUST; }
+CHECKSUM                    { return CHECKSUM; }
+BINARY_CHECKSUM             { return BINARY_CHECKSUM; }
+RANK                        { return RANK; }
+DENSE_RANK                  { return DENSE_RANK; }
+ROW_NUMBER                  { return ROW_NUMBER; }
+NTILE                       { return NTILE; }
+PARTITION                   { return PARTITION; }
+RANGE     { return RANGE; }
+UNBOUNDED     { return UNBOUNDED; }
+PRECEDING     { return PRECEDING; }
+CURRENT     { return CURRENT; }
+FOLLOWING     { return FOLLOWING; }
+OVER     { return OVER; }
+VARP     { return VARP; }
+VAR     { return VAR; }
+SUM     { return SUM; }
+STDEVP     { return STDEVP; }
+STDEV     { return STDEV; }
+MIN     { return MIN; }
+MAX     { return MAX; }
+LEAD     { return LEAD; }
+LAST_VALUE     { return LAST_VALUE; }
+LAG     { return LAG; }
+GROUPING_ID     { return GROUPING_ID; }
+GROUPING     { return GROUPING; }
+FIRST_VALUE     { return FIRST_VALUE; }
+COUNT_BIG     { return COUNT_BIG; }
+COUNT     { return COUNT; }
+CHECKSUM_AGG     { return CHECKSUM_AGG; }
+AVG     { return AVG; }
+SYSTEM_USER     { return SYSTEM_USER; }
+STUFF     { return STUFF; }
+SESSION_USER     { return SESSION_USER; }
+NULLIF     { return NULLIF; }
+MIN_ACTIVE_ROWVERSION     { return MIN_ACTIVE_ROWVERSION; }
+ISNULL     { return ISNULL; }
+IDENTITY     { return IDENTITY; }
+GETUTCDATE     { return GETUTCDATE; }
+GETDATE     { return GETDATE; }
+DATEPART     { return DATEPART; }
+DATENAME     { return DATENAME; }
+DATEDIFF     { return DATEDIFF; }
+DATEADD     { return DATEADD; }
+CURRENT_TIMESTAMP   { return CURRENT_TIMESTAMP; }
+CONVERT             { return CONVERT; }
+COALESCE            { return COALESCE; }
+CAST                { return CAST; }
+
+
 
 NULL    {
     yylval->node = Node::makeTerminalNode(E_NULL, yytext);
