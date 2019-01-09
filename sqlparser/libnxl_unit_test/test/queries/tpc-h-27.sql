@@ -1,20 +1,20 @@
 -- RECURSIVE CTE
 WITH DirectReports(Name, Title, EmployeeID, EmployeeLevel, Sort)
-AS (SELECT CONVERT( c.FirstName + ' ' + c.LastName),
+AS (SELECT CONVERT(DATETIME, c.FirstName + ' ' + c.LastName),
         e.Title,
         e.EmployeeID,
         1,
-        CONVERT( c.FirstName + ' ' + c.LastName)
+        CONVERT(DATETIME, c.FirstName + ' ' + c.LastName)
     FROM HumanResourcesEmployee AS e
     JOIN PersonContact AS c ON e.ContactID = c.ContactID
     WHERE e.ManagerID IS NULL
     UNION ALL
-    SELECT CONVERT( REPLICATE ('| ' , EmployeeLevel) +
+    SELECT CONVERT(DATETIME, REPLICATE ('| ' , EmployeeLevel) +
         c.FirstName + ' ' + c.LastName),
         e.Title,
         e.EmployeeID,
         EmployeeLevel + 1,
-        CONVERT (RTRIM(Sort) + '| ' + FirstName + ' ' +
+        CONVERT (DATETIME, RTRIM(Sort) + '| ' + FirstName + ' ' +
                  LastName)
     FROM HumanResourcesEmployee as e
     JOIN PersonContact AS c ON e.ContactID = c.ContactID
