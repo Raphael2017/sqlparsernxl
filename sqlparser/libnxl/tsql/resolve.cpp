@@ -271,10 +271,13 @@ namespace resolve
                 break;
             case E_SELECT:
             {
-                assert(alias_node != nullptr);
+                /*
+                    The alias is actually not optional at all.
+                */
+                //assert(alias_node != nullptr);
                 uint64_t query_id = OB_INVALID_ID;
                 resolve_select_statement(plan, table_node, query_id, parent);
-                std::string table_name = alias_node->terminalToken_.str;
+                std::string table_name = alias_node ? alias_node->terminalToken_.str : "";
                 std::string alias_name;
                 parent->add_table_item(plan, table_name, alias_name,
                         TableItem::GENERATED_TABLE, query_id, out_table_id, OB_INVALID_ID);
@@ -283,6 +286,23 @@ namespace resolve
             case E_JOINED_TABLE:
             {
                 resolve_joined_table(plan, table_node, parent);
+            }
+                break;
+            case E_TABLE_VALUE_CTOR_PARENS:
+                break;
+            case E_FUN_CALL:
+                /*todo*/
+                break;
+            case E_PIVOT_TABLE:
+            {
+                /*todo*/
+                resolve_table(plan, table_node->getChild(0), parent, out_table_id);
+            }
+                break;
+            case E_UNPIVOT_TABLE:
+            {
+                /*todo*/
+                resolve_table(plan, table_node->getChild(0), parent, out_table_id);
             }
                 break;
             default:

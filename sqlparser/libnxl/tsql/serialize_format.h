@@ -206,11 +206,14 @@ Form HAVING_SERIALIZE_FORMAT                {{1,"HAVING "}, {0,"",0,""}};
 Form COMMA_LIST_SERIALIZE_FORMAT            {{0,"",0,""}, {1,", "}, {0,"",1,""}};
 Form SINGLE_SERIALIZE_FORMAT                {{0,"",0,""}};
 Form DOUBLE_SERIALIZE_FORMAT                {{0,"",0,""}, {0," ",1,""}};
-Form AS_SERIALIZE_FORMAT                    {{0,"",0,""}, {1," AS "}, {0,"",1,""}, {0," ",2,""}, {0," ",3,""}};
+Form AS_SERIALIZE_FORMAT                    {{0,"",0,""}, {0," ",4,""}, {1," AS "}, {0,"",1,""}, {0," ",2,""}, {0," ",3,""}};
 Form QUADRUPLE_SERIALIZE_FORMAT             {{0,"",0,""}, {0," ",1,""}, {0," ",2,""}, {0," ",3,""}};
+Form PENTA_SERIALIZE_FORMAT                 {{0,"",0,""}, {0," ",1,""}, {0," ",2,""}, {0," ",3,""}, {0," ",4,""}};
+Form PENTA_SERIALIZE_FORMAT_0               {{0,"",0,""}, {0," ",4,""}, {0," ",1,""}, {0," ",2,""}, {0," ",3,""}};
 Form JOINED_TB_1_SERIALIZE_FORMAT           {{0,"",1," "}, {0,"",0,""}, {1," JOIN "}, {0,"",2,""}, {1," ON "}, {0,"",3,""}};
 Form JOINED_TB_2_SERIALIZE_FORMAT           {{0,"",1," "}, {0,"",0,""}, {1," JOIN "}, {0,"",2,""}};
 Form JOINED_TB_3_SERIALIZE_FORMAT           {{0,"",1," "}, {0,"",0,""}, {1," JOIN "}, {0,"",2,""}, {1, " USING ("}, {0,"",3,""},{1,")"}};
+Form APPLY_TB_SERIALIZE_FORMAT              {{0,"",1," "}, {0,"",0,""}, {1," APPLY "}, {0,"",2,""}};
 Form OP_EXISTS_SERIALIZE_FORMAT             {{1,"EXISTS "}, {0,"",0,""}};
 Form OP_POS_SERIALIZE_FORMAT                {{1,"+"}, {0,"",0,""}};
 Form OP_NEG_SERIALIZE_FORMAT                {{1,"-"}, {0,"",0,""}};
@@ -239,6 +242,7 @@ Form OP_NOT_BETWEEN_SERIALIZE_FORMAT        {{0,"",0,""}, {1," NOT BETWEEN "}, {
 Form OP_IN_SERIALIZE_FORMAT                 {{0,"",0,""}, {1," IN "}, {0,"",1,""}};
 Form OP_NOT_IN_SERIALIZE_FORMAT             {{0,"",0,""}, {1," NOT IN "}, {0,"",1,""}};
 Form OP_CNN_SERIALIZE_FORMAT                {{0,"",0,""}, {1," || "}, {0,"",1,""}};
+Form OP_COLLATE_SERIALIZE_FORMAT            {{0,"",0,""}, {1," COLLATE "}, {0,"",1,""}};
 Form CASE_SERIALIZE_FORMAT                  {{1,"CASE "}, {0,"",0," "}, {0,"",1,""}, {0," ",2,""}, {1," END"}};
 Form WHEN_SERIALIZE_FORMAT                  {{1,"WHEN "}, {0,"",0,""}, {1," THEN "}, {0,"",1,""}};
 Form ELSE_SERIALIZE_FORMAT                  {{1,"ELSE "}, {0,"",0,""}};
@@ -269,6 +273,11 @@ Form WITH_TABLE_HINT_SERIALIZE_FORMAT       {{1,"WITH("}, {0,"",0,""}, {1,")"}};
 Form TABLE_HINT_NOEXPAND_SERIALIZE_FORMAT   {{1,"NOEXPAND "}, {0,"",0,""}};
 Form OPTION_CLAUSE_SERIALIZE_FORMAT         {{1,"OPTION("}, {0,"",0,""}, {1,")"}};
 Form OVER_CLAUSE_SERIALIZE_FORMAT           {{1,"OVER("}, {0,"PARTITION BY ",0,""}, {0," ",1,""}, {0," ",2,""}, {1, ")"}};
+Form TABLE_VALUE_CTOR_SERIALIZE_FORMAT      {{1,"VALUES "}, {0,"",0,""}};
+Form FOR_SYSTEM_TIME_SERIALIZE_FORMAT       {{1,"FOR SYSTEM_TIME "}, {0,"",0,""}};
+Form PIVOT_TABLE_SERIALIZE_FORMAT           {{0,"",0,""}, {1," PIVOT "}, {0,"",1,""}, {0," AS ",2,""}};
+Form UNPIVOT_TABLE_SERIALIZE_FORMAT         {{0,"",0,""}, {1," UNPIVOT "}, {0,"",1,""}, {0," AS ",2,""}};
+Form PIVOT_CLAUSE_SERIALIZE_FORMAT          {{1,"("}, {0,"",0,""}, {1," FOR "}, {0,"",1,""}, {1," IN "}, {0,"",2,""}, {1,")"}};
 #endif
 
 

@@ -31,14 +31,8 @@ std::string NodeTypeToString(NodeType tp)
             return "E_DISTINCT";
         case E_STAR:
             return "E_STAR";
-        case E_TYPE_INTEGER:
-            return "E_TYPE_INTEGER";
-        case E_TYPE_BOOLEAN:
-            return "E_TYPE_BOOLEAN";
-        case E_TYPE_DOUBLE:
-            return "E_TYPE_DOUBLE";
-        case E_TYPE_DATETIME:
-            return "E_TYPE_DATETIME";
+        case E_DATA_TYPE:
+            return "E_DATA_TYPE";
         case E_SET_UNION:
             return "E_SET_UNION";
         case E_SET_INTERSECT:
@@ -681,6 +675,12 @@ bool Node::setChild(int key, Node* newchild)
 int Node::getChildrenCount() const
 {
     return childrenCount_;
+}
+
+std::string Node::text() const
+{
+    assert(isTerminalToken);
+    return terminalToken_.yytex;
 }
 
 void Node::find_node(Node* root, NodeType target, std::list<Node*>& ret)

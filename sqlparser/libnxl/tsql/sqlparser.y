@@ -109,8 +109,9 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token <node> UNKNOWN
 %token <node> QUESTIONMARK
 
+%right COLLATE
 %left	CONDITIONLESS_JOIN
-%left	CROSS FULL INNER JOIN LEFT NATURAL RIGHT ON USING
+%left	CROSS FULL INNER JOIN LEFT NATURAL RIGHT ON USING OUTER PIVOT UNPIVOT
 %left	UNION EXCEPT
 %left	INTERSECT
 %left	OR
@@ -130,9 +131,10 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %left '(' ')'
 %left '.'
 %left ';'
+%right FOR
 
 %token ADD AND ANY ALL ALTER AS ASC
-%token BETWEEN BEGI BIGINT BINARY BOOLEAN BOTH BROWSE BY
+%token BETWEEN BEGI BIGINT BINARY BOTH BROWSE BY
 %token CASCADE CASE CHARACTER CLUSTER CNNOP COMMENT COMMIT
        CONSISTENT COLUMN COLUMNS CREATE CREATETIME
        CURRENT_USER CHANGE_OBI SWITCH_CLUSTER
@@ -142,10 +144,10 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token FETCH FIRST FLOAT FOR FROM FROZEN FORCE
 %token GLOBAL GLOBAL_ALIAS GRANT GROUP
 %token HAVING HINT_BEGIN HINT_END HOTSPOT
-%token IDENTIFIED IF IN INTEGER INTERSECT INSERT INTO IS
+%token IDENTIFIED IF IN INTERSECT INSERT INTO IS
 %token KEY
 %token LEADING LIMIT LIKE LOCAL LOCKED
-%token MEDIUMINT MEMORY MOD MODIFYTIME MASTER
+%token MEMORY MOD MODIFYTIME MASTER
 %token NEXT NOEXPAND NOT NUMERIC
 %token OFFSET ONLY OR ORDER OPTION OUTER
 %token PARAMETERS PERCENT PASSWORD PRECISION PREPARE PRIMARY
@@ -169,6 +171,8 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token SYSTEM_USER STUFF SESSION_USER NULLIF MIN_ACTIVE_ROWVERSION
 %token ISNULL IDENTITY GETUTCDATE GETDATE DATEPART DATENAME DATEDIFF DATEADD
 %token CURRENT_TIMESTAMP CONVERT COALESCE CAST
+%token BIT CHAR DATETIME2 DATETIMEOFFSET INT MONEY NCHAR NVARCHAR SMALLDATETIME SMALLMONEY TEXT
+%token COLLATE APPLY SYSTEM_TIME OF CONTAINED PIVOT UNPIVOT
 
 %type <node> sql_stmt stmt_list stmt
 %type <node> select_stmt
@@ -194,6 +198,9 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> offset_fetch opt_for_clause opt_with_table_hint table_hint_list table_hint table_hint_expr
 %type <ival> join_hint
 %type <node> opt_option_query_hint query_hint query_hint_list over_clause row_or_range_clause window_frame_extent
+%type <node> aggregate_windowed_function ranking_windowed_function analytic_windowed_function scalar_function
+%type <node> table_value_constructor table_value_constructor_parens row_value_expression_list_parens_list
+%type <node> system_time opt_for_system_time pivot_clause unpivot_clause
 
 %start sql_stmt
 %%
@@ -736,20 +743,20 @@ table_factor:
 ;
 
 table_factor_non_join:
-    relation_factor opt_with_table_hint
+    relation_factor opt_for_system_time opt_with_table_hint
 {
-    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, nullptr, nullptr, $2);
-    $$->serialize_format = &QUADRUPLE_SERIALIZE_FORMAT;
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 5, $1, nullptr, nullptr, $3, $2);
+    $$->serialize_format = &PENTA_SERIALIZE_FORMAT_0;
 }
-  | relation_factor AS relation_name opt_with_table_hint
+  | relation_factor opt_for_system_time AS relation_name opt_with_table_hint
 {
-    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, $3, nullptr, $4);
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 5, $1, $4, nullptr, $5, $2);
     $$->serialize_format = &AS_SERIALIZE_FORMAT;
 }
-  | relation_factor relation_name  opt_with_table_hint
+  | relation_factor opt_for_system_time relation_name  opt_with_table_hint
 {
-    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, $2, nullptr, $3);
-    $$->serialize_format = &QUADRUPLE_SERIALIZE_FORMAT;
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 5, $1, $3, nullptr, $4, $2);
+    $$->serialize_format = &PENTA_SERIALIZE_FORMAT_0;
 }
   | select_with_parens AS relation_name opt_simple_ident_list_with_parens
 {
@@ -765,6 +772,89 @@ table_factor_non_join:
 {
     $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, nullptr, $2, nullptr);
     $$->serialize_format = &QUADRUPLE_SERIALIZE_FORMAT;
+}
+  | table_value_constructor_parens AS relation_name opt_simple_ident_list_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, $3, $4, nullptr);
+    $$->serialize_format = &AS_SERIALIZE_FORMAT;
+}
+  | table_value_constructor_parens relation_name opt_simple_ident_list_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, $2, $3, nullptr);
+    $$->serialize_format = &QUADRUPLE_SERIALIZE_FORMAT;
+}
+  | table_value_constructor_parens opt_simple_ident_list_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, nullptr, $2, nullptr);
+    $$->serialize_format = &QUADRUPLE_SERIALIZE_FORMAT;
+}
+  | func_expr AS relation_name
+{
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, $3, nullptr, nullptr);
+    $$->serialize_format = &AS_SERIALIZE_FORMAT;
+}
+  | func_expr relation_name
+{
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, $2, nullptr, nullptr);
+    $$->serialize_format = &QUADRUPLE_SERIALIZE_FORMAT;
+}
+  | func_expr
+{
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, nullptr, nullptr, nullptr);
+    $$->serialize_format = &QUADRUPLE_SERIALIZE_FORMAT;
+}
+;
+
+opt_for_system_time:
+    /*EMPTY*/	%prec UMINUS	{ $$ = nullptr; }
+  | FOR SYSTEM_TIME system_time
+{
+    $$ = Node::makeNonTerminalNode(E_FOR_SYSTEM_TIME, 1, $3);
+    $$->serialize_format = &FOR_SYSTEM_TIME_SERIALIZE_FORMAT;
+}
+;
+
+system_time:
+    AS OF STRING
+{ $$ = Node::makeTerminalNode(E_STRING, "AS OF "+$3->text()); }
+  | FROM STRING TO STRING
+{ $$ = Node::makeTerminalNode(E_STRING, "FROM "+$2->text()+" TO "+$4->text()); }
+  | BETWEEN STRING AND STRING
+{ $$ = Node::makeTerminalNode(E_STRING, "BETWEEN "+$2->text()+" AND "+$4->text()); }
+  | CONTAINED IN '(' STRING ',' STRING ')'
+{ $$ = Node::makeTerminalNode(E_STRING, "CONTAINED IN("+$4->text()+","+$6->text()+")"); }
+  | ALL
+{ $$ = Node::makeTerminalNode(E_STRING, "ALL"); }
+;
+
+table_value_constructor_parens:
+    '(' table_value_constructor ')'
+{
+    $$ = Node::makeNonTerminalNode(E_TABLE_VALUE_CTOR_PARENS, 1, $2);
+    $$->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
+}
+;
+
+table_value_constructor:
+    VALUES row_value_expression_list_parens_list
+{
+    $$ = Node::makeNonTerminalNode(E_TABLE_VALUE_CTOR, 1, $2);
+    $$->serialize_format = &TABLE_VALUE_CTOR_SERIALIZE_FORMAT;
+}
+;
+
+row_value_expression_list_parens_list:
+    '(' expr_list ')'
+{
+    $$ = Node::makeNonTerminalNode(E_EXPR_LIST_PARENS, 1, $2);
+    $$->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
+}
+  | '(' expr_list ')' ',' row_value_expression_list_parens_list
+{
+    Node* nd = Node::makeNonTerminalNode(E_EXPR_LIST_PARENS, 1, $2);
+    nd->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
+    $$ = Node::makeNonTerminalNode(E_EXPR_LIST_PARENS_LIST, 2, nd, $5);
+    $$->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
 }
 ;
 
@@ -832,23 +922,23 @@ opt_simple_ident_list_with_parens:
 
 /* https://docs.microsoft.com/zh-cn/sql/t-sql/language-elements/transact-sql-syntax-conventions-transact-sql?view=sql-server-2017 */
 relation_factor:
-    	                         NAME
-  |                     NAME '.' NAME
+    	                         NAME	%prec UMINUS
+  |                     NAME '.' NAME	%prec UMINUS
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, 4, $3, $1, nullptr, nullptr);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_1;
 }
-  |            NAME '.' NAME '.' NAME
+  |            NAME '.' NAME '.' NAME	%prec UMINUS
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, 4, $5, $3, $1, nullptr);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
 }
-  |            NAME '.'      '.' NAME
+  |            NAME '.'      '.' NAME	%prec UMINUS
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, 4, $4, nullptr, $1, nullptr);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
 }
-  |   NAME '.' NAME '.' NAME '.' NAME
+  |   NAME '.' NAME '.' NAME '.' NAME	%prec UMINUS
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, 4, $7, $5, $3, $1);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
@@ -858,7 +948,7 @@ relation_factor:
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, 4, $6, $4, nullptr, $1);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
 }
-  |   NAME '.' NAME '.'      '.' NAME
+  |   NAME '.' NAME '.'      '.' NAME	%prec UMINUS
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, 4, $6, nullptr, $3, $1);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
@@ -900,13 +990,67 @@ joined_table:
 }
   | table_factor CROSS JOIN table_factor
 {
-    //Node* nd = Node::makeTerminalNode(E_JOIN_CROSS, "CROSS");
-    //$$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $4, nullptr);
-    //$$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
     Node* nd = Node::makeTerminalNode(E_JOIN_CROSS, "CROSS");
-    Node* cj = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, nullptr, nullptr);
-    cj->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
-    $$ = Node::addjust_cross_join($4, cj);
+    $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $4, nullptr);
+    $$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
+}
+  | table_factor CROSS APPLY table_factor  %prec UMINUS
+{
+    Node* nd = Node::makeTerminalNode(E_JOIN_CROSS, "CROSS");
+    $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $4, nullptr);
+    $$->serialize_format = &APPLY_TB_SERIALIZE_FORMAT;
+}
+  | table_factor OUTER APPLY table_factor %prec UMINUS
+{
+    Node* nd = Node::makeTerminalNode(E_JOIN_CROSS, "OUTER");
+    $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $4, nullptr);
+    $$->serialize_format = &APPLY_TB_SERIALIZE_FORMAT;
+}
+  | table_factor PIVOT pivot_clause AS relation_name
+{
+    $$ = Node::makeNonTerminalNode(E_PIVOT_TABLE, 3, $1, $3, $5);
+    $$->serialize_format = &PIVOT_TABLE_SERIALIZE_FORMAT;
+}
+  | table_factor PIVOT pivot_clause relation_name
+{
+    $$ = Node::makeNonTerminalNode(E_PIVOT_TABLE, 3, $1, $3, $4);
+    $$->serialize_format = &PIVOT_TABLE_SERIALIZE_FORMAT;
+}
+  | table_factor PIVOT pivot_clause
+{
+    $$ = Node::makeNonTerminalNode(E_PIVOT_TABLE, 3, $1, $3, nullptr);
+    $$->serialize_format = &PIVOT_TABLE_SERIALIZE_FORMAT;
+}
+  | table_factor UNPIVOT unpivot_clause AS relation_name
+{
+    $$ = Node::makeNonTerminalNode(E_UNPIVOT_TABLE, 3, $1, $3, $5);
+    $$->serialize_format = &UNPIVOT_TABLE_SERIALIZE_FORMAT;
+}
+  | table_factor UNPIVOT unpivot_clause relation_name
+{
+    $$ = Node::makeNonTerminalNode(E_UNPIVOT_TABLE, 3, $1, $3, $4);
+    $$->serialize_format = &UNPIVOT_TABLE_SERIALIZE_FORMAT;
+}
+  | table_factor UNPIVOT unpivot_clause
+{
+    $$ = Node::makeNonTerminalNode(E_UNPIVOT_TABLE, 3, $1, $3, nullptr);
+    $$->serialize_format = &UNPIVOT_TABLE_SERIALIZE_FORMAT;
+}
+;
+
+pivot_clause:
+    '(' aggregate_windowed_function FOR column_ref IN simple_ident_list_with_parens ')'
+{
+    $$ = Node::makeNonTerminalNode(E_PIVOT_CLAUSE, 3, $2, $4, $6);
+    $$->serialize_format = &PIVOT_CLAUSE_SERIALIZE_FORMAT;
+}
+;
+
+unpivot_clause:
+    '(' expr FOR column_ref IN simple_ident_list_with_parens ')'
+{
+    $$ = Node::makeNonTerminalNode(E_UNPIVOT_CLAUSE, 3, $2, $4, $6);
+    $$->serialize_format = &PIVOT_CLAUSE_SERIALIZE_FORMAT;
 }
 ;
 
@@ -1073,6 +1217,9 @@ expr_const:
   | BOOL
   | NULLX
   | QUESTIONMARK
+  | DEFAULT		{ $$ = Node::makeTerminalNode(E_STRING, "DEFAULT"); }
+  | '$' INTNUM		{ $$ = Node::makeTerminalNode(E_STRING, "$"+$2->text()); }
+  | '$' APPROXNUM	{ $$ = Node::makeTerminalNode(E_STRING, "$"+$2->text()); }
 ;
 
 /* todo when_func */
@@ -1147,6 +1294,12 @@ arith_expr:
 
 expr:
     arith_expr
+  | over_clause
+  | expr COLLATE NAME
+{
+    $$ = Node::makeNonTerminalNode(E_OP_COLLATE, 2, $1, $3);
+    $$->serialize_format = &OP_COLLATE_SERIALIZE_FORMAT;
+}
   | expr COMP_LE expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_LE, 2, $1, $3);
@@ -1309,159 +1462,180 @@ case_default:
 
 /*https://github.com/Raphael2017/grammars-v4/blob/master/tsql/TSqlParser.g4*/
 func_expr:
-    NAME '.' NAME '.' NAME '.' NAME '('                      ')'
+    scalar_function
+  | ranking_windowed_function
+  | aggregate_windowed_function
+  | analytic_windowed_function
+  |                 BINARY_CHECKSUM '('                  '*' ')'
 {
-    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $7, $5, $3, $1);
-    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  | NAME '.' NAME '.'      '.' NAME '('                      ')'
-{
-    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $6, nullptr, $3, $1);
-    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |          NAME '.' NAME '.' NAME '('                      ')'
-{
-    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $5, $3, $1, nullptr);
-    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |          NAME '.'      '.' NAME '('                      ')'
-{
-    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $4, nullptr, $1, nullptr);
-    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |                   NAME '.' NAME '('                      ')'
-{
-    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $3, $1, nullptr, nullptr);
-    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_1;
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |                            NAME '('                      ')'
-{
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, $1);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |                           RIGHT '('                      ')'
-{
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "RIGHT");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |                            LEFT '('                      ')'
-{
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "LEFT");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |                 BINARY_CHECKSUM '('                      ')'
-{
+    Node* star = Node::makeTerminalNode(E_STAR, "*");
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "BINARY_CHECKSUM");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, star, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                        CHECKSUM '('                      ')'
+  |                            CAST '('    expr AS data_type ')'
 {
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CAST");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 5, fun_name, $3, nullptr, nullptr, $5);
+    $$->serialize_format = &FUN_CALL_AS_SERIALIZE_FORMAT;
+}
+  |                         CONVERT '(' data_type   ',' expr ')'
+{
+    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, $5);
+    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CONVERT");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                  CONVERT '(' data_type ',' expr ',' expr ')'
+{
+    Node* expr_list1 = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $5, $7);
+    expr_list1->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, expr_list1);
+    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CONVERT");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                        CHECKSUM '('                  '*' ')'
+{
+    Node* star = Node::makeTerminalNode(E_STAR, "*");
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CHECKSUM");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, star, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  | NAME '.' NAME '.' NAME '.' NAME '('            expr_list ')'
+  |                        COALESCE '('            expr_list ')'
 {
-    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $7, $5, $3, $1);
-    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $9);
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "COALESCE");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, $3, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  | NAME '.' NAME '.'      '.' NAME '('            expr_list ')'
+  |               CURRENT_TIMESTAMP
 {
-    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $6, nullptr, $3, $1);
-    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $8);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CURRENT_TIMESTAMP");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
+    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-  |          NAME '.' NAME '.' NAME '('            expr_list ')'
+  |                    CURRENT_USER
 {
-    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $5, $3, $1, nullptr);
-    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $7);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CURRENT_USER");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
+    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-  |          NAME '.'      '.' NAME '('            expr_list ')'
+  |                       DATEADD '(' NAME ',' expr ',' expr ')'
 {
-    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $4, nullptr, $1, nullptr);
-    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $6);
+    Node* expr_list1 = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $5, $7);
+    expr_list1->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, expr_list1);
+    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "DATEADD");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                   NAME '.' NAME '('            expr_list ')'
+  |                      DATEDIFF '(' NAME ',' expr ',' expr ')'
 {
-    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $3, $1, nullptr, nullptr);
-    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_1;
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $5);
+    Node* expr_list1 = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $5, $7);
+    expr_list1->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, expr_list1);
+    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "DATEDIFF");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                            NAME '('            expr_list ')'
+  |                      DATENAME '(' NAME ',' expr          ')'
 {
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, $1, $3);
+    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, $5);
+    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "DATENAME");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                           RIGHT '('            expr_list ')'
+  |                      DATEPART '(' NAME ',' expr          ')'
 {
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "RIGHT");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $3);
+    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, $5);
+    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "DATEPART");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                            LEFT '('            expr_list ')'
+  |                       GETDATE '('                        ')'
 {
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "LEFT");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $3);
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "GETDATE");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                 BINARY_CHECKSUM '('            expr_list ')'
+  |                    GETUTCDATE '('                        ')'
 {
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "BINARY_CHECKSUM");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $3);
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "GETUTCDATE");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                        CHECKSUM '('            expr_list ')'
+  |             IDENTITY '(' data_type ',' INTNUM ',' INTNUM ')'
 {
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CHECKSUM");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $3);
+    Node* expr_list1 = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $5, $7);
+    expr_list1->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, expr_list1);
+    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "IDENTITY");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                            RANK '('                      ')' over_clause
+  |             IDENTITY '(' data_type                       ')'
 {
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "RANK");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, $4);
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "IDENTITY");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, $3, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                      DENSE_RANK '('                      ')' over_clause
+  |         MIN_ACTIVE_ROWVERSION
 {
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "DENSE_RANK");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, $4);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "MIN_ACTIVE_ROWVERSION");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
+    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-  |                      ROW_NUMBER '('                      ')' over_clause
+  |                        NULLIF '('          expr ',' expr ')'
 {
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "ROW_NUMBER");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, $4);
+    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, $5);
+    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "NULLIF");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                           NTILE '('                 expr ')' over_clause
+  |            STUFF '(' expr ',' INTNUM ',' INTNUM ',' expr ')'
 {
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "NTILE");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, $3, $5);
+    Node* expr_list2 = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $7, $9);
+    expr_list2->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* expr_list1 = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $5, expr_list2);
+    expr_list1->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, expr_list1);
+    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "STUFF");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                             AVG '('                 expr ')' over_clause
+  |                  SESSION_USER
+{
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "SESSION_USER");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
+    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
+}
+  |                   SYSTEM_USER
+{
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "SYSTEM_USER");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
+    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
+}
+  |                        ISNULL '('          expr ',' expr ')'
+{
+    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, $5);
+    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "ISNULL");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+;
+
+aggregate_windowed_function:
+                                AVG '('                 expr ')' over_clause
 {
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "AVG");
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, $3, $5);
@@ -1753,7 +1927,10 @@ func_expr:
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, $3, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                     FIRST_VALUE '('                 expr ')' over_clause
+;
+
+analytic_windowed_function:
+                        FIRST_VALUE '('                 expr ')' over_clause
 {
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "FIRST_VALUE");
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, $3, $5);
@@ -1813,173 +1990,163 @@ func_expr:
     $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, $9);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                 BINARY_CHECKSUM '('                  '*' ')'
+
+ranking_windowed_function:
+                               RANK '('                      ')' over_clause
 {
-    Node* star = Node::makeTerminalNode(E_STAR, "*");
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "BINARY_CHECKSUM");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, star, nullptr);
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "RANK");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, $4);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                            CAST '('    expr AS data_type ')'
+  |                      DENSE_RANK '('                      ')' over_clause
 {
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CAST");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 5, fun_name, $3, nullptr, nullptr, $5);
-    $$->serialize_format = &FUN_CALL_AS_SERIALIZE_FORMAT;
-}
-  |                         CONVERT '(' data_type   ',' expr ')'
-{
-    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, $5);
-    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CONVERT");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "DENSE_RANK");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, $4);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                  CONVERT '(' data_type ',' expr ',' expr ')'
+  |                      ROW_NUMBER '('                      ')' over_clause
 {
-    Node* expr_list1 = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $5, $7);
-    expr_list1->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, expr_list1);
-    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CONVERT");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "ROW_NUMBER");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, $4);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                        CHECKSUM '('                  '*' ')'
+  |                           NTILE '('                 expr ')' over_clause
 {
-    Node* star = Node::makeTerminalNode(E_STAR, "*");
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CHECKSUM");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, star, nullptr);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |                        COALESCE '('            expr_list ')'
-{
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "COALESCE");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, $3, nullptr);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |               CURRENT_TIMESTAMP
-{
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CURRENT_TIMESTAMP");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
-    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
-}
-  |                    CURRENT_USER
-{
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CURRENT_USER");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
-    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
-}
-  |                       DATEADD '(' NAME ',' expr ',' expr ')'
-{
-    Node* expr_list1 = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $5, $7);
-    expr_list1->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, expr_list1);
-    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "DATEADD");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |                      DATEDIFF '(' NAME ',' expr ',' expr ')'
-{
-    Node* expr_list1 = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $5, $7);
-    expr_list1->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, expr_list1);
-    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "DATEDIFF");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |                      DATENAME '(' NAME ',' expr          ')'
-{
-    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, $5);
-    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "DATENAME");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |                      DATEPART '(' NAME ',' expr          ')'
-{
-    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, $5);
-    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "DATEPART");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |                       GETDATE '('                        ')'
-{
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "GETDATE");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |                    GETUTCDATE '('                        ')'
-{
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "GETUTCDATE");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |             IDENTITY '(' data_type ',' INTNUM ',' INTNUM ')'
-{
-    Node* expr_list1 = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $5, $7);
-    expr_list1->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, expr_list1);
-    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "IDENTITY");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |             IDENTITY '(' data_type                       ')'
-{
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "IDENTITY");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, $3, nullptr);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |         MIN_ACTIVE_ROWVERSION
-{
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "MIN_ACTIVE_ROWVERSION");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
-    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
-}
-  |                        NULLIF '('          expr ',' expr ')'
-{
-    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, $5);
-    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "NULLIF");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |            STUFF '(' expr ',' INTNUM ',' INTNUM ',' expr ')'
-{
-    Node* expr_list2 = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $7, $9);
-    expr_list2->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* expr_list1 = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $5, expr_list2);
-    expr_list1->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, expr_list1);
-    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "STUFF");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
-  |                  SESSION_USER
-{
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "SESSION_USER");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
-    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
-}
-  |                   SYSTEM_USER
-{
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "SYSTEM_USER");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, nullptr, nullptr);
-    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
-}
-  |                        ISNULL '('          expr ',' expr ')'
-{
-    Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, 2, $3, $5);
-    expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "ISNULL");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, expr_list, nullptr);
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "NTILE");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 3, fun_name, $3, $5);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
 ;
+
+scalar_function:
+    NAME '.' NAME '.' NAME '.' NAME '('                      ')'
+{
+    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $7, $5, $3, $1);
+    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  | NAME '.' NAME '.'      '.' NAME '('                      ')'
+{
+    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $6, nullptr, $3, $1);
+    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |          NAME '.' NAME '.' NAME '('                      ')'
+{
+    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $5, $3, $1, nullptr);
+    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |          NAME '.'      '.' NAME '('                      ')'
+{
+    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $4, nullptr, $1, nullptr);
+    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                   NAME '.' NAME '('                      ')'
+{
+    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $3, $1, nullptr, nullptr);
+    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_1;
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                            NAME '('                      ')'
+{
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, $1);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                           RIGHT '('                      ')'
+{
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "RIGHT");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                            LEFT '('                      ')'
+{
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "LEFT");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                 BINARY_CHECKSUM '('                      ')'
+{
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "BINARY_CHECKSUM");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                        CHECKSUM '('                      ')'
+{
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CHECKSUM");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 1, fun_name);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  | NAME '.' NAME '.' NAME '.' NAME '('            expr_list ')'
+{
+    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $7, $5, $3, $1);
+    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $9);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  | NAME '.' NAME '.'      '.' NAME '('            expr_list ')'
+{
+    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $6, nullptr, $3, $1);
+    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $8);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |          NAME '.' NAME '.' NAME '('            expr_list ')'
+{
+    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $5, $3, $1, nullptr);
+    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $7);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |          NAME '.'      '.' NAME '('            expr_list ')'
+{
+    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $4, nullptr, $1, nullptr);
+    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $6);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                   NAME '.' NAME '('            expr_list ')'
+{
+    Node* fun_name = Node::makeNonTerminalNode(E_PROC_IDENT, 4, $3, $1, nullptr, nullptr);
+    fun_name->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_1;
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $5);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                            NAME '('            expr_list ')'
+{
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, $1, $3);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                           RIGHT '('            expr_list ')'
+{
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "RIGHT");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $3);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                            LEFT '('            expr_list ')'
+{
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "LEFT");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $3);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                 BINARY_CHECKSUM '('            expr_list ')'
+{
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "BINARY_CHECKSUM");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $3);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
+  |                        CHECKSUM '('            expr_list ')'
+{
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CHECKSUM");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, 2, fun_name, $3);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
+}
 
 over_clause:
     OVER '(' PARTITION BY expr_list order_by row_or_range_clause ')'
@@ -2042,60 +2209,60 @@ row_or_range_clause:
 window_frame_extent:
     UNBOUNDED PRECEDING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "UNBOUNDED PRECEDING"); }
-  | DECIMAL PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "DECIMAL PRECEDING"); }
+  | INTNUM PRECEDING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, $1->text()+"PRECEDING"); }
   | CURRENT ROW
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "CURRENT ROW"); }
   | BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED PRECEDING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED PRECEDING"); }
-  | BETWEEN DECIMAL PRECEDING   AND UNBOUNDED PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN DECIMAL PRECEDING AND UNBOUNDED PRECEDING"); }
+  | BETWEEN INTNUM PRECEDING   AND UNBOUNDED PRECEDING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND UNBOUNDED PRECEDING"); }
   | BETWEEN CURRENT ROW         AND UNBOUNDED PRECEDING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND UNBOUNDED PRECEDING"); }
   | BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED PRECEDING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED PRECEDING"); }
-  | BETWEEN DECIMAL FOLLOWING   AND UNBOUNDED PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN DECIMAL FOLLOWING AND UNBOUNDED PRECEDING"); }
-  | BETWEEN UNBOUNDED PRECEDING AND DECIMAL PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND DECIMAL PRECEDING"); }
-  | BETWEEN DECIMAL PRECEDING   AND DECIMAL PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN DECIMAL PRECEDING AND DECIMAL PRECEDING"); }
-  | BETWEEN CURRENT ROW         AND DECIMAL PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND DECIMAL PRECEDING"); }
-  | BETWEEN UNBOUNDED FOLLOWING AND DECIMAL PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND DECIMAL PRECEDING"); }
-  | BETWEEN DECIMAL FOLLOWING   AND DECIMAL PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN DECIMAL FOLLOWING AND DECIMAL PRECEDING"); }
+  | BETWEEN INTNUM FOLLOWING   AND UNBOUNDED PRECEDING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND UNBOUNDED PRECEDING"); }
+  | BETWEEN UNBOUNDED PRECEDING AND INTNUM PRECEDING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND "+$5->text()+" PRECEDING"); }
+  | BETWEEN INTNUM PRECEDING   AND INTNUM PRECEDING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND "+$5->text()+" PRECEDING"); }
+  | BETWEEN CURRENT ROW         AND INTNUM PRECEDING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND "+$5->text()+" PRECEDING"); }
+  | BETWEEN UNBOUNDED FOLLOWING AND INTNUM PRECEDING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND "+$5->text()+" PRECEDING"); }
+  | BETWEEN INTNUM FOLLOWING   AND INTNUM PRECEDING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND "+$5->text()+" PRECEDING"); }
   | BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW"); }
-  | BETWEEN DECIMAL PRECEDING   AND CURRENT ROW
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN DECIMAL PRECEDING AND CURRENT ROW"); }
+  | BETWEEN INTNUM PRECEDING   AND CURRENT ROW
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND CURRENT ROW"); }
   | BETWEEN CURRENT ROW         AND CURRENT ROW
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND CURRENT ROW"); }
   | BETWEEN UNBOUNDED FOLLOWING AND CURRENT ROW
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND CURRENT ROW"); }
-  | BETWEEN DECIMAL FOLLOWING   AND CURRENT ROW
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN DECIMAL FOLLOWING AND CURRENT ROW"); }
+  | BETWEEN INTNUM FOLLOWING   AND CURRENT ROW
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND CURRENT ROW"); }
   | BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING"); }
-  | BETWEEN DECIMAL PRECEDING   AND UNBOUNDED FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN DECIMAL PRECEDING AND UNBOUNDED FOLLOWING"); }
+  | BETWEEN INTNUM PRECEDING   AND UNBOUNDED FOLLOWING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND UNBOUNDED FOLLOWING"); }
   | BETWEEN CURRENT ROW         AND UNBOUNDED FOLLOWING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING"); }
   | BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED FOLLOWING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED FOLLOWING"); }
-  | BETWEEN DECIMAL FOLLOWING   AND UNBOUNDED FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN DECIMAL FOLLOWING AND UNBOUNDED FOLLOWING"); }
+  | BETWEEN INTNUM FOLLOWING   AND UNBOUNDED FOLLOWING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND UNBOUNDED FOLLOWING"); }
   | BETWEEN UNBOUNDED PRECEDING AND DECIMAL FOLLOWING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND DECIMAL FOLLOWING"); }
-  | BETWEEN DECIMAL PRECEDING   AND DECIMAL FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN DECIMAL PRECEDING AND DECIMAL FOLLOWING"); }
-  | BETWEEN CURRENT ROW         AND DECIMAL FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND DECIMAL FOLLOWING"); }
-  | BETWEEN UNBOUNDED FOLLOWING AND DECIMAL FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND DECIMAL FOLLOWING"); }
-  | BETWEEN DECIMAL FOLLOWING   AND DECIMAL FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN DECIMAL FOLLOWING AND DECIMAL FOLLOWING"); }
+  | BETWEEN INTNUM PRECEDING   AND INTNUM FOLLOWING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND "+$5->text()+" FOLLOWING"); }
+  | BETWEEN CURRENT ROW         AND INTNUM FOLLOWING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND "+$5->text()+" FOLLOWING"); }
+  | BETWEEN UNBOUNDED FOLLOWING AND INTNUM FOLLOWING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND "+$5->text()+" FOLLOWING"); }
+  | BETWEEN INTNUM FOLLOWING   AND INTNUM FOLLOWING
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND "+$5->text()+" FOLLOWING"); }
 
 distinct_or_all:
     ALL
@@ -2117,23 +2284,88 @@ column_label:
     NAME
 ;
 
+/*https://docs.microsoft.com/en-us/sql/t-sql/data-types/data-types-transact-sql?view=sql-server-2017#approximate-numerics*/
 data_type:
-    TINYINT
-{ $$ = Node::makeTerminalNode(E_TYPE_INTEGER, "TINYINT"); }
+    BIGINT
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "BIGINT"); }
+  | INT
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "INT"); }
   | SMALLINT
-{ $$ = Node::makeTerminalNode(E_TYPE_INTEGER, "SMALLINT"); }
-  | MEDIUMINT
-{ $$ = Node::makeTerminalNode(E_TYPE_INTEGER, "MEDIUMINT"); }
-  | INTEGER
-{ $$ = Node::makeTerminalNode(E_TYPE_INTEGER, "INTEGER"); }
-  | BIGINT
-{ $$ = Node::makeTerminalNode(E_TYPE_INTEGER, "BIGINT"); }
-  | BOOLEAN
-{ $$ = Node::makeTerminalNode(E_TYPE_BOOLEAN, "BOOLEAN"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "SMALLINT"); }
+  | TINYINT
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "TINYINT"); }
+  | DECIMAL '(' INTNUM ',' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DECIMAL("+$3->text()+","+$5->text()+")"); }
+  | DECIMAL '(' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DECIMAL("+$3->text()+")"); }
+  | DECIMAL
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DECIMAL"); }
+  | NUMERIC '(' INTNUM ',' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NUMERIC("+$3->text()+","+$5->text()+")"); }
+  | NUMERIC '(' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NUMERIC("+$3->text()+")"); }
+  | NUMERIC
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NUMERIC"); }
+  | BIT
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "BIT"); }
+  | MONEY
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "MONEY"); }
+  | SMALLMONEY
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "SMALLMONEY"); }
   | REAL
-{ $$ = Node::makeTerminalNode(E_TYPE_DOUBLE, "REAL"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "REAL"); }
+  | FLOAT '(' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "FLOAT("+$3->text()+")"); }
+  | DATE
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATE"); }
+  | DATETIMEOFFSET '(' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATETIMEOFFSET("+$3->text()+")"); }
+  | DATETIMEOFFSET
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATETIMEOFFSET"); }
+  | DATETIME2 '(' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATETIME2("+$3->text()+")"); }
+  | DATETIME2
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATETIME2"); }
+  | SMALLDATETIME
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "SMALLDATETIME"); }
   | DATETIME
-{ $$ = Node::makeTerminalNode(E_TYPE_DATETIME, "DATETIME"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATETIME"); }
+  | TIME '(' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "TIME("+$3->text()+")"); }
+  | TIME
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "TIME"); }
+  | CHAR '(' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "CHAR("+$3->text()+")"); }
+  | CHAR
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "CHAR"); }
+  | VARCHAR '(' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "VARCHAR("+$3->text()+")"); }
+  | VARCHAR '(' MAX ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "VARCHAR(MAX)"); }
+  | VARCHAR
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "VARCHAR"); }
+  | TEXT
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "TEXT"); }
+  | NCHAR '(' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NCHAR("+$3->text()+")"); }
+  | NCHAR
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NCHAR"); }
+  | NVARCHAR '(' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NVARCHAR("+$3->text()+")"); }
+  | NVARCHAR '(' MAX ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NVARCHAR(MAX)"); }
+  | NVARCHAR
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NVARCHAR"); }
+  | BINARY '(' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "BINARY("+$3->text()+")"); }
+  | BINARY
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "BINARY"); }
+  | VARBINARY '(' INTNUM ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "VARBINARY("+$3->text()+")"); }
+  | VARBINARY '(' MAX ')'
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "VARBINARY(MAX)"); }
+  | VARBINARY
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "VARBINARY"); }
 ;
 
 %%

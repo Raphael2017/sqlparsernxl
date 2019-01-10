@@ -78,6 +78,7 @@ temp_variable (@[A-Za-z_][A_Za-z0-9_]*)
 
 
 quote         '
+nquote        "N'"
 sqbegin       {quote}
 sqend         {quote}
 sqdouble      {quote}{quote}
@@ -107,13 +108,12 @@ BEGIN             { return BEGI; }
 BETWEEN           { return BETWEEN; }
 BIGINT            { return BIGINT; }
 BINARY            { return BINARY; }
-BOOL(EAN)?        { return BOOLEAN; }
 BOTH              { return BOTH; }
 BROWSE            { return BROWSE; }
 BY                { return BY; }
 CASCADE           { return CASCADE; }
 CASE              { return CASE; }
-CHAR(ACTER)?      { return CHARACTER; }
+CHARACTER         { return CHARACTER; }
 CLUSTER           { return CLUSTER; }
 COLUMN            { return COLUMN; }
 COLUMNS           { return COLUMNS; }
@@ -160,8 +160,6 @@ IDENTIFIED        { return IDENTIFIED; }
 IF                { return IF; }
 IN                { return IN; }
 INNER             { return INNER; }
-INT               { return INTEGER; }
-INTEGER           { return INTEGER; }
 INTERSECT         { return INTERSECT; }
 INSERT            { return INSERT; }
 INTO              { return INTO; }
@@ -175,7 +173,6 @@ LIKE              { return LIKE; }
 LOCAL             { return LOCAL; }
 LOCKED            { return LOCKED; }
 LOOP              { return LOOP; }
-MEDIUMINT         { return MEDIUMINT; }
 MEMORY            { return MEMORY; }
 MERGE             { return MERGE; }
 MOD               { return MOD; }
@@ -249,9 +246,9 @@ FROZEN            { return FROZEN;}
 @@global          { return GLOBAL_ALIAS; }
 @@session         { return SESSION_ALIAS; }
 CHANGE_OBI        { return CHANGE_OBI; }
-SWITCH_CLUSTER         { return SWITCH_CLUSTER; }
-SET_MASTER_CLUSTER        { return SET_MASTER_CLUSTER; }
-SET_SLAVE_CLUSTER         { return SET_SLAVE_CLUSTER;  }
+SWITCH_CLUSTER              { return SWITCH_CLUSTER; }
+SET_MASTER_CLUSTER          { return SET_MASTER_CLUSTER; }
+SET_SLAVE_CLUSTER           { return SET_SLAVE_CLUSTER;  }
 MASTER            { return MASTER; }
 SLAVE             { return SLAVE;  }
 FORCE             { return FORCE;  }
@@ -282,7 +279,7 @@ DENSE_RANK                  { return DENSE_RANK; }
 ROW_NUMBER                  { return ROW_NUMBER; }
 NTILE                       { return NTILE; }
 PARTITION                   { return PARTITION; }
-RANGE     { return RANGE; }
+RANGE                       { return RANGE; }
 UNBOUNDED     { return UNBOUNDED; }
 PRECEDING     { return PRECEDING; }
 CURRENT     { return CURRENT; }
@@ -323,7 +320,26 @@ CONVERT             { return CONVERT; }
 COALESCE            { return COALESCE; }
 CAST                { return CAST; }
 
+BIT                { return BIT; }
+CHAR                { return CHAR; }
+DATETIME2                { return DATETIME2; }
+DATETIMEOFFSET                { return DATETIMEOFFSET; }
+INT                { return INT; }
+MONEY                { return MONEY; }
+NCHAR                { return NCHAR; }
+NVARCHAR                { return NVARCHAR; }
+SMALLDATETIME                { return SMALLDATETIME; }
 
+SMALLMONEY                { return SMALLMONEY; }
+TEXT                { return TEXT; }
+COLLATE             { return COLLATE; }
+APPLY               { return APPLY; }
+
+SYSTEM_TIME         { return SYSTEM_TIME; }
+OF                  { return OF; }
+CONTAINED           { return CONTAINED; }
+PIVOT               { return PIVOT; }
+UNPIVOT             { return UNPIVOT; }
 
 NULL    {
     yylval->node = Node::makeTerminalNode(E_NULL, yytext);
@@ -377,6 +393,12 @@ FALSE   {
     BEGIN(sq);
     ((ParseResult*)yyextra)->buf_ = std::stringstream{};
     ((ParseResult*)yyextra)->buf_ << '\'';
+}
+
+{nquote}    {
+    BEGIN(sq);
+    ((ParseResult*)yyextra)->buf_ = std::stringstream{};
+    ((ParseResult*)yyextra)->buf_ << "N'";
 }
 
 <sq>{sqdouble} {
@@ -442,7 +464,7 @@ FALSE   {
 {comment}   { /* ignore */ }
 [ \t\r\n]+  { /* ignore */ }
 
-[-+&~|^/%*(),.;!] { return yytext[0];}
+[-+&~|^/%*(),.;!$] { return yytext[0];}
 
 "||"    { return CNNOP; }
 "="     { return COMP_EQ; }

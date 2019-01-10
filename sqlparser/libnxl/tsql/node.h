@@ -93,6 +93,7 @@ struct Node
     Node** getChildRef(int key);
     bool setChild(int key, Node*);
     int getChildrenCount() const;
+    std::string text() const;
 
 
     NodeType nodeType_;
