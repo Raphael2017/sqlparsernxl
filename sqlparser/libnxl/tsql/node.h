@@ -129,6 +129,7 @@ private:
     static std::string convert_join_hint(int ival);       // transact sql support join hint
     static Node* make_query_hint(const std::string&);     // transact sql support query hint
     static Node* make_query_hint(const std::string&, Node*);
+    static bool check_update_item(Node*);
     friend int yyparse (ParseResult* result, yyscan_t scanner);
 };
 

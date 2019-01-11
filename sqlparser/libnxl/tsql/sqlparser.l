@@ -452,6 +452,15 @@ FALSE   {
     return NAME;
 }
 
+{temp_variable} {
+    Node* nd = Node::makeTerminalNode(E_TEMP_VARIABLE, yytext);
+    yylval->node = nd;
+    nd->terminalToken_.str = yytext + 1;    // skip '@'
+    nd->terminalToken_.line = yylloc->first_line;
+    nd->terminalToken_.column = yylloc->first_column;
+    return TEMP_VARIABLE;
+}
+
 [A-Za-z][A-Za-z0-9_]* {
 	Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
 	yylval->node = nd;

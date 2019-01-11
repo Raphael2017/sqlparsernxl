@@ -1188,3 +1188,15 @@ Node* Node::make_query_hint(const std::string& text, Node* num)
     return ret;
 }
 
+bool Node::check_update_item(Node* root)
+{
+    std::list<Node*> ls{};
+    ToList(root, ls);
+    for (auto expr : ls)
+    {
+        if (expr->nodeType_ != E_OP_EQ)
+            return false;
+    }
+    return true;
+}
+

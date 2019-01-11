@@ -185,8 +185,8 @@ struct FormatDetail
 };
 typedef const std::list<FormatDetail> Form;
 Form SELECT_SERIALIZE_FORMAT                {{0,"",16," "}, {1,"SELECT "}, {0,"",13," "}, {0,"",0," "}, {0,"",15," "}, \
-                {0,"",1," "}, {0,"",2," "}, {0,"",3," "}, {0,"",4," "}, {0,"",5," "}, {0,"",8," "}, {0,"",6," "},\
-                {0,"",7," "}, {0,"",9," "}, {0,"",10," "}, {0,"",11," "}, {0,"",12," "}, {0,"",14," "}, {0,"",17,""}};
+    {0,"",1," "}, {0,"",18," "}, {0,"",2," "}, {0,"",3," "}, {0,"",4," "}, {0,"",5," "}, {0,"",8," "}, {0,"",6," "},\
+    {0,"",7," "}, {0,"",9," "}, {0,"",10," "}, {0,"",11," "}, {0,"",12," "}, {0,"",14," "}, {0,"",17,""}};
 Form SEMICOLON_LIST_SERIALIZE_FORMAT        {{0,"",0,""}, {1,"; "}, {0,"",1,""}};
 Form SINGLE_WITH_PARENS_SERIALIZE_FORMAT    {{1,"("}, {0,"",0,""}, {1,")"}};
 Form SELECT_UNION_SERIALIZE_FORMAT          {{0,"",8,""}, {1, " UNION "}, {0,"",7," "}, {0,"",9,""}};
@@ -278,6 +278,7 @@ Form FOR_SYSTEM_TIME_SERIALIZE_FORMAT       {{1,"FOR SYSTEM_TIME "}, {0,"",0,""}
 Form PIVOT_TABLE_SERIALIZE_FORMAT           {{0,"",0,""}, {1," PIVOT "}, {0,"",1,""}, {0," AS ",2,""}};
 Form UNPIVOT_TABLE_SERIALIZE_FORMAT         {{0,"",0,""}, {1," UNPIVOT "}, {0,"",1,""}, {0," AS ",2,""}};
 Form PIVOT_CLAUSE_SERIALIZE_FORMAT          {{1,"("}, {0,"",0,""}, {1," FOR "}, {0,"",1,""}, {1," IN "}, {0,"",2,""}, {1,")"}};
+Form INTO_CLAUSE_SERIALIZE_FORMAT           {{1,"INTO "}, {0,"",0,""}};
 #endif
 
 

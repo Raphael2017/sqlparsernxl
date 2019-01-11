@@ -11,7 +11,7 @@
 #define E_LIST_NEXT 1
 
 //  E_SELECT
-#define E_SELECT_PROPERTY_CNT           18
+#define E_SELECT_PROPERTY_CNT           19
 
 #define E_SELECT_DISTINCT               0
 #define E_SELECT_SELECT_EXPR_LIST       1
@@ -31,6 +31,7 @@
 #define E_SELECT_OPT_TOP                15
 #define E_SELECT_OPT_WITH               16
 #define E_SELECT_OPT_OPTION             17
+#define E_SELECT_OPT_INTO               18
 
 //  E_SELECT_WITH_PARENS
 #define E_SELECT_WITH_PARENS_SELECT 0
@@ -136,6 +137,7 @@ enum NodeType
     E_BOOL,
     E_STRING,
     E_IDENTIFIER,
+    E_TEMP_VARIABLE,
     E_QUESTIONMARK,
     E_ALL,
     E_DISTINCT,
@@ -278,6 +280,9 @@ enum NodeType
     E_UNPIVOT_TABLE,
     E_PIVOT_CLAUSE,
     E_UNPIVOT_CLAUSE,
+
+    E_TEMP_VAR_FUN_CALL,
+    E_INTO_CLAUSE,
 
     E_NODETYPE_END
 };

@@ -305,6 +305,9 @@ namespace resolve
                 resolve_table(plan, table_node->getChild(0), parent, out_table_id);
             }
                 break;
+            case E_TEMP_VAR_FUN_CALL:
+                /*todo*/
+                break;
             default:
                 /*unreachable*/
                 assert(false);

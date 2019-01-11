@@ -108,6 +108,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token <node> NULLX
 %token <node> UNKNOWN
 %token <node> QUESTIONMARK
+%token <node> TEMP_VARIABLE
 
 %right COLLATE
 %left	CONDITIONLESS_JOIN
@@ -175,13 +176,15 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token COLLATE APPLY SYSTEM_TIME OF CONTAINED PIVOT UNPIVOT
 
 %type <node> sql_stmt stmt_list stmt
+%type <node> dml_stmt
+
 %type <node> select_stmt
 
-%type <node> opt_from_clause table_factor_non_join data_type opt_hint
+%type <node> opt_from_clause table_factor_non_join data_type
 %type <node> relation_name column_label
 
 %type <node> select_with_parens select_no_parens select_clause
-%type <node> simple_select select_expr_list
+%type <node> simple_select select_expr_list opt_into_clause
 %type <node> opt_where opt_groupby opt_order_by order_by opt_having opt_top
 %type <node> sort_list sort_key opt_asc_desc
 %type <node> opt_distinct distinct_or_all projection
@@ -201,6 +204,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> aggregate_windowed_function ranking_windowed_function analytic_windowed_function scalar_function
 %type <node> table_value_constructor table_value_constructor_parens row_value_expression_list_parens_list
 %type <node> system_time opt_for_system_time pivot_clause unpivot_clause
+
 
 %start sql_stmt
 %%
@@ -228,12 +232,18 @@ stmt_list:
 }
 ;
 
-/*https://docs.microsoft.com/zh-cn/sql/t-sql/language-elements/transact-sql-syntax-conventions-transact-sql?view=sql-server-2017*/
-/*;	Transact-SQL 语句终止符。 虽然在此版本的 SQL Server 中大部分语句不需要分号，但将来的版本需要分号。*/
+/* https://docs.microsoft.com/zh-cn/sql/t-sql/language-elements/transact-sql-syntax-conventions-transact-sql?view=sql-server-2017
+ * Statement terminator is actually not optional at all.
+ * Although the semicolon is not required for most statements in this version of SQL Server, it will be required in a future version
+ */
 stmt:
-    ';' { $$ = nullptr; }
-  | select_stmt ';'
-  | select_stmt %prec UMINUS
+    ';'	{ $$ = nullptr; } /*EMPTY STATEMENT*/
+  | dml_stmt ';'
+  | dml_stmt %prec UMINUS
+;
+
+dml_stmt:
+    select_stmt
 ;
 
 /* SELECT GRAMMAR */
@@ -291,35 +301,35 @@ query_hint_list:
 }
 ;
 
-/* todo wtf */
+/* todo */
 query_hint:
-    HASH GROUP			{ $$ = Node::make_query_hint("HASH GROUP"); }
-  | ORDER GROUP			{ $$ = Node::make_query_hint("ORDER GROUP"); }
-  | CONCAT UNION		{ $$ = Node::make_query_hint("CONCAT UNION"); }
-  | HASH UNION			{ $$ = Node::make_query_hint("HASH UNION"); }
-  | MERGE UNION			{ $$ = Node::make_query_hint("MERGE UNION"); }
-  | LOOP JOIN			{ $$ = Node::make_query_hint("LOOP JOIN"); }
-  | MERGE JOIN			{ $$ = Node::make_query_hint("MERGE JOIN"); }
-  | HASH JOIN			{ $$ = Node::make_query_hint("HASH JOIN"); }
-  | EXPAND VIEWS		{ $$ = Node::make_query_hint("EXPAND VIEWS"); }
-  | FAST INTNUM			{ $$ = Node::make_query_hint("FAST", $2); }
-  | FORCE ORDER			{ $$ = Node::make_query_hint("FORCE ORDER"); }
-  | FORCE EXTERNALPUSHDOWN	{ $$ = Node::make_query_hint("FORCE EXTERNALPUSHDOWN"); }
+    HASH GROUP					{ $$ = Node::make_query_hint("HASH GROUP"); }
+  | ORDER GROUP					{ $$ = Node::make_query_hint("ORDER GROUP"); }
+  | CONCAT UNION				{ $$ = Node::make_query_hint("CONCAT UNION"); }
+  | HASH UNION					{ $$ = Node::make_query_hint("HASH UNION"); }
+  | MERGE UNION					{ $$ = Node::make_query_hint("MERGE UNION"); }
+  | LOOP JOIN					{ $$ = Node::make_query_hint("LOOP JOIN"); }
+  | MERGE JOIN					{ $$ = Node::make_query_hint("MERGE JOIN"); }
+  | HASH JOIN					{ $$ = Node::make_query_hint("HASH JOIN"); }
+  | EXPAND VIEWS				{ $$ = Node::make_query_hint("EXPAND VIEWS"); }
+  | FAST INTNUM					{ $$ = Node::make_query_hint("FAST", $2); }
+  | FORCE ORDER					{ $$ = Node::make_query_hint("FORCE ORDER"); }
+  | FORCE EXTERNALPUSHDOWN			{ $$ = Node::make_query_hint("FORCE EXTERNALPUSHDOWN"); }
   | IGNORE_NONCLUSTERED_COLUMNSTORE_INDEX	{ $$ = Node::make_query_hint("IGNORE_NONCLUSTERED_COLUMNSTORE_INDEX"); }
-  | KEEP PLAN			{ $$ = Node::make_query_hint("KEEP PLAN"); }
-  | KEEPFIXED PLAN		{ $$ = Node::make_query_hint("KEEP PLAN"); }
+  | KEEP PLAN					{ $$ = Node::make_query_hint("KEEP PLAN"); }
+  | KEEPFIXED PLAN				{ $$ = Node::make_query_hint("KEEP PLAN"); }
   | MAX_GRANT_PERCENT COMP_EQ APPROXNUM		{ $$ = Node::make_query_hint("MAX_GRANT_PERCENT =", $3); }
   | MAX_GRANT_PERCENT COMP_EQ INTNUM		{ $$ = Node::make_query_hint("MAX_GRANT_PERCENT =", $3); }
   | MIN_GRANT_PERCENT COMP_EQ APPROXNUM		{ $$ = Node::make_query_hint("MIN_GRANT_PERCENT =", $3); }
   | MIN_GRANT_PERCENT COMP_EQ INTNUM		{ $$ = Node::make_query_hint("MIN_GRANT_PERCENT =", $3); }
-  | MAXDOP INTNUM		{ $$ = Node::make_query_hint("MAXDOP", $2); }
-  | MAXRECURSION INTNUM		{ $$ = Node::make_query_hint("MAXRECURSION", $2); }
-  | NO_PERFORMANCE_SPOOL	{ $$ = Node::make_query_hint("NO_PERFORMANCE_SPOOL"); }
-  | OPTIMIZE FOR UNKNOWN	{ $$ = Node::make_query_hint("OPTIMIZE FOR", $3); }
-  | PARAMETERIZATION SIMPLE	{ $$ = Node::make_query_hint("PARAMETERIZATION SIMPLE"); }
-  | PARAMETERIZATION FORCED	{ $$ = Node::make_query_hint("PARAMETERIZATION FORCED"); }
-  | RECOMPILE			{ $$ = Node::make_query_hint("RECOMPILE"); }
-  | ROBUST PLAN			{ $$ = Node::make_query_hint("ROBUST PLAN"); }
+  | MAXDOP INTNUM				{ $$ = Node::make_query_hint("MAXDOP", $2); }
+  | MAXRECURSION INTNUM				{ $$ = Node::make_query_hint("MAXRECURSION", $2); }
+  | NO_PERFORMANCE_SPOOL			{ $$ = Node::make_query_hint("NO_PERFORMANCE_SPOOL"); }
+  | OPTIMIZE FOR UNKNOWN			{ $$ = Node::make_query_hint("OPTIMIZE FOR", $3); }
+  | PARAMETERIZATION SIMPLE			{ $$ = Node::make_query_hint("PARAMETERIZATION SIMPLE"); }
+  | PARAMETERIZATION FORCED			{ $$ = Node::make_query_hint("PARAMETERIZATION FORCED"); }
+  | RECOMPILE					{ $$ = Node::make_query_hint("RECOMPILE"); }
+  | ROBUST PLAN					{ $$ = Node::make_query_hint("ROBUST PLAN"); }
 ;
 
 select_clause:
@@ -328,12 +338,12 @@ select_clause:
 ;
 
 simple_select:
-    SELECT opt_hint opt_distinct opt_top select_expr_list
+    SELECT opt_distinct opt_top select_expr_list opt_into_clause
     opt_from_clause opt_where opt_groupby opt_having
 {
     $$ = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
-                    $3,             /* E_SELECT_DISTINCT 0 */
-                    $5,             /* E_SELECT_SELECT_EXPR_LIST 1 */
+                    $2,             /* E_SELECT_DISTINCT 0 */
+                    $4,             /* E_SELECT_SELECT_EXPR_LIST 1 */
                     $6,             /* E_SELECT_FROM_LIST 2 */
                     $7,             /* E_SELECT_OPT_WHERE 3 */
                     $8,             /* E_SELECT_GROUP_BY 4 */
@@ -345,11 +355,12 @@ simple_select:
                     nullptr,        /* E_SELECT_ORDER_BY 10 */
                     nullptr,        /* E_SELECT_LIMIT 11 */
                     nullptr,        /* E_SELECT_FOR_UPDATE 12 */
-                    $2,             /* E_SELECT_HINTS 13 */
+                    nullptr,        /* E_SELECT_HINTS 13 */
                     nullptr,        /* E_SELECT_WHEN 14 */
-                    $4,             /* E_SELECT_OPT_TOP 15 */
+                    $3,             /* E_SELECT_OPT_TOP 15 */
                     nullptr,        /* E_SELECT_OPT_WITH 16 */
-                    nullptr	    /* E_SELECT_OPT_OPTION 17 */
+                    nullptr,        /* E_SELECT_OPT_OPTION 17 */
+	            $5              /* E_SELECT_OPT_INTO 18 */
                     );
     $$->serialize_format = &SELECT_SERIALIZE_FORMAT;
 }
@@ -374,7 +385,8 @@ simple_select:
                         nullptr,             /* E_SELECT_WHEN 14 */
                         nullptr,             /* E_SELECT_OPT_TOP 15 */
                         nullptr,             /* E_SELECT_OPT_WITH 16 */
-                        nullptr	             /* E_SELECT_OPT_OPTION 17 */
+                        nullptr,             /* E_SELECT_OPT_OPTION 17 */
+                        nullptr              /* E_SELECT_OPT_INTO 18 */
                         );
     $$->serialize_format = &SELECT_UNION_SERIALIZE_FORMAT;
 }
@@ -399,7 +411,8 @@ simple_select:
                         nullptr,             /* E_SELECT_WHEN 14 */
                         nullptr,             /* E_SELECT_OPT_TOP 15 */
                         nullptr,             /* E_SELECT_OPT_WITH 16 */
-                        nullptr	             /* E_SELECT_OPT_OPTION 17 */
+                        nullptr,            /* E_SELECT_OPT_OPTION 17 */
+                        nullptr              /* E_SELECT_OPT_INTO 18 */
                         );
     $$->serialize_format = &SELECT_INTERSECT_SERIALIZE_FORMAT;
 }
@@ -424,9 +437,19 @@ simple_select:
                         nullptr,             /* E_SELECT_WHEN 14 */
                         nullptr,             /* E_SELECT_OPT_TOP 15 */
                         nullptr,             /* E_SELECT_OPT_WITH 16 */
-                        nullptr	             /* E_SELECT_OPT_OPTION 17 */
+                        nullptr,             /* E_SELECT_OPT_OPTION 17 */
+                        nullptr              /* E_SELECT_OPT_INTO 18 */
                         );
     $$->serialize_format = &SELECT_EXCEPT_SERIALIZE_FORMAT;
+}
+;
+
+opt_into_clause:
+    /*EMPTY*/	{ $$ = nullptr; }
+  | INTO relation_factor
+{
+    $$ = Node::makeNonTerminalNode(E_INTO_CLAUSE, 1, $2);
+    $$->serialize_format = &INTO_CLAUSE_SERIALIZE_FORMAT;
 }
 ;
 
@@ -500,10 +523,6 @@ opt_from_clause:
     $$ = Node::makeNonTerminalNode(E_FROM_CLAUSE, 1, $2);
     $$->serialize_format = &FROM_SERIALIZE_FORMAT;
 }
-;
-
-opt_hint:
-    /*EMPTY*/	{ $$ = nullptr; }
 ;
 
 opt_groupby:
@@ -742,6 +761,7 @@ table_factor:
   | joined_table
 ;
 
+/* todo */
 table_factor_non_join:
     relation_factor opt_for_system_time opt_with_table_hint
 {
@@ -801,6 +821,42 @@ table_factor_non_join:
   | func_expr
 {
     $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, nullptr, nullptr, nullptr);
+    $$->serialize_format = &QUADRUPLE_SERIALIZE_FORMAT;
+}
+  | TEMP_VARIABLE AS relation_name
+{
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, $3, nullptr, nullptr);
+    $$->serialize_format = &AS_SERIALIZE_FORMAT;
+}
+  | TEMP_VARIABLE relation_name
+{
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, $2, nullptr, nullptr);
+    $$->serialize_format = &QUADRUPLE_SERIALIZE_FORMAT;
+}
+  | TEMP_VARIABLE
+{
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, $1, nullptr, nullptr, nullptr);
+    $$->serialize_format = &QUADRUPLE_SERIALIZE_FORMAT;
+}
+  | TEMP_VARIABLE '.' func_expr AS relation_name opt_simple_ident_list_with_parens
+{
+    Node* nd = Node::makeNonTerminalNode(E_TEMP_VAR_FUN_CALL, 2, $3, $1);
+    nd->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_1;
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, nd, $5, $6, nullptr);
+    $$->serialize_format = &AS_SERIALIZE_FORMAT;
+}
+  | TEMP_VARIABLE '.' func_expr relation_name opt_simple_ident_list_with_parens
+{
+    Node* nd = Node::makeNonTerminalNode(E_TEMP_VAR_FUN_CALL, 2, $3, $1);
+    nd->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_1;
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, nd, $4, $5, nullptr);
+    $$->serialize_format = &QUADRUPLE_SERIALIZE_FORMAT;
+}
+  | TEMP_VARIABLE '.' func_expr opt_simple_ident_list_with_parens
+{
+    Node* nd = Node::makeNonTerminalNode(E_TEMP_VAR_FUN_CALL, 2, $3, $1);
+    nd->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_1;
+    $$ = Node::makeNonTerminalNode(E_ALIAS, 4, nd, nullptr, $4, nullptr);
     $$->serialize_format = &QUADRUPLE_SERIALIZE_FORMAT;
 }
 ;
@@ -1102,7 +1158,6 @@ join_hint:
   | REMOTE	{ $$ = 4; }
 ;
 
-
 join_outer:
     /* EMPTY */                 { $$ = 0; }
   | OUTER                       { $$ = 1; /*this is a flag*/}
@@ -1222,9 +1277,9 @@ expr_const:
   | '$' APPROXNUM	{ $$ = Node::makeTerminalNode(E_STRING, "$"+$2->text()); }
 ;
 
-/* todo when_func */
 simple_expr:
     column_ref
+  | TEMP_VARIABLE
   | expr_const
   | '('  expr_list ')'
 {
