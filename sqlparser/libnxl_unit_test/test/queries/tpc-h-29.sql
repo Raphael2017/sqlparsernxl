@@ -157,3 +157,360 @@ FROM result;
 -- Transact-SQL object ref (4 part)
 SELECT dbo.ACCOUNT.salary
 FROM dbo.ACCOUNT;
+
+--https://docs.microsoft.com/zh-cn/sql/t-sql/queries/select-transact-sql?view=sql-server-2017
+SELECT *
+FROM DimEmployee
+ORDER BY LastName;
+
+SELECT e.*
+FROM DimEmployee AS e
+ORDER BY LastName;
+
+SELECT FirstName, LastName, StartDate AS FirstDay
+FROM DimEmployee
+ORDER BY LastName;
+
+SELECT FirstName, LastName, StartDate AS FirstDay
+FROM DimEmployee
+WHERE EndDate IS NOT NULL
+AND MaritalStatus = 'M'
+ORDER BY LastName;
+
+SELECT FirstName, LastName, BaseRate, BaseRate * 40 AS GrossPay
+FROM DimEmployee
+ORDER BY LastName;
+
+SELECT DISTINCT Title
+FROM DimEmployee
+ORDER BY Title;
+
+SELECT OrderDateKey, SUM(SalesAmount) AS TotalSales
+FROM FactInternetSales
+GROUP BY OrderDateKey
+ORDER BY OrderDateKey;
+
+SELECT OrderDateKey, PromotionKey, AVG(SalesAmount) AS AvgSales, SUM(SalesAmount) AS TotalSales
+FROM FactInternetSales
+GROUP BY OrderDateKey, PromotionKey
+ORDER BY OrderDateKey;
+
+SELECT OrderDateKey, SUM(SalesAmount) AS TotalSales
+FROM FactInternetSales
+WHERE OrderDateKey > '20020801'
+GROUP BY OrderDateKey
+ORDER BY OrderDateKey;
+
+SELECT SUM(SalesAmount) AS TotalSales
+FROM FactInternetSales
+GROUP BY (OrderDateKey * 10);
+
+SELECT OrderDateKey, SUM(SalesAmount) AS TotalSales
+FROM FactInternetSales
+GROUP BY OrderDateKey
+ORDER BY OrderDateKey;
+
+SELECT OrderDateKey, SUM(SalesAmount) AS TotalSales
+FROM FactInternetSales
+GROUP BY OrderDateKey
+HAVING OrderDateKey > 20010000
+ORDER BY OrderDateKey;
+
+SELECT DISTINCT Name
+FROM Production.Product AS p
+WHERE EXISTS
+    (SELECT *
+     FROM Production.ProductModel AS pm
+     WHERE p.ProductModelID = pm.ProductModelID
+           AND pm.Name LIKE 'Long-Sleeve Logo Jersey%');
+
+SELECT DISTINCT Name
+FROM Production.Product
+WHERE ProductModelID IN
+    (SELECT ProductModelID
+     FROM Production.ProductModel
+     WHERE Name LIKE 'Long-Sleeve Logo Jersey%');
+
+SELECT DISTINCT p.LastName, p.FirstName
+FROM Person.Person AS p
+       JOIN HumanResources.Employee AS e
+            ON e.BusinessEntityID = p.BusinessEntityID WHERE 5000.00 IN
+                                                             (SELECT Bonus
+                                                              FROM Sales.SalesPerson AS sp
+                                                              WHERE e.BusinessEntityID = sp.BusinessEntityID);
+
+SELECT DISTINCT pp.LastName, pp.FirstName
+FROM Person.Person pp JOIN HumanResources.Employee e
+                           ON e.BusinessEntityID = pp.BusinessEntityID WHERE pp.BusinessEntityID IN
+                                                                             (SELECT SalesPersonID
+                                                                              FROM Sales.SalesOrderHeader
+                                                                              WHERE SalesOrderID IN
+                                                                                    (SELECT SalesOrderID
+                                                                                     FROM Sales.SalesOrderDetail
+                                                                                     WHERE ProductID IN
+                                                                                           (SELECT ProductID
+                                                                                            FROM Production.Product p
+                                                                                            WHERE ProductNumber = 'BK-M68B-42')));
+
+SELECT AVG(OrderQty) AS [Average Quantity],
+       NonDiscountSales = (OrderQty * UnitPrice)
+FROM Sales.SalesOrderDetail
+GROUP BY (OrderQty * UnitPrice)
+ORDER BY (OrderQty * UnitPrice) DESC;
+
+SELECT ProductID, AVG(UnitPrice) AS [Average Price]
+FROM Sales.SalesOrderDetail
+WHERE OrderQty > 10
+GROUP BY ProductID
+ORDER BY AVG(UnitPrice);
+
+SELECT ProductID
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+HAVING AVG(OrderQty) > 5
+ORDER BY ProductID;
+
+SELECT SalesOrderID, CarrierTrackingNumber
+FROM Sales.SalesOrderDetail
+GROUP BY SalesOrderID, CarrierTrackingNumber
+HAVING CarrierTrackingNumber LIKE '4BD%'
+ORDER BY SalesOrderID ;
+
+SELECT ProductID
+FROM Sales.SalesOrderDetail
+WHERE UnitPrice < 25.00
+GROUP BY ProductID
+HAVING AVG(OrderQty) > 5
+ORDER BY ProductID;
+
+SELECT ProductID, AVG(OrderQty) AS AverageQuantity, SUM(LineTotal) AS Total
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+HAVING SUM(LineTotal) > $1000000.00
+   AND AVG(OrderQty) < 3;
+
+SELECT ProductID, Total = SUM(LineTotal)
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+HAVING SUM(LineTotal) > $2000000.00;
+
+SELECT ProductID, SUM(LineTotal) AS Total
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+HAVING COUNT(*) > 1500;
+
+SELECT pp.FirstName, pp.LastName, e.NationalIDNumber
+FROM HumanResources.Employee AS e WITH (INDEX(AK_Employee_NationalIDNumber))
+JOIN Person.Person AS pp on e.BusinessEntityID = pp.BusinessEntityID
+WHERE LastName = 'Johnson';
+
+SELECT pp.LastName, pp.FirstName, e.JobTitle
+FROM HumanResources.Employee AS e WITH (INDEX = 0) JOIN Person.Person AS pp
+ON e.BusinessEntityID = pp.BusinessEntityID
+WHERE LastName = 'Johnson';
+
+SELECT ProductID, OrderQty, SUM(LineTotal) AS Total
+FROM Sales.SalesOrderDetail
+WHERE UnitPrice < $5.00
+GROUP BY ProductID, OrderQty
+ORDER BY ProductID, OrderQty
+OPTION (HASH GROUP, FAST 10);
+
+SELECT BusinessEntityID, JobTitle, HireDate, VacationHours, SickLeaveHours
+FROM HumanResources.Employee AS e1
+UNION
+SELECT BusinessEntityID, JobTitle, HireDate, VacationHours, SickLeaveHours
+FROM HumanResources.Employee AS e2
+OPTION (MERGE UNION);
+
+SELECT ProductModelID, Name
+FROM Production.ProductModel
+WHERE ProductModelID NOT IN (3, 4)
+UNION
+SELECT ProductModelID, Name
+FROM dbo.Gloves
+ORDER BY Name;
+
+SELECT ProductModelID, Name
+FROM Production.ProductModel
+WHERE ProductModelID NOT IN (3, 4)
+UNION
+SELECT ProductModelID, Name
+FROM dbo.Gloves
+ORDER BY Name;
+
+SELECT LastName, FirstName, JobTitle
+FROM dbo.EmployeeOne
+UNION ALL
+SELECT LastName, FirstName ,JobTitle
+FROM dbo.EmployeeTwo
+UNION ALL
+SELECT LastName, FirstName,JobTitle
+FROM dbo.EmployeeThree;
+
+SELECT LastName, FirstName,JobTitle
+FROM dbo.EmployeeOne
+UNION
+SELECT LastName, FirstName, JobTitle
+FROM dbo.EmployeeTwo
+UNION
+SELECT LastName, FirstName, JobTitle
+FROM dbo.EmployeeThree;
+
+SELECT LastName, FirstName,JobTitle
+FROM dbo.EmployeeOne
+UNION ALL
+(
+  SELECT LastName, FirstName, JobTitle
+  FROM dbo.EmployeeTwo
+  UNION
+  SELECT LastName, FirstName, JobTitle
+  FROM dbo.EmployeeThree
+);
+
+SELECT p.ProductID, v.BusinessEntityID
+FROM Production.Product AS p
+       JOIN Purchasing.ProductVendor AS v
+            ON (p.ProductID = v.ProductID);
+
+SELECT COUNT(*)
+FROM HumanResources.Employee WITH (TABLOCK, HOLDLOCK) ;
+
+SELECT e.BusinessEntityID, d.Name AS Department
+FROM HumanResources.Employee AS e
+       CROSS JOIN HumanResources.Department AS d
+ORDER BY e.BusinessEntityID, d.Name ;
+
+-- The OUTER keyword following the FULL keyword is optional.
+SELECT p.Name, sod.SalesOrderID
+FROM Production.Product AS p
+       FULL OUTER JOIN Sales.SalesOrderDetail AS sod
+                       ON p.ProductID = sod.ProductID
+ORDER BY p.Name ;
+
+SELECT p.Name, sod.SalesOrderID
+FROM Production.Product AS p
+       LEFT OUTER JOIN Sales.SalesOrderDetail AS sod
+                       ON p.ProductID = sod.ProductID
+ORDER BY p.Name ;
+
+-- By default, SQL Server performs an INNER JOIN if only the JOIN
+-- keyword is specified.
+SELECT p.Name, sod.SalesOrderID
+FROM Production.Product AS p
+       INNER JOIN Sales.SalesOrderDetail AS sod
+                  ON p.ProductID = sod.ProductID
+ORDER BY p.Name ;
+
+SELECT st.Name AS Territory, sp.BusinessEntityID
+FROM Sales.SalesTerritory AS st
+       RIGHT OUTER JOIN Sales.SalesPerson AS sp
+                        ON st.TerritoryID = sp.TerritoryID ;
+
+SELECT p.Name AS ProductName, v.Name AS VendorName
+FROM Production.Product AS p
+       INNER MERGE JOIN Purchasing.ProductVendor AS pv
+                        ON p.ProductID = pv.ProductID
+       INNER HASH JOIN Purchasing.Vendor AS v
+                       ON pv.BusinessEntityID = v.BusinessEntityID
+ORDER BY p.Name, v.Name ;
+
+SELECT RTRIM(p.FirstName) + ' ' + LTRIM(p.LastName) AS Name, d.City
+FROM Person.Person AS p
+       INNER JOIN HumanResources.Employee e ON p.BusinessEntityID = e.BusinessEntityID
+       INNER JOIN
+     (SELECT bea.BusinessEntityID, a.City
+      FROM Person.Address AS a
+             INNER JOIN Person.BusinessEntityAddress AS bea
+                        ON a.AddressID = bea.AddressID) AS d
+     ON p.BusinessEntityID = d.BusinessEntityID
+ORDER BY p.LastName, p.FirstName;
+
+SELECT DeptID, DeptName, DeptMgrID, EmpID, EmpLastName, EmpSalary
+FROM Departments d
+       CROSS APPLY dbo.GetReports(d.DeptMgrID) ;
+
+SELECT DeptID, DeptName, DeptMgrID, EmpID, EmpLastName, EmpSalary
+FROM Departments d
+       OUTER APPLY dbo.GetReports(d.DeptMgrID) ;
+
+SELECT dbid, object_id, query_plan
+FROM sys.dm_exec_cached_plans AS cp
+       CROSS APPLY sys.dm_exec_query_plan(cp.plan_handle);
+
+SELECT DepartmentNumber,
+       DepartmentName,
+       ManagerID,
+       ParentDepartmentNumber
+FROM DEPARTMENT
+     FOR SYSTEM_TIME AS OF '2014-01-01'
+WHERE ManagerID = 5;
+
+SELECT DepartmentNumber,
+       DepartmentName,
+       ManagerID,
+       ParentDepartmentNumber
+FROM DEPARTMENT
+     FOR SYSTEM_TIME FROM '2013-01-01' TO '2014-01-01'
+WHERE ManagerID = 5;
+
+SELECT DepartmentNumber,
+       DepartmentName,
+       ManagerID,
+       ParentDepartmentNumber
+FROM DEPARTMENT
+     FOR SYSTEM_TIME BETWEEN '2013-01-01' AND '2014-01-01'
+WHERE ManagerID = 5;
+
+SELECT DepartmentNumber,
+       DepartmentName,
+       ManagerID,
+       ParentDepartmentNumber
+FROM DEPARTMENT
+     FOR SYSTEM_TIME CONTAINED IN ( '2013-01-01', '2014-01-01' )
+WHERE ManagerID = 5;
+
+SELECT 'AverageCost' AS Cost_Sorted_By_Production_Days,
+       [0], [1], [2], [3], [4]
+FROM
+  (SELECT DaysToManufacture, StandardCost
+   FROM Production.Product) AS SourceTable
+    PIVOT
+    (
+    AVG(StandardCost)
+    FOR DaysToManufacture IN ([0], [1], [2], [3], [4])
+    ) AS PivotTable;
+
+SELECT VendorID, [250] AS Emp1, [251] AS Emp2, [256] AS Emp3, [257] AS Emp4, [260] AS Emp5
+FROM
+  (SELECT PurchaseOrderID, EmployeeID, VendorID
+   FROM Purchasing.PurchaseOrderHeader) p
+    PIVOT
+    (
+    COUNT (PurchaseOrderID)
+    FOR EmployeeID IN
+    ( [250], [251], [256], [257], [260] )
+    ) AS pvt
+ORDER BY pvt.VendorID
+
+SELECT VendorID, Employee, Orders
+FROM
+  (SELECT VendorID, Emp1, Emp2, Emp3, Emp4, Emp5
+   FROM pvt) p
+    UNPIVOT
+    (Orders FOR Employee IN
+    (Emp1, Emp2, Emp3, Emp4, Emp5)
+    )AS unpvt;
+
+SELECT c.FirstName, c.LastName, e.JobTitle, a.AddressLine1, a.City,
+       sp.Name AS [State/Province], a.PostalCode
+       INTO dbo.EmployeeAddresses
+FROM Person.Person AS c
+       JOIN HumanResources.Employee AS e
+            ON e.BusinessEntityID = c.BusinessEntityID
+       JOIN Person.BusinessEntityAddress AS bea
+            ON e.BusinessEntityID = bea.BusinessEntityID
+       JOIN Person.Address AS a
+            ON bea.AddressID = a.AddressID
+       JOIN Person.StateProvince as sp
+            ON sp.StateProvinceID = a.StateProvinceID;
