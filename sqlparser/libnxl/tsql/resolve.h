@@ -9,9 +9,6 @@
 #include <assert.h>
 #include <functional>
 
-#define OB_INVALID_ID  0
-#define OB_APP_MIN_COLUMN_ID  500
-
 struct Node;
 
 namespace resolve

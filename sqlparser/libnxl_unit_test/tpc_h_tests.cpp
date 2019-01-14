@@ -1,7 +1,5 @@
 #include "thirdparty/microtest.h"
-#include "parser.h"
-#include "resolve.h"
-#include "SelectStmt.h"
+#include "Interface.h"
 #include <time.h>
 #include <fstream>
 #include <iostream>
@@ -54,42 +52,29 @@ TEST(TPCHQueryGrammarTests)
     {
         std::string query = readFileContents(file_path);
 
-
-        ParseResult result;
-        parser::parse(query, &result);
-        if (!result.accept)
+        INode* tree = INode::Parse(query);
+        if (!tree)
         {
             mt::printFailed(file_path.c_str());
-            printf("%s           %s (L%d:%d)%s\n", mt::red(), result.errDetail.c_str(), result.errFirstLine + 1, result.errFirstColumn, mt::def());
             ++testsFailed;
         }
         else
         {
             mt::printOk(file_path.c_str());
+            printf("%s\n", tree->Serialize().c_str());
         }
-        if (result.accept)
+        if (tree)
         {
-            concatenated += query;
-            if (concatenated.back() != ';')
-                concatenated += "\n";
-            else
-                concatenated += "\n";
+            concatenated += query + "\n";
         }
     }
 
     clock_t start, end;
     int tks_count = 0;
-    std::vector<yytokentype> tks;
-    parser::tokenize(concatenated, &tks);
-    printf(concatenated.c_str());
-    tks_count = tks.size();
-    start = clock();
-    ParseResult result;
-    parser::parse(concatenated, &result);
-    if (!result.accept)
+    INode* tree = INode::Parse(concatenated);
+    if (!tree)
     {
         mt::printFailed("TPCHAllConcatenated");
-        printf("%s           %s (L%d:%d)%s\n", mt::red(), result.errDetail.c_str(), result.errFirstLine + 1, result.errFirstColumn, mt::def());
         ++testsFailed;
     }
     else
@@ -97,69 +82,29 @@ TEST(TPCHQueryGrammarTests)
         mt::printOk("TPCHAllConcatenated");
     }
 
-    if (result.accept)
+    if (tree)
     {
-        printf("%s\n", concatenated.c_str());
-        resolve::ResultPlan resultPlan([](
-                Node* node,
-                resolve::TableItem::TableType tp,
-                const std::string& table_name,
-                const std::string& alias_name,
-                uint64_t query_id
-        ){
-            int line = 0;
-            int column = 0;
-
-            while (!node->isTerminalToken)
+        auto t = tree->GetType();
+        IPlan* plan = IPlan::CreatePlan([](IPlan* plan, ITableItem* tbi, uint64_t query_id){
+            switch (tbi->GetTableItemType())
             {
-                node = node->getChild(0);
-            }
-
-            switch (tp)
-            {
-                case resolve::TableItem::BASE_TABLE:
+                case E_BASIC_TABLE:
                 {
-                    line = node->terminalToken_.line;
-                    column = node->terminalToken_.column;
-                    printf("access base table: %-25s at (L%+3d:%-2d)\n", table_name.c_str(), line + 1, column);
+                    printf("access base table: %-25s at (L%+3d:%-2d)\n", tbi->GetTableName().c_str(), tbi->GetLine() + 1, tbi->GetColumn());
                 }
                     break;
-                case resolve::TableItem::ALIAS_TABLE:
+                case E_BASIC_TABLE_WITH_ALIAS:
                 {
-                    line = node->terminalToken_.line;
-                    column = node->terminalToken_.column;
-
-                    printf("access base table: %-25s at (L%+3d:%-2d) alias: %-10s\n", table_name.c_str(), line + 1, column, alias_name.c_str());
+                    printf("access base table: %-25s at (L%+3d:%-2d) alias: %-10s\n", tbi->GetTableName().c_str(), tbi->GetLine()  + 1, tbi->GetColumn(), tbi->GetTableAliasName().c_str());
                 }
                     break;
                 default:
-                    /*unreachable*/
                     break;
             }
-        });
 
-
-
-        uint64_t query_id;
-        std::list<Node*> stmts;
-        Node::ToList(result.result_tree_, stmts);
-        size_t index = 1;
-        for (auto stmt : stmts)
-        {
-            resultPlan.reset();
-            printf("STATEMENT %-3d ANALYZE:\n", index++);
-            resolve::resolve_select_statement(&resultPlan, stmt, query_id);
-            printf("\n");
-        }
-        mt::printOk("TPCHAllConcatenated Semantics Detail");
-
-        printf("Compact Sql:\n%s\n", result.result_tree_->serialize().c_str());
-        //printf("Compact Sql:\n%s\n", result.result_tree_->SerializeNonRecursive(result.result_tree_).c_str());
-        end = clock();
-        double seconds  =(double)(end - start)/CLOCKS_PER_SEC;
-        fprintf(stdout, "Frequency %d,Use time is: %.8f\n", 1, seconds);
-        seconds = seconds / tks_count *1000;
-        fprintf(stdout, "per 1000 tokens,Use time is: %.8f\n", seconds);
+        }, nullptr, tree);
+        IPlan::Visit(plan);
+        printf("%s\n", concatenated.c_str());
     }
 
     ASSERT_EQ(testsFailed, 0);

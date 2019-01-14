@@ -195,8 +195,7 @@ ParseResult::ParseResult() : result_tree_(nullptr), accept(false),
 
 ParseResult::~ParseResult()
 {
-    delete(result_tree_);
-    result_tree_ = nullptr;
+
 }
 
 Node* Node::makeTerminalNode(NodeType tp, const std::string& yytext)

@@ -1,5 +1,6 @@
 set(SRCS
         node.cpp
+        nodeimpl.cpp
         parser.cpp
         sqlparser_bison.cpp
         sqlparser_flex.cpp
@@ -7,6 +8,8 @@ set(SRCS
         resolve.cpp
         expr.cpp
         SelectStmt.cpp
+        Stmt.cpp
+        ResultPlan.cpp
         LogicPlan.cpp
         LocalTableMgr.cpp)
 

@@ -2,8 +2,8 @@
 #include <algorithm>
 #include <time.h>
 #include <assert.h>
-#include "resolve.h"
-#include "SelectStmt.h"
+
+#include "Interface.h"
 
 
 int main()
@@ -105,67 +105,54 @@ int main()
         "( [250], [251], [256], [257], [260] )  \n"
         ") AS pvt  \n"
         "ORDER BY pvt.VendorID;";
+
+    a = "UPDATE dbo.Table2   \n"
+        "SET dbo.Table2.ColB - dbo.Table2.ColB + dbo.Table1.ColB  \n"
+        "FROM dbo.Table2   \n"
+        "    INNER JOIN dbo.Table1   \n"
+        "    ON (dbo.Table2.ColA = dbo.Table1.ColA)";
+
+    a = "SELECT * from @TMPVAR";
+
+    a = "SELECT c.FirstName, c.LastName, e.JobTitle, a.AddressLine1, a.City,   \n"
+        "    sp.Name AS [State/Province], a.PostalCode  \n"
+        "INTO dbo.EmployeeAddresses  \n"
+        "FROM Person.Person AS c  \n"
+        "    JOIN HumanResources.Employee AS e   \n"
+        "    ON e.BusinessEntityID = c.BusinessEntityID  \n"
+        "    JOIN Person.BusinessEntityAddress AS bea  \n"
+        "    ON e.BusinessEntityID = bea.BusinessEntityID  \n"
+        "    JOIN Person.Address AS a  \n"
+        "    ON bea.AddressID = a.AddressID  \n"
+        "    JOIN Person.StateProvince as sp   \n"
+        "    ON sp.StateProvinceID = a.StateProvinceID;";
+
     {
-        ParseResult result;
-        std::vector<yytokentype> tks;
-        parser::parse(a, &result);
-        if (result.accept)
+        INode* tree = INode::Parse(a);
+        auto t = tree->GetType();
+        if (tree)
         {
-            printf("%s\n", result.result_tree_->serialize().c_str());
-            printf("%s\n", result.result_tree_->SerializeNonRecursive(result.result_tree_).c_str());
-            Node::print(result.result_tree_);
-        }
-
-        if (result.accept)
-        {
-            resolve::ResultPlan resultPlan([](
-                    Node* node,
-                    resolve::TableItem::TableType tp,
-                    const std::string& table_name,
-                    const std::string& alias_name,
-                    uint64_t query_id
-            ){
-                int line = 0;
-                int column = 0;
-
-                while (!node->isTerminalToken)
+            auto t = tree->GetType();
+            IPlan* plan = IPlan::CreatePlan([](IPlan* plan, ITableItem* tbi, uint64_t query_id){
+                auto stmt_type = plan->GetQuery(query_id)->GetStmtType();
+                switch (tbi->GetTableItemType())
                 {
-                    node = node->getChild(0);
-                }
-
-                switch (tp)
-                {
-                    case resolve::TableItem::BASE_TABLE:
+                    case E_BASIC_TABLE:
                     {
-                        line = node->terminalToken_.line;
-                        column = node->terminalToken_.column;
-                        printf("access base table: %-25s at (L%+3d:%-2d)\n", table_name.c_str(), line + 1, column);
+                        printf("access base table: %-25s at (L%+3d:%-2d)\n", tbi->GetTableName().c_str(), tbi->GetLine() + 1, tbi->GetColumn());
                     }
                         break;
-                    case resolve::TableItem::ALIAS_TABLE:
+                    case E_BASIC_TABLE_WITH_ALIAS:
                     {
-                        line = node->terminalToken_.line;
-                        column = node->terminalToken_.column;
-
-                        printf("access base table: %-25s at (L%+3d:%-2d) alias: %-10s\n", table_name.c_str(), line + 1, column, alias_name.c_str());
+                        printf("access base table: %-25s at (L%+3d:%-2d) alias: %-10s\n", tbi->GetTableName().c_str(), tbi->GetLine()  + 1, tbi->GetColumn(), tbi->GetTableAliasName().c_str());
                     }
                         break;
                     default:
-                        /*unreachable*/
-                        break;
+                        assert(false);
                 }
-            });
 
-            uint64_t query_id;
-            std::list<Node*> stmts;
-            Node::ToList(result.result_tree_, stmts);
-            for (auto stmt : stmts)
-            {
-                resultPlan.reset();
-                printf("TABLE ANALYZE:\n");
-                resolve::resolve_select_statement(&resultPlan, stmt, query_id);
-                printf("\n");
-            }
+            }, nullptr, tree);
+            IPlan::Visit(plan);
         }
     }
 

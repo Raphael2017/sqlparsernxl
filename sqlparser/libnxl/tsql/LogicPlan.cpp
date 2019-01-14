@@ -1,5 +1,6 @@
 #include "LogicPlan.h"
 #include <assert.h>
+#include "Stmt.h"
 #include "SelectStmt.h"
 #include "expr.h"
 
@@ -47,14 +48,25 @@ namespace resolve
         return new_gen_qid_++;
     }
 
-    SelectStmt* LogicPlan::add_query()
+    Stmt* LogicPlan::add_query(StmtType stmtType)
     {
-        SelectStmt* s = new SelectStmt;
+        Stmt* s = nullptr;
+        switch (stmtType)
+        {
+            case E_STMT_TYPE_SELECT:
+                s = new SelectStmt;
+                break;
+            case E_STMT_TYPE_UPDATE:
+                s = new UpdateStmt;
+                break;
+            default:
+                assert(false);
+        }
         stmts_.push_back(s);
         return s;
     }
 
-    SelectStmt* LogicPlan::get_query(uint64_t query_id)
+    Stmt* LogicPlan::get_query(uint64_t query_id)
     {
         for (auto stmt : stmts_)
         {

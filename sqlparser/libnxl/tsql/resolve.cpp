@@ -3,6 +3,7 @@
 #include "expr.h"
 #include "SelectStmt.h"
 #include "LogicPlan.h"
+#include "ResultPlan.h"
 #include <assert.h>
 #include <list>
 
@@ -17,9 +18,9 @@ namespace resolve
         if (node->nodeType_ == E_SELECT_WITH_PARENS)
             node = Node::remove_parens(node);
         query_id = plan->logicPlan_->generate_query_id();
-        SelectStmt* select_stmt = plan->logicPlan_->add_query();
+        SelectStmt* select_stmt = dynamic_cast<SelectStmt*>(plan->logicPlan_->add_query(E_STMT_TYPE_SELECT));
         select_stmt->set_query_id(query_id);
-        select_stmt->set_outer_select(parent);
+        select_stmt->set_parent(parent);
 
 
         Node* set_op = node->getChild(E_SELECT_SET_OPERATION);
@@ -236,12 +237,11 @@ namespace resolve
                     }
                     else
                     {
-                        parent->add_table_item(plan, table_name, alias_name,
-                                TableItem::ALIAS_TABLE, OB_INVALID_ID, out_table_id, OB_INVALID_ID);
+                        auto tbi = parent->add_table_item(plan, table_name, alias_name,
+                                TableItem::ALIAS_TABLE, OB_INVALID_ID, out_table_id, OB_INVALID_ID, node);
 
                         if (plan->base_table_visit_)
-                            plan->base_table_visit_(node, TableItem::ALIAS_TABLE,
-                                    table_name, alias_name, parent->get_query_id());
+                            plan->base_table_visit_(plan, tbi, parent->get_query_id());
                     }
                 }
                 else
@@ -260,11 +260,10 @@ namespace resolve
                     }
                     else
                     {
-                        parent->add_table_item(plan, table_name, alias_name,
-                                TableItem::BASE_TABLE, OB_INVALID_ID, out_table_id, OB_INVALID_ID);
+                        auto tbi = parent->add_table_item(plan, table_name, alias_name,
+                                TableItem::BASE_TABLE, OB_INVALID_ID, out_table_id, OB_INVALID_ID, node);
                         if (plan->base_table_visit_)
-                            plan->base_table_visit_(node, TableItem::BASE_TABLE,
-                                    table_name, alias_name, parent->get_query_id());
+                            plan->base_table_visit_(plan, tbi, parent->get_query_id());
                     }
                 }
             }

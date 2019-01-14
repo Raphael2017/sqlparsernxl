@@ -115,6 +115,9 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %left	CROSS FULL INNER JOIN LEFT NATURAL RIGHT ON USING OUTER PIVOT UNPIVOT
 %left	UNION EXCEPT
 %left	INTERSECT
+
+%right ASSIGN ASSIGN_ADD ASSGIN_MINUS ASSIGN_MUL ASSIGN_DIV ASSIGN_REM ASSIGN_BITWISE_AND ASSIGN_BITWISE_OR ASSIGN_BITWISE_XOR
+
 %left	OR
 %left	AND
 %right NOT
@@ -133,6 +136,8 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %left '.'
 %left ';'
 %right FOR
+
+
 
 %token ADD AND ANY ALL ALTER AS ASC
 %token BETWEEN BEGI BIGINT BINARY BOTH BROWSE BY
@@ -174,6 +179,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token CURRENT_TIMESTAMP CONVERT COALESCE CAST
 %token BIT CHAR DATETIME2 DATETIMEOFFSET INT MONEY NCHAR NVARCHAR SMALLDATETIME SMALLMONEY TEXT
 %token COLLATE APPLY SYSTEM_TIME OF CONTAINED PIVOT UNPIVOT
+%token OUTPUT DELETED INSERTED DOLLAR_ACTION
 
 %type <node> sql_stmt stmt_list stmt
 %type <node> dml_stmt
@@ -205,6 +211,9 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> table_value_constructor table_value_constructor_parens row_value_expression_list_parens_list
 %type <node> system_time opt_for_system_time pivot_clause unpivot_clause
 
+%type <node> update_stmt
+%type <node> opt_output_clause update_elem_list update_elem opt_update_where
+%type <node> dml_select_list dml_select_item
 
 %start sql_stmt
 %%
@@ -244,6 +253,77 @@ stmt:
 
 dml_stmt:
     select_stmt
+  | update_stmt
+;
+
+/* UPDATE GRAMMAR */
+update_stmt:
+    with_clause UPDATE opt_top relation_factor opt_with_table_hint
+    SET update_elem_list opt_output_clause opt_from_clause opt_update_where
+    opt_option_query_hint
+  | with_clause UPDATE opt_top TEMP_VARIABLE opt_with_table_hint
+    SET update_elem_list opt_output_clause opt_from_clause opt_update_where
+    opt_option_query_hint
+  |             UPDATE opt_top relation_factor opt_with_table_hint
+    SET update_elem_list opt_output_clause opt_from_clause opt_update_where
+    opt_option_query_hint
+  |             UPDATE opt_top TEMP_VARIABLE opt_with_table_hint
+    SET update_elem_list opt_output_clause opt_from_clause opt_update_where
+    opt_option_query_hint
+;
+
+opt_update_where:
+    opt_where
+  | WHERE CURRENT OF GLOBAL NAME
+  | WHERE CURRENT OF GLOBAL TEMP_VARIABLE
+  | WHERE CURRENT OF        NAME
+  | WHERE CURRENT OF        TEMP_VARIABLE
+;
+
+update_elem_list:
+    update_elem
+  | update_elem ',' update_elem_list
+;
+
+update_elem:
+    expr
+{
+    if (!Node::check_update_item($1))
+    {
+        yyerror(&@1, result, scanner, "update element format error");
+    	YYABORT;
+    }
+    $$ = $1;
+}
+;
+
+opt_output_clause:
+    /*EMPTY*/	{ $$ = nullptr; }
+  | OUTPUT dml_select_list
+  | OUTPUT dml_select_list INTO relation_factor opt_derived_column_list
+  | OUTPUT dml_select_list INTO TEMP_VARIABLE opt_derived_column_list
+;
+
+dml_select_list:
+    dml_select_item
+  | dml_select_item ',' dml_select_list
+;
+
+dml_select_item:
+    DELETED         '.' NAME		AS column_label
+  | DELETED         '.' NAME		   column_label
+  | DELETED         '.' NAME
+  | DELETED         '.' '*'		AS column_label
+  | DELETED         '.' '*'		   column_label
+  | DELETED         '.' '*'
+  | INSERTED 	    '.' NAME		AS column_label
+  | INSERTED        '.' NAME		   column_label
+  | INSERTED        '.' NAME
+  | INSERTED        '.' '*'		AS column_label
+  | INSERTED        '.' '*'		   column_label
+  | INSERTED        '.' '*'
+  | projection
+  | DOLLAR_ACTION
 ;
 
 /* SELECT GRAMMAR */
@@ -673,7 +753,7 @@ common_table_expr:
 ;
 
 opt_derived_column_list:
-    /*EMPTY*/ { $$ = nullptr; }
+    /*EMPTY*/  %prec UMINUS { $$ = nullptr; }
   | simple_ident_list_with_parens
 ;
 
@@ -979,6 +1059,10 @@ opt_simple_ident_list_with_parens:
 /* https://docs.microsoft.com/zh-cn/sql/t-sql/language-elements/transact-sql-syntax-conventions-transact-sql?view=sql-server-2017 */
 relation_factor:
     	                         NAME	%prec UMINUS
+{
+    $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, 4, $1, nullptr, nullptr, nullptr);
+    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
+}
   |                     NAME '.' NAME	%prec UMINUS
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, 4, $3, $1, nullptr, nullptr);
@@ -1175,6 +1259,10 @@ expr_list:
 
 column_ref:
 		 			    NAME	%prec UMINUS
+{
+    $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 1, $1);
+    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
+}
     |   		           NAME '.' NAME	%prec UMINUS
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, 2, $3, $1);
@@ -1404,6 +1492,46 @@ expr:
 {
     $$ = Node::makeNonTerminalNode(E_OP_OR, 2, $1, $3);
     $$->serialize_format = &OP_OR_SERIALIZE_FORMAT;
+}
+  | expr ASSIGN_ADD expr
+{
+    $$ = Node::makeNonTerminalNode(E_OP_ASS_ADD, 2, $1, $3);
+    $$->serialize_format = &OP_ASS_ADD_SERIALIZE_FORMAT;
+}
+  | expr ASSGIN_MINUS expr
+{
+    $$ = Node::makeNonTerminalNode(E_OP_ASS_MINUS, 2, $1, $3);
+    $$->serialize_format = &OP_ASS_MINUS_SERIALIZE_FORMAT;
+}
+  | expr ASSIGN_MUL expr
+{
+    $$ = Node::makeNonTerminalNode(E_OP_ASS_MUL, 2, $1, $3);
+    $$->serialize_format = &OP_ASS_MUL_SERIALIZE_FORMAT;
+}
+  | expr ASSIGN_DIV expr
+{
+    $$ = Node::makeNonTerminalNode(E_OP_ASS_DIV, 2, $1, $3);
+    $$->serialize_format = &OP_ASS_DIV_SERIALIZE_FORMAT;
+}
+  | expr ASSIGN_REM expr
+{
+    $$ = Node::makeNonTerminalNode(E_OP_ASS_REM, 2, $1, $3);
+    $$->serialize_format = &OP_ASS_REM_SERIALIZE_FORMAT;
+}
+  | expr ASSIGN_BITWISE_AND expr
+{
+    $$ = Node::makeNonTerminalNode(E_OP_ASS_BIT_AND, 2, $1, $3);
+    $$->serialize_format = &OP_ASS_BIT_AND_SERIALIZE_FORMAT;
+}
+  | expr ASSIGN_BITWISE_OR expr
+{
+    $$ = Node::makeNonTerminalNode(E_OP_ASS_BIT_OR, 2, $1, $3);
+    $$->serialize_format = &OP_ASS_BIT_OR_SERIALIZE_FORMAT;
+}
+  | expr ASSIGN_BITWISE_XOR expr
+{
+    $$ = Node::makeNonTerminalNode(E_OP_ASS_BIT_XOR, 2, $1, $3);
+    $$->serialize_format = &OP_ASS_BIT_XOR_SERIALIZE_FORMAT;
 }
   | NOT expr
 {
@@ -2337,6 +2465,7 @@ relation_name:
 
 column_label:
     NAME
+  | STRING
 ;
 
 /*https://docs.microsoft.com/en-us/sql/t-sql/data-types/data-types-transact-sql?view=sql-server-2017#approximate-numerics*/

@@ -279,6 +279,14 @@ Form PIVOT_TABLE_SERIALIZE_FORMAT           {{0,"",0,""}, {1," PIVOT "}, {0,"",1
 Form UNPIVOT_TABLE_SERIALIZE_FORMAT         {{0,"",0,""}, {1," UNPIVOT "}, {0,"",1,""}, {0," AS ",2,""}};
 Form PIVOT_CLAUSE_SERIALIZE_FORMAT          {{1,"("}, {0,"",0,""}, {1," FOR "}, {0,"",1,""}, {1," IN "}, {0,"",2,""}, {1,")"}};
 Form INTO_CLAUSE_SERIALIZE_FORMAT           {{1,"INTO "}, {0,"",0,""}};
+Form OP_ASS_ADD_SERIALIZE_FORMAT            {{0,"",0,""}, {1," += "}, {0,"",1,""}};
+Form OP_ASS_MINUS_SERIALIZE_FORMAT          {{0,"",0,""}, {1," -= "}, {0,"",1,""}};
+Form OP_ASS_MUL_SERIALIZE_FORMAT            {{0,"",0,""}, {1," *= "}, {0,"",1,""}};
+Form OP_ASS_DIV_SERIALIZE_FORMAT            {{0,"",0,""}, {1," /= "}, {0,"",1,""}};
+Form OP_ASS_REM_SERIALIZE_FORMAT            {{0,"",0,""}, {1," %= "}, {0,"",1,""}};
+Form OP_ASS_BIT_AND_SERIALIZE_FORMAT        {{0,"",0,""}, {1," &= "}, {0,"",1,""}};
+Form OP_ASS_BIT_OR_SERIALIZE_FORMAT         {{0,"",0,""}, {1," |= "}, {0,"",1,""}};
+Form OP_ASS_BIT_XOR_SERIALIZE_FORMAT        {{0,"",0,""}, {1," ^= "}, {0,"",1,""}};
 #endif
 
 

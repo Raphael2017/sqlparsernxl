@@ -10,6 +10,7 @@
 #include <functional>
 #include <set>
 #include "environment.h"
+#include "Interface.h"
 
 #define NODE_CHILDREN_DEBUG
 
@@ -42,7 +43,7 @@ struct TerminalToken
     int column{0};
 };
 
-struct Node
+struct Node : public INode
 {
     static Node* makeTerminalNode(NodeType tp, const std::string&);
     static Node* makeNonTerminalNode(NodeType tp, int num, ...);
@@ -86,7 +87,7 @@ struct Node
 
 
     Node();
-    ~Node();
+    virtual ~Node();
     Node* getParent();
     Node* setParent(Node*);
     Node* getChild(int key);
@@ -131,6 +132,19 @@ private:
     static Node* make_query_hint(const std::string&, Node*);
     static bool check_update_item(Node*);
     friend int yyparse (ParseResult* result, yyscan_t scanner);
+
+public:
+    // implement INode
+    virtual NodeType GetType();
+    virtual INode* GetParent();
+    virtual bool SetParent(INode* node);
+    virtual INode* GetChild(int key);
+    virtual bool SetChild(int key, INode* node);
+    virtual int GetChildrenCount() const;
+    virtual std::string Text() const;
+    virtual bool IsTerminal() const;
+    virtual std::string Serialize();
+    virtual void Print();
 };
 
 

@@ -69,6 +69,7 @@
 //  E_ALIAS
 #define E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS 0
 #define E_ALIAS_RELATION_NAME   1
+#define E_ALIAS_TABLE_HINTS     3
 
 //  E_JOINED_TABLE
 #define E_JOINED_TABLE_JOIN_TYPE 0
@@ -231,6 +232,16 @@ enum NodeType
     E_OP_NOT_IN,
     E_OP_CNN,               // STRING CONNECTOR
 
+    E_OP_ASS,
+    E_OP_ASS_ADD,
+    E_OP_ASS_MINUS,
+    E_OP_ASS_MUL,
+    E_OP_ASS_DIV,
+    E_OP_ASS_REM,
+    E_OP_ASS_BIT_AND,
+    E_OP_ASS_BIT_OR,
+    E_OP_ASS_BIT_XOR,
+
     E_OP_COLLATE,
 
     E_EXPR_LIST,
@@ -286,6 +297,24 @@ enum NodeType
 
     E_NODETYPE_END
 };
+
+enum StmtType
+{
+    E_NONE,
+    E_STMT_TYPE_SELECT,
+    E_STMT_TYPE_UPDATE,
+};
+
+enum TableItemType
+{
+    E_BASIC_TABLE,
+    E_BASIC_TABLE_WITH_ALIAS,
+    E_DERIVED_TABLE,
+    E_CTE_TABLE,
+};
+
+#define OB_INVALID_ID  0
+#define OB_APP_MIN_COLUMN_ID  500
 
 const std::set<std::string> FUNCTION_CAN_WITH_PARAM_STAR{
     "COUNT", "COUNT_BIG"

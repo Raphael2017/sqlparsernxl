@@ -9,7 +9,9 @@ namespace resolve
             std::vector<TableColumnRef>& out_table_column_ref)
     {
         assert(logic != nullptr && id_ != OB_INVALID_ID);
-        SelectStmt* stmt = logic->get_query(id_);
+        Stmt* stmt1 = logic->get_query(id_);
+        assert(stmt1 != nullptr);
+        SelectStmt* stmt = dynamic_cast<SelectStmt*>(stmt1);
         assert(stmt != nullptr);
         for (const SelectItem& sli : stmt->select_items_)
         {

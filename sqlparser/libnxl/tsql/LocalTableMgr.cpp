@@ -2,6 +2,7 @@
 #include <assert.h>
 #include "LocalTableMgr.h"
 #include "resolve.h"
+#include "keydef.h"
 
 namespace resolve
 {
