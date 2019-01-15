@@ -18,7 +18,7 @@ namespace resolve
             USE_CTE_TABLE,
         };
 
-        uint64_t table_id;
+        uint64_t table_id{OB_INVALID_ID};
         std::string table_name_;
         std::string schema_name_;
         std::string database_name_;
@@ -34,13 +34,14 @@ namespace resolve
          * for GENERATED_TABLE, CTE_TABLE, ref_id_ link to a query_id
          * for BASE_TABLE, ALIAS_TABLE, ref_id_ link to a base table_id
          * */
-        uint64_t ref_id_;
-        uint64_t cte_at_query_id_; // for USE_CTE_TABLE  <cte_at_query_id_, ref_id_> link to cte definition
+        uint64_t ref_id_{OB_INVALID_ID};
+        uint64_t cte_at_query_id_{OB_INVALID_ID}; // for USE_CTE_TABLE  <cte_at_query_id_, ref_id_> link to cte definition
 
         bool is_recursive_cte_{false};  // for CTE_TABLE
         Node* node_{nullptr};
 
-
+        bool default_schema_{true};
+        uint64_t query_id_{OB_INVALID_ID};
     public:
         void bind_node(Node* node);
         bool check_is_ref(
@@ -49,6 +50,7 @@ namespace resolve
     public:
         virtual TableItemType GetTableItemType();
         virtual uint64_t GetTableID();
+        virtual uint64_t GetQueryID();
         virtual std::string GetTableName();
         virtual std::string GetTableAliasName();
         virtual std::string GetSchemaName();
@@ -64,12 +66,26 @@ namespace resolve
         virtual int GetColumn();
     };
 
-    struct ColumnItem
+    struct ColumnItem : public ITableColumnRefItem
     {
-        uint64_t column_id_;
+        uint64_t column_id_{OB_INVALID_ID};
         std::string column_name_;
-        uint64_t table_id_;
-        uint64_t query_id_;     // for correlated subquery
+        uint64_t table_id_{OB_INVALID_ID};
+        uint64_t query_id_{OB_INVALID_ID};     // for correlated subquery
+
+        std::string column_object_;
+        int line_;
+        int column_;
+        ITableItem* tbi_;
+    public:
+        void bind(Node* node, ITableItem* tbi);
+    public:
+        virtual ITableItem* GetTableItem();
+        virtual std::string GetColumnName();
+        virtual std::string GetColumnObject();
+        virtual bool SetText(const std::string& columnref);
+        virtual int GetLine();
+        virtual int GetColumn();
     };
 
     struct SelectItem
@@ -135,9 +151,21 @@ namespace resolve
                 TableItem& out_table_item);
 
         bool get_table_item(
+                const std::string& schema,
+                const std::string& table_name,
+                uint64_t& out_query_id,
+                uint64_t& out_table_id,
+                TableItem*& out_table_item);
+
+        bool get_table_item(
                 uint64_t table_id,
                 uint64_t& out_query_id,
                 TableItem& out_table_item);
+
+        bool get_table_item(
+                uint64_t table_id,
+                uint64_t& out_query_id,
+                TableItem*& out_table_item);
 
         bool check_table_column(
                 ResultPlan* plan,
@@ -155,7 +183,8 @@ namespace resolve
                 const std::string& schema,
                 const std::string& table_name,
                 const std::string& column_name,
-                ColumnItem& out_column_item);
+                ColumnItem& out_column_item,
+                Node* node);
 
     private:
         uint64_t query_id_;
@@ -176,7 +205,7 @@ namespace resolve
                 uint64_t cte_at_query_id,
                 Node* node);
 
-        static void push_back_(std::vector<ColumnItem>& src, const ColumnItem& it);
+        static ColumnItem* push_back_(std::vector<ColumnItem>& src, const ColumnItem& it);
 
         friend int resolve_cte(ResultPlan*, Node*, Stmt*, uint64_t&);
         friend int resolve_table(

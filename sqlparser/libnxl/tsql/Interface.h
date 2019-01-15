@@ -21,13 +21,15 @@ struct INode
 };
 
 struct ITableItem;
+struct ITableColumnRefItem;
 struct IStmt;
 struct IPlan
 {
-    typedef std::function<void(IPlan*, ITableItem*,
-                               uint64_t query_id)> BaseTableVisit;
+    typedef std::function<void(IPlan*, ITableItem*)> BaseTableVisit;
+    typedef std::function<void(IPlan*, ITableColumnRefItem*)> BaseTableColumnVisit;
     static void Visit(IPlan*);
-    static IPlan* CreatePlan(const BaseTableVisit& baseTableVisit, void* context, INode*);
+    static IPlan* CreatePlan(const BaseTableVisit& baseTableVisit,
+            const BaseTableColumnVisit& baseTableColumnVisit, void* context, INode*);
     static void Destroy(IPlan*);
     virtual ~IPlan() {}
     virtual void* GetContext() = 0;
@@ -39,6 +41,7 @@ struct ITableItem
     virtual ~ITableItem(){}
     virtual TableItemType GetTableItemType() = 0;
     virtual uint64_t GetTableID() = 0;
+    virtual uint64_t GetQueryID() = 0;
     virtual std::string GetTableName() = 0;
     virtual std::string GetTableAliasName() = 0;
     virtual std::string GetSchemaName() = 0;
@@ -50,6 +53,17 @@ struct ITableItem
             TableItemType tp,
             const std::string& newtable,
             const std::string& alias) = 0;
+    virtual int GetLine() = 0;
+    virtual int GetColumn() = 0;
+};
+
+struct ITableColumnRefItem
+{
+    virtual ~ITableColumnRefItem(){}
+    virtual ITableItem* GetTableItem() = 0;
+    virtual std::string GetColumnName() = 0;
+    virtual std::string GetColumnObject() = 0;
+    virtual bool SetText(const std::string& columnref) = 0;
     virtual int GetLine() = 0;
     virtual int GetColumn() = 0;
 };

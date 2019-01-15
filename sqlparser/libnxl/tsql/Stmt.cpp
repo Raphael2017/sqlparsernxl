@@ -21,6 +21,7 @@ namespace resolve
         table_object_ = factor->serialize();
         Node* schema = factor->getChild(E_TABLE_IDENT_SCHEMA);
         schema_name_ = schema ? schema->terminalToken_.str : "dbo"; // sqlserver default schema
+        default_schema_ = (schema == nullptr);
         Node* db = factor->getChild(E_TABLE_IDENT_DATABASE);
         database_name_ = db ? db->terminalToken_.str : "";
         Node* server = factor->getChild(E_TABLE_IDENT_SERVER);
@@ -48,7 +49,7 @@ namespace resolve
             {
                 return schema == schema_name_ && table == table_name_;
             }
-            return table == alias_name_;
+            return table == table_name_;
         }
     }
 
@@ -76,6 +77,11 @@ namespace resolve
     uint64_t TableItem::GetTableID()
     {
         return table_id;
+    }
+
+    uint64_t TableItem::GetQueryID()
+    {
+        return query_id_;
     }
 
     std::string TableItem::GetTableName()
@@ -106,7 +112,9 @@ namespace resolve
 
     std::string TableItem::GetSchemaName()
     {
-        return schema_name_;
+        if (!default_schema_)
+            return schema_name_;
+        return "";
     }
 
     std::string TableItem::GetDatabaseName()
@@ -155,6 +163,46 @@ namespace resolve
         return column_;
     }
     //////////////////////////////////////////////////////////////////////////////
+    void ColumnItem::bind(Node* node, ITableItem* tbi)
+    {
+        tbi_ = tbi;
+        assert(node->nodeType_ == E_OP_NAME_FIELD);
+        column_object_ = node->serialize();
+        Node* cl = node->getChild(E_OP_NAME_FIELD_COLUMN_NAME);
+        line_ = cl->terminalToken_.line;
+        column_ = cl->terminalToken_.column;
+    }
+
+    ITableItem* ColumnItem::GetTableItem()
+    {
+        return tbi_;
+    }
+
+    std::string ColumnItem::GetColumnName()
+    {
+        return column_name_;
+    }
+
+    std::string ColumnItem::GetColumnObject()
+    {
+        return column_object_;
+    }
+
+    bool ColumnItem::SetText(const std::string& columnref)
+    {
+        return false;
+    }
+
+    int ColumnItem::GetLine()
+    {
+        return line_;
+    }
+
+    int ColumnItem::GetColumn()
+    {
+        return column_;
+    }
+    //////////////////////////////////////////////////////////////////////////////
     Stmt::Stmt() : query_id_(OB_INVALID_ID),
                    parent_(nullptr)
 
@@ -197,9 +245,11 @@ namespace resolve
             uint64_t cte_at_query_id,
             Node* node)
     {
-        return _add_table_item(table_items_, resultPlan,
+        auto ret = _add_table_item(table_items_, resultPlan,
                                table_name, alias_name, tbtype,
                                ref_id, out_table_id, cte_at_query_id, node);
+        ret->query_id_ = get_query_id();
+        return ret;
     }
 
     TableItem* Stmt::add_cte_item(
@@ -213,9 +263,11 @@ namespace resolve
             Node* node)
     {
         assert(tbtype == TableItem::CTE_TABLE);
-        return _add_table_item(cte_items_, resultPlan,
+        auto ret = _add_table_item(cte_items_, resultPlan,
                                table_name, alias_name, tbtype,
                                ref_id, out_table_id, cte_at_query_id, node);
+        ret->query_id_ = get_query_id();
+        return ret;
     }
 
     bool Stmt::check_in_cte(
@@ -338,6 +390,36 @@ namespace resolve
     }
 
     bool Stmt::get_table_item(
+            const std::string& schema,
+            const std::string& table_name,
+            uint64_t& out_query_id,
+            uint64_t& out_table_id,
+            TableItem*& out_table_item)
+    {
+        assert(table_name.length() > 0);
+        Stmt* cur = this;
+        while (cur != nullptr)
+        {
+            for (TableItem& tbi : cur->table_items_)
+            {
+                if (tbi.check_is_ref(schema, table_name))
+                {
+                    out_table_id = tbi.table_id;
+                    out_query_id = cur->query_id_;
+                    out_table_item = &tbi;
+                    return true;
+                }
+            }
+            /*
+             * Since correlated subquery is supported, if no match in this query,
+             * maybe this is a subquery, so look up in the outer query
+             * */
+            cur = cur->parent_;
+        }
+        return false;
+    }
+
+    bool Stmt::get_table_item(
             uint64_t table_id,
             uint64_t& out_query_id,
             TableItem& out_table_item)
@@ -351,6 +433,32 @@ namespace resolve
                 {
                     out_query_id = cur->query_id_;
                     out_table_item = tbi;
+                    return true;
+                }
+            }
+            /*
+             * Since correlated subquery is supported, if no match in this query,
+             * maybe this is a subquery, so look up in the outer query
+             * */
+            cur = cur->parent_;
+        }
+        return false;
+    }
+
+    bool Stmt::get_table_item(
+            uint64_t table_id,
+            uint64_t& out_query_id,
+            TableItem*& out_table_item)
+    {
+        Stmt* cur = this;
+        while (cur != nullptr)
+        {
+            for (TableItem& tbi : cur->table_items_)
+            {
+                if (tbi.table_id == table_id)
+                {
+                    out_query_id = cur->query_id_;
+                    out_table_item = &tbi;
                     return true;
                 }
             }
@@ -492,11 +600,12 @@ namespace resolve
             const std::string& schema,
             const std::string& table_name,
             const std::string& column_name,
-            ColumnItem& out_column_item)
+            ColumnItem& out_column_item,
+            Node* node)
     {
         uint64_t query_id = OB_INVALID_ID;
         uint64_t table_id = OB_INVALID_ID;
-        TableItem tbi;
+        TableItem* tbi;
         bool findtb = get_table_item(schema, table_name, query_id, table_id, tbi);
         assert(findtb);
         if (findtb && query_id != this->query_id_)
@@ -504,19 +613,21 @@ namespace resolve
             // here means Correlated Sub-Query
         }
         Stmt* stmt = plan->logicPlan_->get_query(query_id);
-        ColumnItem cli{OB_INVALID_ID, "", OB_INVALID_ID, OB_INVALID_ID};
-        bool checkColumn = check_table_column(plan, column_name, tbi, cli.column_id_);
+        ColumnItem cli;
+        bool checkColumn = check_table_column(plan, column_name, *tbi, cli.column_id_);
 
-        if (!checkColumn && (tbi.type_ == TableItem::BASE_TABLE || tbi.type_ == TableItem::ALIAS_TABLE))
+        if (!checkColumn && (tbi->type_ == TableItem::BASE_TABLE || tbi->type_ == TableItem::ALIAS_TABLE))
         {
-            cli.column_id_ = plan->local_table_mgr->add_local_table_column(tbi.table_name_, column_name);
+            cli.column_id_ = plan->local_table_mgr->add_local_table_column(tbi->table_name_, column_name);
         }
 
         cli.column_name_ = column_name;
-        cli.table_id_ = tbi.table_id;
+        cli.table_id_ = tbi->table_id;
         cli.query_id_ = query_id;
-        push_back_(column_items_, cli);
-        out_column_item = cli;
+        ColumnItem* t = push_back_(column_items_, cli);
+        out_column_item = *t;
+        t->bind(node, tbi);
+        plan->baseTableColumnVisit_(plan, t);
         return 0;
     }
 
@@ -590,8 +701,9 @@ namespace resolve
         return &tbs.back();
     }
 
-    void Stmt::push_back_(std::vector<ColumnItem>& src, const ColumnItem& it)
+    ColumnItem* Stmt::push_back_(std::vector<ColumnItem>& src, const ColumnItem& it)
     {
+        /*
         std::vector<ColumnItem>::iterator find = std::find_if(src.begin(), src.end(),
           [it](ColumnItem cur)
           {
@@ -603,6 +715,8 @@ namespace resolve
         if (find == src.end())
         {
             src.push_back(it);
-        }
+        }*/
+        src.push_back(it);
+        return &src.back();
     }
 }

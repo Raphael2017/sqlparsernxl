@@ -952,13 +952,28 @@ opt_for_system_time:
 
 system_time:
     AS OF STRING
-{ $$ = Node::makeTerminalNode(E_STRING, "AS OF "+$3->text()); }
+{
+    $$ = Node::makeTerminalNode(E_STRING, "AS OF "+$3->text());
+    delete($3);
+}
   | FROM STRING TO STRING
-{ $$ = Node::makeTerminalNode(E_STRING, "FROM "+$2->text()+" TO "+$4->text()); }
+{
+    $$ = Node::makeTerminalNode(E_STRING, "FROM "+$2->text()+" TO "+$4->text());
+    delete($2);
+    delete($4);
+}
   | BETWEEN STRING AND STRING
-{ $$ = Node::makeTerminalNode(E_STRING, "BETWEEN "+$2->text()+" AND "+$4->text()); }
+{
+    $$ = Node::makeTerminalNode(E_STRING, "BETWEEN "+$2->text()+" AND "+$4->text());
+    delete($2);
+    delete($4);
+}
   | CONTAINED IN '(' STRING ',' STRING ')'
-{ $$ = Node::makeTerminalNode(E_STRING, "CONTAINED IN("+$4->text()+","+$6->text()+")"); }
+{
+    $$ = Node::makeTerminalNode(E_STRING, "CONTAINED IN("+$4->text()+","+$6->text()+")");
+    delete($4);
+    delete($6);
+}
   | ALL
 { $$ = Node::makeTerminalNode(E_STRING, "ALL"); }
 ;
@@ -1116,17 +1131,6 @@ joined_table:
     Node* nd = Node::makeTerminalNode(E_JOIN_INNER, "");
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $3, $5);
     $$->serialize_format = &JOINED_TB_1_SERIALIZE_FORMAT;
-}
-  | table_factor join_type JOIN table_factor USING '(' simple_ident_list ')'
-{
-    $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, $2, $1, $4, $7);
-    $$->serialize_format = &JOINED_TB_3_SERIALIZE_FORMAT;
-}
-  | table_factor JOIN table_factor USING '(' simple_ident_list ')'
-{
-    Node* nd = Node::makeTerminalNode(E_JOIN_INNER, "");
-    $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, 4, nd, $1, $3, $6);
-    $$->serialize_format = &JOINED_TB_3_SERIALIZE_FORMAT;
 }
   | table_factor CROSS JOIN table_factor
 {
@@ -1361,8 +1365,8 @@ expr_const:
   | NULLX
   | QUESTIONMARK
   | DEFAULT		{ $$ = Node::makeTerminalNode(E_STRING, "DEFAULT"); }
-  | '$' INTNUM		{ $$ = Node::makeTerminalNode(E_STRING, "$"+$2->text()); }
-  | '$' APPROXNUM	{ $$ = Node::makeTerminalNode(E_STRING, "$"+$2->text()); }
+  | '$' INTNUM		{ $$ = Node::makeTerminalNode(E_STRING, "$"+$2->text()); delete($2); }
+  | '$' APPROXNUM	{ $$ = Node::makeTerminalNode(E_STRING, "$"+$2->text()); delete($2); }
 ;
 
 simple_expr:
@@ -2393,59 +2397,59 @@ window_frame_extent:
     UNBOUNDED PRECEDING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "UNBOUNDED PRECEDING"); }
   | INTNUM PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, $1->text()+"PRECEDING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, $1->text()+"PRECEDING"); delete($1); }
   | CURRENT ROW
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "CURRENT ROW"); }
   | BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED PRECEDING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED PRECEDING"); }
   | BETWEEN INTNUM PRECEDING   AND UNBOUNDED PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND UNBOUNDED PRECEDING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND UNBOUNDED PRECEDING"); delete($2); }
   | BETWEEN CURRENT ROW         AND UNBOUNDED PRECEDING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND UNBOUNDED PRECEDING"); }
   | BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED PRECEDING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED PRECEDING"); }
   | BETWEEN INTNUM FOLLOWING   AND UNBOUNDED PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND UNBOUNDED PRECEDING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND UNBOUNDED PRECEDING"); delete($2); }
   | BETWEEN UNBOUNDED PRECEDING AND INTNUM PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND "+$5->text()+" PRECEDING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND "+$5->text()+" PRECEDING"); delete($5);}
   | BETWEEN INTNUM PRECEDING   AND INTNUM PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND "+$5->text()+" PRECEDING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND "+$5->text()+" PRECEDING"); delete($2); delete($5); }
   | BETWEEN CURRENT ROW         AND INTNUM PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND "+$5->text()+" PRECEDING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND "+$5->text()+" PRECEDING"); delete($5); }
   | BETWEEN UNBOUNDED FOLLOWING AND INTNUM PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND "+$5->text()+" PRECEDING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND "+$5->text()+" PRECEDING"); delete($5); }
   | BETWEEN INTNUM FOLLOWING   AND INTNUM PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND "+$5->text()+" PRECEDING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND "+$5->text()+" PRECEDING"); delete($2); delete($5); }
   | BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW"); }
   | BETWEEN INTNUM PRECEDING   AND CURRENT ROW
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND CURRENT ROW"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND CURRENT ROW"); delete($2); }
   | BETWEEN CURRENT ROW         AND CURRENT ROW
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND CURRENT ROW"); }
   | BETWEEN UNBOUNDED FOLLOWING AND CURRENT ROW
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND CURRENT ROW"); }
   | BETWEEN INTNUM FOLLOWING   AND CURRENT ROW
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND CURRENT ROW"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND CURRENT ROW"); delete($2); }
   | BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING"); }
   | BETWEEN INTNUM PRECEDING   AND UNBOUNDED FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND UNBOUNDED FOLLOWING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND UNBOUNDED FOLLOWING"); delete($2); }
   | BETWEEN CURRENT ROW         AND UNBOUNDED FOLLOWING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING"); }
   | BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED FOLLOWING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED FOLLOWING"); }
   | BETWEEN INTNUM FOLLOWING   AND UNBOUNDED FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND UNBOUNDED FOLLOWING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND UNBOUNDED FOLLOWING"); delete($2); }
   | BETWEEN UNBOUNDED PRECEDING AND DECIMAL FOLLOWING
 { $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND DECIMAL FOLLOWING"); }
   | BETWEEN INTNUM PRECEDING   AND INTNUM FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND "+$5->text()+" FOLLOWING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND "+$5->text()+" FOLLOWING"); delete($2); delete($5); }
   | BETWEEN CURRENT ROW         AND INTNUM FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND "+$5->text()+" FOLLOWING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND "+$5->text()+" FOLLOWING"); delete($5); }
   | BETWEEN UNBOUNDED FOLLOWING AND INTNUM FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND "+$5->text()+" FOLLOWING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND "+$5->text()+" FOLLOWING"); delete($5); }
   | BETWEEN INTNUM FOLLOWING   AND INTNUM FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND "+$5->text()+" FOLLOWING"); }
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND "+$5->text()+" FOLLOWING"); delete($2); delete($5); }
 
 distinct_or_all:
     ALL
@@ -2479,15 +2483,15 @@ data_type:
   | TINYINT
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "TINYINT"); }
   | DECIMAL '(' INTNUM ',' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DECIMAL("+$3->text()+","+$5->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DECIMAL("+$3->text()+","+$5->text()+")"); delete($3); delete($5); }
   | DECIMAL '(' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DECIMAL("+$3->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DECIMAL("+$3->text()+")"); delete($3); }
   | DECIMAL
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "DECIMAL"); }
   | NUMERIC '(' INTNUM ',' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NUMERIC("+$3->text()+","+$5->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NUMERIC("+$3->text()+","+$5->text()+")"); delete($3); delete($5); }
   | NUMERIC '(' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NUMERIC("+$3->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NUMERIC("+$3->text()+")"); delete($3); }
   | NUMERIC
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "NUMERIC"); }
   | BIT
@@ -2499,15 +2503,15 @@ data_type:
   | REAL
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "REAL"); }
   | FLOAT '(' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "FLOAT("+$3->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "FLOAT("+$3->text()+")"); delete($3); }
   | DATE
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATE"); }
   | DATETIMEOFFSET '(' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATETIMEOFFSET("+$3->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATETIMEOFFSET("+$3->text()+")"); delete($3); }
   | DATETIMEOFFSET
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATETIMEOFFSET"); }
   | DATETIME2 '(' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATETIME2("+$3->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATETIME2("+$3->text()+")"); delete($3); }
   | DATETIME2
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATETIME2"); }
   | SMALLDATETIME
@@ -2515,15 +2519,15 @@ data_type:
   | DATETIME
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "DATETIME"); }
   | TIME '(' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "TIME("+$3->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "TIME("+$3->text()+")"); delete($3); }
   | TIME
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "TIME"); }
   | CHAR '(' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "CHAR("+$3->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "CHAR("+$3->text()+")"); delete($3); }
   | CHAR
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "CHAR"); }
   | VARCHAR '(' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "VARCHAR("+$3->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "VARCHAR("+$3->text()+")"); delete($3); }
   | VARCHAR '(' MAX ')'
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "VARCHAR(MAX)"); }
   | VARCHAR
@@ -2531,21 +2535,21 @@ data_type:
   | TEXT
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "TEXT"); }
   | NCHAR '(' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NCHAR("+$3->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NCHAR("+$3->text()+")"); delete($3); }
   | NCHAR
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "NCHAR"); }
   | NVARCHAR '(' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NVARCHAR("+$3->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "NVARCHAR("+$3->text()+")"); delete($3); }
   | NVARCHAR '(' MAX ')'
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "NVARCHAR(MAX)"); }
   | NVARCHAR
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "NVARCHAR"); }
   | BINARY '(' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "BINARY("+$3->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "BINARY("+$3->text()+")"); delete($3); }
   | BINARY
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "BINARY"); }
   | VARBINARY '(' INTNUM ')'
-{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "VARBINARY("+$3->text()+")"); }
+{ $$ = Node::makeTerminalNode(E_DATA_TYPE, "VARBINARY("+$3->text()+")"); delete($3); }
   | VARBINARY '(' MAX ')'
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "VARBINARY(MAX)"); }
   | VARBINARY

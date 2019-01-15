@@ -10,14 +10,13 @@ namespace resolve
     struct LocalTableMgr;
     struct ResultPlan : public IPlan
     {
-        typedef std::function<void(IPlan*, ITableItem*,
-        uint64_t query_id)> BaseTableVisit;
-        explicit ResultPlan(const BaseTableVisit& visit);
+        ResultPlan(const BaseTableVisit& visit, const BaseTableColumnVisit& visit1);
         ~ResultPlan();
         void reset();
         LogicPlan* logicPlan_{nullptr};
         LocalTableMgr* local_table_mgr{nullptr};
         BaseTableVisit base_table_visit_;
+        BaseTableColumnVisit baseTableColumnVisit_;
         void* context_{nullptr};
         Node* tree_root_{nullptr};
 

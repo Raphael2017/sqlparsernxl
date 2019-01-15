@@ -5,13 +5,18 @@
 #include "ResultPlan.h"
 
 
-IPlan* IPlan::CreatePlan(const BaseTableVisit& baseTableVisit, void* context, INode* node)
+IPlan* IPlan::CreatePlan(const BaseTableVisit& baseTableVisit, const BaseTableColumnVisit& baseTableColumnVisit , void* context, INode* node)
 {
     Node* root = dynamic_cast<Node*>(node);
-    resolve::ResultPlan* ret = new resolve::ResultPlan(baseTableVisit);
+    resolve::ResultPlan* ret = new resolve::ResultPlan(baseTableVisit, baseTableColumnVisit);
     ret->context_ = context;
     ret->tree_root_ = root;
     return ret;
+}
+
+void IPlan::Destroy(IPlan* plan)
+{
+    delete(plan);
 }
 
 void IPlan::Visit(IPlan* p)

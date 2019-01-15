@@ -241,7 +241,7 @@ namespace resolve
                                 TableItem::ALIAS_TABLE, OB_INVALID_ID, out_table_id, OB_INVALID_ID, node);
 
                         if (plan->base_table_visit_)
-                            plan->base_table_visit_(plan, tbi, parent->get_query_id());
+                            plan->base_table_visit_(plan, tbi);
                     }
                 }
                 else
@@ -263,7 +263,7 @@ namespace resolve
                         auto tbi = parent->add_table_item(plan, table_name, alias_name,
                                 TableItem::BASE_TABLE, OB_INVALID_ID, out_table_id, OB_INVALID_ID, node);
                         if (plan->base_table_visit_)
-                            plan->base_table_visit_(plan, tbi, parent->get_query_id());
+                            plan->base_table_visit_(plan, tbi);
                     }
                 }
             }
@@ -373,36 +373,26 @@ namespace resolve
             return 0;
         if (node->nodeType_ == E_OP_NAME_FIELD)
         {
+
+            Node* sch = node->getChild(E_OP_NAME_FIELD_SCHEMA_NAME);
             Node* tb = node->getChild(E_OP_NAME_FIELD_RELATION_NAME);
             Node* cl = node->getChild(E_OP_NAME_FIELD_COLUMN_NAME);
             assert(cl != nullptr);
-            /*
             if (tb)
             {
-                ColumnItem cli{OB_INVALID_ID, "", OB_INVALID_ID, OB_INVALID_ID};
-                parent->add_column_item(plan, tb->terminalToken_.str,
-                        cl->terminalToken_.yytex, cli);
+                ColumnItem cli;
+                parent->add_column_item(plan, sch ? sch->terminalToken_.str : "" , tb->terminalToken_.str,
+                        cl->terminalToken_.str, cli, node);
             }
             else
             {
-                ColumnItem cli{OB_INVALID_ID, "", OB_INVALID_ID, OB_INVALID_ID};
-                parent->add_column_item(plan, cl->terminalToken_.yytex, cli);
+                // todo
             }
-             */
             return 0;
         }
         else if (node->nodeType_ == E_STAR)
         {
-            for (const TableItem& tbi : parent->get_table_items())
-            {
-                if (tbi.type_ == TableItem::BASE_TABLE || tbi.type_ == TableItem::ALIAS_TABLE)
-                {
-                    /*
-                    ColumnItem cli{OB_INVALID_ID, "", OB_INVALID_ID, OB_INVALID_ID};
-                    parent->add_column_item(plan, tbi.table_name_, "*", cli);
-                     */
-                }
-            }
+            // todo
         }
         if (node->nodeType_ == E_SELECT)
         {

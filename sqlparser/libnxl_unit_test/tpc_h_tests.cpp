@@ -67,6 +67,7 @@ TEST(TPCHQueryGrammarTests)
         {
             concatenated += query + "\n";
         }
+        INode::Destroy(tree);
     }
 
     clock_t start, end;
@@ -85,7 +86,7 @@ TEST(TPCHQueryGrammarTests)
     if (tree)
     {
         auto t = tree->GetType();
-        IPlan* plan = IPlan::CreatePlan([](IPlan* plan, ITableItem* tbi, uint64_t query_id){
+        IPlan* plan = IPlan::CreatePlan([](IPlan* plan, ITableItem* tbi){
             switch (tbi->GetTableItemType())
             {
                 case E_BASIC_TABLE:
@@ -95,16 +96,23 @@ TEST(TPCHQueryGrammarTests)
                     break;
                 case E_BASIC_TABLE_WITH_ALIAS:
                 {
-                    printf("access base table: %-25s at (L%+3d:%-2d) alias: %-10s\n", tbi->GetTableName().c_str(), tbi->GetLine()  + 1, tbi->GetColumn(), tbi->GetTableAliasName().c_str());
+                    printf("access base table: %-25s at (L%+3d:%-2d) alias: %-10s\n", tbi->GetTableObject().c_str(), tbi->GetLine()  + 1, tbi->GetColumn(), tbi->GetTableAliasName().c_str());
                 }
                     break;
                 default:
                     break;
             }
 
-        }, nullptr, tree);
+        },
+                [](IPlan* plan, ITableColumnRefItem* cli){
+                printf("base column access : %-25s at (L%+3d:%-2d) src table : %-25s at (L%+3d:%-2d)\n",
+                    cli->GetColumnName().c_str(), cli->GetLine() + 1, cli->GetColumn() + 1,
+                   cli->GetTableItem()->GetTableObject().c_str(), cli->GetTableItem()->GetLine() + 1, cli->GetTableItem()->GetColumn());
+            }, nullptr, tree);
         IPlan::Visit(plan);
-        printf("%s\n", concatenated.c_str());
+        //printf("%s\n", concatenated.c_str());
+        INode::Destroy(tree);
+        IPlan::Destroy(plan);
     }
 
     ASSERT_EQ(testsFailed, 0);

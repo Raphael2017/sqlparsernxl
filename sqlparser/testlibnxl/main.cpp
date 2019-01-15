@@ -127,33 +127,53 @@ int main()
         "    JOIN Person.StateProvince as sp   \n"
         "    ON sp.StateProvinceID = a.StateProvinceID;";
 
+    a = "SELECT * \n"
+        "FROM SA.SALES \n"
+        "WHERE QTY=(\n"
+        "        SELECT QTY \n"
+        "        FROM SALES \n"
+        "        WHERE QTY=SA.SALES.QTY)";
+
+    a = "SELECT * \n"
+        "FROM SALES \n"
+        "WHERE OrderID=(\n"
+        "        SELECT QTY \n"
+        "        FROM SA.SALES \n"
+        "        WHERE dbo.SALES.OrderID=SALES.OrderID)";
+
     {
         INode* tree = INode::Parse(a);
         auto t = tree->GetType();
         if (tree)
         {
             auto t = tree->GetType();
-            IPlan* plan = IPlan::CreatePlan([](IPlan* plan, ITableItem* tbi, uint64_t query_id){
-                auto stmt_type = plan->GetQuery(query_id)->GetStmtType();
-                switch (tbi->GetTableItemType())
-                {
-                    case E_BASIC_TABLE:
+            IPlan* plan = IPlan::CreatePlan([](IPlan* plan, ITableItem* tbi){
+                    switch (tbi->GetTableItemType())
                     {
-                        printf("access base table: %-25s at (L%+3d:%-2d)\n", tbi->GetTableName().c_str(), tbi->GetLine() + 1, tbi->GetColumn());
+                        case E_BASIC_TABLE:
+                        {
+                            printf("access base table: %-25s at (L%+3d:%-2d)\n", tbi->GetTableName().c_str(), tbi->GetLine() + 1, tbi->GetColumn());
+                        }
+                            break;
+                        case E_BASIC_TABLE_WITH_ALIAS:
+                        {
+                            printf("access base table: %-25s at (L%+3d:%-2d) alias: %-10s\n", tbi->GetTableObject().c_str(), tbi->GetLine()  + 1, tbi->GetColumn(), tbi->GetTableAliasName().c_str());
+                        }
+                            break;
+                        default:
+                            break;
                     }
-                        break;
-                    case E_BASIC_TABLE_WITH_ALIAS:
-                    {
-                        printf("access base table: %-25s at (L%+3d:%-2d) alias: %-10s\n", tbi->GetTableName().c_str(), tbi->GetLine()  + 1, tbi->GetColumn(), tbi->GetTableAliasName().c_str());
-                    }
-                        break;
-                    default:
-                        assert(false);
-                }
 
-            }, nullptr, tree);
+                },
+                [](IPlan* plan, ITableColumnRefItem* cli){
+                    printf("base column access : %-25s at (L%+3d:%-2d) src table : %-25s at (L%+3d:%-2d)\n",
+                           cli->GetColumnName().c_str(), cli->GetLine() + 1, cli->GetColumn() + 1,
+                           cli->GetTableItem()->GetTableObject().c_str(), cli->GetTableItem()->GetLine() + 1, cli->GetTableItem()->GetColumn());
+                }, nullptr, tree);
             IPlan::Visit(plan);
+            //printf("%s\n", concatenated.c_str());
         }
+
     }
 
     {
