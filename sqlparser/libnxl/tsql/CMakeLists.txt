@@ -13,4 +13,5 @@ set(SRCS
         LogicPlan.cpp
         LocalTableMgr.cpp)
 
-add_library(libnxltsql ${SRCS})
+add_library(libnxltsql SHARED
+        ${SRCS})

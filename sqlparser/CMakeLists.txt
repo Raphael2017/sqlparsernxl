@@ -12,6 +12,7 @@ add_subdirectory(calculatorprox)
 add_subdirectory(libnxl/sql)
 add_subdirectory(libnxl/tsql)
 add_subdirectory(testlibnxl)
+add_subdirectory(libsqlparser)
 
 add_subdirectory(LR)
 
