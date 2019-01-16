@@ -261,28 +261,100 @@ update_stmt:
     with_clause UPDATE opt_top relation_factor opt_with_table_hint
     SET update_elem_list opt_output_clause opt_from_clause opt_update_where
     opt_option_query_hint
+{
+    $$ = Node::makeNonTerminalNode(E_UPDATE, E_UPDATE_PROPERTY_CNT,
+    		$1,	/* E_UPDATE_OPT_WITH 0 */
+    		$3,	/* E_UPDATE_OPT_TOP 1 */
+    		$4,	/* E_UPDATE_UPDATE_RELATION 2 */
+    		$5,	/* E_UPDATE_UPDATE_RELATION_OPT_TABLE_HINT 3 */
+    		$7,	/* E_UPDATE_UPDATE_ELEM_LIST 4 */
+    		$8,	/* E_UPDATE_OPT_OUTPUT 5 */
+    		$9,	/* E_UPDATE_FROM_LIST 6 */
+    		$10,	/* E_UPDATE_OPT_WHERE 7 */
+    		$11	/* E_UPDATE_OPT_QUERY_HINT 8 */);
+    $$->serialize_format = &E_UPDATE_SERIALIZE_FORMAT;
+}
   | with_clause UPDATE opt_top TEMP_VARIABLE opt_with_table_hint
     SET update_elem_list opt_output_clause opt_from_clause opt_update_where
     opt_option_query_hint
+{
+    $$ = Node::makeNonTerminalNode(E_UPDATE, E_UPDATE_PROPERTY_CNT,
+    		$1,	/* E_UPDATE_OPT_WITH 0 */
+    		$3,	/* E_UPDATE_OPT_TOP 1 */
+    		$4,	/* E_UPDATE_UPDATE_RELATION 2 */
+    		$5,	/* E_UPDATE_UPDATE_RELATION_OPT_TABLE_HINT 3 */
+    		$7,	/* E_UPDATE_UPDATE_ELEM_LIST 4 */
+    		$8,	/* E_UPDATE_OPT_OUTPUT 5 */
+    		$9,	/* E_UPDATE_FROM_LIST 6 */
+    		$10,	/* E_UPDATE_OPT_WHERE 7 */
+    		$11	/* E_UPDATE_OPT_QUERY_HINT 8 */);
+    $$->serialize_format = &E_UPDATE_SERIALIZE_FORMAT;
+}
   |             UPDATE opt_top relation_factor opt_with_table_hint
     SET update_elem_list opt_output_clause opt_from_clause opt_update_where
     opt_option_query_hint
+{
+    $$ = Node::makeNonTerminalNode(E_UPDATE, E_UPDATE_PROPERTY_CNT,
+    		nullptr,	/* E_UPDATE_OPT_WITH 0 */
+    		$2,		/* E_UPDATE_OPT_TOP 1 */
+    		$3,		/* E_UPDATE_UPDATE_RELATION 2 */
+    		$4,		/* E_UPDATE_UPDATE_RELATION_OPT_TABLE_HINT 3 */
+    		$6,		/* E_UPDATE_UPDATE_ELEM_LIST 4 */
+    		$7,		/* E_UPDATE_OPT_OUTPUT 5 */
+    		$8,		/* E_UPDATE_FROM_LIST 6 */
+    		$9,		/* E_UPDATE_OPT_WHERE 7 */
+    		$10		/* E_UPDATE_OPT_QUERY_HINT 8 */);
+    $$->serialize_format = &E_UPDATE_SERIALIZE_FORMAT;
+}
   |             UPDATE opt_top TEMP_VARIABLE opt_with_table_hint
     SET update_elem_list opt_output_clause opt_from_clause opt_update_where
     opt_option_query_hint
+{
+    $$ = Node::makeNonTerminalNode(E_UPDATE, E_UPDATE_PROPERTY_CNT,
+    		nullptr,	/* E_UPDATE_OPT_WITH 0 */
+    		$2,		/* E_UPDATE_OPT_TOP 1 */
+    		$3,		/* E_UPDATE_UPDATE_RELATION 2 */
+    		$4,		/* E_UPDATE_UPDATE_RELATION_OPT_TABLE_HINT 3 */
+    		$6,		/* E_UPDATE_UPDATE_ELEM_LIST 4 */
+    		$7,		/* E_UPDATE_OPT_OUTPUT 5 */
+    		$8,		/* E_UPDATE_FROM_LIST 6 */
+    		$9,		/* E_UPDATE_OPT_WHERE 7 */
+    		$10		/* E_UPDATE_OPT_QUERY_HINT 8 */);
+    $$->serialize_format = &E_UPDATE_SERIALIZE_FORMAT;
+}
 ;
 
 opt_update_where:
     opt_where
   | WHERE CURRENT OF GLOBAL NAME
+{
+    $$ = Node::makeNonTerminalNode(E_WHERE_CLAUSE, 1, $5);
+    $$->serialize_format = &WHERE_CUR_GLO_SERIALIZE_FORMAT;
+}
   | WHERE CURRENT OF GLOBAL TEMP_VARIABLE
+{
+    $$ = Node::makeNonTerminalNode(E_WHERE_CLAUSE, 1, $5);
+    $$->serialize_format = &WHERE_CUR_GLO_SERIALIZE_FORMAT;
+}
   | WHERE CURRENT OF        NAME
+{
+    $$ = Node::makeNonTerminalNode(E_WHERE_CLAUSE, 1, $4);
+    $$->serialize_format = &WHERE_CUR_SERIALIZE_FORMAT;
+}
   | WHERE CURRENT OF        TEMP_VARIABLE
+{
+    $$ = Node::makeNonTerminalNode(E_WHERE_CLAUSE, 1, $4);
+    $$->serialize_format = &WHERE_CUR_SERIALIZE_FORMAT;
+}
 ;
 
 update_elem_list:
     update_elem
   | update_elem ',' update_elem_list
+{
+    $$ = Node::makeNonTerminalNode(E_UPDATE_ELEM_LIST, 2, $1, $3);
+    $$->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+}
 ;
 
 update_elem:
@@ -293,37 +365,55 @@ update_elem:
         yyerror(&@1, result, scanner, "update element format error");
     	YYABORT;
     }
-    $$ = $1;
+    $$ = Node::makeNonTerminalNode(E_UPDATE_ELEM, 1, $1);
+    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
 ;
 
 opt_output_clause:
     /*EMPTY*/	{ $$ = nullptr; }
   | OUTPUT dml_select_list
+{
+    $$ = Node::makeNonTerminalNode(E_OUTPUT_CLAUSE, 3, $2, nullptr, nullptr);
+    $$->serialize_format = &OUTPUT_CLAUSE_SERIALIZE_FORMAT;
+}
   | OUTPUT dml_select_list INTO relation_factor opt_derived_column_list
+{
+    $$ = Node::makeNonTerminalNode(E_OUTPUT_CLAUSE, 3, $2, $4, $5);
+    $$->serialize_format = &OUTPUT_CLAUSE_SERIALIZE_FORMAT;
+}
   | OUTPUT dml_select_list INTO TEMP_VARIABLE opt_derived_column_list
+{
+    $$ = Node::makeNonTerminalNode(E_OUTPUT_CLAUSE, 3, $2, $4, $5);
+    $$->serialize_format = &OUTPUT_CLAUSE_SERIALIZE_FORMAT;
+}
 ;
 
 dml_select_list:
     dml_select_item
   | dml_select_item ',' dml_select_list
+{
+    $$ = Node::makeNonTerminalNode(E_DML_SELECT_LIST, 2, $1, $3);
+    $$->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+}
 ;
 
 dml_select_item:
-    DELETED         '.' NAME		AS column_label
-  | DELETED         '.' NAME		   column_label
-  | DELETED         '.' NAME
-  | DELETED         '.' '*'		AS column_label
-  | DELETED         '.' '*'		   column_label
-  | DELETED         '.' '*'
-  | INSERTED 	    '.' NAME		AS column_label
-  | INSERTED        '.' NAME		   column_label
-  | INSERTED        '.' NAME
-  | INSERTED        '.' '*'		AS column_label
-  | INSERTED        '.' '*'		   column_label
-  | INSERTED        '.' '*'
+    DELETED         '.' projection
+{
+    $$ = Node::makeNonTerminalNode(E_DML_SELECT_ITEM, 1, $3);
+    $$->serialize_format = &DELETED_DML_SELECT_ITEM_SERIALIZE_FORMAT;
+}
+  | INSERTED 	    '.' projection
+{
+    $$ = Node::makeNonTerminalNode(E_DML_SELECT_ITEM, 1, $3);
+    $$->serialize_format = &INSERTED_DML_SELECT_ITEM_SERIALIZE_FORMAT;
+}
   | projection
-  | DOLLAR_ACTION
+{
+    $$ = Node::makeNonTerminalNode(E_DML_SELECT_ITEM, 1, $1);
+    $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
+}
 ;
 
 /* SELECT GRAMMAR */
@@ -377,7 +467,7 @@ query_hint_list:
   | query_hint ',' query_hint_list
 {
     $$ = Node::makeNonTerminalNode(E_QUERY_HINT_LIST, 2, $1, $3);
-    $$->serialize_format = &SORT_LIST_SERIALIZE_FORMAT;
+    $$->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
 }
 ;
 
@@ -691,7 +781,7 @@ sort_list:
   | sort_key ',' sort_list
 {
     $$ = Node::makeNonTerminalNode(E_SORT_LIST, 2, $1, $3);
-    $$->serialize_format = &SORT_LIST_SERIALIZE_FORMAT;
+    $$->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
 }
 ;
 
@@ -1023,12 +1113,12 @@ table_hint_list:
   | table_hint ',' table_hint_list
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_HINT_LIST, 2, $1, $3);
-    $$->serialize_format = &SORT_LIST_SERIALIZE_FORMAT;
+    $$->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
 }
   | table_hint  table_hint_list
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_HINT_LIST, 2, $1, $2);
-    $$->serialize_format = &SORT_LIST_SERIALIZE_FORMAT;
+    $$->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
 }
 ;
 

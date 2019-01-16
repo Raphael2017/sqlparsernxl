@@ -9,7 +9,7 @@
 
 namespace resolve
 {
-    void TableItem::bind_node(Node* node)
+    void TableItem::bind_node(Node* node, const std::string& default_schema)
     {
         assert(node != nullptr);
         node_ = node;
@@ -20,7 +20,7 @@ namespace resolve
 
         table_object_ = factor->serialize();
         Node* schema = factor->getChild(E_TABLE_IDENT_SCHEMA);
-        schema_name_ = schema ? schema->terminalToken_.str : "dbo"; // sqlserver default schema
+        schema_name_ = schema ? schema->terminalToken_.str : default_schema; // sqlserver seems to add a default schema
         default_schema_ = (schema == nullptr);
         Node* db = factor->getChild(E_TABLE_IDENT_DATABASE);
         database_name_ = db ? db->terminalToken_.str : "";
@@ -165,6 +165,7 @@ namespace resolve
     //////////////////////////////////////////////////////////////////////////////
     void ColumnItem::bind(Node* node, ITableItem* tbi)
     {
+        node_ = node;
         tbi_ = tbi;
         assert(node->nodeType_ == E_OP_NAME_FIELD);
         column_object_ = node->serialize();
@@ -618,7 +619,7 @@ namespace resolve
 
         if (!checkColumn && (tbi->type_ == TableItem::BASE_TABLE || tbi->type_ == TableItem::ALIAS_TABLE))
         {
-            cli.column_id_ = plan->local_table_mgr->add_local_table_column(tbi->table_name_, column_name);
+            cli.column_id_ = plan->local_table_mgr->add_local_table_column(tbi->schema_name_+"."+tbi->table_name_, column_name);
         }
 
         cli.column_name_ = column_name;
@@ -627,7 +628,8 @@ namespace resolve
         ColumnItem* t = push_back_(column_items_, cli);
         out_column_item = *t;
         t->bind(node, tbi);
-        plan->baseTableColumnVisit_(plan, t);
+        if (tbi->type_ == TableItem::BASE_TABLE || tbi->type_ == TableItem::ALIAS_TABLE)
+            plan->baseTableColumnVisit_(plan, t);
         return 0;
     }
 
@@ -649,9 +651,12 @@ namespace resolve
             case TableItem::BASE_TABLE:
             {
                 assert(node != nullptr);
-                item.ref_id_ = resultPlan->local_table_mgr->get_local_table_id(table_name);
+                Node* factor = node->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS);
+                Node* schema = factor->getChild(E_TABLE_IDENT_SCHEMA);
+                std::string schemaname = schema ? schema->terminalToken_.str : resultPlan->local_table_mgr->get_default_schema();
+                item.ref_id_ = resultPlan->local_table_mgr->get_local_table_id(schemaname+"."+table_name);
                 item.table_id = item.ref_id_;
-                item.bind_node(node);
+                item.bind_node(node, resultPlan->local_table_mgr->get_default_schema());
             }
                 break;
             case TableItem::ALIAS_TABLE:
@@ -660,10 +665,13 @@ namespace resolve
                  * FROM NATION AS N1, NATION N2
                  * this means we need generate different table_id, and they link to a same base table
                  * */
+                Node* factor = node->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS);
+                Node* schema = factor->getChild(E_TABLE_IDENT_SCHEMA);
+                std::string schemaname = schema ? schema->terminalToken_.str : resultPlan->local_table_mgr->get_default_schema();
                 assert(node != nullptr);
-                item.ref_id_ = resultPlan->local_table_mgr->get_local_table_id(table_name);
+                item.ref_id_ = resultPlan->local_table_mgr->get_local_table_id(schemaname+"."+table_name);
                 item.table_id = resultPlan->logicPlan_->generate_table_id();
-                item.bind_node(node);
+                item.bind_node(node, resultPlan->local_table_mgr->get_default_schema());
             }
                 break;
             case TableItem::CTE_TABLE:

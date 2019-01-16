@@ -43,7 +43,7 @@ namespace resolve
         bool default_schema_{true};
         uint64_t query_id_{OB_INVALID_ID};
     public:
-        void bind_node(Node* node);
+        void bind_node(Node* node, const std::string& default_schema);
         bool check_is_ref(
                 const std::string& schema,
                 const std::string& table) const;
@@ -76,7 +76,8 @@ namespace resolve
         std::string column_object_;
         int line_;
         int column_;
-        ITableItem* tbi_;
+        ITableItem* tbi_{nullptr};
+        Node* node_{nullptr};
     public:
         void bind(Node* node, ITableItem* tbi);
     public:
@@ -178,6 +179,8 @@ namespace resolve
                 const std::string& column_name,
                 ColumnItem& out_column_item);
 
+        // support schema
+        // todo database, server
         int add_column_item(
                 ResultPlan* plan,
                 const std::string& schema,

@@ -1189,13 +1189,39 @@ Node* Node::make_query_hint(const std::string& text, Node* num)
 
 bool Node::check_update_item(Node* root)
 {
-    std::list<Node*> ls{};
-    ToList(root, ls);
-    for (auto expr : ls)
+    if (root->nodeType_ == E_OP_EQ ||
+        root->nodeType_ == E_OP_ASS_BIT_AND ||
+        root->nodeType_ == E_OP_ASS_BIT_OR ||
+        root->nodeType_ == E_OP_ASS_BIT_XOR ||
+        root->nodeType_ == E_OP_ASS_ADD ||
+        root->nodeType_ == E_OP_ASS_MINUS ||
+        root->nodeType_ == E_OP_ASS_MUL ||
+        root->nodeType_ == E_OP_ASS_DIV ||
+        root->nodeType_ == E_OP_ASS_REM)
     {
-        if (expr->nodeType_ != E_OP_EQ)
-            return false;
+        // check NAME ... NAME assign expr
+        //       @variable assign expr
+        Node* l = root->getChild(E_OP_BINARY_OPERAND_L);
+        Node* r = root->getChild(E_OP_BINARY_OPERAND_R);
+        if ((l->nodeType_ == E_OP_NAME_FIELD || l->nodeType_ == E_TEMP_VARIABLE) && l->getChild(E_OP_NAME_FIELD_COLUMN_NAME) &&
+            l->getChild(E_OP_NAME_FIELD_COLUMN_NAME)->nodeType_ != E_STAR)
+        {
+            if (root->nodeType_ == E_OP_EQ)
+                root->nodeType_ = E_OP_ASS;
+            return true;
+        }
     }
-    return true;
+    else if (root->nodeType_ == E_FUN_CALL)
+    {
+        // check format like NAME.NAME(...)
+        Node* func = root->getChild(0);
+        if (func->nodeType_ == E_PROC_IDENT &&
+            func->getChild(0) && func->getChild(1) &&
+            !func->getChild(2) && func->getChild(3))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 

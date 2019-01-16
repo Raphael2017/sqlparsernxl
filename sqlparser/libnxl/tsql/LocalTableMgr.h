@@ -20,10 +20,14 @@ namespace resolve
 
         uint64_t add_local_table_column(const std::string& table_name,
                                         const std::string& column_name);
+        std::string get_default_schema() const { return default_schema_; }
+        void set_default_schema(const std::string& default_schema) { default_schema_ = default_schema; }
     private:
         std::map<std::string, uint64_t > local_table_;
         std::map<uint64_t , std::map<std::string, uint64_t >> local_table_column_;
         uint64_t local_table_id_begin_;
+        std::string default_schema_{"dbo"};
+
     };
 }
 

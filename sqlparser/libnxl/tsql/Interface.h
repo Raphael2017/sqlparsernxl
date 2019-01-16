@@ -27,13 +27,18 @@ struct IPlan
 {
     typedef std::function<void(IPlan*, ITableItem*)> BaseTableVisit;
     typedef std::function<void(IPlan*, ITableColumnRefItem*)> BaseTableColumnVisit;
+    typedef std::function<void(IPlan*)> StartNewStmt;
     static void Visit(IPlan*);
     static IPlan* CreatePlan(const BaseTableVisit& baseTableVisit,
-            const BaseTableColumnVisit& baseTableColumnVisit, void* context, INode*);
+            const BaseTableColumnVisit& baseTableColumnVisit,
+            const StartNewStmt& startNewStmt,
+            void* context, INode*);
     static void Destroy(IPlan*);
     virtual ~IPlan() {}
     virtual void* GetContext() = 0;
     virtual IStmt* GetQuery(uint64_t query_id) = 0;
+    virtual void SetDefaultSchema(const std::string& default_schema) = 0;
+    virtual void AddTableStructure(const std::string& schema, const std::string& table, const std::list<std::string>& columns) = 0;
 };
 
 struct ITableItem

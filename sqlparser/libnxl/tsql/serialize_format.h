@@ -200,7 +200,6 @@ Form WHERE_SERIALIZE_FORMAT                 {{1,"WHERE "}, {0,"",0,""}};
 Form FROM_SERIALIZE_FORMAT                  {{1,"FROM "}, {0,"",0,""}};
 Form GROUP_BY_SERIALIZE_FORMAT              {{1,"GROUP"}, {1," BY "}, {0,"",0,""}};
 Form ORDER_BY_SERIALIZE_FORMAT              {{1,"ORDER"}, {1," BY "}, {0,"",0,""}, {0," ",1,""}};
-Form SORT_LIST_SERIALIZE_FORMAT             {{0,"",0,""}, {1,", "}, {0,"",1,""}};
 Form SORT_KEY_SERIALIZE_FORMAT              {{0,"",0,""}, {0," ",1,""}};
 Form HAVING_SERIALIZE_FORMAT                {{1,"HAVING "}, {0,"",0,""}};
 Form COMMA_LIST_SERIALIZE_FORMAT            {{0,"",0,""}, {1,", "}, {0,"",1,""}};
@@ -287,6 +286,12 @@ Form OP_ASS_REM_SERIALIZE_FORMAT            {{0,"",0,""}, {1," %= "}, {0,"",1,""
 Form OP_ASS_BIT_AND_SERIALIZE_FORMAT        {{0,"",0,""}, {1," &= "}, {0,"",1,""}};
 Form OP_ASS_BIT_OR_SERIALIZE_FORMAT         {{0,"",0,""}, {1," |= "}, {0,"",1,""}};
 Form OP_ASS_BIT_XOR_SERIALIZE_FORMAT        {{0,"",0,""}, {1," ^= "}, {0,"",1,""}};
+Form E_UPDATE_SERIALIZE_FORMAT              {};
+Form WHERE_CUR_GLO_SERIALIZE_FORMAT         {};
+Form WHERE_CUR_SERIALIZE_FORMAT             {};
+Form OUTPUT_CLAUSE_SERIALIZE_FORMAT         {};
+Form DELETED_DML_SELECT_ITEM_SERIALIZE_FORMAT   {};
+Form INSERTED_DML_SELECT_ITEM_SERIALIZE_FORMAT  {};
 #endif
 
 
