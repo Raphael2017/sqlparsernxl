@@ -17,11 +17,11 @@ namespace resolve
     {
         if (node->nodeType_ == E_SELECT_WITH_PARENS)
             node = Node::remove_parens(node);
+        assert(node->nodeType_ == E_SELECT);
         query_id = plan->logicPlan_->generate_query_id();
         SelectStmt* select_stmt = dynamic_cast<SelectStmt*>(plan->logicPlan_->add_query(E_STMT_TYPE_SELECT));
         select_stmt->set_query_id(query_id);
         select_stmt->set_parent(parent);
-
 
         Node* set_op = node->getChild(E_SELECT_SET_OPERATION);
         if (set_op != nullptr)

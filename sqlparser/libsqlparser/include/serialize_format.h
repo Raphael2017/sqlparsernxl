@@ -286,12 +286,15 @@ Form OP_ASS_REM_SERIALIZE_FORMAT            {{0,"",0,""}, {1," %= "}, {0,"",1,""
 Form OP_ASS_BIT_AND_SERIALIZE_FORMAT        {{0,"",0,""}, {1," &= "}, {0,"",1,""}};
 Form OP_ASS_BIT_OR_SERIALIZE_FORMAT         {{0,"",0,""}, {1," |= "}, {0,"",1,""}};
 Form OP_ASS_BIT_XOR_SERIALIZE_FORMAT        {{0,"",0,""}, {1," ^= "}, {0,"",1,""}};
-Form E_UPDATE_SERIALIZE_FORMAT              {};
-Form WHERE_CUR_GLO_SERIALIZE_FORMAT         {};
-Form WHERE_CUR_SERIALIZE_FORMAT             {};
-Form OUTPUT_CLAUSE_SERIALIZE_FORMAT         {};
-Form DELETED_DML_SELECT_ITEM_SERIALIZE_FORMAT   {};
-Form INSERTED_DML_SELECT_ITEM_SERIALIZE_FORMAT  {};
+Form E_UPDATE_SERIALIZE_FORMAT              {{0,"",0," "}, {1,"UPDATE "}, {0,"",1," "}, {0,"",2," "}, {0,"",3," "},
+                                             {1,"SET "}, {0,"",4," "}, {0,"",5," "}, {0,"",6," "}, {0,"",7," "}, {0,"",8,""}};
+Form WHERE_CUR_GLO_SERIALIZE_FORMAT         {{1,"WHERE CURRENT OF GLOBAL "}, {0,"",0,""}};
+Form WHERE_CUR_SERIALIZE_FORMAT             {{1,"WHERE CURRENT OF "}, {0,"",0,""}};
+Form OUTPUT_CLAUSE_SERIALIZE_FORMAT         {{0,"OUTPUT ",0,""}, {0," INTO ",1,""}, {0," ",2,""}};
+Form DELETED_DML_SELECT_ITEM_SERIALIZE_FORMAT
+                                            {{1,"DELETED."}, {0,"",0,""}};
+Form INSERTED_DML_SELECT_ITEM_SERIALIZE_FORMAT
+                                            {{1,"INSERTED."}, {0,"",0,""}};
 #endif
 
 

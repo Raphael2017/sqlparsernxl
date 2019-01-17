@@ -63,6 +63,7 @@ namespace resolve
             SelectStmt* parent
             );  // not use
 
+            // select_expr_list
     int resolve_select_clause(
             ResultPlan* plan,
             Node* node,
