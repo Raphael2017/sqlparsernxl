@@ -226,13 +226,12 @@ namespace resolve
             std::vector<SelectItem*>& out_select_items,
             size_t start_index)
     {
-        uint64_t index = 0;
         for (auto it : cols_)
         {
             SelItemExpandStar* item = new SelItemExpandStar;
             item->ref_table_id_ = table_id_;
             item->col_name_ = it->get_column_name();
-            item->ref_column_id_ = index++;
+            item->ref_column_id_ = it->get_column_id();
             item->set_column_id(start_index++);
             item->query_id_ = query_id_;
             out_select_items.push_back(item);
