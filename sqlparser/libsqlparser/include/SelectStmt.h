@@ -10,30 +10,38 @@ struct Node;
 
 namespace resolve
 {
+    struct SelectItem;
     struct SelectStmt : public Stmt, public ISelectStmt
     {
     public:
-        int add_select_item(
-                uint64_t eid,
-                const std::string& alias_name,
-                const std::string& name);
+        const std::vector<SelectItem*>& get_select_items() const { return select_items_; }
+        bool add_select_item_expand_star(
+                ResultPlan* plan,
+                const std::string& schema,
+                const std::string& table);
+        bool add_select_item(uint64_t expr_id, const std::string& alias, bool is_real_alias);
+        bool is_set_op() const;
         uint64_t get_set_op_left_query_id() const;
         uint64_t get_set_op_right_query_id() const;
         void set_set_op_left_query_id(uint64_t left_query_id);
         void set_set_op_right_query_id(uint64_t right_query_id);
-        bool is_set_op() const;
     private:
+        uint64_t get_last_column_id() const;
+        std::vector<SelectItem*> select_items_;
         uint64_t left_query_id_;
         uint64_t right_query_id_;
-        std::vector<SelectItem> select_items_;
-        friend struct Stmt;
-        friend class RawExprUnaryRef;
+
+    public:
+        virtual StmtType GetStmtType() { return  E_STMT_TYPE_SELECT; }
     };
 
     struct UpdateStmt : public Stmt, public IUpdateStmt
     {
-
+    public:
+        virtual StmtType GetStmtType() { return  E_STMT_TYPE_UPDATE; }
     };
+
+
 }
 
 #endif

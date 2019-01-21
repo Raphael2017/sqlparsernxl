@@ -221,7 +221,7 @@ Node* Node::makeNonTerminalNode(NodeType tp, int num, ...)
 #endif
     ret->childrenCount_ = num;
     va_start(va, num);
-    for (size_t i = 0; i < num; ++i)
+    for (size_t i = 0; i < (size_t)num; ++i)
     {
         Node* child = va_arg(va, Node*);
         if (child)
@@ -307,7 +307,7 @@ int Node::ListLengthNonRecursive(Node* root)
             continue;
         }
 
-        for (int i=0 ;i<lpNode->childrenCount_; i++)
+        for (size_t i = 0; i < lpNode->childrenCount_; i++)
         {
             stack.push(lpNode->children_[i]);
         }
@@ -541,7 +541,7 @@ std::string Node::SerializeNonRecursive(Node* root)
         return "";
     struct Item
     {
-        Node* node = nullptr;
+        Node* node;
         std::string str;
     };
 
@@ -640,11 +640,12 @@ Node* Node::setParent(Node* p)
 {
     assert(nullptr != p);
     parent_ = p;
+    return this;
 }
 
 Node* Node::getChild(int key)
 {
-    if (0 <= key && key < childrenCount_)
+    if (0 <= (size_t)key && (size_t)key < childrenCount_)
         return children_[key];
     else
         return nullptr;
@@ -652,7 +653,7 @@ Node* Node::getChild(int key)
 
 Node** Node::getChildRef(int key)
 {
-    if (0 <= key && key < childrenCount_)
+    if (0 <= (size_t)key && (size_t)key < childrenCount_)
         return &children_[key];
     else
         return nullptr;
@@ -660,7 +661,7 @@ Node** Node::getChildRef(int key)
 
 bool Node::setChild(int key, Node* newchild)
 {
-    if (0 <= key && key < childrenCount_)
+    if (0 <= (size_t)key && (size_t)key < childrenCount_)
     {
         children_[key] = newchild;
         if (newchild)
@@ -671,7 +672,7 @@ bool Node::setChild(int key, Node* newchild)
         return false;
 }
 
-int Node::getChildrenCount() const
+size_t Node::getChildrenCount() const
 {
     return childrenCount_;
 }
@@ -1106,7 +1107,7 @@ Node* Node::check_expr_is_column_alias(Node* root)
         Node* left = root->getChild(E_OP_BINARY_OPERAND_L);
         Node* right = root->getChild(E_OP_BINARY_OPERAND_R);
         assert(left != nullptr && right != nullptr);
-        if (left->nodeType_ == E_IDENTIFIER)
+        if (left->nodeType_ == E_IDENTIFIER || left->nodeType_ == E_STRING)
         {
             // this is a column_alias
             Node* ret = makeNonTerminalNode(E_ALIAS, 2, right, left);
@@ -1202,7 +1203,6 @@ bool Node::check_update_item(Node* root)
         // check NAME ... NAME assign expr
         //       @variable assign expr
         Node* l = root->getChild(E_OP_BINARY_OPERAND_L);
-        Node* r = root->getChild(E_OP_BINARY_OPERAND_R);
         if ((l->nodeType_ == E_OP_NAME_FIELD || l->nodeType_ == E_TEMP_VARIABLE) && l->getChild(E_OP_NAME_FIELD_COLUMN_NAME) &&
             l->getChild(E_OP_NAME_FIELD_COLUMN_NAME)->nodeType_ != E_STAR)
         {

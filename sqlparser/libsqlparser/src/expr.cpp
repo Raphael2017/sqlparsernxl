@@ -1,27 +1,16 @@
 #include "expr.h"
 #include "LogicPlan.h"
 #include "SelectStmt.h"
+#include "TableRef.h"
+#include "SelectItem.h"
 
 namespace resolve
 {
-    void RawExprUnaryRef::scanf_table_column_ref(
+    void RawExprScalarSubquery::scanf_table_column_ref(
             LogicPlan* logic,
             std::vector<TableColumnRef>& out_table_column_ref)
     {
-        assert(logic != nullptr && id_ != OB_INVALID_ID);
-        Stmt* stmt1 = logic->get_query(id_);
-        assert(stmt1 != nullptr);
-        SelectStmt* stmt = dynamic_cast<SelectStmt*>(stmt1);
-        assert(stmt != nullptr);
-        for (const SelectItem& sli : stmt->select_items_)
-        {
-            uint64_t expr_id = sli.expr_id_;
-            SqlRawExpr* sql_expr = logic->get_expr(expr_id);
-            assert(sql_expr != nullptr);
-            RawExpr* expr = sql_expr->get_expr();
-            assert(expr != nullptr);
-            expr->scanf_table_column_ref(logic, out_table_column_ref);
-        }
+
     }
 
     void RawExprBinaryRef::scanf_table_column_ref(
@@ -98,8 +87,49 @@ namespace resolve
             LogicPlan* logic,
             std::vector<TableColumnRef>& out_table_column_ref)
     {
-
+        if (param_expr_ == nullptr)
+        {
+            // means '*'
+        }
+        else
+        {
+            param_expr_->scanf_table_column_ref(logic, out_table_column_ref);
+        }
     }
 
+    void RawExprSysFun::scanf_table_column_ref(
+            LogicPlan* logic,
+            std::vector<TableColumnRef>& out_table_column_ref)
+    {
+        for (auto expr : param_exprs_)
+        {
+            expr->scanf_table_column_ref(logic, out_table_column_ref);
+        }
+    }
 
+    void SqlRawExpr::debug(LogicPlan* logic)
+    {
+        std::vector<TableColumnRef> vec;
+        expr_->scanf_table_column_ref(logic, vec);
+        Stmt* stmt = logic->get_query(query_id_);
+        for (const TableColumnRef& ref : vec )
+        {
+            TableRef* tbi = nullptr;
+            bool fd = stmt->get_table_item(ref.table_id_, tbi);
+            assert(fd);
+            SelectItem* s = nullptr;
+            fd = tbi->check_column_by_index(ref.column_id_, s);
+            if (fd)
+            {
+                printf("->%s.%s", tbi->get_table_name().c_str(), s->get_column_name().c_str());
+                s->debug(logic);
+            }
+            else
+            {
+                /*leaf node*/
+                ITableItem* tt = dynamic_cast<ITableItem*>(tbi);
+                printf("->%s\n", tt->GetTableName().c_str());
+            }
+        }
+    }
 }

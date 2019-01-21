@@ -19,8 +19,6 @@
 
 struct SQLPARSER_PUBLIC_API INode
 {
-    static INode* Parse(const std::string& sql);
-    static void Destroy(INode*);
     virtual ~INode(){}
     virtual NodeType GetType() = 0;
     virtual INode* GetParent() = 0;
@@ -37,17 +35,12 @@ struct SQLPARSER_PUBLIC_API INode
 struct ITableItem;
 struct ITableColumnRefItem;
 struct IStmt;
+struct IPlan;
+typedef std::function<void(IPlan*, ITableItem*)> BaseTableVisit;
+typedef std::function<void(IPlan*, ITableColumnRefItem*)> BaseTableColumnVisit;
+typedef std::function<void(IPlan*)> StartNewStmt;
 struct SQLPARSER_PUBLIC_API IPlan
 {
-    typedef std::function<void(IPlan*, ITableItem*)> BaseTableVisit;
-    typedef std::function<void(IPlan*, ITableColumnRefItem*)> BaseTableColumnVisit;
-    typedef std::function<void(IPlan*)> StartNewStmt;
-    static void Visit(IPlan*);
-    static IPlan* CreatePlan(const BaseTableVisit& baseTableVisit,
-            const BaseTableColumnVisit& baseTableColumnVisit,
-            const StartNewStmt& startNewStmt,
-            void* context, INode*);
-    static void Destroy(IPlan*);
     virtual ~IPlan() {}
     virtual void* GetContext() = 0;
     virtual IStmt* GetQuery(uint64_t query_id) = 0;
@@ -102,6 +95,18 @@ struct SQLPARSER_PUBLIC_API ISelectStmt
 struct SQLPARSER_PUBLIC_API IUpdateStmt
 {
 
+};
+
+extern "C"
+{
+INode* ParseNode(const std::string& sql);
+void DestroyNode(INode*);
+IPlan* CreatePlan(const BaseTableVisit& baseTableVisit,
+                  const BaseTableColumnVisit& baseTableColumnVisit,
+                  const StartNewStmt& startNewStmt,
+                  void* context, INode*);
+void VisitPlan(IPlan*);
+void DestroyPlan(IPlan*);
 };
 
 #endif

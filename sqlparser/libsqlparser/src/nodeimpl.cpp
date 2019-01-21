@@ -5,7 +5,7 @@
 #include "ResultPlan.h"
 
 
-IPlan* IPlan::CreatePlan(
+IPlan* CreatePlan(
         const BaseTableVisit& baseTableVisit,
         const BaseTableColumnVisit& baseTableColumnVisit,
         const StartNewStmt& startNewStmt,
@@ -18,32 +18,24 @@ IPlan* IPlan::CreatePlan(
     return ret;
 }
 
-void IPlan::Destroy(IPlan* plan)
+void DestroyPlan(IPlan* plan)
 {
     delete(plan);
 }
 
-void IPlan::Visit(IPlan* p)
+void VisitPlan(IPlan* p)
 {
     resolve::ResultPlan* plan = dynamic_cast<resolve::ResultPlan*>(p);
     if (!plan)
         return;
     if (!plan->tree_root_)
         return;
-    uint64_t query_id;
-    std::list<Node*> stmts;
-    Node::ToList(plan->tree_root_, stmts);
 
-    size_t index = 1;
-    for (auto stmt : stmts)
-    {
-        plan->startNewStmt_(plan);
-        plan->reset();
-        resolve::resolve_select_statement(plan, stmt, query_id);
-    }
+    resolve::resolve(plan, plan->tree_root_);
+
 }
 
-INode* INode::Parse(const std::string &sql)
+INode* ParseNode(const std::string &sql)
 {
     INode* ret = nullptr;
     ParseResult result;
@@ -57,9 +49,10 @@ INode* INode::Parse(const std::string &sql)
     {
         return result.result_tree_;
     }
+    return ret;
 }
 
-void INode::Destroy(INode * node)
+void DestroyNode(INode * node)
 {
     delete(node);
 }

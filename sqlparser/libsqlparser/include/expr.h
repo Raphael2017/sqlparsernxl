@@ -9,8 +9,8 @@ namespace resolve
 {
     struct TableColumnRef
     {
-        uint64_t table_id_ = OB_INVALID_ID;
-        uint64_t column_id_ = OB_INVALID_ID;
+        uint64_t table_id_;
+        uint64_t column_id_;
     };
     class RawExpr
     {
@@ -29,6 +29,10 @@ namespace resolve
     class RawExprConst
             : public RawExpr
     {
+    public:
+        virtual void scanf_table_column_ref(
+                LogicPlan* logic,
+                std::vector<TableColumnRef>& out_table_column_ref) {}
     private:
         union {
             int i;
@@ -37,17 +41,17 @@ namespace resolve
         } value_;
     };
 
-    class RawExprUnaryRef
+    class RawExprScalarSubquery
             : public RawExpr
     {
     public:
-        uint64_t get_ref_id() const { return id_; }
-        void set_ref_id(uint64_t id) { id_ = id; }
+        uint64_t get_ref_id() const { return query_id_; }
+        void set_ref_id(uint64_t id) { query_id_ = id; }
         virtual void scanf_table_column_ref(
                 LogicPlan* logic,
                 std::vector<TableColumnRef>& out_table_column_ref);
     private:
-        uint64_t id_;
+        uint64_t query_id_;
     };
 
     class RawExprBinaryRef
@@ -62,8 +66,8 @@ namespace resolve
                 LogicPlan* logic,
                 std::vector<TableColumnRef>& out_table_column_ref);
     private:
-        uint64_t first_id_;
-        uint64_t second_id_;
+        uint64_t first_id_;     // table_id
+        uint64_t second_id_;    // column_id
     };
 
     class RawExprUnaryOp
@@ -163,6 +167,7 @@ namespace resolve
     class RawExprAggFun
             : public RawExpr
     {
+    public:
         RawExpr* get_param_expr() { return param_expr_; };
         void set_param_expr(RawExpr* param_expr) { param_expr_ = param_expr; }
         bool get_distinct() { return distinct_; }
@@ -178,9 +183,20 @@ namespace resolve
     class RawExprSysFun
             : public RawExpr
     {
+    public:
+        std::string get_func_name() { return func_name_; }
+        void set_func_name(const std::string& func_name) { func_name_ = func_name; }
+        void add_param_expr(RawExpr* param_expr) { param_exprs_.push_back(param_expr); }
+        RawExpr* get_param_expr(size_t index)
+        {
+            return 0 <= index && index < param_exprs_.size() ? param_exprs_[index] : nullptr;
+        }
+        virtual void scanf_table_column_ref(
+                LogicPlan* logic,
+                std::vector<TableColumnRef>& out_table_column_ref);
     private:
         std::string func_name_;
-        std::vector<RawExpr*> exprs_;
+        std::vector<RawExpr*> param_exprs_;
     };
 
     /////
@@ -188,12 +204,21 @@ namespace resolve
     {
     public:
         uint64_t get_expr_id() const { return expr_id_; }
+        void set_expr_id(uint64_t expr_id) { expr_id_ = expr_id; }
+        uint64_t get_query_id() const { return query_id_; }
+        void set_query_id(uint64_t query_id) { query_id_ = query_id; }
         RawExpr* get_expr() { return expr_; }
+        void set_expr(RawExpr* raw_expr) { expr_ = raw_expr; }
+        void debug(LogicPlan* logic);
+        std::string expr_content;
+
     private:
+        uint64_t query_id_;
         uint64_t expr_id_;
         uint64_t table_id_;
         uint64_t column_id_;
         RawExpr* expr_;
+
     };
 }
 

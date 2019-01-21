@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <assert.h>
+#include <stdarg.h>
 #include "LocalTableMgr.h"
 #include "resolve.h"
 #include "keydef.h"
@@ -48,14 +49,17 @@ namespace resolve
         auto fd = local_table_.find(tb);
         if (fd == local_table_.end())
         {
+            uint64_t ret = local_table_id_begin_;
             local_table_[tb] = local_table_id_begin_;
             local_table_column_[local_table_id_begin_] = {};
             ++local_table_id_begin_;
+            return ret;
         }
         else
         {
             return fd->second;
         }
+
     }
 
     uint64_t  LocalTableMgr::get_local_table_column_id(
@@ -74,6 +78,38 @@ namespace resolve
         if (cols->second.find(column_name) != cols->second.end())
             return OB_INVALID_ID;
         return cols->second[column_name];
+    }
+
+    uint64_t LocalTableMgr::add_table_struct(
+            const std::string &schema_table_name,
+            const std::list<std::string>& columns)
+    {
+        assert(local_table_.find(schema_table_name) == local_table_.end());
+        uint64_t table_id = get_local_table_id(schema_table_name);
+        auto cols = local_table_column_.find(table_id);
+        assert(cols != local_table_column_.end());
+        int k = 1;
+        for (auto it : columns)
+        {
+            assert(cols->second.find(it) == cols->second.end());
+            cols->second[it] = k++;
+        }
+
+        return table_id;
+    }
+
+    bool LocalTableMgr::get_table_struct(
+            uint64_t table_id,
+            std::map<std::string, uint64_t >& out_struct)
+    {
+        auto fd = local_table_column_.find(table_id);
+        if (fd == local_table_column_.end())
+            return false;
+        else
+        {
+            out_struct = fd->second;
+            return true;
+        }
     }
 
     uint64_t LocalTableMgr::add_local_table_column(

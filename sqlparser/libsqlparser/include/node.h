@@ -93,7 +93,7 @@ struct Node : public INode
     Node* getChild(int key);
     Node** getChildRef(int key);
     bool setChild(int key, Node*);
-    int getChildrenCount() const;
+    size_t getChildrenCount() const;
     std::string text() const;
 
 
@@ -108,7 +108,7 @@ private:
 #else
     Node** children_;
 #endif
-    int childrenCount_;
+    size_t childrenCount_;
     Node* parent_;
 private:
     static int GetKey(const std::string&);

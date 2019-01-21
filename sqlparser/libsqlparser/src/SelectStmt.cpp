@@ -5,22 +5,55 @@
 #include <assert.h>
 #include "Interface.h"
 #include "node.h"
+#include "TableRef.h"
+#include "SelectItem.h"
 
 namespace resolve
 {
-
-
-
-    int SelectStmt::add_select_item(uint64_t eid, const std::string& alias_name,
-                        const std::string& name)
+    bool SelectStmt::add_select_item_expand_star(
+            ResultPlan* plan,
+            const std::string& schema,
+            const std::string& table)
     {
-        select_items_.push_back({eid, name, alias_name});
-        return 0;
+        if (table.length() == 0)
+        {
+            // all table expand
+            size_t index = 0;
+            for (TableRef* tbi : table_items_)
+            {
+                tbi->expand(plan, select_items_, 1 + get_last_column_id());
+            }
+        }
+        else
+        {
+            // specific table expand
+            TableRef* tbi = nullptr;
+            bool gettable = get_table_item(schema, table, tbi);
+            assert(gettable);
+            tbi->expand(plan, select_items_, 1 + get_last_column_id());
+            return true;
+        }
     }
 
-
-
-
+    bool SelectStmt::add_select_item(uint64_t expr_id, const std::string& alias, bool is_real_alias)
+    {
+        if (is_real_alias)
+        {
+            SelItemExprAlias* item = new SelItemExprAlias;
+            item->sql_raw_expr_id_ = expr_id;
+            item->set_alias(alias);
+            item->set_column_id(get_last_column_id() + 1);
+            select_items_.push_back(item);
+        }
+        else
+        {
+            SelItemExpr* item = new SelItemExpr;
+            item->sql_raw_expr_id_ = expr_id;
+            item->name_ = alias;
+            item->set_column_id(get_last_column_id() + 1);
+            select_items_.push_back(item);
+        }
+    }
 
     bool SelectStmt::is_set_op() const
     {
@@ -46,5 +79,14 @@ namespace resolve
     void SelectStmt::set_set_op_right_query_id(uint64_t right_query_id)
     {
         right_query_id_ = right_query_id;
+    }
+
+    uint64_t SelectStmt::get_last_column_id() const
+    {
+        uint64_t index = 0;
+        if (select_items_.size() == 0)
+            index = 0;
+        else
+            index = select_items_.back()->get_column_id();
     }
 }

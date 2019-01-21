@@ -7,7 +7,7 @@
 namespace resolve
 {
     LogicPlan::LogicPlan() : new_gen_tid_(UINT16_MAX),
-                            new_gen_qid_(1)
+                            new_gen_qid_(1), new_gen_eid_(1)
     {
 
     }
@@ -46,6 +46,11 @@ namespace resolve
     uint64_t LogicPlan::generate_query_id()
     {
         return new_gen_qid_++;
+    }
+
+    uint64_t LogicPlan::generate_sql_raw_expr_id()
+    {
+        return new_gen_eid_++;
     }
 
     Stmt* LogicPlan::add_query(StmtType stmtType)
@@ -87,5 +92,12 @@ namespace resolve
             }
         }
         return nullptr;
+    }
+
+    SqlRawExpr* LogicPlan::add_expr()
+    {
+        SqlRawExpr* ret = new SqlRawExpr;
+        exprs_.push_back(ret);
+        return ret;
     }
 }

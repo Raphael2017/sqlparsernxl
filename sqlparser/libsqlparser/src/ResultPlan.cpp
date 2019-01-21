@@ -31,6 +31,19 @@ namespace resolve
     {
         Stmt* ret = logicPlan_->get_query(query_id);
         return ret;
-    };
+    }
+
+    void ResultPlan::SetDefaultSchema(const std::string& default_schema)
+    {
+        local_table_mgr->set_default_schema(default_schema);
+    }
+
+    void ResultPlan::AddTableStructure(
+            const std::string& schema,
+            const std::string& table,
+            const std::list<std::string>& columns)
+    {
+        local_table_mgr->add_table_struct(schema + "." + table, columns);
+    }
 }
 

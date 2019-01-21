@@ -18,7 +18,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <strings.h>
+//#include <strings.h>
 
 /*
  * We provide parse error includes error message, first line, first column of error lex for debug
@@ -162,7 +162,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token SCHEMA SCOPE SELECT SESSION SESSION_ALIAS
        SET SHOW SMALLINT SNAPSHOT SPFILE START STATIC SYSTEM STRONG SET_MASTER_CLUSTER SET_SLAVE_CLUSTER SLAVE
 %token TABLE TABLES THEN TIES TIME TIMESTAMP TINYINT TRAILING TRANSACTION TO TOP
-%token UNION UPDATE USER
+%token UNION UPDATE
 %token VALUES VARCHAR VARBINARY
 %token WHERE WHEN WITH WORK PROCESSLIST QUERY CONNECTION WEAK
 %token LOOP HASH MERGE REMOTE CONCAT OPTIMIZE EXPAND VIEWS

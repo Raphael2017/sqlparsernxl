@@ -18,12 +18,11 @@ bool parser::parse(const std::string& sql, ParseResult* result)
 
     // Parse the tokens.
     // If parsing fails, the result will contain an error object.
-    int ret = yyparse(result, scanner);
-    bool success = (ret == 0);
+    yyparse(result, scanner);
     yy_delete_buffer(state, scanner);
     yylex_destroy(scanner);
 
-    return true;
+    return result->accept;
 }
 
 bool parser::tokenize(const std::string& sql, std::vector<yytokentype>* tokens)

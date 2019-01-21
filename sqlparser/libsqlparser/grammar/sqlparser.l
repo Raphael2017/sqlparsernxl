@@ -230,7 +230,6 @@ TRAILING          { return TRAILING; }
 TRANSACTION       { return TRANSACTION; }
 UNION             { return UNION; }
 UPDATE            { return UPDATE; }
-USER              { return USER; }
 USING             { return USING; }
 VALUES            { return VALUES; }
 VARBINARY         { return VARBINARY; }
