@@ -80,6 +80,21 @@ namespace resolve
         return cols->second[column_name];
     }
 
+    std::string LocalTableMgr::get_local_table_column_name(
+            uint64_t table_id,
+            uint64_t column_id)
+    {
+        auto cols = local_table_column_.find(table_id);
+        if (cols == local_table_column_.end())
+            return "";
+        for (auto it : cols->second)
+        {
+            if (it.second == column_id)
+                return it.first;
+        }
+        return "";
+    }
+
     uint64_t LocalTableMgr::add_table_struct(
             const std::string &schema_table_name,
             const std::list<std::string>& columns)

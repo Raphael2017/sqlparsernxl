@@ -17,7 +17,7 @@
 #endif //WIN32
 
 
-struct SQLPARSER_PUBLIC_API INode
+struct INode
 {
     virtual ~INode(){}
     virtual NodeType GetType() = 0;
@@ -39,7 +39,7 @@ struct IPlan;
 typedef std::function<void(IPlan*, ITableItem*)> BaseTableVisit;
 typedef std::function<void(IPlan*, ITableColumnRefItem*)> BaseTableColumnVisit;
 typedef std::function<void(IPlan*)> StartNewStmt;
-struct SQLPARSER_PUBLIC_API IPlan
+struct IPlan
 {
     virtual ~IPlan() {}
     virtual void* GetContext() = 0;
@@ -48,7 +48,7 @@ struct SQLPARSER_PUBLIC_API IPlan
     virtual void AddTableStructure(const std::string& schema, const std::string& table, const std::list<std::string>& columns) = 0;
 };
 
-struct SQLPARSER_PUBLIC_API ITableItem
+struct ITableItem
 {
     virtual ~ITableItem(){}
     virtual TableItemType GetTableItemType() = 0;
@@ -69,7 +69,7 @@ struct SQLPARSER_PUBLIC_API ITableItem
     virtual int GetColumn() = 0;
 };
 
-struct SQLPARSER_PUBLIC_API ITableColumnRefItem
+struct ITableColumnRefItem
 {
     virtual ~ITableColumnRefItem(){}
     virtual ITableItem* GetTableItem() = 0;
@@ -80,33 +80,33 @@ struct SQLPARSER_PUBLIC_API ITableColumnRefItem
     virtual int GetColumn() = 0;
 };
 
-struct SQLPARSER_PUBLIC_API IStmt
+struct IStmt
 {
     virtual ~IStmt(){}
     virtual StmtType GetStmtType() = 0;
     virtual uint64_t GetQueryID() = 0;
 };
 
-struct SQLPARSER_PUBLIC_API ISelectStmt
+struct ISelectStmt
 {
 
 };
 
-struct SQLPARSER_PUBLIC_API IUpdateStmt
+struct IUpdateStmt
 {
 
 };
 
 extern "C"
 {
-INode* ParseNode(const std::string& sql);
-void DestroyNode(INode*);
-IPlan* CreatePlan(const BaseTableVisit& baseTableVisit,
+SQLPARSER_PUBLIC_API INode* ParseNode(const std::string& sql);
+SQLPARSER_PUBLIC_API void DestroyNode(INode*);
+SQLPARSER_PUBLIC_API IPlan* CreatePlan(const BaseTableVisit& baseTableVisit,
                   const BaseTableColumnVisit& baseTableColumnVisit,
                   const StartNewStmt& startNewStmt,
                   void* context, INode*);
-void VisitPlan(IPlan*);
-void DestroyPlan(IPlan*);
-};
+SQLPARSER_PUBLIC_API void VisitPlan(IPlan*);
+SQLPARSER_PUBLIC_API void DestroyPlan(IPlan*);
+}
 
 #endif

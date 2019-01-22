@@ -1107,15 +1107,24 @@ Node* Node::check_expr_is_column_alias(Node* root)
         Node* left = root->getChild(E_OP_BINARY_OPERAND_L);
         Node* right = root->getChild(E_OP_BINARY_OPERAND_R);
         assert(left != nullptr && right != nullptr);
-        if (left->nodeType_ == E_IDENTIFIER || left->nodeType_ == E_STRING)
+        if (left->nodeType_ == E_OP_NAME_FIELD &&
+        left->getChild(0) != nullptr && left->getChild(0)->nodeType_ == E_IDENTIFIER &&
+        left->getChild(1) == nullptr && left->getChild(2) == nullptr &&
+        left->getChild(3) == nullptr && left->getChild(4) == nullptr)
         {
             // this is a column_alias
-            Node* ret = makeNonTerminalNode(E_ALIAS, 2, right, left);
+            std::string alias_name = left->getChild(0)->terminalToken_.str;
+            Node* alias = makeTerminalNode(E_IDENTIFIER, alias_name);
+            alias->terminalToken_.str = alias_name;
+            Node* ret = makeNonTerminalNode(E_ALIAS, 2, right, alias);
             ret->serialize_format = &AS_SERIALIZE_FORMAT;
-            root->setChild(E_OP_BINARY_OPERAND_L, nullptr);
             root->setChild(E_OP_BINARY_OPERAND_R, nullptr);
             delete(root);
             return ret;
+        }
+        else
+        {
+            // maybe here is an grammar error
         }
     }
     return root;

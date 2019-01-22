@@ -154,15 +154,29 @@ int main()
         "        WHERE OrderID=SA.SALES.OrderID)";
     a = "\n"
         "\n"
-        "UPDATE [dbo].[Product] SET [CreateDate] = DEFAULT\n"
-        "";
+        "UPDATE [dbo].[Product] SET [CreateDate] = DEFAULT;\n"
+        "SELECT 1";
+
+    a = "SELECT * FROM A AA INNER JOIN (B BB INNER JOIN C CC ON p=q) ON r=s";
+    a = "SELECT SALES.Qty + N1.a, N1.d + N1.a, N1.b FROM (SELECT Qty a, Product b, Qty d FROM SALES) N1, (SELECT * FROM (SELECT OrderID+Qty Qty FROM SALES) KK) SALES";
+    a = "SELECT d FROM (SELECT OrderID,SalesRep,Product, OrderID FROM (SELECT * FROM SALES) N) AA(a,b,c,d);";
+    a = "SELECT Qty FROM (SELECT * FROM (SELECT Qty aa,OrderID Qty FROM (SELECT * FROM SALES) N) N1) N";
+    a = "WITH CT(a) AS (SELECT OrderID FROM SALES)\n"
+        "SELECT a from CT";
+    a = "SELECT a FROM (SELECT a=Qty FROM SALES) QQ";
+    a = "SELECT qq, Qty From (SELECT 1, OrderID, Qty FROM SALES) N(qq, OrderID, Qty)";
+    a = "SELECT SALES.Qty + N1.a, N1.d + N1.a, N1.b+SALES.Qty FROM (SELECT Qty a, Product b, Qty d FROM SALES) N1, (SELECT * FROM (SELECT OrderID+Qty Qty FROM SALES) KK) SALES";
+    a = "SELECT dbo.Sales.Qty FROM Sales";
     {
-        INode* tree = INode::Parse(a);
+        INode* tree = ParseNode(a);
         auto t = tree->GetType();
+        printf("%s\n", tree->Serialize().c_str());
         if (tree)
         {
             auto t = tree->GetType();
-            IPlan* plan = IPlan::CreatePlan([](IPlan* plan, ITableItem* tbi){
+            IStmt* stmt = nullptr;
+            IPlan* plan = CreatePlan([&stmt](IPlan* plan, ITableItem* tbi){
+                stmt = plan->GetQuery(tbi->GetQueryID());
                 switch (tbi->GetTableItemType())
                 {
                     case E_BASIC_TABLE:
@@ -188,9 +202,11 @@ int main()
             [](IPlan* plan){
                 printf("\n");
             },nullptr, tree);
-            IPlan::Visit(plan);
-            INode::Destroy(tree);
-            IPlan::Destroy(plan);
+            plan->SetDefaultSchema("dbo");
+            plan->AddTableStructure("dbo", "SALES", {"OrderID", "SalesRep", "Product", "Qty"});
+            VisitPlan(plan);
+            DestroyNode(tree);
+            DestroyPlan(plan);
         }
 
     }

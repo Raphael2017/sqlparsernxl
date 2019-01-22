@@ -18,6 +18,7 @@ namespace resolve
 
         uint64_t  get_local_table_column_id(const std::string& schema_table_name,
                                             const std::string& column_name);
+        std::string get_local_table_column_name(uint64_t table_id, uint64_t column_id);
 
         std::string get_default_schema() const { return default_schema_; }
         void set_default_schema(const std::string& default_schema) { default_schema_ = default_schema; }

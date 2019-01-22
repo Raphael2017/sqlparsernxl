@@ -17,7 +17,8 @@ namespace resolve
         void set_query_id(uint64_t query_id) { query_id_ = query_id; }
         Stmt* get_parent() const { return parent_; }
         void set_parent(Stmt* parent) { parent_ = parent; }
-        CteDef* get_cte_def_by_index(size_t index) { 0 <= index && index < cte_defs_.size() ? cte_defs_[index] : nullptr; }
+        CteDef* get_cte_def_by_index(size_t index)
+            { return 0 <= index && index < cte_defs_.size() ? cte_defs_[index] : nullptr; }
         const std::vector<TableRef*>& get_table_items() const { return table_items_; }
 
         bool check_in_cte(
@@ -85,6 +86,7 @@ namespace resolve
     public:
         virtual StmtType GetStmtType() { return  E_NONE; }
         virtual uint64_t GetQueryID() { return get_query_id(); }
+        friend struct CteTableRef;
     };
 }
 

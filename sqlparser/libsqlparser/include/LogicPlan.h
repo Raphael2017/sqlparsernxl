@@ -8,6 +8,7 @@ namespace resolve
 {
     struct Stmt;
     struct SqlRawExpr;
+    struct SelectItem;
     struct LogicPlan
     {
         LogicPlan();

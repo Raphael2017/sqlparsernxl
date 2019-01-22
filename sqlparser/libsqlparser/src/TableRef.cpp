@@ -85,11 +85,6 @@ namespace resolve
         return true;
     }
 
-    bool BaseTableRef::check_column_by_index( uint64_t index, SelectItem*& out)
-    {
-        return false;
-    }
-
     void BaseTableRef::bind_node(ResultPlan* plan, Node* node)
     {
         assert(node != nullptr);
@@ -204,6 +199,7 @@ namespace resolve
             index++;
             cols_.push_back(clone);
         }
+        return true;
     }
 
     bool GeneratedTableRef::check_is_ref(
@@ -235,19 +231,6 @@ namespace resolve
             item->set_column_id(start_index++);
             item->query_id_ = query_id_;
             out_select_items.push_back(item);
-        }
-        return true;
-    }
-
-    bool GeneratedTableRef::check_column_by_index( uint64_t index, SelectItem*& out)
-    {
-        for (auto it : cols_)
-        {
-            if (index == it->get_column_id())
-            {
-                out = it;
-                break;
-            }
         }
         return true;
     }
@@ -317,12 +300,6 @@ namespace resolve
         return true;
     }
 
-    bool CteTableRef::check_column_by_index( uint64_t index, SelectItem*& out)
-    {
-        // todo
-        return false;
-    }
-
     CteDef::~CteDef()
     {
         for (auto it : cols_)
@@ -371,6 +348,7 @@ namespace resolve
             index++;
             cols_.push_back(clone);
         }
+        return true;
     }
 
 }

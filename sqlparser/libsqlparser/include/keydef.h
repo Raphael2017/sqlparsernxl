@@ -326,6 +326,7 @@ enum StmtType
 
 enum TableItemType
 {
+    E_UNKNOWN,
     E_BASIC_TABLE,
     E_BASIC_TABLE_WITH_ALIAS,
     E_DERIVED_TABLE,

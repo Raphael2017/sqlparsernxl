@@ -19,11 +19,10 @@ namespace resolve
         SelectItemType get_sel_item_type() const { return select_item_type_; }
         void set_sel_item_type(SelectItemType sel_type) { select_item_type_ = sel_type; }
         uint64_t get_column_id() const { return column_id_; }
-        uint64_t set_column_id(uint64_t column_id) { column_id_ = column_id; }
+        void set_column_id(uint64_t column_id) { column_id_ = column_id; }
 
         virtual std::string get_column_name() const  = 0;
         virtual SelectItem* clone() const = 0;
-        virtual void debug(LogicPlan*) = 0;
         virtual void set_alias(const std::string& alias) { alias_ = alias; }
 
     protected:
@@ -45,10 +44,10 @@ namespace resolve
             SelectItem* ret = new SelItemExprAlias(*this);
             return ret;
         }
-        virtual void debug(LogicPlan*);
     private:
         uint64_t sql_raw_expr_id_;
         friend struct SelectStmt;
+        friend struct SqlRawExpr;
     };
 
     struct SelItemExpr : public SelectItem
@@ -67,11 +66,11 @@ namespace resolve
             SelectItem* ret = new SelItemExpr(*this);
             return ret;
         }
-        virtual void debug(LogicPlan*);
     private:
         uint64_t sql_raw_expr_id_;
         std::string name_;
         friend struct SelectStmt;
+        friend struct SqlRawExpr;
     };
 
     struct SelItemExpandStar : public SelectItem
@@ -90,7 +89,6 @@ namespace resolve
             SelectItem* ret = new SelItemExpandStar(*this);
             return ret;
         }
-        virtual void debug(LogicPlan*);
     private:
         std::string col_name_;
         uint64_t query_id_;
@@ -99,6 +97,7 @@ namespace resolve
         friend struct BaseTableRef;
         friend struct GeneratedTableRef;
         friend struct CteTableRef;
+        friend struct SqlRawExpr;
     };
 }
 

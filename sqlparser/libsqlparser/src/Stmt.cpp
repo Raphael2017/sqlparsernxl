@@ -81,14 +81,15 @@ namespace resolve
         }
         else
         {
+            std::string schema_name1 = schema_name.length() > 0 ? schema_name : plan->local_table_mgr->get_default_schema();
             if (alias_name.length() > 0)
             {
                 BaseTableAliasRef* tb = new BaseTableAliasRef;
                 tb->table_id_ = plan->logicPlan_->generate_table_id();
                 tb->query_id_ = this->query_id_;
-                tb->base_table_id_ = plan->local_table_mgr->get_local_table_id(schema_name+"."+table_name);
+                tb->base_table_id_ = plan->local_table_mgr->get_local_table_id(schema_name1+"."+table_name);
                 tb->table_name_ = table_name;
-                tb->schema_name_ = schema_name;
+                tb->schema_name_ = schema_name1;
                 /*todo*/
                 assert(node != nullptr);
                 tb->bind_node(plan, node);
@@ -99,10 +100,10 @@ namespace resolve
             {
                 BaseTableRef* tb = new BaseTableRef;
                 tb->query_id_ = this->query_id_;
-                tb->base_table_id_ = plan->local_table_mgr->get_local_table_id(schema_name+"."+table_name);
+                tb->base_table_id_ = plan->local_table_mgr->get_local_table_id(schema_name1+"."+table_name);
                 tb->table_id_ = tb->base_table_id_;
                 tb->table_name_ = table_name;
-                tb->schema_name_ = schema_name;
+                tb->schema_name_ = schema_name1;
                 /*todo*/
                 assert(node != nullptr);
                 tb->bind_node(plan, node);

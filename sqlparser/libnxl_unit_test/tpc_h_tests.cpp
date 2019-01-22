@@ -52,7 +52,7 @@ TEST(TPCHQueryGrammarTests)
     {
         std::string query = readFileContents(file_path);
 
-        INode* tree = INode::Parse(query);
+        INode* tree = ParseNode(query);
         if (!tree)
         {
             mt::printFailed(file_path.c_str());
@@ -67,12 +67,12 @@ TEST(TPCHQueryGrammarTests)
         {
             concatenated += query + "\n";
         }
-        INode::Destroy(tree);
+        DestroyNode(tree);
     }
 
     clock_t start, end;
     int tks_count = 0;
-    INode* tree = INode::Parse(concatenated);
+    INode* tree = ParseNode(concatenated);
     if (!tree)
     {
         mt::printFailed("TPCHAllConcatenated");
@@ -86,7 +86,7 @@ TEST(TPCHQueryGrammarTests)
     if (tree)
     {
         auto t = tree->GetType();
-        IPlan* plan = IPlan::CreatePlan([](IPlan* plan, ITableItem* tbi){
+        IPlan* plan = CreatePlan([](IPlan* plan, ITableItem* tbi){
             switch (tbi->GetTableItemType())
             {
                 case E_BASIC_TABLE:
@@ -112,10 +112,10 @@ TEST(TPCHQueryGrammarTests)
             [](IPlan* plan){
                 printf("\n");
             },nullptr, tree);
-        IPlan::Visit(plan);
+        VisitPlan(plan);
         printf("%s\n", concatenated.c_str());
-        INode::Destroy(tree);
-        IPlan::Destroy(plan);
+        DestroyNode(tree);
+        DestroyPlan(plan);
     }
 
     ASSERT_EQ(testsFailed, 0);

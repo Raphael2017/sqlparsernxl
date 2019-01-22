@@ -28,7 +28,7 @@ namespace resolve
         uint64_t get_table_id() const { return table_id_; }
         void set_table_id(uint64_t table_id) { table_id_ = table_id; }
         uint64_t get_query_id() const { return query_id_; }
-        uint64_t set_query_id(uint64_t query_id) { query_id_ = query_id; }
+        void set_query_id(uint64_t query_id) { query_id_ = query_id; }
 
         virtual std::string get_table_name() const = 0;
         virtual bool check_column(
@@ -40,25 +40,24 @@ namespace resolve
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
                 size_t start_index) = 0;
-        virtual bool check_column_by_index(uint64_t index, SelectItem*& out_sel) = 0;
 
         /* Implement Of ITableItem */
-        virtual TableItemType GetTableItemType() {}
-        virtual uint64_t GetTableID() {}
-        virtual uint64_t GetQueryID() {}
-        virtual std::string GetTableName() {}
-        virtual std::string GetTableAliasName() {}
-        virtual std::string GetSchemaName() {}
-        virtual std::string GetDatabaseName() {}
-        virtual std::string GetServerName() {}
-        virtual std::string GetTableHint() {}
-        virtual std::string GetTableObject() {}
+        virtual TableItemType GetTableItemType() { return E_UNKNOWN; }
+        virtual uint64_t GetTableID() { return OB_INVALID_ID; }
+        virtual uint64_t GetQueryID() { return OB_INVALID_ID; }
+        virtual std::string GetTableName() { return ""; }
+        virtual std::string GetTableAliasName() { return ""; }
+        virtual std::string GetSchemaName() { return ""; }
+        virtual std::string GetDatabaseName() { return ""; }
+        virtual std::string GetServerName() { return ""; }
+        virtual std::string GetTableHint() { return ""; }
+        virtual std::string GetTableObject() { return ""; }
         virtual bool SetText(
                 TableItemType tp,
                 const std::string& newtable,
-                const std::string& alias) {}
-        virtual int GetLine() {}
-        virtual int GetColumn() {}
+                const std::string& alias) { return false; }
+        virtual int GetLine() { return 0; }
+        virtual int GetColumn() { return 0; }
 
     protected:
         TableRefType table_ref_type_;
@@ -81,7 +80,6 @@ namespace resolve
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
                 uint64_t start_index);
-        virtual bool check_column_by_index(uint64_t index, SelectItem*&);
 
         /* Implement Of ITableItem */
         virtual TableItemType GetTableItemType() { return E_BASIC_TABLE; }
@@ -114,6 +112,7 @@ namespace resolve
         int column_;
         Node* node_;
     friend struct Stmt;
+    friend struct SqlRawExpr;
     };
 
     struct BaseTableAliasRef: public BaseTableRef
@@ -129,7 +128,7 @@ namespace resolve
         virtual bool SetText(
                 TableItemType tp,
                 const std::string& newtable,
-                const std::string& alias) {}
+                const std::string& alias) { return false; }
     private:
         std::string alias_name_;
         friend struct Stmt;
@@ -149,7 +148,6 @@ namespace resolve
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
                 size_t start_index);
-        virtual bool check_column_by_index(uint64_t index, SelectItem*&);
         bool set_column_alias(
                 ResultPlan*plan,
                 const std::vector<std::string>& col_alias);
@@ -159,6 +157,7 @@ namespace resolve
         std::string alias_name_;
         uint64_t ref_query_id_;  // link of selectstmt
         friend struct Stmt;
+        friend struct SqlRawExpr;
     };
 
     struct CteTableRef: public TableRef
@@ -175,13 +174,13 @@ namespace resolve
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
                 uint64_t start_index);
-        virtual bool check_column_by_index(uint64_t index, SelectItem*&);
     private:
         std::string cte_name_;
         std::string alias_name_;
         uint64_t cte_at_query_id_;
         uint64_t cte_index_;
         friend struct Stmt;
+        friend struct SqlRawExpr;
     };
 
     struct Stmt;
@@ -204,6 +203,7 @@ namespace resolve
                 Node* node,
                 Stmt* parent,
                 uint64_t& out_table_id);
+        friend struct SqlRawExpr;
     };
 
 }

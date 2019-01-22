@@ -18,7 +18,6 @@ namespace resolve
         if (table.length() == 0)
         {
             // all table expand
-            size_t index = 0;
             for (TableRef* tbi : table_items_)
             {
                 tbi->expand(plan, select_items_, 1 + get_last_column_id());
@@ -31,8 +30,8 @@ namespace resolve
             bool gettable = get_table_item(schema, table, tbi);
             assert(gettable);
             tbi->expand(plan, select_items_, 1 + get_last_column_id());
-            return true;
         }
+        return true;
     }
 
     bool SelectStmt::add_select_item(uint64_t expr_id, const std::string& alias, bool is_real_alias)
@@ -53,6 +52,7 @@ namespace resolve
             item->set_column_id(get_last_column_id() + 1);
             select_items_.push_back(item);
         }
+        return true;
     }
 
     bool SelectStmt::is_set_op() const
@@ -88,5 +88,6 @@ namespace resolve
             index = 0;
         else
             index = select_items_.back()->get_column_id();
+        return index;
     }
 }

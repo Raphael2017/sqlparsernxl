@@ -12,6 +12,7 @@ namespace resolve
         uint64_t table_id_;
         uint64_t column_id_;
     };
+
     class RawExpr
     {
     public:
@@ -209,9 +210,13 @@ namespace resolve
         void set_query_id(uint64_t query_id) { query_id_ = query_id; }
         RawExpr* get_expr() { return expr_; }
         void set_expr(RawExpr* raw_expr) { expr_ = raw_expr; }
-        void debug(LogicPlan* logic);
-        std::string expr_content;
-
+        void debug(ResultPlan* plan, int lvl = 0);
+        bool check_base_field_ref(ResultPlan* plan);
+    private:
+        static void debug1(ResultPlan* plan, uint64_t query_id, uint64_t table_id, uint64_t column_id, int lvl);
+        static bool check_base_field_ref1(ResultPlan* plan, uint64_t query_id, uint64_t table_id, uint64_t column_id);
+    public:
+        std::string expr_content;   // for debug info
     private:
         uint64_t query_id_;
         uint64_t expr_id_;

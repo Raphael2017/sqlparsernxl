@@ -200,7 +200,7 @@ namespace resolve
         if (!node)
             return 0;
         assert(node->nodeType_ == E_WHERE_CLAUSE);
-        Node* expr = node->getChild(E_WHERE_CLAUSE_EXPR);
+        //Node* expr = node->getChild(E_WHERE_CLAUSE_EXPR);
         //resolve_expr(plan, expr, parent);
         return 0;
     }
@@ -220,7 +220,6 @@ namespace resolve
             assert(child->nodeType_ == E_PROJECT_STRING);
             Node* nd = child->getChild(E_PROJECT_STRING_EXPR_OR_ALIAS);
             std::string alias_name = "";
-            uint64_t sql_raw_expr_id = OB_INVALID_ID;
             switch (nd->nodeType_)
             {
                 case E_ALIAS:
@@ -318,8 +317,7 @@ namespace resolve
             {
                 std::string table_name = table_node->terminalToken_.str;
                 std::string alias_name = alias_node ? alias_node->terminalToken_.str : "";
-                std::string schema_name = schema_node ? schema_node->terminalToken_.str
-                        : plan->local_table_mgr->get_default_schema();  // add default schema name
+                std::string schema_name = schema_node ? schema_node->terminalToken_.str : "";
                 parent->add_table_item(plan, schema_name, table_name, alias_name, out_table_id, node);
             }
                 break;
@@ -446,9 +444,10 @@ namespace resolve
         assert(raw_expr != nullptr);
         sql_expr->set_query_id(parent->get_query_id());
         sql_expr->expr_content = node->serialize();
-        printf("%s:\n", sql_expr->expr_content.c_str());
-        sql_expr->debug(plan->logicPlan_);
+        printf("%s updateable %d :", sql_expr->expr_content.c_str(), sql_expr->check_base_field_ref(plan) ? 1 : 0);
+        sql_expr->debug(plan);
         printf("\n");
+        return 0;
     }
 
     int resolve_expr(
@@ -519,6 +518,25 @@ namespace resolve
             }
                 break;
             case E_OP_ADD:
+            case E_OP_MINUS:
+            case E_OP_MUL:
+            case E_OP_DIV:
+            case E_OP_REM:
+            case E_OP_POW:
+            case E_OP_MOD:
+            case E_OP_LE:
+            case E_OP_LT:
+            case E_OP_EQ:
+            case E_OP_GE:
+            case E_OP_GT:
+            case E_OP_NE:
+            case E_OP_LIKE:
+            case E_OP_NOT_LIKE:
+            case E_OP_AND:
+            case E_OP_OR:
+            case E_OP_IS:
+            case E_OP_IS_NOT:
+            case E_OP_CNN:
             {
                 RawExpr* l = nullptr;
                 RawExpr* r = nullptr;
@@ -535,5 +553,6 @@ namespace resolve
                 break;
 
         }
+        return 0;
     }
 }

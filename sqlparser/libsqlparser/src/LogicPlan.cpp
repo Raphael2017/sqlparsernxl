@@ -3,6 +3,8 @@
 #include "Stmt.h"
 #include "SelectStmt.h"
 #include "expr.h"
+#include "TableRef.h"
+#include "SelectItem.h"
 
 namespace resolve
 {
@@ -19,8 +21,9 @@ namespace resolve
 
     void LogicPlan::reset()
     {
-        new_gen_qid_ = UINT16_MAX;
+        new_gen_tid_ = UINT16_MAX;
         new_gen_qid_ = 1;
+        new_gen_eid_ = 1;
         release();
     }
 
@@ -100,4 +103,5 @@ namespace resolve
         exprs_.push_back(ret);
         return ret;
     }
+
 }
