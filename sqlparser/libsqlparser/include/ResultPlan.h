@@ -10,12 +10,17 @@ namespace resolve
     struct LocalTableMgr;
     struct ResultPlan : public IPlan
     {
-        ResultPlan(const BaseTableVisit& visit, const BaseTableColumnVisit& visit1, const StartNewStmt& visit2);
+        ResultPlan(
+                const BaseTableVisit& visit,
+                const BaseTableColumnVisit& visit1,
+                const StartNewStmt& visit2,
+                const WhereClauseVisit& visit3);
         ~ResultPlan();
         void reset();
         BaseTableVisit base_table_visit_;
         BaseTableColumnVisit baseTableColumnVisit_;
         StartNewStmt startNewStmt_;
+        WhereClauseVisit whereClauseVisit_;
         LogicPlan* logicPlan_{nullptr};
         LocalTableMgr* local_table_mgr{nullptr};
         void* context_{nullptr};

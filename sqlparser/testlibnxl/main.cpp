@@ -166,7 +166,28 @@ int main()
     a = "SELECT a FROM (SELECT a=Qty FROM SALES) QQ";
     a = "SELECT qq, Qty From (SELECT 1, OrderID, Qty FROM SALES) N(qq, OrderID, Qty)";
     a = "SELECT SALES.Qty + N1.a, N1.d + N1.a, N1.b+SALES.Qty FROM (SELECT Qty a, Product b, Qty d FROM SALES) N1, (SELECT * FROM (SELECT OrderID+Qty Qty FROM SALES) KK) SALES";
-    a = "SELECT dbo.Sales.Qty FROM Sales";
+    a = "SELECT *\n"
+        "FROM   sa.sales WITH(nolock nowait)\n"
+        "       LEFT JOIN sa.Sales01 N\n"
+        "              ON sales.orderid = N.Qty\n"
+        "WHERE  sales.Product <> 'Wheel'";
+    a = "SELECT *\n"
+        "FROM   (SELECT *\n"
+        "        FROM   sa.Sales01) N\n"
+        "       LEFT JOIN sa.sales\n"
+        "              ON N.orderid = sales.Qty";
+    a = "SELECT VendorID, [250] AS Emp1, [251] AS Emp2, [256] AS Emp3, [257] AS Emp4, [260] AS Emp5\n"
+        "FROM\n"
+        "  (SELECT PurchaseOrderID, EmployeeID, VendorID\n"
+        "   FROM Purchasing.PurchaseOrderHeader) p\n"
+        "    PIVOT\n"
+        "    (\n"
+        "    COUNT (PurchaseOrderID)\n"
+        "    FOR EmployeeID IN\n"
+        "    ( [250], [251], [256], [257], [260] )\n"
+        "    ) AS pvt\n"
+        "ORDER BY pvt.VendorID";
+    a = "SELECT * FROM SA.SALES A LEFT JOIN SA.Sales01 B RIGHT JOIN SA.SALES C ON C.OrderID < B.Qty ON A.Qty = B.OrderID";
     {
         INode* tree = ParseNode(a);
         auto t = tree->GetType();
@@ -181,6 +202,8 @@ int main()
                 {
                     case E_BASIC_TABLE:
                     {
+                        std::string a = tbi->GetTableObject();
+                        std::string s = tbi->GetTableHint();
                         printf("access base table : %-25s at (L%+3d:%-2d)(%lld)\n", tbi->GetTableObject().c_str(), tbi->GetLine() + 1, tbi->GetColumn(), tbi->GetTableID());
                     }
                         break;
@@ -201,10 +224,68 @@ int main()
             },
             [](IPlan* plan){
                 printf("\n");
-            },nullptr, tree);
+            },[](IPlan* plan, IWhereCluase* wc){
+                uint64_t query_id = wc->GetQueryID();
+                assert(query_id != OB_INVALID_ID);
+                IStmt* stmt = plan->GetQuery(query_id);
+                size_t cnt = stmt->GetTableItemCount();
+                std::string cond = "";
+                size_t t = 0;
+                for (size_t i = 0; i < cnt; ++i)
+                {
+                    ITableItem* tbi = stmt->GetTableItem(i);
+                    if (!tbi) continue;
+
+
+
+                    switch (tbi->GetTableItemType())
+                    {
+                        case E_BASIC_TABLE:
+                        {
+                            if (tbi->GetTableName() == "Sales01")
+                            {
+                                if (t > 0)
+                                    cond += " AND ";
+                                t++;
+                                cond += "(" + tbi->GetTableObject() + ".Qty IS NULL OR ";
+                                cond += tbi->GetTableObject() + ".Qty > 4)";
+                            }
+                        }
+                            break;
+                        case E_BASIC_TABLE_WITH_ALIAS:
+                        {
+                            if (tbi->GetTableName() == "Sales01")
+                            {
+                                if (t > 0)
+                                    cond += " AND ";
+                                t++;
+                                assert(tbi->GetTableAliasName().length() > 0);
+                                cond += "(" + tbi->GetTableAliasName() + ".Qty IS NULL OR ";
+                                cond += tbi->GetTableAliasName() + ".Qty > 4)";
+                            }
+                        }
+                            break;
+                        default:
+                        {
+                            /*do nothing*/
+                        }
+                            break;
+                    }
+                }
+                if (t > 0)
+                {
+                    wc->AddCondition(cond);
+                }
+
+
+            }, nullptr, tree);
             plan->SetDefaultSchema("dbo");
             plan->AddTableStructure("dbo", "SALES", {"OrderID", "SalesRep", "Product", "Qty"});
             VisitPlan(plan);
+
+            std::string a = tree->Serialize();
+            printf("%s\n", a.c_str());
+
             DestroyNode(tree);
             DestroyPlan(plan);
         }

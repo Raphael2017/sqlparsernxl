@@ -10,6 +10,7 @@
 #include "TableRef.h"
 #include "expr.h"
 #include "LogicPlan.h"
+#include "where_clause.h"
 
 namespace resolve
 {
@@ -104,7 +105,7 @@ namespace resolve
             resolve_cte_clause(plan, node->getChild(E_SELECT_OPT_WITH), select_stmt);
             resolve_from_clause(plan, node->getChild(E_SELECT_FROM_LIST), select_stmt);
 
-            resolve_where_clause(plan, node->getChild(E_SELECT_OPT_WHERE), select_stmt);
+            resolve_where_clause(plan, node->getChild(E_SELECT_OPT_WHERE), node, select_stmt);
             resolve_select_items(plan, node->getChild(E_SELECT_SELECT_EXPR_LIST), select_stmt, scope);
         }
         return 0;
@@ -195,16 +196,28 @@ namespace resolve
     int resolve_where_clause(
             ResultPlan* plan,
             Node* node,
+            Node* select,
             Stmt* parent)
     {
-        if (!node)
-            return 0;
-        assert(node->nodeType_ == E_WHERE_CLAUSE);
-        //Node* expr = node->getChild(E_WHERE_CLAUSE_EXPR);
-        //resolve_expr(plan, expr, parent);
+        if (node)
+        {
+            assert(node->nodeType_ == E_WHERE_CLAUSE);
+            Node* expr = node->getChild(E_WHERE_CLAUSE_EXPR);
+            uint64_t sql_raw_expr_id = OB_INVALID_ID;
+            resolve_independ_expr(plan, expr, sql_raw_expr_id, parent);
+        }
+
+        {
+            WhereCluase wc;
+            wc.query_id_ = parent->get_query_id();
+            wc.bind(node, select);
+            plan->whereClauseVisit_(plan, &wc);
+        }
+
         return 0;
     }
 
+#ifdef COMPLETE_ANALYSIS
     int resolve_select_items(
             ResultPlan* plan,
             Node* node,
@@ -274,6 +287,18 @@ namespace resolve
         }
         return 0;
     }
+#else
+    int resolve_select_items(
+            ResultPlan* plan,
+            Node* node,
+            SelectStmt* parent,
+            ScopeType scope)
+    {
+        RawExpr* e = nullptr;
+        resolve_expr(plan, node, nullptr, parent, e);
+        return 0;
+    }
+#endif
 
     int resolve_table(
             ResultPlan* plan,
@@ -428,6 +453,7 @@ namespace resolve
         return ret;
     }
 
+#ifdef COMPLETE_ANALYSIS
     int resolve_independ_expr(
             ResultPlan *plan,
             Node *node,
@@ -449,6 +475,31 @@ namespace resolve
         printf("\n");
         return 0;
     }
+#else
+    int resolve_independ_expr(
+            ResultPlan *plan,
+            Node *node,
+            uint64_t& sql_raw_expr_id,
+            Stmt* parent)
+    {
+        if (!node)
+            return 0;
+        if (node->nodeType_ == E_SELECT)
+        {
+            uint64_t query_id = OB_INVALID_ID;
+            resolve_select_statement(plan, node, query_id, parent);
+            return 0;
+        }
+        for (size_t i = 0; i < node->getChildrenCount(); ++i)
+        {
+            Node* child = node->getChild(i);
+            if (child)
+                resolve_independ_expr(plan, child, sql_raw_expr_id, parent);
+        }
+        sql_raw_expr_id = OB_INVALID_ID;
+        return 0;
+    }
+#endif
 
     int resolve_expr(
             ResultPlan* plan,

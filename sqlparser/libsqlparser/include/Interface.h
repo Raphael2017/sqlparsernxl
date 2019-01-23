@@ -36,9 +36,18 @@ struct ITableItem;
 struct ITableColumnRefItem;
 struct IStmt;
 struct IPlan;
+struct IWhereCluase;
 typedef std::function<void(IPlan*, ITableItem*)> BaseTableVisit;
 typedef std::function<void(IPlan*, ITableColumnRefItem*)> BaseTableColumnVisit;
 typedef std::function<void(IPlan*)> StartNewStmt;
+typedef std::function<void(IPlan*, IWhereCluase*)> WhereClauseVisit;
+struct IWhereCluase
+{
+    virtual ~IWhereCluase(){}
+    virtual std::string GetCondition() = 0;
+    virtual bool AddCondition(const std::string& condition) = 0;
+    virtual uint64_t GetQueryID() = 0;
+};
 struct IPlan
 {
     virtual ~IPlan() {}
@@ -85,6 +94,8 @@ struct IStmt
     virtual ~IStmt(){}
     virtual StmtType GetStmtType() = 0;
     virtual uint64_t GetQueryID() = 0;
+    virtual size_t GetTableItemCount() const = 0;
+    virtual ITableItem* GetTableItem(size_t index) = 0;
 };
 
 struct ISelectStmt
@@ -104,6 +115,7 @@ SQLPARSER_PUBLIC_API void DestroyNode(INode*);
 SQLPARSER_PUBLIC_API IPlan* CreatePlan(const BaseTableVisit& baseTableVisit,
                   const BaseTableColumnVisit& baseTableColumnVisit,
                   const StartNewStmt& startNewStmt,
+                  const WhereClauseVisit& whereClauseVisit,
                   void* context, INode*);
 SQLPARSER_PUBLIC_API void VisitPlan(IPlan*);
 SQLPARSER_PUBLIC_API void DestroyPlan(IPlan*);

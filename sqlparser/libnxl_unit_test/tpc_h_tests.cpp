@@ -111,9 +111,58 @@ TEST(TPCHQueryGrammarTests)
             },
             [](IPlan* plan){
                 printf("\n");
-            },nullptr, tree);
+            }, [](IPlan* plan, IWhereCluase* wc){
+                    uint64_t query_id = wc->GetQueryID();
+                    IStmt* stmt = plan->GetQuery(query_id);
+                    size_t cnt = stmt->GetTableItemCount();
+                    std::string cond = "";
+                    size_t t = 0;
+                    for (size_t i = 0; i < cnt; ++i)
+                    {
+                        ITableItem* tbi = stmt->GetTableItem(i);
+                        if (!tbi) continue;
+
+                        if (t > 0)
+                            cond += " AND ";
+
+                        switch (tbi->GetTableItemType())
+                        {
+                            case E_BASIC_TABLE:
+                            {
+                                if (true)
+                                {
+                                    t++;
+                                    cond += "(" + tbi->GetTableObject() + ".Qty IS NULL OR ";
+                                    cond += tbi->GetTableObject() + ".Qty > 3)";
+                                }
+                            }
+                                break;
+                            case E_BASIC_TABLE_WITH_ALIAS:
+                            {
+                                if (true)
+                                {
+                                    t++;
+
+                                    cond += "(" + tbi->GetTableAliasName() + ".Qty IS NULL OR ";
+                                    cond += tbi->GetTableAliasName() + ".Qty > 3)";
+                                }
+                            }
+                                break;
+                            default:
+                            {
+                                /*do nothing*/
+                            }
+                                break;
+                        }
+                    }
+                    if (t > 0)
+                    {
+                        wc->AddCondition(cond);
+                    }
+            }, nullptr, tree);
         VisitPlan(plan);
         printf("%s\n", concatenated.c_str());
+        printf("%s\n", tree->Serialize().c_str());
         DestroyNode(tree);
         DestroyPlan(plan);
     }

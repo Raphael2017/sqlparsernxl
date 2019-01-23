@@ -9,6 +9,8 @@
 #include <assert.h>
 #include <functional>
 
+#define COMPLETE_ANALYSIS1
+
 struct Node;
 
 namespace resolve
@@ -82,6 +84,7 @@ namespace resolve
     int resolve_where_clause(
             ResultPlan* plan,
             Node* node,
+            Node* select,
             Stmt* parent
             );  // not use
 

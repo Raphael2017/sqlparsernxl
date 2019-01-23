@@ -13,7 +13,8 @@ namespace resolve
     struct Stmt : public IStmt
     {
     public:
-        int get_query_id() const { return query_id_; }
+        ~Stmt();
+        uint64_t get_query_id() const { return query_id_; }
         void set_query_id(uint64_t query_id) { query_id_ = query_id; }
         Stmt* get_parent() const { return parent_; }
         void set_parent(Stmt* parent) { parent_ = parent; }
@@ -86,6 +87,8 @@ namespace resolve
     public:
         virtual StmtType GetStmtType() { return  E_NONE; }
         virtual uint64_t GetQueryID() { return get_query_id(); }
+        virtual size_t GetTableItemCount() const { return table_items_.size(); }
+        virtual ITableItem* GetTableItem(size_t index);
         friend struct CteTableRef;
     };
 }

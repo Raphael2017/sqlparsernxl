@@ -9,10 +9,11 @@ IPlan* CreatePlan(
         const BaseTableVisit& baseTableVisit,
         const BaseTableColumnVisit& baseTableColumnVisit,
         const StartNewStmt& startNewStmt,
+        const WhereClauseVisit& whereClauseVisit,
         void* context, INode* node)
 {
     Node* root = dynamic_cast<Node*>(node);
-    resolve::ResultPlan* ret = new resolve::ResultPlan(baseTableVisit, baseTableColumnVisit, startNewStmt);
+    resolve::ResultPlan* ret = new resolve::ResultPlan(baseTableVisit, baseTableColumnVisit, startNewStmt, whereClauseVisit);
     ret->context_ = context;
     ret->tree_root_ = root;
     return ret;

@@ -10,6 +10,16 @@
 
 namespace resolve
 {
+    Stmt::~Stmt()
+    {
+        for (auto it : cte_defs_)
+            delete(it);
+        cte_defs_.clear();
+        for (auto it : table_items_)
+            delete(it);
+        table_items_.clear();
+    }
+
     bool Stmt::check_in_cte(
             const std::string& table_name,
             uint64_t& out_query_id,
@@ -264,5 +274,9 @@ namespace resolve
         if (!ret)
             return false;
         return true;
+    }
+    ITableItem* Stmt::GetTableItem(size_t index)
+    {
+        return 0 <= index && index < table_items_.size() ? table_items_[index] : nullptr;
     }
 }
