@@ -220,7 +220,7 @@ namespace resolve
     bool GeneratedTableRef::expand(
             ResultPlan* plan,
             std::vector<SelectItem*>& out_select_items,
-            size_t start_index)
+            uint64_t start_index)
     {
         for (auto it : cols_)
         {

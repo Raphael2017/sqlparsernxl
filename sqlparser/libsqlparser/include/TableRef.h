@@ -39,7 +39,7 @@ namespace resolve
         virtual bool expand(
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
-                size_t start_index) = 0;
+                uint64_t start_index) = 0;
 
         /* Implement Of ITableItem */
         virtual TableItemType GetTableItemType() { return E_UNKNOWN; }
@@ -147,7 +147,7 @@ namespace resolve
         virtual bool expand(
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
-                size_t start_index);
+                uint64_t start_index);
         bool set_column_alias(
                 ResultPlan*plan,
                 const std::vector<std::string>& col_alias);
