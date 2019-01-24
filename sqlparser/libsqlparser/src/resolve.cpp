@@ -313,8 +313,8 @@ namespace resolve
         Node* schema_node = nullptr;
         if (node->nodeType_ == E_ALIAS)
         {
-            table_node = node->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS);
-            alias_node = node->getChild(E_ALIAS_RELATION_NAME);
+            table_node = node->getChild(E_ALIAS_ORIGN);
+            alias_node = node->getChild(E_ALIAS_ALIAS);
         }
         else if (node->nodeType_ == E_TABLE_IDENT)
         {

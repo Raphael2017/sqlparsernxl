@@ -17,7 +17,7 @@ namespace resolve
         if (!where_)
         {
             Node* new_expr = Node::makeTerminalNode(E_STRING, condition);
-            Node* where = Node::makeNonTerminalNode(E_WHERE_CLAUSE, 1, new_expr);
+            Node* where = Node::makeNonTerminalNode(E_WHERE_CLAUSE, E_WHERE_CLAUSE_PROPERTY_CNT, new_expr);
             where->serialize_format = &WHERE_SERIALIZE_FORMAT;
             select_->setChild(E_SELECT_OPT_WHERE, where);
         }
@@ -25,7 +25,7 @@ namespace resolve
         {
             Node* ori_expr = where_->getChild(E_WHERE_CLAUSE_EXPR);
             Node* cond = Node::makeTerminalNode(E_STRING, condition);
-            Node* new_expr = Node::makeNonTerminalNode(E_OP_AND, 2, ori_expr, cond);
+            Node* new_expr = Node::makeNonTerminalNode(E_OP_AND, E_OP_BINARY_PROPERTY_CNT, ori_expr, cond);
             new_expr->serialize_format = &OP_AND_SERIALIZE_FORMAT;
             where_->setChild(E_WHERE_CLAUSE_EXPR, new_expr);
         }

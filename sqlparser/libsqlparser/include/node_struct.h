@@ -8,7 +8,9 @@
 /*
  * E_STMT_LIST, E_SORT_LIST, E_SELECT_EXPR_LIST
  * E_FROM_LIST, E_EXPR_LIST, E_WHEN_LIST,
- * E_SIMPLE_IDENT_LIST, E_WITH_LIST
+ * E_SIMPLE_IDENT_LIST, E_WITH_LIST, E_TABLE_HINT_LIST
+ * E_QUERY_HINT_LIST, E_EXPR_LIST_PARENS_LIST,
+ * E_UPDATE_ELEM_LIST, E_DML_SELECT_LIST
  * */
 #define E_LIST_PROPERTY_CNT             2
 
@@ -19,6 +21,7 @@
 /*
  * E_SELECT_WITH_PARENS, E_JOINED_TABLE_WITH_PARENS
  * E_EXPR_LIST_WITH_PARENS, E_SIMPLE_IDENT_LIST_WITH_PARENS
+ * E_EXPR_LIST_PARENS, E_TABLE_VALUE_CTOR_PARENS
  * */
 #define E_PARENS_PROPERTY_CNT           1
 
@@ -95,12 +98,13 @@
 /*
  * E_ALIAS
  * */
-#define E_ALIAS_PROPERTY_CNT            4
+#define E_ALIAS_PROPERTY_CNT            5
 
 #define E_ALIAS_ORIGN                   0
 #define E_ALIAS_ALIAS                   1
 #define E_ALIAS_COLUMN_ALIAS_LIST       2
 #define E_ALIAS_TABLE_HINTS             3
+#define E_ALIAS_FOR_SYS_TIME			4
 //////////////////////////////////////////
 
 /*
@@ -168,7 +172,7 @@
 
 #define E_CASE_ARG                      0
 #define E_CASE_WHEN_CLAUSE_LIST         1
-#define E_CASE_DEFAULT                  2
+#define E_CASE_ELSE                     2
 //////////////////////////////////////////
 
 /*
@@ -270,8 +274,174 @@
 //////////////////////////////////////////
 
 /*
- *
+ * E_WITH_TABLE_HINT
  * */
+#define E_WITH_TABLE_HINT_PROPERTY_CNT	1
+
+#define E_WITH_TABLE_HINT_HINTS			0
+//////////////////////////////////////////
+
+/*
+ * E_TABLE_HINT_NOEXPAND
+ * */
+#define E_TABLE_HINT_NOEXPAND_PROPERTY_CNT	1
+
+#define E_TABLE_HINT_NOEXPAND_EXPR		0
+//////////////////////////////////////////
+
+/*
+ * E_OPTION_CLAUSE
+ * */
+#define E_OPTION_CLAUSE_PROPERTY_CNT	1
+
+#define E_OPTION_CLAUSE_HINTS			0
+//////////////////////////////////////////
+
+/*
+ * E_PROC_IDENT
+ * */
+#define E_PROC_IDENT_PROPERTY_CNT		4
+
+#define E_PROC_IDENT_OBJECT				0
+#define E_PROC_IDENT_SCHEMA				1
+#define E_PROC_IDENT_DATABASE			2
+#define E_PROC_IDENT_SERVER				3
+//////////////////////////////////////////
+
+/*
+ * E_ROWS_CLAUSE
+ * */
+#define E_ROWS_CLAUSE_PROPERTY_CNT		2
+
+#define E_ROWS_CLAUSE_ROWS				0
+#define E_ROWS_CLAUSE_EXTEND			1
+//////////////////////////////////////////
+
+/*
+ * E_RANGE_CLAUSE
+ * */
+#define E_RANGE_CLAUSE_PROPERTY_CNT		2
+
+#define E_RANGE_CLAUSE_RANGE			0
+#define E_RANGE_CLAUSE_EXTEND			1
+//////////////////////////////////////////
+
+/*
+ * E_TABLE_VALUE_CTOR
+ * */
+#define E_TABLE_VALUE_CTOR_PROPERTY_CNT	1
+
+#define E_TABLE_VALUE_CTOR_CONTENT		0
+//////////////////////////////////////////
+
+/*
+ * E_FOR_SYSTEM_TIME
+ * */
+#define E_FOR_SYSTEM_TIME_PROPERTY_CNT	1
+
+#define E_FOR_SYSTEM_TIME_TIME			0
+//////////////////////////////////////////
+
+/*
+ * E_PIVOT_TABLE
+ * */
+#define E_PIVOT_TABLE_PROPERTY_CNT		3
+
+#define E_PIVOT_TABLE_TABLE				0
+#define E_PIVOT_TABLE_PIVOT_CLAUSE		1
+#define	E_PIVOT_TABLE_NAME				2
+//////////////////////////////////////////
+
+/*
+ * E_UNPIVOT_TABLE
+ * */
+#define E_UNPIVOT_TABLE_PROPERTY_CNT	3
+
+#define E_UNPIVOT_TABLE_TABLE			0
+#define E_UNPIVOT_TABLE_UNPIVOT_CLAUSE	1
+#define E_UNPIVOT_TABLE_NAME			2
+//////////////////////////////////////////
+
+/*
+ * E_PIVOT_CLAUSE
+ * */
+#define E_PIVOT_CLAUSE_PROPERTY_CNT		3
+
+#define E_PIVOT_CLAUSE_AWF				0
+#define E_PIVOT_CLAUSE_COLUMN			1
+#define E_PIVOT_CLAUSE_IDENT_LIST		2
+//////////////////////////////////////////
+
+/*
+ * E_UNPIVOT_CLAUSE
+ * */
+#define E_UNPIVOT_CLAUSE_PROPERTY_CNT	3
+
+#define	E_UNPIVOT_CLAUSE_EXPR			0
+#define E_UNPIVOT_CLAUSE_COLUMN			1
+#define E_UNPIVOT_CLAUSE_IDENT_LIST		2
+//////////////////////////////////////////
+
+/*
+ * E_TEMP_VAR_FUN_CALL
+ * */
+#define E_TEMP_VAR_FUN_CALL_PROPERTY_CNT 2
+
+#define E_TEMP_VAR_FUN_CALL_FUNC_EXPR	0
+#define E_TEMP_VAR_FUN_CALL_VAR			1
+//////////////////////////////////////////
+
+/*
+ * E_INTO_CLAUSE
+ * */
+#define E_INTO_CLAUSE_PROPERTY_CNT		1
+
+#define E_INTO_CLAUSE_RELATION_FACTOR	0
+//////////////////////////////////////////
+
+/*
+ * E_UPDATE_ELEM
+ * */
+#define E_UPDATE_ELEM_PROPERTY_CNT		1
+
+#define E_UPDATE_ELEM_ASSIGN_EXPR		0
+//////////////////////////////////////////
+
+/*
+ * E_DML_SELECT_ITEM
+ * */
+#define E_DML_SELECT_ITEM_PROPERTY_CNT	1
+
+#define E_DML_SELECT_ITEM_PROJECTION	0
+//////////////////////////////////////////
+
+/*
+ * E_OUTPUT_CLAUSE
+ * */
+#define E_OUTPUT_CLAUSE_PROPERTY_CNT	3
+
+#define E_OUTPUT_CLAUSE_SELECT_LIST		0
+#define E_OUTPUT_CLAUSE_RELATION_FACTOR	1
+#define E_OUTPUT_CLAUSE_COLUMN_LIST		2
+//////////////////////////////////////////
+
+/*
+ * E_OVER_CLAUSE
+ * */
+#define E_OVER_CLAUSE_PROPERTY_CNT		3
+
+#define E_OVER_CLAUSE_PARTITION_BY		0
+#define E_OVER_CLAUSE_ORDER_BY			1
+#define E_OVER_CLAUSE_ROW_RANGE			2
+ /////////////////////////////////////////
+
+/*
+ * E_QUERY_HINT
+ * */
+#define E_QUERY_HINT_PROPERTY_CNT       2
+#define E_QUERY_HINT_0                  0
+#define E_QUERY_HINT_1                  1
+//////////////////////////////////////////
 
 /*
  * E_SELECT
@@ -298,6 +468,21 @@
 #define E_SELECT_OPT_OPTION             17
 #define E_SELECT_OPT_INTO               18
 ///////////////////////////////////////////
+
+/*
+ * E_UPDATE
+ * */
+#define E_UPDATE_PROPERTY_CNT           9
+
+#define E_UPDATE_OPT_WITH               0
+#define E_UPDATE_OPT_TOP                1
+#define E_UPDATE_UPDATE_RELATION        2
+#define E_UPDATE_UPDATE_RELATION_OPT_TABLE_HINT 3
+#define E_UPDATE_UPDATE_ELEM_LIST       4
+#define E_UPDATE_OPT_OUTPUT             5
+#define E_UPDATE_FROM_LIST              6
+#define E_UPDATE_OPT_WHERE              7
+#define E_UPDATE_OPT_QUERY_HINT         8
 
 /*
  *  TERMINAL NODE:

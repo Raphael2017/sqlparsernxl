@@ -5,7 +5,9 @@
 #include <string>
 #include <set>
 #include "serialize_format.h"
+#include "node_struct.h"
 
+/*
 //  XXX_LIST
 #define E_LIST_ITEM 0
 #define E_LIST_NEXT 1
@@ -138,6 +140,7 @@
 #define E_UPDATE_FROM_LIST 6
 #define E_UPDATE_OPT_WHERE 7
 #define E_UPDATE_OPT_QUERY_HINT 8
+ */
 
 enum NodeType
 {

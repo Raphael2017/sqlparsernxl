@@ -30,34 +30,37 @@ namespace resolve
         uint64_t get_query_id() const { return query_id_; }
         void set_query_id(uint64_t query_id) { query_id_ = query_id; }
 
+        /*  */
         virtual std::string get_table_name() const = 0;
         virtual bool check_column(
                 ResultPlan* plan,
                 const std::string column_name,
                 uint64_t& out_column_id) const = 0;
-        virtual bool check_is_ref(const std::string& schema, const std::string& table) const = 0;
+        virtual bool check_is_ref(
+                const std::string& schema,
+                const std::string& table) const = 0;
         virtual bool expand(
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
                 uint64_t start_index) = 0;
 
         /* Implement Of ITableItem */
-        virtual TableItemType GetTableItemType() { return E_UNKNOWN; }
-        virtual uint64_t GetTableID() { return OB_INVALID_ID; }
-        virtual uint64_t GetQueryID() { return OB_INVALID_ID; }
-        virtual std::string GetTableName() { return ""; }
-        virtual std::string GetTableAliasName() { return ""; }
-        virtual std::string GetSchemaName() { return ""; }
-        virtual std::string GetDatabaseName() { return ""; }
-        virtual std::string GetServerName() { return ""; }
-        virtual std::string GetTableHint() { return ""; }
-        virtual std::string GetTableObject() { return ""; }
+        virtual TableItemType GetTableItemType() override { return E_UNKNOWN; }
+        virtual uint64_t GetTableID() override { return OB_INVALID_ID; }
+        virtual uint64_t GetQueryID() override { return OB_INVALID_ID; }
+        virtual std::string GetTableName() override { return ""; }
+        virtual std::string GetTableAliasName() override { return ""; }
+        virtual std::string GetSchemaName() override { return ""; }
+        virtual std::string GetDatabaseName() override { return ""; }
+        virtual std::string GetServerName() override { return ""; }
+        virtual std::string GetTableHint() override { return ""; }
+        virtual std::string GetTableObject() override { return ""; }
         virtual bool SetText(
                 TableItemType tp,
                 const std::string& newtable,
-                const std::string& alias) { return false; }
-        virtual int GetLine() { return 0; }
-        virtual int GetColumn() { return 0; }
+                const std::string& alias) override { return false; }
+        virtual int GetLine() override { return 0; }
+        virtual int GetColumn() override { return 0; }
 
     protected:
         TableRefType table_ref_type_;
@@ -70,33 +73,35 @@ namespace resolve
     {
     public:
         BaseTableRef() { table_ref_type_ = BASE_TABLE_DIRECT_REF; }
-        virtual std::string get_table_name() const;
+        virtual std::string get_table_name() const override;
         virtual bool check_column(
                 ResultPlan* plan,
                 const std::string column_name,
-                uint64_t& out_column_id) const;
-        virtual bool check_is_ref(const std::string& schema, const std::string& table) const;
+                uint64_t& out_column_id) const override;
+        virtual bool check_is_ref(
+                const std::string& schema,
+                const std::string& table) const override;
         virtual bool expand(
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
-                uint64_t start_index);
+                uint64_t start_index) override;
 
         /* Implement Of ITableItem */
-        virtual TableItemType GetTableItemType() { return E_BASIC_TABLE; }
-        virtual uint64_t GetTableID() { return base_table_id_; }
-        virtual uint64_t GetQueryID() { return query_id_; }
-        virtual std::string GetTableName() { return table_name_; }
-        virtual std::string GetSchemaName() { return schema_name_; }
-        virtual std::string GetDatabaseName() { return database_name_; }
-        virtual std::string GetServerName() { return server_name_; }
-        virtual std::string GetTableHint() { return table_hints_; }
-        virtual std::string GetTableObject() { return table_object_; }
+        virtual TableItemType GetTableItemType() override { return E_BASIC_TABLE; }
+        virtual uint64_t GetTableID() override { return base_table_id_; }
+        virtual uint64_t GetQueryID() override { return query_id_; }
+        virtual std::string GetTableName() override { return table_name_; }
+        virtual std::string GetSchemaName() override { return schema_name_; }
+        virtual std::string GetDatabaseName() override { return database_name_; }
+        virtual std::string GetServerName() override { return server_name_; }
+        virtual std::string GetTableHint() override { return table_hints_; }
+        virtual std::string GetTableObject() override { return table_object_; }
         virtual bool SetText(
                 TableItemType tp,
                 const std::string& newtable,
-                const std::string& alias) { return false; }
-        virtual int GetLine() { return line_; }
-        virtual int GetColumn() { return column_; }
+                const std::string& alias) override { return false; }
+        virtual int GetLine() override { return line_; }
+        virtual int GetColumn() override { return column_; }
     private:
         void bind_node(ResultPlan* plan, Node* node);
     private:
@@ -119,16 +124,18 @@ namespace resolve
     {
     public:
         BaseTableAliasRef() { table_ref_type_ = BASE_TABLE_ALIAS_REF; }
-        virtual std::string get_table_name() const;
-        virtual bool check_is_ref(const std::string& schema, const std::string& table) const;
+        virtual std::string get_table_name() const override;
+        virtual bool check_is_ref(
+                const std::string& schema,
+                const std::string& table) const override;
 
         /* Implement Of ITableItem */
-        virtual TableItemType GetTableItemType() { return E_BASIC_TABLE_WITH_ALIAS; }
-        virtual std::string GetTableAliasName() { return alias_name_; }
+        virtual TableItemType GetTableItemType() override { return E_BASIC_TABLE_WITH_ALIAS; }
+        virtual std::string GetTableAliasName() override { return alias_name_; }
         virtual bool SetText(
                 TableItemType tp,
                 const std::string& newtable,
-                const std::string& alias) { return false; }
+                const std::string& alias) override { return false; }
     private:
         std::string alias_name_;
         friend struct Stmt;
@@ -138,16 +145,18 @@ namespace resolve
     {
     public:
         GeneratedTableRef() { table_ref_type_ = GENERATED_TABLE_REF; }
-        virtual std::string get_table_name() const;
+        virtual std::string get_table_name() const override;
         virtual bool check_column(
                 ResultPlan* plan,
                 const std::string column_name,
-                uint64_t& out_column_id) const;
-        virtual bool check_is_ref(const std::string& schema, const std::string& table) const;
+                uint64_t& out_column_id) const override;
+        virtual bool check_is_ref(
+                const std::string& schema,
+                const std::string& table) const override;
         virtual bool expand(
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
-                uint64_t start_index);
+                uint64_t start_index) override;
         bool set_column_alias(
                 ResultPlan*plan,
                 const std::vector<std::string>& col_alias);
@@ -164,16 +173,18 @@ namespace resolve
     {
     public:
         CteTableRef() { table_ref_type_ = CTE_TABLE_REF; }
-        virtual std::string get_table_name() const;
+        virtual std::string get_table_name() const override;
         virtual bool check_column(
                 ResultPlan* plan,
                 const std::string column_name,
-                uint64_t& out_column_id) const;
-        virtual bool check_is_ref(const std::string& schema, const std::string& table) const;
+                uint64_t& out_column_id) const override;
+        virtual bool check_is_ref(
+                const std::string& schema,
+                const std::string& table) const override;
         virtual bool expand(
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
-                uint64_t start_index);
+                uint64_t start_index) override;
     private:
         std::string cte_name_;
         std::string alias_name_;

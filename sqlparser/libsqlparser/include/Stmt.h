@@ -66,12 +66,6 @@ namespace resolve
 
         bool find_tableref_by_column(
                 ResultPlan* plan,
-                const std::string& column_name,
-                TableRef*& table_item,
-                uint64_t& column_id);
-
-        bool find_tableref_by_column(
-                ResultPlan* plan,
                 const std::string& schema,
                 const std::string& table,
                 const std::string& column_name,

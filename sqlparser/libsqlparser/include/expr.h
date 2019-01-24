@@ -13,7 +13,7 @@ namespace resolve
         uint64_t column_id_;
     };
 
-    class RawExpr
+    struct RawExpr
     {
     public:
         RawExpr() : type_(E_NODETYPE_BEGIN) {}
@@ -27,7 +27,7 @@ namespace resolve
         NodeType type_;
     };
 
-    class RawExprConst
+    struct RawExprConst
             : public RawExpr
     {
     public:
@@ -42,7 +42,7 @@ namespace resolve
         } value_;
     };
 
-    class RawExprScalarSubquery
+    struct RawExprScalarSubquery
             : public RawExpr
     {
     public:
@@ -55,7 +55,7 @@ namespace resolve
         uint64_t query_id_;
     };
 
-    class RawExprBinaryRef
+    struct RawExprBinaryRef
             : public RawExpr
     {
     public:
@@ -71,7 +71,7 @@ namespace resolve
         uint64_t second_id_;    // column_id
     };
 
-    class RawExprUnaryOp
+    struct RawExprUnaryOp
             : public RawExpr
     {
     public:
@@ -84,7 +84,7 @@ namespace resolve
         RawExpr* expr_;
     };
 
-    class RawExprBinaryOp
+    struct RawExprBinaryOp
             : public RawExpr
     {
     public:
@@ -100,7 +100,7 @@ namespace resolve
         RawExpr* second_expr_;
     };
 
-    class RawExprTripleOp
+    struct RawExprTripleOp
             : public RawExpr
     {
         RawExpr* get_first_op_expr() { return first_expr_; }
@@ -118,7 +118,7 @@ namespace resolve
         RawExpr* third_expr_;
     };
 
-    class RawExprMultiOp
+    struct RawExprMultiOp
             : public RawExpr
     {
     public:
@@ -134,7 +134,7 @@ namespace resolve
         std::vector<RawExpr*> exprs_;
     };
 
-    class RawExprCaseOp
+    struct RawExprCaseOp
             : public RawExpr
     {
     public:
@@ -165,7 +165,7 @@ namespace resolve
     /*
      * https://en.wikipedia.org/wiki/Aggregate_function
      * */
-    class RawExprAggFun
+    struct RawExprAggFun
             : public RawExpr
     {
     public:
@@ -181,7 +181,7 @@ namespace resolve
         bool distinct_;
     };
 
-    class RawExprSysFun
+    struct RawExprSysFun
             : public RawExpr
     {
     public:
@@ -201,7 +201,7 @@ namespace resolve
     };
 
     /////
-    class SqlRawExpr
+    struct SqlRawExpr
     {
     public:
         uint64_t get_expr_id() const { return expr_id_; }

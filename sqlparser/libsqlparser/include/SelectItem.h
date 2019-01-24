@@ -35,11 +35,11 @@ namespace resolve
     {
     public:
         SelItemExprAlias() { select_item_type_ = E_SEL_ITEM_EXPR_ALIAS; }
-        virtual std::string get_column_name() const
+        virtual std::string get_column_name() const override
         {
             return alias_;
         }
-        virtual SelectItem* clone() const
+        virtual SelectItem* clone() const override
         {
             SelectItem* ret = new SelItemExprAlias(*this);
             return ret;
@@ -54,14 +54,14 @@ namespace resolve
     {
     public:
         SelItemExpr() { select_item_type_ = E_SEL_ITEM_EXPR; }
-        virtual std::string get_column_name() const
+        virtual std::string get_column_name() const override
         {
             if (alias_.length() > 0)
                 return alias_;
             else
                 return name_;
         }
-        virtual SelectItem* clone() const
+        virtual SelectItem* clone() const override
         {
             SelectItem* ret = new SelItemExpr(*this);
             return ret;
@@ -77,14 +77,14 @@ namespace resolve
     {
     public:
         SelItemExpandStar() { select_item_type_ = E_SEL_ITEM_EXPAND_STAR; }
-        virtual std::string get_column_name() const
+        virtual std::string get_column_name() const override
         {
             if (alias_.length() > 0)
                 return alias_;
             else
                 return col_name_;
         }
-        virtual SelectItem* clone() const
+        virtual SelectItem* clone() const override
         {
             SelectItem* ret = new SelItemExpandStar(*this);
             return ret;

@@ -90,7 +90,7 @@ namespace resolve
         assert(node != nullptr);
         node_ = node;
         assert(node_->nodeType_ == E_ALIAS);
-        Node* factor = node->getChild(E_ALIAS_RELATION_FACTOR_OR_SELECT_WITH_PARENS);
+        Node* factor = node->getChild(E_ALIAS_ORIGN);
 
         assert(factor && factor->nodeType_ == E_TABLE_IDENT);
 

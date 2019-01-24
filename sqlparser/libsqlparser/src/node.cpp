@@ -760,7 +760,7 @@ void Node::find_table_direct_ref(Node* root, std::list<Node*>& ret)
             break;
         case E_JOINED_TABLE_WITH_PARENS:
         {
-            find_table_direct_ref(root->getChild(E_JOINED_TABLE_WITH_PARENS_JOINED_TABLE), ret);
+            find_table_direct_ref(root->getChild(E_PARENS_ELEMENT), ret);
         }
             break;
         case E_IDENTIFIER:
@@ -826,7 +826,7 @@ void Node::find_table_direct_ref_non_recursive(Node* root, std::list<Node*>& ret
                 break;
             case E_JOINED_TABLE_WITH_PARENS:
             {
-                if ((tmp = lpNode->getChild(E_JOINED_TABLE_WITH_PARENS_JOINED_TABLE)))
+                if ((tmp = lpNode->getChild(E_PARENS_ELEMENT)))
                     stack.push(tmp);
             }
                 break;
@@ -870,7 +870,7 @@ void Node::find_table_direct_ref(Node** root, std::list<Node**>& ret)
             break;
         case E_JOINED_TABLE_WITH_PARENS:
         {
-            find_table_direct_ref((*root)->getChildRef(E_JOINED_TABLE_WITH_PARENS_JOINED_TABLE), ret);
+            find_table_direct_ref((*root)->getChildRef(E_PARENS_ELEMENT), ret);
         }
             break;
         case E_IDENTIFIER:
@@ -937,7 +937,7 @@ void Node::find_table_direct_ref_non_recursive(Node** root, std::list<Node**>& r
                 break;
             case E_JOINED_TABLE_WITH_PARENS:
             {
-                if ((tmp = (*lpNode)->getChildRef(E_JOINED_TABLE_WITH_PARENS_JOINED_TABLE)))
+                if ((tmp = (*lpNode)->getChildRef(E_PARENS_ELEMENT)))
                     stack.push(tmp);
             }
                 break;
@@ -1116,7 +1116,8 @@ Node* Node::check_expr_is_column_alias(Node* root)
             std::string alias_name = left->getChild(0)->terminalToken_.str;
             Node* alias = makeTerminalNode(E_IDENTIFIER, alias_name);
             alias->terminalToken_.str = alias_name;
-            Node* ret = makeNonTerminalNode(E_ALIAS, 2, right, alias);
+            Node* ret = makeNonTerminalNode(E_ALIAS, E_ALIAS_PROPERTY_CNT,
+                    right, alias, nullptr, nullptr, nullptr);
             ret->serialize_format = &AS_SERIALIZE_FORMAT;
             root->setChild(E_OP_BINARY_OPERAND_R, nullptr);
             delete(root);
@@ -1192,7 +1193,7 @@ Node* Node::make_query_hint(const std::string& text)
 Node* Node::make_query_hint(const std::string& text, Node* num)
 {
     Node* nd = makeTerminalNode(E_STRING, text);
-    Node* ret = makeNonTerminalNode(E_QUERY_HINT, 2, nd, num);
+    Node* ret = makeNonTerminalNode(E_QUERY_HINT, E_QUERY_HINT_PROPERTY_CNT, nd, num);
     ret->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
     return ret;
 }
