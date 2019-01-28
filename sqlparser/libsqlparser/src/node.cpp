@@ -195,7 +195,8 @@ ParseResult::ParseResult() : result_tree_(nullptr), accept(false),
 
 ParseResult::~ParseResult()
 {
-
+    delete(result_tree_);
+    result_tree_ = nullptr;
 }
 
 Node* Node::makeTerminalNode(NodeType tp, const std::string& yytext)
@@ -1202,7 +1203,7 @@ Node* Node::make_query_hint(const std::string& text, Node* num)
     return ret;
 }
 
-bool Node::check_update_item(Node* root)
+bool Node::check_update_item(Node* root, Node*& out_expr)
 {
     if (root->nodeType_ == E_OP_EQ ||
         root->nodeType_ == E_OP_ASS_BIT_AND ||
@@ -1217,6 +1218,7 @@ bool Node::check_update_item(Node* root)
         // check NAME ... NAME assign expr
         //       @variable assign expr
         Node* l = root->getChild(E_OP_BINARY_OPERAND_L);
+        out_expr = root->getChild(E_OP_BINARY_OPERAND_R);
         switch (l->nodeType_)
         {
             case E_OP_NAME_FIELD:

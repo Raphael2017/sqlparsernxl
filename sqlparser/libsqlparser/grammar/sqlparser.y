@@ -360,7 +360,8 @@ update_elem_list:
 update_elem:
     expr
 {
-    if (!Node::check_update_item($1))
+    Node* t = nullptr;
+    if (!Node::check_update_item($1, t))
     {
         yyerror(&@1, result, scanner, "update element format error");
     	YYABORT;
