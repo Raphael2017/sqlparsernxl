@@ -222,6 +222,7 @@ int main()
         "JOIN Production.WorkOrder AS wo\n"
         "     ON sr.ScrapReasonID = wo.ScrapReasonID\n"
         "     AND wo.ScrappedQty > 300;";
+    a = "UPDATE SA.SALES01 SET Qty=(SELECT 1)";
     {
         IParseResult* parseResult = ParseSql(a);
         if (!parseResult->IsAccept())
@@ -314,7 +315,26 @@ int main()
                 }
                 if (stmt->GetStmtType() == E_STMT_TYPE_UPDATE)
                 {
-
+                    IUpdateStmt* ustmt = dynamic_cast<IUpdateStmt*>(stmt);
+                    if (ustmt->IsBasicTableOrAlias())
+                    {
+                        ITableItem* u = ustmt->GetUpdateTable();
+                        switch (u->GetTableItemType())
+                        {
+                            case E_BASIC_TABLE:
+                            {
+                                std::string qq = u->GetTableObject();
+                                printf("%s\n", qq.c_str());
+                            }
+                                break;
+                            case E_BASIC_TABLE_WITH_ALIAS:
+                            {
+                                std::string qq = u->GetTableAliasName();
+                                printf("%s\n", qq.c_str());
+                            }
+                                break;
+                        }
+                    }
                 }
 
             }, [](IPlan* plan){

@@ -126,7 +126,8 @@ namespace resolve
             if (ret->get_table_name() == it->get_table_name())
             {
                 /* ambiguous table name at from clause error */
-                assert(false);
+                plan->error_detail_ = "ambiguous name " + ret->get_table_name();
+                plan->errorOccur_(plan);
             }
         }
 
@@ -154,7 +155,8 @@ namespace resolve
             if (ret->get_table_name() == it->get_table_name())
             {
                 /* ambiguous table name at from clause error */
-                assert(false);
+                plan->error_detail_ = "ambiguous name " + ret->get_table_name();
+                plan->errorOccur_(plan);
             }
         }
 

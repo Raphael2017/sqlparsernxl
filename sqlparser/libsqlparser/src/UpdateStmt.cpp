@@ -35,8 +35,8 @@ namespace resolve
                 if (tbi->get_table_ref_type() == TableRef::BASE_TABLE_DIRECT_REF)
                 {
                     local_table_id = dynamic_cast<BaseTableRef*>(tbi)->GetTableID();
-                    update_table_ = tbi->clone();
                 }
+                update_table_ = tbi->clone();
                 fd = true;
                 break;
             }
@@ -126,10 +126,26 @@ namespace resolve
                     assert(false);
                 }
             }
-            table_items_.push_back(tb);
-            update_table_ = tb->clone();
+            update_table_ = tb;
             out_table_ref = tb;
         }
         return true;
+    }
+
+    bool UpdateStmt::IsBasicTableOrAlias()
+    {
+        if (update_table_ == nullptr)
+            return false;
+        else
+        {
+            auto tp = update_table_->get_table_ref_type();
+            return tp == TableRef::BASE_TABLE_DIRECT_REF ||
+                    tp == TableRef::BASE_TABLE_ALIAS_REF;
+        }
+    }
+
+    ITableItem* UpdateStmt::GetUpdateTable()
+    {
+        return update_table_;
     }
 }

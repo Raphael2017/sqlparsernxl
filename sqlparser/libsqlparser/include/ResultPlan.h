@@ -28,7 +28,10 @@ namespace resolve
         void* context_{nullptr};
         Node* tree_root_{nullptr};
 
+    public:
+        void set_err(int err_code, const std::string err_detail);
         std::string error_detail_;
+        int error_code_;
 
         // implement IPlan
         virtual void* GetContext() override { return context_; }

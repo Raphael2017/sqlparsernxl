@@ -83,6 +83,7 @@ namespace resolve
         virtual uint64_t GetQueryID() override { return get_query_id(); }
         virtual size_t GetTableItemCount() const override { return table_items_.size(); }
         virtual ITableItem* GetTableItem(size_t index) override;
+        virtual IStmt* GetParent() override { return get_parent(); }
         friend struct CteTableRef;
     };
 }

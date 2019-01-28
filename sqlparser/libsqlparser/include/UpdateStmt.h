@@ -29,6 +29,9 @@ namespace resolve
         TableRef*  update_table_{nullptr};
     public:
         virtual StmtType GetStmtType() override { return  E_STMT_TYPE_UPDATE; }
+
+        virtual bool IsBasicTableOrAlias() override;
+        virtual ITableItem* GetUpdateTable() override;
     };
 }
 

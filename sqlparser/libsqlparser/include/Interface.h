@@ -111,16 +111,19 @@ struct IStmt
     virtual uint64_t GetQueryID() = 0;
     virtual size_t GetTableItemCount() const = 0;
     virtual ITableItem* GetTableItem(size_t index) = 0;
+    virtual IStmt* GetParent() = 0;
 };
 
 struct ISelectStmt
 {
-
+    virtual ~ISelectStmt(){}
 };
 
 struct IUpdateStmt
 {
-
+    virtual ~IUpdateStmt(){}
+    virtual bool IsBasicTableOrAlias() = 0;
+    virtual ITableItem* GetUpdateTable() = 0;
 };
 
 extern "C"

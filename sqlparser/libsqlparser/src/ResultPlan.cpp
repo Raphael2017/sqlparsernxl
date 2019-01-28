@@ -16,7 +16,8 @@ namespace resolve
             whereClauseVisit_(visit3),
             errorOccur_(errorOccur),
             logicPlan_(new LogicPlan),
-            local_table_mgr(new LocalTableMgr)
+            local_table_mgr(new LocalTableMgr),
+            error_code_(0)
     {
 
     }
@@ -28,10 +29,19 @@ namespace resolve
 
     void ResultPlan::reset()
     {
+        error_code_ = 0;
+        error_detail_ = "";
+        tree_root_ = nullptr;
         if (logicPlan_)
             logicPlan_->reset();
         if (local_table_mgr)
             local_table_mgr->reset();
+    }
+
+    void ResultPlan::set_err(int err_code, const std::string err_detail)
+    {
+        error_code_ = err_code;
+        error_detail_ = err_detail;
     }
 
     IStmt* ResultPlan::GetQuery(uint64_t query_id)
