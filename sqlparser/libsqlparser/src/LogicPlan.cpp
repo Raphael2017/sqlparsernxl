@@ -5,6 +5,7 @@
 #include "expr.h"
 #include "TableRef.h"
 #include "SelectItem.h"
+#include "UpdateStmt.h"
 
 namespace resolve
 {

@@ -243,13 +243,17 @@ bool Node::IsList(Node* root)
         case E_STMT_LIST:
         case E_SORT_LIST:
         case E_SELECT_EXPR_LIST:
+        case E_FROM_LIST:
         case E_EXPR_LIST:
         case E_WHEN_LIST:
-        case E_FROM_LIST:
         case E_SIMPLE_IDENT_LIST:
-        case E_OPT_DERIVED_COLUMN_LIST:
         case E_WITH_LIST:
         case E_TABLE_HINT_LIST:
+        case E_QUERY_HINT_LIST:
+        case E_EXPR_LIST_PARENS_LIST:
+        case E_UPDATE_ELEM_LIST:
+        case E_DML_SELECT_LIST:
+        case E_OPT_DERIVED_COLUMN_LIST:
         {
             ret = true;
         }
@@ -1213,12 +1217,27 @@ bool Node::check_update_item(Node* root)
         // check NAME ... NAME assign expr
         //       @variable assign expr
         Node* l = root->getChild(E_OP_BINARY_OPERAND_L);
-        if ((l->nodeType_ == E_OP_NAME_FIELD || l->nodeType_ == E_TEMP_VARIABLE) && l->getChild(E_OP_NAME_FIELD_COLUMN_NAME) &&
-            l->getChild(E_OP_NAME_FIELD_COLUMN_NAME)->nodeType_ != E_STAR)
+        switch (l->nodeType_)
         {
-            if (root->nodeType_ == E_OP_EQ)
-                root->nodeType_ = E_OP_ASS;
-            return true;
+            case E_OP_NAME_FIELD:
+            {
+                Node* column = l->getChild(E_OP_NAME_FIELD_COLUMN_NAME);
+                assert(column != nullptr);
+                return column->nodeType_ != E_STAR;
+            }
+                break;
+            case E_OP_EQ:
+            {
+                Node* var = l->getChild(E_OP_BINARY_OPERAND_L);
+                Node* column = l->getChild(E_OP_BINARY_OPERAND_R);
+                assert(var != nullptr);
+                assert(column != nullptr);
+                return var->nodeType_ == E_TEMP_VARIABLE &&
+                    column->nodeType_ == E_OP_NAME_FIELD;
+            }
+                break;
+            default:
+                return false;
         }
     }
     else if (root->nodeType_ == E_FUN_CALL)

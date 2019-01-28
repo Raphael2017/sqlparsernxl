@@ -17,7 +17,7 @@
 std::string NodeTypeToString(NodeType tp);
 
 struct Node;
-struct ParseResult
+struct ParseResult : public IParseResult
 {
     ParseResult();
     ~ParseResult();
@@ -27,6 +27,13 @@ struct ParseResult
     int errFirstColumn;
     std::string errDetail;
     std::stringstream buf_;
+
+    // implement of IParseResult
+    virtual bool IsAccept() const override;
+    virtual INode* GetParseTree() override;
+    virtual size_t GetErrorLine() const override;
+    virtual size_t GetErrorColumn() const override;
+    virtual std::string GetErrorDetail() const override;
 };
 
 struct TerminalToken

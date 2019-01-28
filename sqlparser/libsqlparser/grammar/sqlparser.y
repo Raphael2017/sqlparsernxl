@@ -495,7 +495,7 @@ query_hint:
   | MAXDOP INTNUM				{ $$ = Node::make_query_hint("MAXDOP", $2); }
   | MAXRECURSION INTNUM				{ $$ = Node::make_query_hint("MAXRECURSION", $2); }
   | NO_PERFORMANCE_SPOOL			{ $$ = Node::make_query_hint("NO_PERFORMANCE_SPOOL"); }
-  | OPTIMIZE FOR UNKNOWN			{ $$ = Node::make_query_hint("OPTIMIZE FOR", $3); }
+  | OPTIMIZE FOR expr				{ $$ = Node::make_query_hint("OPTIMIZE FOR", $3); }
   | PARAMETERIZATION SIMPLE			{ $$ = Node::make_query_hint("PARAMETERIZATION SIMPLE"); }
   | PARAMETERIZATION FORCED			{ $$ = Node::make_query_hint("PARAMETERIZATION FORCED"); }
   | RECOMPILE					{ $$ = Node::make_query_hint("RECOMPILE"); }

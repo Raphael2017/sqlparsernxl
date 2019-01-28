@@ -336,6 +336,11 @@ OF                  { return OF; }
 CONTAINED           { return CONTAINED; }
 PIVOT               { return PIVOT; }
 UNPIVOT             { return UNPIVOT; }
+OUTPUT              { return OUTPUT; }
+DELETED             { return DELETED; }
+INSERTED            { return INSERTED; }
+OPTIMIZE            { return OPTIMIZE; }
+
 
 NULL    {
     yylval->node = Node::makeTerminalNode(E_NULL, yytext);
@@ -479,6 +484,15 @@ FALSE   {
 "<"     { return COMP_LT; }
 "<>"    { return COMP_NE; }
 "!="    { return COMP_NE; }
+
+"+="    { return ASSIGN_ADD; }
+"-="    { return ASSGIN_MINUS; }
+"*="    { return ASSIGN_MUL; }
+"/="    { return ASSIGN_DIV; }
+"%="    { return ASSIGN_REM; }
+"&="    { return ASSIGN_BITWISE_AND; }
+"|="    { return ASSIGN_BITWISE_OR; }
+"^="    { return ASSIGN_BITWISE_XOR; }
 
 ""
 

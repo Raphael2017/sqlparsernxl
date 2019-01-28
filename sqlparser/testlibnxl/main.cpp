@@ -188,9 +188,45 @@ int main()
         "    ) AS pvt\n"
         "ORDER BY pvt.VendorID";
     a = "SELECT * FROM SA.SALES A LEFT JOIN SA.Sales01 B RIGHT JOIN SA.SALES C ON C.OrderID < B.Qty ON A.Qty = B.OrderID";
+    a = "WITH Parts(AssemblyID, ComponentID, PerAssemblyQty, EndDate, ComponentLevel) AS  \n"
+        "(  \n"
+        "    SELECT b.ProductAssemblyID, b.ComponentID, b.PerAssemblyQty,  \n"
+        "        b.EndDate, 0 AS ComponentLevel  \n"
+        "    FROM Production.BillOfMaterials AS b  \n"
+        "    WHERE b.ProductAssemblyID = 800  \n"
+        "          AND b.EndDate IS NULL  \n"
+        "    UNION ALL  \n"
+        "    SELECT bom.ProductAssemblyID, bom.ComponentID, p.PerAssemblyQty,  \n"
+        "        bom.EndDate, ComponentLevel + 1  \n"
+        "    FROM Production.BillOfMaterials AS bom   \n"
+        "        INNER JOIN Parts AS p  \n"
+        "        ON bom.ProductAssemblyID = p.ComponentID  \n"
+        "        AND bom.EndDate IS NULL  \n"
+        ")  \n"
+        "UPDATE Production.BillOfMaterials  \n"
+        "SET PerAssemblyQty = c.PerAssemblyQty * 2  \n"
+        "FROM Production.BillOfMaterials AS c  \n"
+        "JOIN Parts AS d ON c.ProductAssemblyID = d.AssemblyID  \n"
+        "WHERE d.ComponentLevel = 0;";
+    a = "UPDATE HumanResources.Employee  \n"
+        "SET VacationHours = VacationHours + 8  \n"
+        "FROM (SELECT TOP 10 BusinessEntityID FROM HumanResources.Employee  \n"
+        "     ORDER BY HireDate ASC) AS th  \n"
+        "WHERE HumanResources.Employee.BusinessEntityID = th.BusinessEntityID;";
+    a = "UPDATE TOP (10) HumanResources.Employee\n"
+        "SET VacationHours = VacationHours * 1.25 ;";
+    a = "UPDATE SA.SALES SET Qty=0 FROM SA.SALES01 N, SA.SALES01 ";
+    a = "UPDATE sr\n"
+        "SET sr.Name += ' - tool malfunction'\n"
+        "FROM Production.ScrapReason AS sr\n"
+        "JOIN Production.WorkOrder AS wo\n"
+        "     ON sr.ScrapReasonID = wo.ScrapReasonID\n"
+        "     AND wo.ScrappedQty > 300;";
     {
-        INode* tree = ParseNode(a);
-        auto t = tree->GetType();
+        IParseResult* parseResult = ParseSql(a);
+        if (!parseResult->IsAccept())
+            return 0;
+        INode* tree = parseResult->GetParseTree();
         printf("%s\n", tree->Serialize().c_str());
         if (tree)
         {
@@ -242,7 +278,7 @@ int main()
                     {
                         case E_BASIC_TABLE:
                         {
-                            if (tbi->GetTableName() == "Sales01")
+                            //if (tbi->GetTableName() == "Sales01")
                             {
                                 if (t > 0)
                                     cond += " AND ";
@@ -254,7 +290,7 @@ int main()
                             break;
                         case E_BASIC_TABLE_WITH_ALIAS:
                         {
-                            if (tbi->GetTableName() == "Sales01")
+                            //if (tbi->GetTableName() == "Sales01")
                             {
                                 if (t > 0)
                                     cond += " AND ";
@@ -276,8 +312,13 @@ int main()
                 {
                     wc->AddCondition(cond);
                 }
+                if (stmt->GetStmtType() == E_STMT_TYPE_UPDATE)
+                {
 
+                }
 
+            }, [](IPlan* plan){
+                printf("%s\n", plan->GetErrorDetail().c_str());
             }, nullptr, tree);
             plan->SetDefaultSchema("dbo");
             plan->AddTableStructure("dbo", "SALES", {"OrderID", "SalesRep", "Product", "Qty"});
@@ -286,7 +327,7 @@ int main()
             std::string a = tree->Serialize();
             printf("%s\n", a.c_str());
 
-            DestroyNode(tree);
+            DestroyParseResult(parseResult);
             DestroyPlan(plan);
         }
 

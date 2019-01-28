@@ -44,6 +44,7 @@ TEST(TPCHQueryGrammarTests)
         "test/queries/tpc-h-27.sql",
         "test/queries/tpc-h-28.sql",
         "test/queries/tpc-h-29.sql",
+        "test/queries/tpc-h-30.sql",
     };
 
     int testsFailed = 0;
@@ -52,8 +53,9 @@ TEST(TPCHQueryGrammarTests)
     {
         std::string query = readFileContents(file_path);
 
-        INode* tree = ParseNode(query);
-        if (!tree)
+        IParseResult* parseResult = ParseSql(query);
+        INode* tree = parseResult->GetParseTree();
+        if (!parseResult->IsAccept())
         {
             mt::printFailed(file_path.c_str());
             ++testsFailed;
@@ -63,17 +65,19 @@ TEST(TPCHQueryGrammarTests)
             mt::printOk(file_path.c_str());
             printf("%s\n", tree->Serialize().c_str());
         }
-        if (tree)
+        if (parseResult->IsAccept())
         {
             concatenated += query + "\n";
         }
-        DestroyNode(tree);
+        DestroyParseResult(parseResult);
     }
 
     clock_t start, end;
     int tks_count = 0;
-    INode* tree = ParseNode(concatenated);
-    if (!tree)
+    IParseResult* parseResult = ParseSql(concatenated);
+
+    INode* tree = parseResult->GetParseTree();
+    if (!parseResult->IsAccept())
     {
         mt::printFailed("TPCHAllConcatenated");
         ++testsFailed;
@@ -159,11 +163,13 @@ TEST(TPCHQueryGrammarTests)
                     {
                         wc->AddCondition(cond);
                     }
+            }, [](IPlan* plan){
+                    printf("%s\n", plan->GetErrorDetail().c_str());
             }, nullptr, tree);
         VisitPlan(plan);
         printf("%s\n", concatenated.c_str());
         printf("%s\n", tree->Serialize().c_str());
-        DestroyNode(tree);
+        DestroyParseResult(parseResult);
         DestroyPlan(plan);
     }
 

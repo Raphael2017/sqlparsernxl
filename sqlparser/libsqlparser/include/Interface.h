@@ -32,6 +32,16 @@ struct INode
     virtual void Print() = 0;
 };
 
+struct IParseResult
+{
+    virtual ~IParseResult(){}
+    virtual bool IsAccept() const = 0;
+    virtual INode* GetParseTree() = 0;
+    virtual size_t GetErrorLine() const = 0;
+    virtual size_t GetErrorColumn() const = 0;
+    virtual std::string GetErrorDetail() const = 0;
+};
+
 struct ITableItem;
 struct ITableColumnRefItem;
 struct IStmt;
@@ -41,6 +51,7 @@ typedef std::function<void(IPlan*, ITableItem*)> BaseTableVisit;
 typedef std::function<void(IPlan*, ITableColumnRefItem*)> BaseTableColumnVisit;
 typedef std::function<void(IPlan*)> StartNewStmt;
 typedef std::function<void(IPlan*, IWhereCluase*)> WhereClauseVisit;
+typedef std::function<void(IPlan*)> ErrorOccur;
 struct IWhereCluase
 {
     virtual ~IWhereCluase(){}
@@ -54,7 +65,11 @@ struct IPlan
     virtual void* GetContext() = 0;
     virtual IStmt* GetQuery(uint64_t query_id) = 0;
     virtual void SetDefaultSchema(const std::string& default_schema) = 0;
-    virtual void AddTableStructure(const std::string& schema, const std::string& table, const std::list<std::string>& columns) = 0;
+    virtual void AddTableStructure(
+            const std::string& schema,
+            const std::string& table,
+            const std::list<std::string>& columns) = 0;
+    virtual std::string GetErrorDetail() = 0;
 };
 
 struct ITableItem
@@ -110,12 +125,13 @@ struct IUpdateStmt
 
 extern "C"
 {
-SQLPARSER_PUBLIC_API INode* ParseNode(const std::string& sql);
-SQLPARSER_PUBLIC_API void DestroyNode(INode*);
+SQLPARSER_PUBLIC_API IParseResult* ParseSql(const std::string& sql);
+SQLPARSER_PUBLIC_API void DestroyParseResult(IParseResult*);
 SQLPARSER_PUBLIC_API IPlan* CreatePlan(const BaseTableVisit& baseTableVisit,
                   const BaseTableColumnVisit& baseTableColumnVisit,
                   const StartNewStmt& startNewStmt,
                   const WhereClauseVisit& whereClauseVisit,
+                  const ErrorOccur& errorOccur,
                   void* context, INode*);
 SQLPARSER_PUBLIC_API void VisitPlan(IPlan*);
 SQLPARSER_PUBLIC_API void DestroyPlan(IPlan*);

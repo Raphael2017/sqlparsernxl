@@ -10,10 +10,13 @@ IPlan* CreatePlan(
         const BaseTableColumnVisit& baseTableColumnVisit,
         const StartNewStmt& startNewStmt,
         const WhereClauseVisit& whereClauseVisit,
+        const ErrorOccur& errorOccur,
         void* context, INode* node)
 {
     Node* root = dynamic_cast<Node*>(node);
-    resolve::ResultPlan* ret = new resolve::ResultPlan(baseTableVisit, baseTableColumnVisit, startNewStmt, whereClauseVisit);
+    resolve::ResultPlan* ret = new resolve::ResultPlan(
+            baseTableVisit, baseTableColumnVisit,
+            startNewStmt, whereClauseVisit, errorOccur);
     ret->context_ = context;
     ret->tree_root_ = root;
     return ret;
@@ -36,26 +39,17 @@ void VisitPlan(IPlan* p)
 
 }
 
-INode* ParseNode(const std::string &sql)
+IParseResult* ParseSql(const std::string &sql)
 {
-    INode* ret = nullptr;
-    ParseResult result;
-    parser::parse(sql, &result);
-    if (!result.accept)
-    {
-        printf("%s (L%d:%d)\n", result.errDetail.c_str(), result.errFirstLine + 1, result.errFirstColumn);
-        return nullptr;
-    }
-    else
-    {
-        return result.result_tree_;
-    }
-    return ret;
+    ParseResult* result = new ParseResult;
+    parser::parse(sql, result);
+
+    return result;
 }
 
-void DestroyNode(INode * node)
+void DestroyParseResult(IParseResult* result)
 {
-    delete(node);
+    delete(result);
 }
 
 NodeType Node::GetType()
@@ -113,4 +107,29 @@ std::string Node::Serialize()
 void Node::Print()
 {
     print(this, 0);
+}
+
+bool ParseResult::IsAccept() const
+{
+    return accept;
+}
+
+INode* ParseResult::GetParseTree()
+{
+    return result_tree_;
+}
+
+size_t ParseResult::GetErrorLine() const
+{
+    return errFirstLine;
+}
+
+size_t ParseResult::GetErrorColumn() const
+{
+    return errFirstColumn;
+}
+
+std::string ParseResult::GetErrorDetail() const
+{
+    return errDetail;
 }

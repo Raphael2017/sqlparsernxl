@@ -79,10 +79,10 @@ namespace resolve
         std::vector<CteDef*> cte_defs_;
 
     public:
-        virtual StmtType GetStmtType() { return  E_NONE; }
-        virtual uint64_t GetQueryID() { return get_query_id(); }
-        virtual size_t GetTableItemCount() const { return table_items_.size(); }
-        virtual ITableItem* GetTableItem(size_t index);
+        virtual StmtType GetStmtType() override { return  E_NONE; }
+        virtual uint64_t GetQueryID() override { return get_query_id(); }
+        virtual size_t GetTableItemCount() const override { return table_items_.size(); }
+        virtual ITableItem* GetTableItem(size_t index) override;
         friend struct CteTableRef;
     };
 }

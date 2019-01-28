@@ -11,6 +11,7 @@
 #include "expr.h"
 #include "LogicPlan.h"
 #include "where_clause.h"
+#include "UpdateStmt.h"
 
 namespace resolve
 {
@@ -68,6 +69,17 @@ namespace resolve
             ScopeType scope/* = E_SCOPE_WHATEVER*/)
     {
         assert(node->nodeType_ == E_UPDATE);
+        query_id = plan->logicPlan_->generate_query_id();
+        UpdateStmt* update_stmt = dynamic_cast<UpdateStmt*>(plan->logicPlan_->add_query(E_STMT_TYPE_UPDATE));
+        update_stmt->set_query_id(query_id);
+        update_stmt->set_parent(parent);
+
+        resolve_cte_clause(plan, node->getChild(E_UPDATE_OPT_WITH), update_stmt);
+        resolve_from_clause(plan, node->getChild(E_UPDATE_FROM_LIST), update_stmt);
+        resolve_update_clause(plan, node->getChild(E_UPDATE_UPDATE_RELATION), update_stmt);
+        resolve_where_clause(plan, node->getChild(E_UPDATE_OPT_WHERE), node, update_stmt);
+        resolve_update_items(plan, node->getChild(E_UPDATE_UPDATE_ELEM_LIST), update_stmt);
+
         return 0;
     }
 
@@ -196,7 +208,7 @@ namespace resolve
     int resolve_where_clause(
             ResultPlan* plan,
             Node* node,
-            Node* select,
+            Node* node_parent,
             Stmt* parent)
     {
         if (node)
@@ -210,7 +222,7 @@ namespace resolve
         {
             WhereCluase wc;
             wc.query_id_ = parent->get_query_id();
-            wc.bind(node, select);
+            wc.bind(node, node_parent);
             plan->whereClauseVisit_(plan, &wc);
         }
 
@@ -299,6 +311,58 @@ namespace resolve
         return 0;
     }
 #endif
+
+    int resolve_update_clause(
+            ResultPlan* plan,
+            Node* node,
+            UpdateStmt* parent
+    )
+    {
+        assert(node);
+        switch (node->nodeType_)
+        {
+            case E_TABLE_IDENT:
+            {
+                Node* schema_node = node->getChild(E_TABLE_IDENT_SCHEMA);
+                Node* table_node = node->getChild(E_TABLE_IDENT_OBJECT);
+                assert(table_node != nullptr);
+                std::string table_name = table_node->terminalToken_.str;
+                std::string schema_name = schema_node ? schema_node->terminalToken_.str : "";
+                TableRef* tbi = nullptr;
+                parent->set_update_table(plan, schema_name, table_name, tbi);
+                if (tbi)
+                {
+                    if (tbi->get_table_ref_type() == TableRef::BASE_TABLE_DIRECT_REF ||
+                        tbi->get_table_ref_type() == TableRef::BASE_TABLE_ALIAS_REF)
+                    {
+                        BaseTableRef* btbi = dynamic_cast<BaseTableRef*>(tbi);
+                        btbi->table_name_ = table_name;
+                        btbi->schema_name_ = schema_name = schema_node ? schema_node->terminalToken_.str : plan->local_table_mgr->get_default_schema();
+                        btbi->table_object_ = node->serialize();
+                        btbi->default_schema_ = (schema_node == nullptr);
+                    }
+                }
+
+            }
+            case E_TEMP_VARIABLE:
+            {
+
+            }
+            default:
+                break;  /* todo */
+        }
+
+        return 0;
+    }
+
+    int resolve_update_items(
+            ResultPlan* plan,
+            Node* node,
+            UpdateStmt* parent
+    )
+    {
+        return 0;
+    }
 
     int resolve_table(
             ResultPlan* plan,
@@ -568,6 +632,43 @@ namespace resolve
                 out_raw_expr = expr;
             }
                 break;
+            case E_EXPR_LIST_WITH_PARENS:
+            {
+                Node* nd = Node::remove_parens(node);
+                resolve_expr(plan, nd, sql_raw_expr, parent, out_raw_expr);
+            }
+                break;
+            case E_EXPR_LIST:
+            {
+                std::list<Node*> ls;
+                Node::ToList(node, ls);
+                RawExprMultiOp* expr = new RawExprMultiOp;
+                expr->set_expr_type(E_EXPR_LIST);
+                for (auto it : ls)
+                {
+                    RawExpr* e = nullptr;
+                    resolve_expr(plan, it, sql_raw_expr, parent, e);
+                    expr->add_op_expr(e);
+                }
+                out_raw_expr = expr;
+            }
+                break;
+            case E_SELECT_WITH_PARENS:
+            {
+                Node* nd = Node::remove_parens(node);
+                resolve_expr(plan, nd, sql_raw_expr, parent, out_raw_expr);
+            }
+                break;
+            case E_SELECT:
+            {
+                uint64_t query_id = OB_INVALID_ID;
+                resolve_select_statement(plan, node, query_id, parent);
+                RawExprScalarSubquery* expr = new RawExprScalarSubquery;
+                expr->set_expr_type(E_SELECT);
+                expr->set_ref_id(query_id);
+                out_raw_expr = expr;
+            }
+                break;
             case E_OP_ADD:
             case E_OP_MINUS:
             case E_OP_MUL:
@@ -587,7 +688,19 @@ namespace resolve
             case E_OP_OR:
             case E_OP_IS:
             case E_OP_IS_NOT:
+            case E_OP_IN:
+            case E_OP_NOT_IN:
             case E_OP_CNN:
+            case E_OP_ASS:
+            case E_OP_ASS_ADD:
+            case E_OP_ASS_MINUS:
+            case E_OP_ASS_MUL:
+            case E_OP_ASS_DIV:
+            case E_OP_ASS_REM:
+            case E_OP_ASS_BIT_AND:
+            case E_OP_ASS_BIT_OR:
+            case E_OP_ASS_BIT_XOR:
+            case E_OP_COLLATE:
             {
                 RawExpr* l = nullptr;
                 RawExpr* r = nullptr;
@@ -597,6 +710,87 @@ namespace resolve
                 expr->set_expr_type(node->nodeType_);
                 expr->set_first_op_expr(l);
                 expr->set_second_op_expr(r);
+                out_raw_expr = expr;
+            }
+                break;
+            case E_OP_NOT:
+            case E_OP_EXISTS:
+            case E_OP_POS:
+            case E_OP_NEG:
+            {
+                RawExpr* r = nullptr;
+                resolve_expr(plan, node->getChild(E_OP_UNARY_OPERAND), sql_raw_expr, parent, r);
+                RawExprUnaryOp* expr = new RawExprUnaryOp;
+                expr->set_expr_type(node->nodeType_);
+                expr->set_op_expr(r);
+                out_raw_expr = expr;
+            }
+                break;
+            case E_OP_BTW:
+            case E_OP_NOT_BTW:
+            {
+                RawExpr* a = nullptr;
+                RawExpr* b = nullptr;
+                RawExpr* c = nullptr;
+                resolve_expr(plan, node->getChild(E_OP_TERNARY_OPERAND_1), sql_raw_expr, parent, a);
+                resolve_expr(plan, node->getChild(E_OP_TERNARY_OPERAND_2), sql_raw_expr, parent, b);
+                resolve_expr(plan, node->getChild(E_OP_TERNARY_OPERAND_3), sql_raw_expr, parent, c);
+                RawExprTripleOp* expr = new RawExprTripleOp;
+                expr->set_expr_type(node->nodeType_);
+                expr->set_first_op_expr(a);
+                expr->set_second_op_expr(b);
+                expr->set_third_op_expr(c);
+                out_raw_expr = expr;
+            }
+                break;
+            case E_CASE:
+            {
+                RawExprCaseOp* expr = new RawExprCaseOp;
+                expr->set_expr_type(E_CASE);
+                RawExpr* arg = nullptr;
+                resolve_expr(plan, node->getChild(E_CASE_ARG), sql_raw_expr, parent, arg);
+                expr->set_arg_op_expr(arg);
+                Node* deft = node->getChild(E_CASE_ELSE);
+                if (!deft)
+                    expr->set_default_expr(nullptr);
+                else
+                {
+                    RawExpr* e = nullptr;
+                    resolve_expr(plan, deft->getChild(E_CASE_DEFAULT_EXPR), sql_raw_expr, parent, e);
+                    expr->set_default_expr(e);
+                }
+
+                Node* when = node->getChild(E_CASE_WHEN_CLAUSE_LIST);
+                std::list<Node*> ls;
+                Node::ToList(when, ls);
+                for (auto it : ls)
+                {
+                    assert(it->nodeType_ == E_WHEN);
+                    RawExpr* w = nullptr;
+                    resolve_expr(plan, it->getChild(E_WHEN_WHEN_EXPR), sql_raw_expr, parent, w);
+                    expr->add_when_op_expr(w);
+                    RawExpr* t = nullptr;
+                    resolve_expr(plan, it->getChild(E_WHEN_THEN_EXPR), sql_raw_expr, parent, t);
+                    expr->add_then_op_expr(t);
+                }
+                out_raw_expr = expr;
+            }
+                break;
+            case E_FUN_CALL:
+            {
+                Node* func = node->getChild(E_FUN_CALL_FUNC_NAME);
+                Node* params = node->getChild(E_FUN_CALL_PARAMS);
+                RawExprSysFun* expr = new RawExprSysFun;
+                expr->set_expr_type(E_FUN_CALL);
+                expr->set_func_name(func->serialize());
+                std::list<Node*> ls;
+                Node::ToList(params, ls);
+                for (auto it : ls)
+                {
+                    RawExpr* param = nullptr;
+                    resolve_expr(plan, it, sql_raw_expr, parent, param);
+                    expr->add_param_expr(param);
+                }
                 out_raw_expr = expr;
             }
                 break;

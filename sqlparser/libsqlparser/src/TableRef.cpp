@@ -85,6 +85,13 @@ namespace resolve
         return true;
     }
 
+    TableRef* BaseTableRef::clone() const
+    {
+        BaseTableRef* ret = new BaseTableRef(*this);
+        ret->node_ = nullptr;
+        return ret;
+    }
+
     void BaseTableRef::bind_node(ResultPlan* plan, Node* node)
     {
         assert(node != nullptr);
@@ -127,6 +134,13 @@ namespace resolve
         {
             return table == alias_name_;
         }
+    }
+
+    TableRef* BaseTableAliasRef::clone() const
+    {
+        BaseTableRef* ret = new BaseTableAliasRef(*this);
+        ret->node_ = nullptr;
+        return ret;
     }
 
     GeneratedTableRef::~GeneratedTableRef()
@@ -235,6 +249,15 @@ namespace resolve
         return true;
     }
 
+    TableRef* GeneratedTableRef::clone() const
+    {
+        GeneratedTableRef* ret = new GeneratedTableRef(*this);
+        ret->cols_.clear();
+        for (auto it : this->cols_)
+            ret->cols_.push_back(it->clone());
+        return ret;
+    }
+
     std::string CteTableRef::get_table_name() const
     {
         return cte_name_;
@@ -298,6 +321,12 @@ namespace resolve
             out_select_items.push_back(item);
         }
         return true;
+    }
+
+    TableRef* CteTableRef::clone() const
+    {
+        CteTableRef* ret = new CteTableRef(*this);
+        return ret;
     }
 
     CteDef::~CteDef()

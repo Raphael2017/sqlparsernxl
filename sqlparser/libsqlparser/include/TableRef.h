@@ -11,6 +11,7 @@ namespace resolve
     struct ResultPlan;
     struct LogicPlan;
     struct SelectItem;
+    struct UpdateStmt;
     struct TableRef : ITableItem
     {
     public:
@@ -43,6 +44,7 @@ namespace resolve
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
                 uint64_t start_index) = 0;
+        virtual TableRef* clone() const = 0;
 
         /* Implement Of ITableItem */
         virtual TableItemType GetTableItemType() override { return E_UNKNOWN; }
@@ -85,6 +87,7 @@ namespace resolve
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
                 uint64_t start_index) override;
+        virtual TableRef* clone() const override;
 
         /* Implement Of ITableItem */
         virtual TableItemType GetTableItemType() override { return E_BASIC_TABLE; }
@@ -102,9 +105,11 @@ namespace resolve
                 const std::string& alias) override { return false; }
         virtual int GetLine() override { return line_; }
         virtual int GetColumn() override { return column_; }
-    private:
+
+    public:
         void bind_node(ResultPlan* plan, Node* node);
-    private:
+
+    protected:
         uint64_t base_table_id_;
         std::string table_name_;
         std::string schema_name_;
@@ -118,6 +123,13 @@ namespace resolve
         Node* node_;
     friend struct Stmt;
     friend struct SqlRawExpr;
+    friend struct UpdateStmt;
+    friend struct BaseTableAliasRef;
+    friend int resolve_update_clause(
+            ResultPlan* plan,
+            Node* node,
+            UpdateStmt* parent
+    );
     };
 
     struct BaseTableAliasRef: public BaseTableRef
@@ -128,6 +140,7 @@ namespace resolve
         virtual bool check_is_ref(
                 const std::string& schema,
                 const std::string& table) const override;
+        virtual TableRef* clone() const override;
 
         /* Implement Of ITableItem */
         virtual TableItemType GetTableItemType() override { return E_BASIC_TABLE_WITH_ALIAS; }
@@ -157,6 +170,7 @@ namespace resolve
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
                 uint64_t start_index) override;
+        virtual TableRef* clone() const override;
         bool set_column_alias(
                 ResultPlan*plan,
                 const std::vector<std::string>& col_alias);
@@ -185,6 +199,7 @@ namespace resolve
                 ResultPlan* plan,
                 std::vector<SelectItem*>& out_select_items,
                 uint64_t start_index) override;
+        virtual TableRef* clone() const override;
     private:
         std::string cte_name_;
         std::string alias_name_;
@@ -192,6 +207,7 @@ namespace resolve
         uint64_t cte_index_;
         friend struct Stmt;
         friend struct SqlRawExpr;
+        friend struct UpdateStmt;
     };
 
     struct Stmt;

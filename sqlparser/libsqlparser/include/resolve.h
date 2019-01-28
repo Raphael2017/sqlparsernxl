@@ -26,6 +26,7 @@ namespace resolve
 
     struct Stmt;
     struct SelectStmt;
+    struct UpdateStmt;
     struct SqlRawExpr;
     struct RawExpr;
     struct LogicPlan;
@@ -84,16 +85,28 @@ namespace resolve
     int resolve_where_clause(
             ResultPlan* plan,
             Node* node,
-            Node* select,
+            Node* node_parent,
             Stmt* parent
-            );  // not use
+            );
 
     int resolve_select_items(
             ResultPlan* plan,
             Node* node,
             SelectStmt* parent,
             ScopeType scope
-            );  // not use
+            );
+
+    int resolve_update_clause(
+            ResultPlan* plan,
+            Node* node,
+            UpdateStmt* parent
+            );
+
+    int resolve_update_items(
+            ResultPlan* plan,
+            Node* node,
+            UpdateStmt* parent
+            );
 
     int resolve_independ_expr(
             ResultPlan *plan,

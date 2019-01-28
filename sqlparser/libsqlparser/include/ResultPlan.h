@@ -14,24 +14,29 @@ namespace resolve
                 const BaseTableVisit& visit,
                 const BaseTableColumnVisit& visit1,
                 const StartNewStmt& visit2,
-                const WhereClauseVisit& visit3);
+                const WhereClauseVisit& visit3,
+                const ErrorOccur& errorOccur);
         ~ResultPlan();
         void reset();
         BaseTableVisit base_table_visit_;
         BaseTableColumnVisit baseTableColumnVisit_;
         StartNewStmt startNewStmt_;
         WhereClauseVisit whereClauseVisit_;
+        ErrorOccur errorOccur_;
         LogicPlan* logicPlan_{nullptr};
         LocalTableMgr* local_table_mgr{nullptr};
         void* context_{nullptr};
         Node* tree_root_{nullptr};
 
+        std::string error_detail_;
+
         // implement IPlan
-        virtual void* GetContext() { return context_; }
-        virtual IStmt* GetQuery(uint64_t query_id);
-        virtual void SetDefaultSchema(const std::string& default_schema);
+        virtual void* GetContext() override { return context_; }
+        virtual IStmt* GetQuery(uint64_t query_id) override;
+        virtual void SetDefaultSchema(const std::string& default_schema) override;
         virtual void AddTableStructure(const std::string& schema,
-                const std::string& table, const std::list<std::string>& columns);
+                const std::string& table, const std::list<std::string>& columns) override;
+        virtual std::string GetErrorDetail() override { return error_detail_; }
     };
 }
 

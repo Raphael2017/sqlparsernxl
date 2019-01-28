@@ -19,7 +19,22 @@ namespace resolve
             Node* new_expr = Node::makeTerminalNode(E_STRING, condition);
             Node* where = Node::makeNonTerminalNode(E_WHERE_CLAUSE, E_WHERE_CLAUSE_PROPERTY_CNT, new_expr);
             where->serialize_format = &WHERE_SERIALIZE_FORMAT;
-            select_->setChild(E_SELECT_OPT_WHERE, where);
+            switch (select_->nodeType_)
+            {
+                case E_SELECT:
+                {
+                    select_->setChild(E_SELECT_OPT_WHERE, where);
+                }
+                    break;
+                case E_UPDATE:
+                {
+                    select_->setChild(E_UPDATE_OPT_WHERE, where);
+                }
+                    break;
+                default:
+                    assert(false);  /* unreachable */
+                    break;
+            }
         }
         else
         {
@@ -39,7 +54,7 @@ namespace resolve
         if (!where_)
         {
             assert(select);
-            assert(select->nodeType_ == E_SELECT);
+            assert(select->nodeType_ == E_SELECT || select->nodeType_ == E_UPDATE);
         }
     }
 }

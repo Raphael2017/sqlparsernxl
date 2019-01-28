@@ -3,10 +3,8 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <functional>
 #include "Interface.h"
 #include "Stmt.h"
-struct Node;
 
 namespace resolve
 {
@@ -32,16 +30,8 @@ namespace resolve
         uint64_t right_query_id_;
 
     public:
-        virtual StmtType GetStmtType() { return  E_STMT_TYPE_SELECT; }
+        virtual StmtType GetStmtType() override { return  E_STMT_TYPE_SELECT; }
     };
-
-    struct UpdateStmt : public Stmt, public IUpdateStmt
-    {
-    public:
-        virtual StmtType GetStmtType() { return  E_STMT_TYPE_UPDATE; }
-    };
-
-
 }
 
 #endif
