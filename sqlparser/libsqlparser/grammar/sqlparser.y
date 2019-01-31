@@ -179,7 +179,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token CURRENT_TIMESTAMP CONVERT COALESCE CAST
 %token BIT CHAR DATETIME2 DATETIMEOFFSET INT MONEY NCHAR NVARCHAR SMALLDATETIME SMALLMONEY TEXT
 %token COLLATE APPLY SYSTEM_TIME OF CONTAINED PIVOT UNPIVOT
-%token OUTPUT DELETED INSERTED DOLLAR_ACTION
+%token OUTPUT DELETED INSERTED DOLLAR_ACTION SOME
 
 %type <node> sql_stmt stmt_list stmt
 %type <node> dml_stmt
@@ -214,6 +214,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> update_stmt
 %type <node> opt_output_clause update_elem_list update_elem opt_update_where
 %type <node> dml_select_list dml_select_item
+%type <ival> all_some_any
 
 %start sql_stmt
 %%
@@ -1560,30 +1561,180 @@ expr:
     $$ = Node::makeNonTerminalNode(E_OP_LE, E_OP_BINARY_PROPERTY_CNT, $1, $3);
     $$->serialize_format = &OP_LE_SERIALIZE_FORMAT;
 }
+  | expr COMP_LE all_some_any select_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_OP_LE, E_OP_BINARY_PROPERTY_CNT, $1, $4);
+    switch ($3)
+    {
+        case 0:
+        {
+            $$->serialize_format = &OP_LE_ALL_SERIALIZE_FORMAT;
+        }
+            break;
+        case 1:
+        {
+            $$->serialize_format = &OP_LE_SOME_SERIALIZE_FORMAT;
+        }
+            break;
+        case 2:
+        {
+            $$->serialize_format = &OP_LE_ANY_SERIALIZE_FORMAT;
+        }
+            break;
+        default:
+            /* unreachable */
+            break;
+    }
+}
   | expr COMP_LT expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_LT, E_OP_BINARY_PROPERTY_CNT, $1, $3);
     $$->serialize_format = &OP_LT_SERIALIZE_FORMAT;
+}
+  | expr COMP_LT all_some_any select_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_OP_LT, E_OP_BINARY_PROPERTY_CNT, $1, $4);
+    switch ($3)
+    {
+        case 0:
+        {
+            $$->serialize_format = &OP_LT_ALL_SERIALIZE_FORMAT;
+        }
+            break;
+        case 1:
+        {
+            $$->serialize_format = &OP_LT_SOME_SERIALIZE_FORMAT;
+        }
+            break;
+        case 2:
+        {
+            $$->serialize_format = &OP_LT_ANY_SERIALIZE_FORMAT;
+        }
+            break;
+        default:
+            /* unreachable */
+            break;
+    }
 }
   | expr COMP_EQ expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_EQ, E_OP_BINARY_PROPERTY_CNT, $1, $3);
     $$->serialize_format = &OP_EQ_SERIALIZE_FORMAT;
 }
+  | expr COMP_EQ all_some_any select_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_OP_EQ, E_OP_BINARY_PROPERTY_CNT, $1, $4);
+    switch ($3)
+    {
+        case 0:
+        {
+            $$->serialize_format = &OP_EQ_ALL_SERIALIZE_FORMAT;
+        }
+            break;
+        case 1:
+        {
+            $$->serialize_format = &OP_EQ_SOME_SERIALIZE_FORMAT;
+        }
+            break;
+        case 2:
+        {
+            $$->serialize_format = &OP_EQ_ANY_SERIALIZE_FORMAT;
+        }
+            break;
+        default:
+            /* unreachable */
+            break;
+    }
+}
   | expr COMP_GE expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_GE, E_OP_BINARY_PROPERTY_CNT, $1, $3);
     $$->serialize_format = &OP_GE_SERIALIZE_FORMAT;
+}
+  | expr COMP_GE all_some_any select_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_OP_GE, E_OP_BINARY_PROPERTY_CNT, $1, $4);
+    switch ($3)
+    {
+        case 0:
+        {
+            $$->serialize_format = &OP_GE_ALL_SERIALIZE_FORMAT;
+        }
+            break;
+        case 1:
+        {
+            $$->serialize_format = &OP_GE_SOME_SERIALIZE_FORMAT;
+        }
+            break;
+        case 2:
+        {
+            $$->serialize_format = &OP_GE_ANY_SERIALIZE_FORMAT;
+        }
+            break;
+        default:
+            /* unreachable */
+            break;
+    }
 }
   | expr COMP_GT expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_GT, E_OP_BINARY_PROPERTY_CNT, $1, $3);
     $$->serialize_format = &OP_GT_SERIALIZE_FORMAT;
 }
+  | expr COMP_GT all_some_any select_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_OP_GT, E_OP_BINARY_PROPERTY_CNT, $1, $4);
+    switch ($3)
+    {
+        case 0:
+        {
+            $$->serialize_format = &OP_GT_ALL_SERIALIZE_FORMAT;
+        }
+            break;
+        case 1:
+        {
+            $$->serialize_format = &OP_GT_SOME_SERIALIZE_FORMAT;
+        }
+            break;
+        case 2:
+        {
+            $$->serialize_format = &OP_GT_ANY_SERIALIZE_FORMAT;
+        }
+            break;
+        default:
+            /* unreachable */
+            break;
+    }
+}
   | expr COMP_NE expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NE, E_OP_BINARY_PROPERTY_CNT, $1, $3);
     $$->serialize_format = &OP_NE_SERIALIZE_FORMAT;
+}
+  | expr COMP_NE all_some_any select_with_parens
+{
+    $$ = Node::makeNonTerminalNode(E_OP_NE, E_OP_BINARY_PROPERTY_CNT, $1, $4);
+    switch ($3)
+    {
+        case 0:
+        {
+            $$->serialize_format = &OP_NE_ALL_SERIALIZE_FORMAT;
+        }
+            break;
+        case 1:
+        {
+            $$->serialize_format = &OP_NE_SOME_SERIALIZE_FORMAT;
+        }
+            break;
+        case 2:
+        {
+            $$->serialize_format = &OP_NE_ANY_SERIALIZE_FORMAT;
+        }
+            break;
+        default:
+            /* unreachable */
+            break;
+    }
 }
   | expr LIKE expr
 {
@@ -2765,6 +2916,11 @@ data_type:
   | VARBINARY
 { $$ = Node::makeTerminalNode(E_DATA_TYPE, "VARBINARY"); }
 ;
+
+all_some_any:
+    ALL		{ $$ = 0; }
+  | SOME	{ $$ = 1; }
+  | ANY		{ $$ = 2; }
 
 %%
 /*********************************

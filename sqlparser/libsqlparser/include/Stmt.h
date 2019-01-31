@@ -10,6 +10,18 @@ namespace resolve
     struct CteDef;
     struct TableRef;
     struct ResultPlan;
+    struct FromItem
+    {
+        enum FromItemType
+        {
+            E_JOINED,
+            E_NORMAL,
+        };
+        uint64_t tid_;
+        FromItemType fromItemType_;
+    };
+    struct JoinedTable;
+
     struct Stmt : public IStmt
     {
     public:
@@ -22,6 +34,10 @@ namespace resolve
             { return 0 <= index && index < cte_defs_.size() ? cte_defs_[index] : nullptr; }
         const std::vector<TableRef*>& get_table_items() const { return table_items_; }
 
+        /*
+         * these api descripe a name resolve algorithm
+         *
+         * */
         bool check_in_cte(
                 const std::string& name,
                 uint64_t& out_query_id,
@@ -72,11 +88,21 @@ namespace resolve
                 TableRef*& table_item,
                 uint64_t& column_id);
 
+
+        void add_join(JoinedTable* j) { joins_.push_back(j); }
+        void add_from_item(uint64_t id, FromItem::FromItemType t) { from_items_.push_back({id, t}); }
+        uint64_t generate_join_id() { return gen_joined_tid_--; }
+
     protected:
         uint64_t query_id_;
         Stmt* parent_{nullptr};
         std::vector<TableRef*> table_items_;
         std::vector<CteDef*> cte_defs_;
+
+        std::vector<JoinedTable*> joins_;
+        std::vector<FromItem> from_items_;
+
+        uint64_t gen_joined_tid_{UINT64_MAX - 10};
 
     public:
         virtual StmtType GetStmtType() override { return  E_NONE; }

@@ -340,6 +340,7 @@ OUTPUT              { return OUTPUT; }
 DELETED             { return DELETED; }
 INSERTED            { return INSERTED; }
 OPTIMIZE            { return OPTIMIZE; }
+SOME                { return SOME; }
 
 
 NULL    {

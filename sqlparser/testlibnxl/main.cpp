@@ -223,6 +223,10 @@ int main()
         "     ON sr.ScrapReasonID = wo.ScrapReasonID\n"
         "     AND wo.ScrappedQty > 300;";
     a = "UPDATE SA.SALES01 SET Qty=(SELECT 1)";
+    a = "SELECT * FROM A LEFT JOIN B ON x=y LEFT JOIN C ON m=n";
+    a = "SELECT * FROM A LEFT JOIN B LEFT JOIN C ON x=y ON m=n, alpha";
+    a = "SELECT * FROM (SELECT * FROM SALES)";
+    a = "SELECT Qty FROM SA.SALES01 WHERE Qty >  (SELECT 1 FROM SA.SALES WHERE 1=1)";
     {
         IParseResult* parseResult = ParseSql(a);
         if (!parseResult->IsAccept())

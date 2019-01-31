@@ -31,6 +31,7 @@ namespace resolve
     struct RawExpr;
     struct LogicPlan;
     struct ResultPlan;
+    struct JoinedTable;
 
     int resolve(ResultPlan* plan, Node* node);
 
@@ -79,7 +80,8 @@ namespace resolve
     int resolve_joined_table(
             ResultPlan* plan,
             Node* node,
-            Stmt* parent
+            Stmt* parent,
+            JoinedTable* joinedTable
             );
 
     int resolve_where_clause(

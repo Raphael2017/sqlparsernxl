@@ -204,6 +204,12 @@ namespace resolve
         return false;
     }
 
+
+    /*
+     * todo
+     * a subquery at from list not check outer stmt
+     * SELECT * FROM SALES N, (SELECT N.Qty) N1  error invalid N.Qty
+     * */
     bool Stmt::get_table_item(
             uint64_t table_id,
             TableRef*& out_table_ref
@@ -229,6 +235,12 @@ namespace resolve
         return false;
     }
 
+
+    /*
+     * todo
+     * a subquery at from list not check outer stmt
+     * SELECT * FROM SALES N, (SELECT N.Qty) N1  error invalid N.Qty
+     * */
     bool Stmt::check_table_column(
             ResultPlan* plan,
             const std::string& column_name,

@@ -12,6 +12,7 @@
 #include "LogicPlan.h"
 #include "where_clause.h"
 #include "UpdateStmt.h"
+#include "join.h"
 
 namespace resolve
 {
@@ -201,6 +202,15 @@ namespace resolve
         {
             uint64_t table_id = OB_INVALID_ID;
             resolve_table(plan, child_node, parent, table_id);
+            if (child_node->nodeType_ == E_JOINED_TABLE ||
+                child_node->nodeType_ == E_JOINED_TABLE_WITH_PARENS)
+            {
+                parent->add_from_item(table_id, FromItem::E_JOINED);
+            }
+            else
+            {
+                parent->add_from_item(table_id, FromItem::E_NORMAL);
+            }
         }
         return 0;
     }
@@ -412,10 +422,14 @@ namespace resolve
                 break;
             case E_SELECT:
             {
-                assert(alias_node != nullptr);  // The alias is actually not optional at all.
+                //assert(alias_node != nullptr);  // The alias is actually not optional at all.
+                std::string df = table_node->serialize();
+                plan->set_err(0, "(" + df + ") must have alias name");
+                plan->errorOccur_(plan);
+
                 uint64_t query_id = OB_INVALID_ID;
                 resolve_select_statement(plan, table_node, query_id, parent, E_SCOPE_FROM);
-                std::string alias_name = alias_node ? alias_node->terminalToken_.str : "";
+                std::string alias_name = alias_node ? alias_node->terminalToken_.str : df;
                 TableRef* tbi = parent->add_table_item(plan, query_id, alias_name, out_table_id);
                 Node* alias_list = node->getChild(2);
                 std::vector<std::string> aliass{};
@@ -434,7 +448,11 @@ namespace resolve
                 break;
             case E_JOINED_TABLE:
             {
-                resolve_joined_table(plan, table_node, parent);
+                JoinedTable* joinedTable = new JoinedTable;
+                out_table_id = parent->generate_join_id();
+                joinedTable->set_join_id(out_table_id);
+                resolve_joined_table(plan, table_node, parent, joinedTable);
+                parent->add_join(joinedTable);
             }
                 break;
             case E_TABLE_VALUE_CTOR_PARENS:
@@ -467,7 +485,8 @@ namespace resolve
     int resolve_joined_table(
             ResultPlan* plan,
             Node* node,
-            Stmt* parent)
+            Stmt* parent,
+            JoinedTable* joinedTable)
     {
         int ret = 0;
         assert(node->nodeType_ == E_JOINED_TABLE);
@@ -486,11 +505,12 @@ namespace resolve
                     {
                         uint64_t tid = OB_INVALID_ID;
                         ret = resolve_table(plan, table_node, parent, tid);
+                        joinedTable->add_table(tid);
                     }
                         break;
                     case E_JOINED_TABLE:
                     {
-                        ret = resolve_joined_table(plan, table_node, parent);
+                        ret = resolve_joined_table(plan, table_node, parent, joinedTable);
                     }
                         break;
                     case E_SELECT_WITH_PARENS:
@@ -498,13 +518,13 @@ namespace resolve
                         table_node = Node::remove_parens(table_node);
                         uint64_t tid = OB_INVALID_ID;
                         ret = resolve_table(plan, table_node, parent, tid);
+                        joinedTable->add_table(tid);
                     }
                         break;
                     case E_JOINED_TABLE_WITH_PARENS:
                     {
                         table_node = Node::remove_parens(table_node);
-                        uint64_t tid = OB_INVALID_ID;
-                        ret = resolve_table(plan, table_node, parent, tid);
+                        ret = resolve_joined_table(plan, table_node, parent, joinedTable);
                     }
                         break;
                     default:
@@ -514,6 +534,39 @@ namespace resolve
         }
         uint64_t sql_raw_expr_id = OB_INVALID_ID;
         resolve_independ_expr(plan, node->getChild(E_JOINED_TABLE_ON_EXPR), sql_raw_expr_id, parent);
+        Node* join_type_node = node->getChild(E_JOINED_TABLE_JOIN_TYPE);
+        switch (join_type_node->nodeType_)
+        {
+            case E_JOIN_FULL:
+            {
+                joinedTable->add_join_op(E_JOIN_FULL, sql_raw_expr_id);
+            }
+                break;
+            case E_JOIN_CROSS:
+            {
+                joinedTable->add_join_op(E_JOIN_CROSS, OB_INVALID_ID);
+            }
+                break;
+            case E_JOIN_LEFT:
+            {
+                joinedTable->add_join_op(E_JOIN_LEFT, sql_raw_expr_id);
+            }
+                break;
+            case E_JOIN_RIGHT:
+            {
+                joinedTable->add_join_op(E_JOIN_RIGHT, sql_raw_expr_id);
+            }
+                break;
+            case E_JOIN_INNER:
+            {
+                joinedTable->add_join_op(E_JOIN_INNER, sql_raw_expr_id);
+            }
+                break;
+            default:
+                assert(false);  /* unreachable */
+                break;
+        }
+
         return ret;
     }
 

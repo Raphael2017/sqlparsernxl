@@ -331,7 +331,8 @@ extern int yydebug;
     OUTPUT = 533,
     DELETED = 534,
     INSERTED = 535,
-    DOLLAR_ACTION = 536
+    DOLLAR_ACTION = 536,
+    SOME = 537
   };
 #endif
 
@@ -345,7 +346,7 @@ union YYSTYPE
     struct Node* node;
     int    ival;
 
-#line 349 "sqlparser_bison.h" /* yacc.c:1909  */
+#line 350 "sqlparser_bison.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

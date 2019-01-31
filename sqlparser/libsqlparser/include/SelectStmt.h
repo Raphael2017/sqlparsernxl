@@ -6,9 +6,12 @@
 #include "Interface.h"
 #include "Stmt.h"
 
+
 namespace resolve
 {
     struct SelectItem;
+
+
     struct SelectStmt : public Stmt, public ISelectStmt
     {
     public:
@@ -28,6 +31,7 @@ namespace resolve
         std::vector<SelectItem*> select_items_;
         uint64_t left_query_id_;
         uint64_t right_query_id_;
+
 
     public:
         virtual StmtType GetStmtType() override { return  E_STMT_TYPE_SELECT; }

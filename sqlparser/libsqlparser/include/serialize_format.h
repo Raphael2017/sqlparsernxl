@@ -223,12 +223,36 @@ Form OP_DIV_SERIALIZE_FORMAT                {{0,"",0,""}, {1," / "}, {0,"",1,""}
 Form OP_REM_SERIALIZE_FORMAT                {{0,"",0,""}, {1," % "}, {0,"",1,""}};
 Form OP_POW_SERIALIZE_FORMAT                {{0,"",0,""}, {1," ^ "}, {0,"",1,""}};
 Form OP_MOD_SERIALIZE_FORMAT                {{0,"",0,""}, {1," MOD "}, {0,"",1,""}};
+
 Form OP_LE_SERIALIZE_FORMAT                 {{0,"",0,""}, {1," <= "}, {0,"",1,""}};
 Form OP_LT_SERIALIZE_FORMAT                 {{0,"",0,""}, {1," < "}, {0,"",1,""}};
 Form OP_EQ_SERIALIZE_FORMAT                 {{0,"",0,""}, {1," = "}, {0,"",1,""}};
 Form OP_GE_SERIALIZE_FORMAT                 {{0,"",0,""}, {1," >= "}, {0,"",1,""}};
 Form OP_GT_SERIALIZE_FORMAT                 {{0,"",0,""}, {1," > "}, {0,"",1,""}};
 Form OP_NE_SERIALIZE_FORMAT                 {{0,"",0,""}, {1," <> "}, {0,"",1,""}};
+
+Form OP_LE_ALL_SERIALIZE_FORMAT             {{0,"",0,""}, {1," <= ALL "}, {0,"",1,""}};
+Form OP_LT_ALL_SERIALIZE_FORMAT             {{0,"",0,""}, {1," < ALL "}, {0,"",1,""}};
+Form OP_EQ_ALL_SERIALIZE_FORMAT             {{0,"",0,""}, {1," = ALL "}, {0,"",1,""}};
+Form OP_GE_ALL_SERIALIZE_FORMAT             {{0,"",0,""}, {1," >= ALL "}, {0,"",1,""}};
+Form OP_GT_ALL_SERIALIZE_FORMAT             {{0,"",0,""}, {1," > ALL "}, {0,"",1,""}};
+Form OP_NE_ALL_SERIALIZE_FORMAT             {{0,"",0,""}, {1," <> ALL "}, {0,"",1,""}};
+
+Form OP_LE_SOME_SERIALIZE_FORMAT            {{0,"",0,""}, {1," <= SOME "}, {0,"",1,""}};
+Form OP_LT_SOME_SERIALIZE_FORMAT            {{0,"",0,""}, {1," < SOME "}, {0,"",1,""}};
+Form OP_EQ_SOME_SERIALIZE_FORMAT            {{0,"",0,""}, {1," = SOME "}, {0,"",1,""}};
+Form OP_GE_SOME_SERIALIZE_FORMAT            {{0,"",0,""}, {1," >= SOME "}, {0,"",1,""}};
+Form OP_GT_SOME_SERIALIZE_FORMAT            {{0,"",0,""}, {1," > SOME "}, {0,"",1,""}};
+Form OP_NE_SOME_SERIALIZE_FORMAT            {{0,"",0,""}, {1," <> SOME "}, {0,"",1,""}};
+
+Form OP_LE_ANY_SERIALIZE_FORMAT             {{0,"",0,""}, {1," <= ANY "}, {0,"",1,""}};
+Form OP_LT_ANY_SERIALIZE_FORMAT             {{0,"",0,""}, {1," < ANY "}, {0,"",1,""}};
+Form OP_EQ_ANY_SERIALIZE_FORMAT             {{0,"",0,""}, {1," = ANY "}, {0,"",1,""}};
+Form OP_GE_ANY_SERIALIZE_FORMAT             {{0,"",0,""}, {1," >= ANY "}, {0,"",1,""}};
+Form OP_GT_ANY_SERIALIZE_FORMAT             {{0,"",0,""}, {1," > ANY "}, {0,"",1,""}};
+Form OP_NE_ANY_SERIALIZE_FORMAT             {{0,"",0,""}, {1," <> ANY "}, {0,"",1,""}};
+
+
 Form OP_LIKE_SERIALIZE_FORMAT               {{0,"",0,""}, {1," LIKE "}, {0,"",1,""}};
 Form OP_NOT_LIKE_SERIALIZE_FORMAT           {{0,"",0,""}, {1," NOT LIKE "}, {0,"",1,""}};
 Form OP_AND_SERIALIZE_FORMAT                {{0,"",0,""}, {1," AND "}, {0,"",1,""}};
