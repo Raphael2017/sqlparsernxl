@@ -60,6 +60,11 @@ namespace resolve
         local_table_mgr->set_default_database(default_database);
     }
 
+    std::string ResultPlan::GetDefaultDatabase()
+    {
+        return local_table_mgr->get_default_database();
+    }
+
     void ResultPlan::AddTableStructure(
             const std::string& schema,
             const std::string& table,

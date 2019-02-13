@@ -227,7 +227,22 @@ int main()
     a = "SELECT * FROM A LEFT JOIN B LEFT JOIN C ON x=y ON m=n, alpha";
     a = "SELECT * FROM (SELECT * FROM SALES) N";
     a = "SELECT Qty FROM SA.SALES01 WHERE Qty >  (SELECT 1 FROM SA.[SALES] WHERE 1=1)";
-    a = "SELECT * FROM SALES; USE DB01; SELECT * FROM MASTER..SALES, SALES N1";
+    a = "SELECT *\n"
+        "FROM   sales;\n"
+        "\n"
+        "USE db01;\n"
+        "\n"
+        "SELECT *\n"
+        "FROM   master..sales,\n"
+        "       sales N1;\n"
+        "\n"
+        "SELECT *\n"
+        "FROM   sales01\n"
+        "\n"
+        "USE db03;\n"
+        "\n"
+        "SELECT a\n"
+        "FROM   sales01  ";
     {
         IParseResult* parseResult = ParseSql(a);
         if (!parseResult->IsAccept())
@@ -351,7 +366,7 @@ int main()
             plan->SetDefaultDatabase("master");
             plan->AddTableStructure("dbo", "SALES", {"OrderID", "SalesRep", "Product", "Qty"});
             VisitPlan(plan);
-
+            std::string aaaaa = plan->GetDefaultDatabase();
             std::string a = tree->Serialize();
             printf("%s\n", a.c_str());
 
