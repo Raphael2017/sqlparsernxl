@@ -37,6 +37,7 @@ namespace resolve
         virtual void* GetContext() override { return context_; }
         virtual IStmt* GetQuery(uint64_t query_id) override;
         virtual void SetDefaultSchema(const std::string& default_schema) override;
+        virtual void SetDefaultDatabase(const std::string& default_database) override;
         virtual void AddTableStructure(const std::string& schema,
                 const std::string& table, const std::list<std::string>& columns) override;
         virtual std::string GetErrorDetail() override { return error_detail_; }

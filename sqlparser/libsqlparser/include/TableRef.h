@@ -115,6 +115,7 @@ namespace resolve
         std::string schema_name_;
         bool default_schema_{false};
         std::string database_name_;
+        bool default_database_{false};
         std::string server_name_;
         std::string table_hints_;
         std::string table_object_;

@@ -180,6 +180,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token BIT CHAR DATETIME2 DATETIMEOFFSET INT MONEY NCHAR NVARCHAR SMALLDATETIME SMALLMONEY TEXT
 %token COLLATE APPLY SYSTEM_TIME OF CONTAINED PIVOT UNPIVOT
 %token OUTPUT DELETED INSERTED DOLLAR_ACTION SOME
+%token USE
 
 %type <node> sql_stmt stmt_list stmt
 %type <node> dml_stmt
@@ -216,6 +217,8 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> dml_select_list dml_select_item
 %type <ival> all_some_any
 
+%type <node> another_stmt use_stmt
+
 %start sql_stmt
 %%
 /*********************************
@@ -250,12 +253,26 @@ stmt:
     ';'	{ $$ = nullptr; } /*EMPTY STATEMENT*/
   | dml_stmt ';'
   | dml_stmt %prec UMINUS
+  | another_stmt ';'
+  | another_stmt %prec UMINUS
 ;
 
 dml_stmt:
     select_stmt
   | update_stmt
 ;
+
+another_stmt:
+    use_stmt
+;
+
+use_stmt:
+    USE NAME
+{
+    $$ = Node::makeNonTerminalNode(E_USE, E_USE_PROPERTY_CNT, $2);
+    $$->serialize_format = &E_USE_SERIALIZE_FORMAT;
+}
+
 
 /* UPDATE GRAMMAR */
 update_stmt:

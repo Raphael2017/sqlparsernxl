@@ -6,6 +6,7 @@
 #include "TableRef.h"
 #include "SelectItem.h"
 #include "UpdateStmt.h"
+#include "UseStmt.h"
 
 namespace resolve
 {
@@ -67,6 +68,9 @@ namespace resolve
                 break;
             case E_STMT_TYPE_UPDATE:
                 s = new UpdateStmt;
+                break;
+            case E_STMT_TYPE_USE:
+                s = new UseStmt;
                 break;
             default:
                 assert(false);

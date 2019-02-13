@@ -248,7 +248,6 @@ CHANGE_OBI        { return CHANGE_OBI; }
 SWITCH_CLUSTER              { return SWITCH_CLUSTER; }
 SET_MASTER_CLUSTER          { return SET_MASTER_CLUSTER; }
 SET_SLAVE_CLUSTER           { return SET_SLAVE_CLUSTER;  }
-MASTER            { return MASTER; }
 SLAVE             { return SLAVE;  }
 FORCE             { return FORCE;  }
 TOP               { return TOP; }
@@ -341,7 +340,7 @@ DELETED             { return DELETED; }
 INSERTED            { return INSERTED; }
 OPTIMIZE            { return OPTIMIZE; }
 SOME                { return SOME; }
-
+USE                 { return USE; }
 
 NULL    {
     yylval->node = Node::makeTerminalNode(E_NULL, yytext);

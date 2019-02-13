@@ -106,7 +106,8 @@ namespace resolve
         schema_name_ = schema ? schema->terminalToken_.str : plan->local_table_mgr->get_default_schema(); // sqlserver seems to add a default schema
         default_schema_ = (schema == nullptr);
         Node* db = factor->getChild(E_TABLE_IDENT_DATABASE);
-        database_name_ = db ? db->terminalToken_.str : "";
+        database_name_ = db ? db->terminalToken_.str : plan->local_table_mgr->get_default_database();
+        default_schema_ = (db == nullptr);
         Node* server = factor->getChild(E_TABLE_IDENT_SERVER);
         server_name_ = server ? server->terminalToken_.str : "";
 

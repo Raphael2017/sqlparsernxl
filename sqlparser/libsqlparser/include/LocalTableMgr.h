@@ -22,6 +22,8 @@ namespace resolve
 
         std::string get_default_schema() const { return default_schema_; }
         void set_default_schema(const std::string& default_schema) { default_schema_ = default_schema; }
+        std::string get_default_database() const { return default_database_; }
+        void set_default_database(const std::string& default_database) { default_database_ = default_database; }
 
         uint64_t add_table_struct(const std::string& schema_table_name, const std::list<std::string>& cols);
         bool get_table_struct(uint64_t table_id, std::map<std::string, uint64_t >& out_struct);
@@ -33,6 +35,7 @@ namespace resolve
         std::map<uint64_t , std::map<std::string, uint64_t >> local_table_column_;
         uint64_t local_table_id_begin_;
         std::string default_schema_{"dbo"};
+        std::string default_database_{"master"};
     };
 }
 

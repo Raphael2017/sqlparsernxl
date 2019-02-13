@@ -485,6 +485,13 @@
 #define E_UPDATE_OPT_QUERY_HINT         8
 
 /*
+ * E_USE
+ * */
+#define E_USE_PROPERTY_CNT              1
+
+#define E_USE_DATABASE_NAME             0
+
+/*
  *  TERMINAL NODE:
  *  E_NULL, E_INT, E_DOUBLE, E_BOOL, E_STRING, E_IDENTIFIER
  *  E_TEMP_VARIABLE, E_QUESTIONMARK, E_ALL, E_DISTINCT, E_STAR

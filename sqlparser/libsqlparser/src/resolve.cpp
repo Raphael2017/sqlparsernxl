@@ -13,6 +13,7 @@
 #include "where_clause.h"
 #include "UpdateStmt.h"
 #include "join.h"
+#include "UseStmt.h"
 
 namespace resolve
 {
@@ -40,6 +41,12 @@ namespace resolve
                 resolve_update_statement(plan, node, query_id);
             }
                 break;
+            case E_USE:
+            {
+                uint64_t query_id = OB_INVALID_ID;
+                resolve_use_statement(plan, node, query_id);
+            }
+                break;
             default:
                 assert(false);  /*unreachable*/
                 break;
@@ -59,6 +66,25 @@ namespace resolve
             plan->reset();
             resolve::resolve(plan, stmt);
         }
+        return 0;
+    }
+
+    int resolve_use_statement(
+            ResultPlan* plan,
+            Node* node,
+            uint64_t& query_id,
+            Stmt* parent/* = nullptr*/,
+            ScopeType scope/* = E_SCOPE_WHATEVER*/)
+    {
+        assert(node->nodeType_ == E_USE);
+        query_id = plan->logicPlan_->generate_query_id();
+        UseStmt* use_stmt = dynamic_cast<UseStmt*>(plan->logicPlan_->add_query(E_STMT_TYPE_USE));
+        use_stmt->set_query_id(query_id);
+        use_stmt->set_parent(parent);
+        Node* db = node->getChild(E_USE_DATABASE_NAME);
+        assert(db != nullptr);
+        use_stmt->set_database_name(db->terminalToken_.str);
+        plan->local_table_mgr->set_default_database(use_stmt->get_database_name());
         return 0;
     }
 

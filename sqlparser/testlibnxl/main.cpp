@@ -225,8 +225,9 @@ int main()
     a = "UPDATE SA.SALES01 SET Qty=(SELECT 1)";
     a = "SELECT * FROM A LEFT JOIN B ON x=y LEFT JOIN C ON m=n";
     a = "SELECT * FROM A LEFT JOIN B LEFT JOIN C ON x=y ON m=n, alpha";
-    a = "SELECT * FROM (SELECT * FROM SALES)";
-    a = "SELECT Qty FROM SA.SALES01 WHERE Qty >  (SELECT 1 FROM SA.SALES WHERE 1=1)";
+    a = "SELECT * FROM (SELECT * FROM SALES) N";
+    a = "SELECT Qty FROM SA.SALES01 WHERE Qty >  (SELECT 1 FROM SA.[SALES] WHERE 1=1)";
+    a = "SELECT * FROM SALES; USE DB01; SELECT * FROM MASTER..SALES, SALES N1";
     {
         IParseResult* parseResult = ParseSql(a);
         if (!parseResult->IsAccept())
@@ -245,11 +246,13 @@ int main()
                     {
                         std::string a = tbi->GetTableObject();
                         std::string s = tbi->GetTableHint();
+                        printf("database: %-25s", tbi->GetDatabaseName().c_str());
                         printf("access base table : %-25s at (L%+3d:%-2d)(%lld)\n", tbi->GetTableObject().c_str(), tbi->GetLine() + 1, tbi->GetColumn(), tbi->GetTableID());
                     }
                         break;
                     case E_BASIC_TABLE_WITH_ALIAS:
                     {
+                        printf("database: %-25s", tbi->GetDatabaseName().c_str());
                         printf("access base table : %-25s at (L%+3d:%-2d)(%lld) alias: %-10s\n", tbi->GetTableObject().c_str(), tbi->GetLine()  + 1, tbi->GetColumn(), tbi->GetTableID(), tbi->GetTableAliasName().c_str());
                     }
                         break;
@@ -345,6 +348,7 @@ int main()
                 printf("%s\n", plan->GetErrorDetail().c_str());
             }, nullptr, tree);
             plan->SetDefaultSchema("dbo");
+            plan->SetDefaultDatabase("master");
             plan->AddTableStructure("dbo", "SALES", {"OrderID", "SalesRep", "Product", "Qty"});
             VisitPlan(plan);
 

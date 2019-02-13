@@ -65,6 +65,7 @@ struct IPlan
     virtual void* GetContext() = 0;
     virtual IStmt* GetQuery(uint64_t query_id) = 0;
     virtual void SetDefaultSchema(const std::string& default_schema) = 0;
+    virtual void SetDefaultDatabase(const std::string& default_database) = 0;
     virtual void AddTableStructure(
             const std::string& schema,
             const std::string& table,

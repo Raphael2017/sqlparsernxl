@@ -37,6 +37,13 @@ namespace resolve
 
     int resolve_multi_statements(ResultPlan* plan, Node* node);
 
+    int resolve_use_statement(
+            ResultPlan* plan,
+            Node* node,
+            uint64_t& query_id,
+            Stmt* parent = nullptr,
+            ScopeType scope = E_SCOPE_WHATEVER);
+
     int resolve_update_statement(
             ResultPlan* plan,
             Node* node,

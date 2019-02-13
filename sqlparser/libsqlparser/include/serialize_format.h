@@ -319,6 +319,8 @@ Form DELETED_DML_SELECT_ITEM_SERIALIZE_FORMAT
                                             {{1,"DELETED."}, {0,"",0,""}};
 Form INSERTED_DML_SELECT_ITEM_SERIALIZE_FORMAT
                                             {{1,"INSERTED."}, {0,"",0,""}};
+
+Form E_USE_SERIALIZE_FORMAT                 {{1,"USE "}, {0,"",0,""}};
 #endif
 
 
