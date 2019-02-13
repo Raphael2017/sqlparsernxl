@@ -424,8 +424,12 @@ namespace resolve
             {
                 //assert(alias_node != nullptr);  // The alias is actually not optional at all.
                 std::string df = table_node->serialize();
-                plan->set_err(0, "(" + df + ") must have alias name");
-                plan->errorOccur_(plan);
+                if (alias_node == nullptr)
+                {
+                    plan->set_err(0, "(" + df + ") must have alias name");
+                    plan->errorOccur_(plan);
+                }
+
 
                 uint64_t query_id = OB_INVALID_ID;
                 resolve_select_statement(plan, table_node, query_id, parent, E_SCOPE_FROM);
