@@ -31,6 +31,10 @@ namespace resolve
                     select_->setChild(E_UPDATE_OPT_WHERE, where);
                 }
                     break;
+                case E_DELETE:
+                {
+                    select_->setChild(E_DELETE_OPT_WHERE, where);
+                }
                 default:
                     assert(false);  /* unreachable */
                     break;
@@ -54,7 +58,9 @@ namespace resolve
         if (!where_)
         {
             assert(select);
-            assert(select->nodeType_ == E_SELECT || select->nodeType_ == E_UPDATE);
+            assert(select->nodeType_ == E_SELECT ||
+            select->nodeType_ == E_UPDATE ||
+            select->nodeType_ == E_DELETE);
         }
     }
 }

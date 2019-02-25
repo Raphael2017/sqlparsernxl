@@ -7,6 +7,7 @@
 #include "SelectItem.h"
 #include "UpdateStmt.h"
 #include "UseStmt.h"
+#include "DeleteStmt.h"
 
 namespace resolve
 {
@@ -71,6 +72,9 @@ namespace resolve
                 break;
             case E_STMT_TYPE_USE:
                 s = new UseStmt;
+                break;
+            case E_STMT_TYPE_DELETE:
+                s = new DeleteStmt;
                 break;
             default:
                 assert(false);

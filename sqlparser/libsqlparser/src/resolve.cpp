@@ -14,6 +14,7 @@
 #include "UpdateStmt.h"
 #include "join.h"
 #include "UseStmt.h"
+#include "DeleteStmt.h"
 
 namespace resolve
 {
@@ -39,6 +40,12 @@ namespace resolve
             {
                 uint64_t query_id = OB_INVALID_ID;
                 resolve_update_statement(plan, node, query_id);
+            }
+                break;
+            case E_DELETE:
+            {
+                uint64_t query_id = OB_INVALID_ID;
+                resolve_delete_statement(plan, node, query_id);
             }
                 break;
             case E_USE:
@@ -108,6 +115,25 @@ namespace resolve
         resolve_update_items(plan, node->getChild(E_UPDATE_UPDATE_ELEM_LIST), update_stmt);
 
         return 0;
+    }
+
+    int resolve_delete_statement(
+            ResultPlan* plan,
+            Node* node,
+            uint64_t& query_id,
+            Stmt* parent/* = nullptr*/,
+            ScopeType scope/* = E_SCOPE_WHATEVER*/)
+    {
+        assert(node->nodeType_ == E_DELETE);
+        query_id = plan->logicPlan_->generate_query_id();
+        DeleteStmt* delete_stmt = dynamic_cast<DeleteStmt*>(plan->logicPlan_->add_query(E_STMT_TYPE_DELETE));
+        delete_stmt->set_query_id(query_id);
+        delete_stmt->set_parent(parent);
+
+        resolve_cte_clause(plan, node->getChild(E_DELETE_OPT_WITH), delete_stmt);
+        resolve_from_clause(plan, node->getChild(E_DELETE_FROM_LIST), delete_stmt);
+        resolve_delete_clause(plan, node->getChild(E_DELETE_DELETE_RELATION), delete_stmt);
+        resolve_where_clause(plan, node->getChild(E_DELETE_OPT_WHERE), node, delete_stmt);
     }
 
     int resolve_select_statement(
@@ -400,6 +426,47 @@ namespace resolve
         return 0;
     }
 
+    int resolve_delete_clause(
+            ResultPlan* plan,
+            Node* node,
+            DeleteStmt* parent
+    )
+    {
+        assert(node);
+        switch (node->nodeType_)
+        {
+            case E_TABLE_IDENT:
+            {
+                Node* schema_node = node->getChild(E_TABLE_IDENT_SCHEMA);
+                Node* table_node = node->getChild(E_TABLE_IDENT_OBJECT);
+                assert(table_node != nullptr);
+                std::string table_name = table_node->terminalToken_.str;
+                std::string schema_name = schema_node ? schema_node->terminalToken_.str : "";
+                TableRef* tbi = nullptr;
+                parent->set_delete_table(plan, schema_name, table_name, tbi);
+                if (tbi)
+                {
+                    if (tbi->get_table_ref_type() == TableRef::BASE_TABLE_DIRECT_REF ||
+                        tbi->get_table_ref_type() == TableRef::BASE_TABLE_ALIAS_REF)
+                    {
+                        BaseTableRef* btbi = dynamic_cast<BaseTableRef*>(tbi);
+                        btbi->table_name_ = table_name;
+                        btbi->schema_name_ = schema_name = schema_node ? schema_node->terminalToken_.str : plan->local_table_mgr->get_default_schema();
+                        btbi->table_object_ = node->serialize();
+                        btbi->default_schema_ = (schema_node == nullptr);
+                    }
+                }
+
+            }
+            case E_TEMP_VARIABLE:
+            {
+
+            }
+            default:
+                break;  /* todo */
+        }
+    }
+
     int resolve_table(
             ResultPlan* plan,
             Node* node,
@@ -503,6 +570,9 @@ namespace resolve
             }
                 break;
             case E_TEMP_VAR_FUN_CALL:
+                /*todo*/
+                break;
+            case E_TEMP_VARIABLE:
                 /*todo*/
                 break;
             default:

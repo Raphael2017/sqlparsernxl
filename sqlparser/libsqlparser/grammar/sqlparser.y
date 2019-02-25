@@ -218,6 +218,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <ival> all_some_any
 
 %type <node> another_stmt use_stmt
+%type <node> delete_stmt
 
 %start sql_stmt
 %%
@@ -260,6 +261,7 @@ stmt:
 dml_stmt:
     select_stmt
   | update_stmt
+  | delete_stmt
 ;
 
 another_stmt:
@@ -273,6 +275,121 @@ use_stmt:
     $$->serialize_format = &E_USE_SERIALIZE_FORMAT;
 }
 
+/* DELETE GRAMMAR */
+delete_stmt:
+    with_clause DELETE opt_top FROM relation_factor opt_with_table_hint
+    opt_output_clause opt_from_clause opt_update_where opt_option_query_hint
+{
+    $$ = Node::makeNonTerminalNode(E_DELETE, E_DELETE_PROPERTY_CNT,
+    		$1,	/* E_DELETE_OPT_WITH 0 */
+    		$3,	/* E_DELETE_OPT_TOP 1 */
+    		$5,	/* E_DELETE_DELETE_RELATION 2 */
+    		$6,	/* E_DELETE_DELETE_RELATION_OPT_TABLE_HINT 3 */
+    		$7,	/* E_DELETE_OPT_OUTPUT 4 */
+    		$8,	/* E_DELETE_FROM_LIST 5 */
+    		$9,	/* E_DELETE_OPT_WHERE 6 */
+    		$10 	/* E_DELETE_OPT_QUERY_HINT 7 */);
+    $$->serialize_format = &DELETE_SERIALIZE_FORMAT;
+}
+  | with_clause DELETE opt_top FROM TEMP_VARIABLE
+    opt_output_clause opt_from_clause opt_update_where opt_option_query_hint
+{
+    $$ = Node::makeNonTerminalNode(E_DELETE, E_DELETE_PROPERTY_CNT,
+    		$1,		/* E_DELETE_OPT_WITH 0 */
+    		$3,		/* E_DELETE_OPT_TOP 1 */
+    		$5,		/* E_DELETE_DELETE_RELATION 2 */
+    		nullptr,	/* E_DELETE_DELETE_RELATION_OPT_TABLE_HINT 3 */
+    		$6,		/* E_DELETE_OPT_OUTPUT 4 */
+    		$7,		/* E_DELETE_FROM_LIST 5 */
+    		$8,		/* E_DELETE_OPT_WHERE 6 */
+    		$9 		/* E_DELETE_OPT_QUERY_HINT 7 */);
+    $$->serialize_format = &DELETE_SERIALIZE_FORMAT;
+}
+  |             DELETE opt_top FROM relation_factor opt_with_table_hint
+    opt_output_clause opt_from_clause opt_update_where opt_option_query_hint
+{
+    $$ = Node::makeNonTerminalNode(E_DELETE, E_DELETE_PROPERTY_CNT,
+    		nullptr,	/* E_DELETE_OPT_WITH 0 */
+    		$2,		/* E_DELETE_OPT_TOP 1 */
+    		$4,		/* E_DELETE_DELETE_RELATION 2 */
+    		$5,		/* E_DELETE_DELETE_RELATION_OPT_TABLE_HINT 3 */
+    		$6,		/* E_DELETE_OPT_OUTPUT 4 */
+    		$7,		/* E_DELETE_FROM_LIST 5 */
+    		$8,		/* E_DELETE_OPT_WHERE 6 */
+    		$9 		/* E_DELETE_OPT_QUERY_HINT 7 */);
+    $$->serialize_format = &DELETE_SERIALIZE_FORMAT;
+}
+  |             DELETE opt_top FROM TEMP_VARIABLE
+    opt_output_clause opt_from_clause opt_update_where opt_option_query_hint
+{
+    $$ = Node::makeNonTerminalNode(E_DELETE, E_DELETE_PROPERTY_CNT,
+    		nullptr,	/* E_DELETE_OPT_WITH 0 */
+    		$2,		/* E_DELETE_OPT_TOP 1 */
+    		$4,		/* E_DELETE_DELETE_RELATION 2 */
+    		nullptr,	/* E_DELETE_DELETE_RELATION_OPT_TABLE_HINT 3 */
+    		$5,		/* E_DELETE_OPT_OUTPUT 4 */
+    		$6,		/* E_DELETE_FROM_LIST 5 */
+    		$7,		/* E_DELETE_OPT_WHERE 6 */
+    		$8 		/* E_DELETE_OPT_QUERY_HINT 7 */);
+    $$->serialize_format = &DELETE_SERIALIZE_FORMAT;
+}
+  | with_clause DELETE opt_top      relation_factor opt_with_table_hint
+    opt_output_clause opt_from_clause opt_update_where opt_option_query_hint
+{
+    $$ = Node::makeNonTerminalNode(E_DELETE, E_DELETE_PROPERTY_CNT,
+    		$1,	/* E_DELETE_OPT_WITH 0 */
+    		$3,	/* E_DELETE_OPT_TOP 1 */
+    		$4,	/* E_DELETE_DELETE_RELATION 2 */
+    		$5,	/* E_DELETE_DELETE_RELATION_OPT_TABLE_HINT 3 */
+    		$6,	/* E_DELETE_OPT_OUTPUT 4 */
+    		$7,	/* E_DELETE_FROM_LIST 5 */
+    		$8,	/* E_DELETE_OPT_WHERE 6 */
+    		$9 	/* E_DELETE_OPT_QUERY_HINT 7 */);
+    $$->serialize_format = &DELETE_SERIALIZE_FORMAT;
+}
+  | with_clause DELETE opt_top      TEMP_VARIABLE
+    opt_output_clause opt_from_clause opt_update_where opt_option_query_hint
+{
+    $$ = Node::makeNonTerminalNode(E_DELETE, E_DELETE_PROPERTY_CNT,
+    		$1,		/* E_DELETE_OPT_WITH 0 */
+    		$3,		/* E_DELETE_OPT_TOP 1 */
+    		$4,		/* E_DELETE_DELETE_RELATION 2 */
+    		nullptr,	/* E_DELETE_DELETE_RELATION_OPT_TABLE_HINT 3 */
+    		$5,		/* E_DELETE_OPT_OUTPUT 4 */
+    		$6,		/* E_DELETE_FROM_LIST 5 */
+    		$7,		/* E_DELETE_OPT_WHERE 6 */
+    		$8 		/* E_DELETE_OPT_QUERY_HINT */);
+    $$->serialize_format = &DELETE_SERIALIZE_FORMAT;
+}
+  |             DELETE opt_top      relation_factor opt_with_table_hint
+    opt_output_clause opt_from_clause opt_update_where opt_option_query_hint
+{
+    $$ = Node::makeNonTerminalNode(E_DELETE, E_DELETE_PROPERTY_CNT,
+    		nullptr,	/* E_DELETE_OPT_WITH 0 */
+    		$2,		/* E_DELETE_OPT_TOP 1 */
+    		$3,		/* E_DELETE_DELETE_RELATION 2 */
+    		$4,		/* E_DELETE_DELETE_RELATION_OPT_TABLE_HINT 3 */
+    		$5,		/* E_DELETE_OPT_OUTPUT 4 */
+    		$6,		/* E_DELETE_FROM_LIST 5 */
+    		$7,		/* E_DELETE_OPT_WHERE 6 */
+    		$8 		/* E_DELETE_OPT_QUERY_HINT 7 */);
+    $$->serialize_format = &DELETE_SERIALIZE_FORMAT;
+}
+  |             DELETE opt_top      TEMP_VARIABLE
+    opt_output_clause opt_from_clause opt_update_where opt_option_query_hint
+{
+    $$ = Node::makeNonTerminalNode(E_DELETE, E_DELETE_PROPERTY_CNT,
+    		nullptr,	/* E_DELETE_OPT_WITH 0 */
+    		$2,		/* E_DELETE_OPT_TOP 1 */
+    		$3,		/* E_DELETE_DELETE_RELATION 2 */
+    		nullptr,	/* E_DELETE_DELETE_RELATION_OPT_TABLE_HINT 3 */
+    		$4,		/* E_DELETE_OPT_OUTPUT 4 */
+    		$5,		/* E_DELETE_FROM_LIST 5 */
+    		$6,		/* E_DELETE_OPT_WHERE 6 */
+    		$7 		/* E_DELETE_OPT_QUERY_HINT 7 */);
+    $$->serialize_format = &DELETE_SERIALIZE_FORMAT;
+}
+;
 
 /* UPDATE GRAMMAR */
 update_stmt:
@@ -290,12 +407,18 @@ update_stmt:
     		$9,	/* E_UPDATE_FROM_LIST 6 */
     		$10,	/* E_UPDATE_OPT_WHERE 7 */
     		$11	/* E_UPDATE_OPT_QUERY_HINT 8 */);
-    $$->serialize_format = &E_UPDATE_SERIALIZE_FORMAT;
+    $$->serialize_format = &UPDATE_SERIALIZE_FORMAT;
 }
   | with_clause UPDATE opt_top TEMP_VARIABLE opt_with_table_hint
     SET update_elem_list opt_output_clause opt_from_clause opt_update_where
     opt_option_query_hint
 {
+    if ($5)
+    {
+        std::string err = "TABLE_VARIABLE " + $4->text() + " could not have table hint";
+        yyerror(&@1, result, scanner, err.c_str());
+	YYABORT;
+    }
     $$ = Node::makeNonTerminalNode(E_UPDATE, E_UPDATE_PROPERTY_CNT,
     		$1,	/* E_UPDATE_OPT_WITH 0 */
     		$3,	/* E_UPDATE_OPT_TOP 1 */
@@ -306,7 +429,7 @@ update_stmt:
     		$9,	/* E_UPDATE_FROM_LIST 6 */
     		$10,	/* E_UPDATE_OPT_WHERE 7 */
     		$11	/* E_UPDATE_OPT_QUERY_HINT 8 */);
-    $$->serialize_format = &E_UPDATE_SERIALIZE_FORMAT;
+    $$->serialize_format = &UPDATE_SERIALIZE_FORMAT;
 }
   |             UPDATE opt_top relation_factor opt_with_table_hint
     SET update_elem_list opt_output_clause opt_from_clause opt_update_where
@@ -322,12 +445,18 @@ update_stmt:
     		$8,		/* E_UPDATE_FROM_LIST 6 */
     		$9,		/* E_UPDATE_OPT_WHERE 7 */
     		$10		/* E_UPDATE_OPT_QUERY_HINT 8 */);
-    $$->serialize_format = &E_UPDATE_SERIALIZE_FORMAT;
+    $$->serialize_format = &UPDATE_SERIALIZE_FORMAT;
 }
   |             UPDATE opt_top TEMP_VARIABLE opt_with_table_hint
     SET update_elem_list opt_output_clause opt_from_clause opt_update_where
     opt_option_query_hint
 {
+    if ($4)
+    {
+        std::string err = "TABLE_VARIABLE " + $3->text() + " could not have table hint";
+        yyerror(&@1, result, scanner, err.c_str());
+	YYABORT;
+    }
     $$ = Node::makeNonTerminalNode(E_UPDATE, E_UPDATE_PROPERTY_CNT,
     		nullptr,	/* E_UPDATE_OPT_WITH 0 */
     		$2,		/* E_UPDATE_OPT_TOP 1 */
@@ -338,7 +467,7 @@ update_stmt:
     		$8,		/* E_UPDATE_FROM_LIST 6 */
     		$9,		/* E_UPDATE_OPT_WHERE 7 */
     		$10		/* E_UPDATE_OPT_QUERY_HINT 8 */);
-    $$->serialize_format = &E_UPDATE_SERIALIZE_FORMAT;
+    $$->serialize_format = &UPDATE_SERIALIZE_FORMAT;
 }
 ;
 

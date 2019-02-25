@@ -483,6 +483,22 @@
 #define E_UPDATE_FROM_LIST              6
 #define E_UPDATE_OPT_WHERE              7
 #define E_UPDATE_OPT_QUERY_HINT         8
+///////////////////////////////////////////
+
+/*
+ * E_DELETE
+ * */
+#define E_DELETE_PROPERTY_CNT           8
+
+#define E_DELETE_OPT_WITH               0
+#define E_DELETE_OPT_TOP                1
+#define E_DELETE_DELETE_RELATION        2
+#define E_DELETE_DELETE_RELATION_OPT_TABLE_HINT 3
+#define E_DELETE_OPT_OUTPUT             4
+#define E_DELETE_FROM_LIST              5
+#define E_DELETE_OPT_WHERE              6
+#define E_DELETE_OPT_QUERY_HINT         7
+///////////////////////////////////////////
 
 /*
  * E_USE

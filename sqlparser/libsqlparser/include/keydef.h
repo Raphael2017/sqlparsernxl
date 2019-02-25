@@ -319,6 +319,8 @@ enum NodeType
 
     E_USE,
 
+    E_DELETE,
+
     E_NODETYPE_END
 };
 
@@ -327,6 +329,7 @@ enum StmtType
     E_NONE,
     E_STMT_TYPE_SELECT,
     E_STMT_TYPE_UPDATE,
+    E_STMT_TYPE_DELETE,
     E_STMT_TYPE_USE,
 };
 

@@ -128,6 +128,13 @@ struct IUpdateStmt
     virtual ITableItem* GetUpdateTable() = 0;
 };
 
+struct IDeleteStmt
+{
+    virtual ~IDeleteStmt() {}
+    virtual bool IsBasicTableOrAlias() = 0;
+    virtual ITableItem* GetDeleteTable() = 0;
+};
+
 extern "C"
 {
 SQLPARSER_PUBLIC_API IParseResult* ParseSql(const std::string& sql);
