@@ -1550,64 +1550,145 @@ string_value_function:
   | OVERLAY '(' character_value_expression PLACING character_value_expression
     FROM numeric_value_expression                                                      ')'	/* <character overlay function> */
   | NORMALIZE '(' character_value_expression ')'	/* <normalize function> */
+{
+    $$;$3;
+}
   | user_defined_type_value_expression '.' SPECIFICTYPE	/* <specific type method> */
 ;
 
 char_length_units:
-    CHARACTERS
-  | CODE_UNITS
-  | OCTETS
+    CHARACTERS	{ $$; }
+  | CODE_UNITS	{ $$; }
+  | OCTETS	{ $$; }
 ;
 
 opt_trim_specification:
     /* EMPTY */	{ $$ = nullptr; }
-  | LEADING
-  | TRAILING
-  | BOTH
+  | LEADING	{ $$; }
+  | TRAILING	{ $$; }
+  | BOTH	{ $$; }
 ;
 
 similar_predicate:
     case_operand NOT SIMILAR TO character_value_expression
     ESCAPE character_value_expression
+{
+    $$;$1;$5;$7;
+}
   | case_operand NOT SIMILAR TO character_value_expression
+{
+    $$;$1;$5;
+}
   | case_operand     SIMILAR TO character_value_expression
     ESCAPE character_value_expression
+{
+    $$;$1;$4;$6;
+}
   | case_operand     SIMILAR TO character_value_expression
+{
+    $$;$1;$4;
+}
 ;
 
 null_predicate:
     case_operand IS NOT NULLX
+{
+    $$;$1;$4;
+}
   | case_operand IS     NULLX
+{
+    $$;$1;$3;
+}
 ;
 
 /* COMP_LE COMP_LT COMP_EQ COMP_GT COMP_GE COMP_NE */
 quantified_comparison_predicate:
     case_operand COMP_LE ALL  subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_LT ALL  subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_EQ ALL  subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_GT ALL  subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_GE ALL  subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_NE ALL  subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_LE SOME subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_LT SOME subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_EQ SOME subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_GT SOME subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_GE SOME subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_NE SOME subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_LE ANY  subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_LT ANY  subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_EQ ANY  subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_GT ANY  subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_GE ANY  subquery
+{
+    $$;$1;$4;
+}
   | case_operand COMP_NE ANY  subquery
+{
+    $$;$1;$4;
+}
 ;
 
 exists_predicate:
     EXISTS subquery
+{
+    $$;$2;
+}
 ;
 
 unique_predicate:
     UNIQUE subquery
+{
+    $$;$2;
+}
 ;
 
 normalized_predicate:
@@ -1617,21 +1698,51 @@ normalized_predicate:
 
 match_predicate:
     case_operand MATCH UNIQUE SIMPLE  subquery
+{
+    $$;$1;$5;
+}
   | case_operand MATCH UNIQUE PARTIAL subquery
+{
+    $$;$1;$5;
+}
   | case_operand MATCH UNIQUE FULL    subquery
+{
+    $$;$1;$5;
+}
   | case_operand MATCH UNIQUE         subquery
+{
+    $$;$1;$4;
+}
   | case_operand MATCH        SIMPLE  subquery
+{
+    $$;$1;$4;
+}
   | case_operand MATCH        PARTIAL subquery
+{
+    $$;$1;$4;
+}
   | case_operand MATCH        FULL    subquery
+{
+    $$;$1;$4;
+}
   | case_operand MATCH                subquery
+{
+    $$;$1;$3;
+}
 ;
 
 overlaps_predicate:
     case_operand OVERLAPS case_operand
+{
+    $$;$1;$3;
+}
 ;
 
 distinct_predicate:
     case_operand IS DISTINCT FROM case_operand
+{
+    $$;$1;$5;
+}
 ;
 
 member_predicate:
@@ -1650,27 +1761,48 @@ submultiset_predicate:
 
 set_predicate:
     case_operand IS NOT A SET
+{
+    $$;$1;
+}
   | case_operand IS     A SET
+{
+    $$;$1;
+}
 ;
 
 type_predicate:
     case_operand IS NOT OF '(' type_list ')'
+{
+    $$;$1;$6;
+}
   | case_operand IS     OF '(' type_list ')'
+{
+    $$;$1;$5;
+}
 ;
 
 type_list:
     user_defined_type_specification
   | user_defined_type_specification ',' type_list
+{
+    $$;$1;$3;
+}
 ;
 
 user_defined_type_specification:
     identifier_chain
   | ONLY identifier_chain
+{
+    $$;$2;
+}
 ;
 
 
 explicit_table:
     TABLE local_or_schema_qualified_name
+{
+    $$;$2;
+}
 ;
 
 table_name:
@@ -1692,30 +1824,51 @@ opt_corresponding_spec:
 
 opt_with_clause:
     WITH RECURSIVE with_list
+{
+    $$;$3;
+}
   | WITH           with_list
+{
+    $$;$2;
+}
 ;
 
 with_list:
     with_list_element
   | with_list_element ',' with_list
+{
+    $$;$1;$3;
+}
 ;
 
 with_list_element:
     NAME opt_with_column_list AS subquery opt_search_or_cycle_clause
+{
+    $$;$1;$2;$4;$5;
+}
 ;
 
 opt_with_column_list:
     /* EMPTY */	{ $$ = nullptr; }
   | '(' column_name_list ')'
+{
+    $$ = $2;
+}
 ;
 
 column_name_list:
     NAME
   | NAME ',' column_name_list
+{
+    $$;$1;$3;
+}
 ;
 
 subquery:
     '(' query_expression ')'
+{
+    $$ = $2;
+}
 ;
 
 /* todo data_type */
