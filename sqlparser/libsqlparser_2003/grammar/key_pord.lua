@@ -1,3 +1,4 @@
+
 function print_key_words(token)
     local str;
     local file1=io.open("words.txt");
@@ -34,6 +35,16 @@ function print_key_words(token)
         end
     end
     print(cc);
+
+    cc = "";
+    for i=1, #list do
+        local word = list[i];
+        print(word);
+        --cc = cc .. "\n"..word .. "\t\t" .. "TOKEN("..word..")";
+        cc = cc .. string.format("\n%-20sTOKEN(%s)", word, word);
+    end
+    print(cc);
+
 end
 
 function skip_white(str, pos)

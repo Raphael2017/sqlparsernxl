@@ -3,8 +3,8 @@
  * This Grammar is designed for sql2003.
  * https://github.com/Raphael2017/SQL/blob/master/sql-2003-2.bnf
  * sqlparser.y
- * defines sqlparser_bison.h
- * outputs sqlparser_bison.cpp
+ * defines sqlparser_sql2003_bison.h
+ * outputs sqlparser_sql2003_bison.cpp
  *
  * Bison Grammar File Spec: http://dinosaur.compilertools.net/bison/bison_6.html
  *
@@ -13,8 +13,8 @@
  ** Section 1: C Declarations
  *********************************/
 
-#include "sqlparser_bison.h"
-#include "sqlparser_flex.h"
+#include "sqlparser_sql2003_bison.h"
+#include "sqlparser_sql2003_flex.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -47,8 +47,8 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 // Auto update column and line number
 
 // Define the names of the created files (defined in Makefile)
-%output  "sqlparser_bison.cpp"
-%defines "sqlparser_bison.h"
+%output  "sqlparser_sql2003_bison.cpp"
+%defines "sqlparser_sql2003_bison.h"
 
 // Tell bison to create a reentrant parser
 %define api.pure full
@@ -135,7 +135,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
        CURRENT_TIMESTAMP CURRENT_USER
 %token DATE DAY DEC DECIMAL DEFAULT DELETE
        DENSE_RANK DESC DISTINCT DOUBLE
-%token ELSE END END_P EXCEPT EXISTS
+%token ELSE END END_P ERROR EXCEPT EXISTS
 %token FLOAT FOLLOWING FOR FROM FULL
 %token G GROUP GROUPING
 %token HAVING HOUR
@@ -166,9 +166,11 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> sql_stmt
 %type <node> stmt_list
 %type <node> stmt
-%type <node> dml_stmt
 %type <node> dql_stmt
+%type <node> dml_stmt
 %type <node> select_stmt
+%type <node> update_stmt
+%type <node> delete_stmt
 %type <node> opt_from_clause table_factor_non_join data_type
 %type <node> relation_name column_label
 %type <node> select_with_parens select_no_parens select_clause
@@ -190,7 +192,6 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> over_clause row_or_range_clause window_frame_extent
 %type <node> aggregate_windowed_function ranking_windowed_function scalar_function
 %type <node> opt_for_system_time
-%type <node> update_stmt
 %type <node> update_elem_list update_elem
 %type <node> collate_clause
 %type <ival> all_some_any
@@ -200,9 +201,6 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> large_object_length multiplier char_length_units
 %type <node> interval_type interval_qualifier start_field end_field
 %type <node> single_datetime_field non_second_primary_datetime_field
-
-%type <node> delete_stmt
-
 %type <node> opt_corresponding_spec
 
 %start sql_stmt
@@ -696,7 +694,7 @@ projection:
 ;
 
 from_list:
-    table_factor	%prec UMINUS
+    table_factor
   | table_factor ',' from_list
 {
     $$ = Node::makeNonTerminalNode(E_FROM_LIST, E_LIST_PROPERTY_CNT, $1, $3);
@@ -838,12 +836,6 @@ joined_table:
 {
     Node* nd = Node::makeTerminalNode(E_JOIN_NATURAL, "NATURAL " + $3->text());
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, $1, $5, nullptr);
-    $$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
-}
-  | table_factor UNION JOIN table_factor
-{
-    Node* nd = Node::makeTerminalNode(E_JOIN_UNION, "UNION");
-    $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, $1, $4, nullptr);
     $$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
 }
 ;
@@ -2260,7 +2252,7 @@ exact_numeric_type:
 }
   | NUMERIC '(' INTNUM            ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "NUMERIC("+$3->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "NUMERIC("+$3->text()+")");
     delete($3);
 }
   | NUMERIC
@@ -2274,7 +2266,7 @@ exact_numeric_type:
 }
   | DECIMAL '(' INTNUM            ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "DECIMAL("+$3->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "DECIMAL("+$3->text()+")");
     delete($3);
 }
   | DECIMAL
@@ -2288,7 +2280,7 @@ exact_numeric_type:
 }
   | DEC '(' INTNUM            ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "DEC("+$3->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "DEC("+$3->text()+")");
     delete($3);
 }
   | DEC
@@ -2316,7 +2308,7 @@ exact_numeric_type:
 approximate_numeric_type:
     FLOAT '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "FLOAT("+$3->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "FLOAT("+$3->text()+")");
     delete($3);
 }
   | FLOAT
@@ -2336,7 +2328,7 @@ approximate_numeric_type:
 character_string_type:
     CHARACTER '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "CHARACTER("+$3->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "CHARACTER("+$3->text()+")");
     delete($3);
 }
   | CHARACTER
@@ -2345,7 +2337,7 @@ character_string_type:
 }
   | CHAR '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "CHAR("+$3->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "CHAR("+$3->text()+")");
     delete($3);
 }
   | CHAR
@@ -2354,22 +2346,22 @@ character_string_type:
 }
   | CHARACTER VARYING '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "CHARACTER VARYING("+$4->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "CHARACTER VARYING("+$4->text()+")");
     delete($4);
 }
   | CHAR VARYING '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "CHAR VARYING("+$4->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "CHAR VARYING("+$4->text()+")");
     delete($4);
 }
   | VARCHAR '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "VARCHAR("+$3->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "VARCHAR("+$3->text()+")");
     delete($3);
 }
   | CHARACTER LARGE OBJECT '(' large_object_length ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "CHARACTER LARGE OBJECT("+$5->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "CHARACTER LARGE OBJECT("+$5->text()+")");
     delete($5);
 }
   | CHARACTER LARGE OBJECT
@@ -2378,7 +2370,7 @@ character_string_type:
 }
   | CHAR LARGE OBJECT '(' large_object_length ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "CHAR LARGE OBJECT("+$5->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "CHAR LARGE OBJECT("+$5->text()+")");
     delete($5);
 }
   | CHAR LARGE OBJECT
@@ -2387,7 +2379,7 @@ character_string_type:
 }
   | CLOB '(' large_object_length ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "CLOB("+$3->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "CLOB("+$3->text()+")");
     delete($3);
 }
   | CLOB
@@ -2399,7 +2391,7 @@ character_string_type:
 binary_large_object_string_type:
     BINARY LARGE OBJECT '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "BINARY LARGE OBJECT("+$5->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "BINARY LARGE OBJECT("+$5->text()+")");
     delete($5);
 }
   | BINARY LARGE OBJECT
@@ -2408,7 +2400,7 @@ binary_large_object_string_type:
 }
   | BLOB '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "BLOB("+$3->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "BLOB("+$3->text()+")");
     delete($3);
 }
   | BLOB
@@ -2420,7 +2412,7 @@ binary_large_object_string_type:
 national_character_string_type:
     NATIONAL CHARACTER '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "NATIONAL CHARACTER("+$4->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "NATIONAL CHARACTER("+$4->text()+")");
     delete($4);
 }
   | NATIONAL CHARACTER
@@ -2429,7 +2421,7 @@ national_character_string_type:
 }
   | NATIONAL CHAR '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "NATIONAL CHAR("+$4->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "NATIONAL CHAR("+$4->text()+")");
     delete($4);
 }
   | NATIONAL CHAR
@@ -2438,7 +2430,7 @@ national_character_string_type:
 }
   | NCHAR '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "NCHAR("+$3->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "NCHAR("+$3->text()+")");
     delete($3);
 }
   | NCHAR
@@ -2447,22 +2439,22 @@ national_character_string_type:
 }
   | NATIONAL CHARACTER VARYING '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "NATIONAL CHARACTER VARYING("+$5->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "NATIONAL CHARACTER VARYING("+$5->text()+")");
     delete($5);
 }
   | NATIONAL CHAR VARYING '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "NATIONAL CHAR VARYING("+$5->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "NATIONAL CHAR VARYING("+$5->text()+")");
     delete($5);
 }
   | NCHAR VARYING '(' INTNUM ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "NCHAR VARYING("+$4->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "NCHAR VARYING("+$4->text()+")");
     delete($4);
 }
   | NATIONAL CHARACTER LARGE OBJECT '(' large_object_length ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "NATIONAL CHARACTER LARGE OBJECT("+$6->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "NATIONAL CHARACTER LARGE OBJECT("+$6->text()+")");
     delete($6);
 }
   | NATIONAL CHARACTER LARGE OBJECT
@@ -2471,7 +2463,7 @@ national_character_string_type:
 }
   | NCHAR LARGE OBJECT '(' large_object_length ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "NCHAR LARGE OBJECT("+$5->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "NCHAR LARGE OBJECT("+$5->text()+")");
     delete($5);
 }
   | NCHAR LARGE OBJECT
@@ -2480,7 +2472,7 @@ national_character_string_type:
 }
   | NCLOB '(' large_object_length ')'
 {
-    $$ = Node::makeTerminalNode(E_STRING, "NCLOB("+$3->text()")");
+    $$ = Node::makeTerminalNode(E_STRING, "NCLOB("+$3->text()+")");
     delete($3);
 }
   | NCLOB
