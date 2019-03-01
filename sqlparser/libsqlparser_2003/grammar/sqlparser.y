@@ -53,11 +53,9 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 // Tell bison to create a reentrant parser
 %define api.pure full
 
-/*
- * 1. We do not accept any reduce/reduce conflicts, shift/reduce conflicts
- * 2.
- **/
-
+// Prefix the parser
+%define api.prefix {sql2003_}
+%define api.token.prefix {SQL2003_}
 
 %define parse.error verbose
 %locations
@@ -108,7 +106,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token <node> QUESTIONMARK
 
 %right 	COLLATE
-%left	CROSS FULL INNER JOIN LEFT NATURAL RIGHT ON USING OUTER
+%left	CROSS FULL INNER JOIN LEFT NATURAL RIGHT
 %left	UNION EXCEPT
 %left	INTERSECT
 %left	OR
@@ -126,49 +124,53 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %right 	UMINUS
 %left 	'(' ')'
 
-%token AND ANY ALL AS ASC
-%token BETWEEN BIGINT BINARY BY
-%token CASE CNNOP CURRENT_USER
-%token DATE DECIMAL DEFAULT DELETE DESC DISTINCT
+
+%token ALL AND ANY ARRAY AS ASC
+       AVG
+%token BETWEEN BIGINT BINARY BLOB BOOLEAN BY
+%token CASE CAST CHAR CHARACTER CHARACTERS CLOB
+       CNNOP COALESCE CODE_UNITS COLLATE COMP_EQ
+       COMP_GE COMP_GT COMP_LE COMP_LT COMP_NE
+       CONVERT CORRESPONDING COUNT CROSS CURRENT
+       CURRENT_TIMESTAMP CURRENT_USER
+%token DATE DAY DEC DECIMAL DEFAULT DELETE
+       DENSE_RANK DESC DISTINCT DOUBLE
 %token ELSE END END_P EXCEPT EXISTS
-%token FLOAT FOR FROM
-%token GROUP
-%token HAVING
-%token IN INTERSECT IS
-%token LIKE
-%token MOD
-%token NOT NUMERIC
-%token ONLY OR ORDER OUTER
-%token REAL ROW ROWS
-%token SELECT SET SMALLINT
-%token THEN TIME
-%token UNION UPDATE
-%token VARCHAR
-%token WHERE WHEN WITH
-%token RANK DENSE_RANK ROW_NUMBER
-%token PARTITION RANGE UNBOUNDED PRECEDING CURRENT FOLLOWING OVER
-%token SUM MIN MAX
-%token GROUPING COUNT AVG
-%token SYSTEM_USER SESSION_USER NULLIF
-%token CURRENT_TIMESTAMP CONVERT COALESCE CAST
-%token CHAR INT NCHAR
-%token COLLATE OF
-%token SOME
-%token READ CORRESPONDING CHARACTER
-%token ARRAY BLOB BOOLEAN CLOB DEC DOUBLE INTEGER LARGE
-%token MULTISET NATIONAL NCLOB OBJECT PRECISION REF
-%token SCOPE TIMESTAMP VARYING WITHOUT ZONE K M G CHARACTERS CODE_UNITS OCTETS
-%token DAY HOUR INTERVAL MINUTE MONTH SECOND TO YEAR RECURSIVE
-%token STDDEV_POP STDDEV_SAMP VAR_SAMP VAR_POP
+%token FLOAT FOLLOWING FOR FROM FULL
+%token G GROUP GROUPING
+%token HAVING HOUR
+%token IN INNER INT INTEGER INTERSECT INTERVAL
+       IS
+%token JOIN
+%token K
+%token LARGE LEFT LIKE
+%token M MAX MIN MINUTE MOD MONTH
+       MULTISET
+%token NATIONAL NATURAL NCHAR NCLOB NOT NULLIF
+       NUMERIC
+%token OBJECT OCTETS OF ON ONLY OR
+       ORDER OUTER OVER
+%token PARTITION PRECEDING PRECISION
+%token RANGE RANK READ REAL RECURSIVE REF
+       RIGHT ROW ROWS ROW_NUMBER
+%token SCOPE SECOND SELECT SESSION_USER SET SMALLINT
+       SOME STDDEV_POP STDDEV_SAMP SUM SYSTEM_USER
+%token THEN TIME TIMESTAMP TO
+%token UNBOUNDED UNION UPDATE USING
+%token VARCHAR VARYING VAR_POP VAR_SAMP
+%token WHEN WHERE WITH WITHOUT
+%token YEAR
+%token ZONE
+
 
 %type <node> sql_stmt
 %type <node> stmt_list
 %type <node> stmt
 %type <node> dml_stmt
+%type <node> dql_stmt
 %type <node> select_stmt
 %type <node> opt_from_clause table_factor_non_join data_type
 %type <node> relation_name column_label
-
 %type <node> select_with_parens select_no_parens select_clause
 %type <node> simple_select select_expr_list opt_into_clause
 %type <node> opt_where opt_groupby opt_order_by order_by opt_having opt_top
@@ -188,7 +190,6 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> over_clause row_or_range_clause window_frame_extent
 %type <node> aggregate_windowed_function ranking_windowed_function scalar_function
 %type <node> opt_for_system_time
-
 %type <node> update_stmt
 %type <node> update_elem_list update_elem
 %type <node> collate_clause
@@ -223,21 +224,25 @@ sql_stmt:
 
 stmt_list:
     stmt
-  | stmt  stmt_list
+  | stmt ';' stmt_list
 {
-    $$ = Node::makeNonTerminalNode(E_STMT_LIST, E_LIST_PROPERTY_CNT, $1, $2);
+    $$ = Node::makeNonTerminalNode(E_STMT_LIST, E_LIST_PROPERTY_CNT, $1, $3);
     $$->serialize_format = &SEMICOLON_LIST_SERIALIZE_FORMAT;
 }
 ;
 
 stmt:
-    ';'	{ $$ = nullptr; } /*EMPTY STATEMENT*/
-  | dml_stmt ';'
+    /*EMPTY*/	{ $$ = nullptr; } /*EMPTY STATEMENT*/
+  | dql_stmt
+  | dml_stmt
+;
+
+dql_stmt:
+    select_stmt
 ;
 
 dml_stmt:
-    select_stmt
-  | update_stmt
+    update_stmt
   | delete_stmt
 ;
 
@@ -618,7 +623,7 @@ common_table_expr:
 ;
 
 opt_derived_column_list:
-    /*EMPTY*/  %prec UMINUS { $$ = nullptr; }
+    /*EMPTY*/	{ $$ = nullptr; }
   | simple_ident_list_with_parens
 ;
 
@@ -738,42 +743,42 @@ table_factor_non_join:
 
 /* sql2003 not support this */
 opt_for_system_time:
-    /*EMPTY*/	%prec UMINUS	{ $$ = nullptr; }
+    /*EMPTY*/	{ $$ = nullptr; }
 ;
 
 /* sql2003 not support this */
 opt_with_table_hint:
-    /*EMPTY*/ %prec UMINUS	{ $$ = nullptr; }
+    /*EMPTY*/	{ $$ = nullptr; }
 ;
 
 opt_simple_ident_list_with_parens:
-    /*EMPTY*/ %prec UMINUS	{ $$ = nullptr; }
+    /*EMPTY*/	{ $$ = nullptr; }
   | simple_ident_list_with_parens
 ;
 
 /* keep these that can solve <identifier chain> in sql2003 */
 relation_factor:
-    	                         NAME	%prec UMINUS
+    	                         NAME
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $1, nullptr, nullptr, nullptr);
     $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-  |                     NAME '.' NAME	%prec UMINUS
+  |                     NAME '.' NAME
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $3, $1, nullptr, nullptr);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_1;
 }
-  |            NAME '.' NAME '.' NAME	%prec UMINUS
+  |            NAME '.' NAME '.' NAME
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $5, $3, $1, nullptr);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
 }
-  |            NAME '.'      '.' NAME	%prec UMINUS
+  |            NAME '.'      '.' NAME
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $4, nullptr, $1, nullptr);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
 }
-  |   NAME '.' NAME '.' NAME '.' NAME	%prec UMINUS
+  |   NAME '.' NAME '.' NAME '.' NAME
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $7, $5, $3, $1);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
@@ -783,7 +788,7 @@ relation_factor:
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $6, $4, nullptr, $1);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
 }
-  |   NAME '.' NAME '.'      '.' NAME	%prec UMINUS
+  |   NAME '.' NAME '.'      '.' NAME
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $6, nullptr, $3, $1);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
@@ -905,13 +910,13 @@ expr_list:
 
 /* keep these that can solve <identifier chain> in sql2003 */
 column_ref:
-		 			    NAME	%prec UMINUS
+		 			    NAME
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			$1, nullptr, nullptr, nullptr, nullptr);
     $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-    |   		           NAME '.' NAME	%prec UMINUS
+    |   		           NAME '.' NAME
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			$3, $1, nullptr, nullptr, nullptr);
@@ -924,7 +929,7 @@ column_ref:
     			nd, $1, nullptr, nullptr, nullptr);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_1;
 }
-    |		          NAME '.' NAME '.' NAME	%prec UMINUS
+    |		          NAME '.' NAME '.' NAME
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			$5, $3, $1, nullptr, nullptr);
@@ -937,7 +942,7 @@ column_ref:
     			nd, $3, $1, nullptr, nullptr);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_2;
 }
-    |	         NAME '.' NAME '.' NAME '.' NAME	%prec UMINUS
+    |	         NAME '.' NAME '.' NAME '.' NAME
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			$7, $5, $3, $1, nullptr);
