@@ -210,29 +210,18 @@ enum TableItemType
 #define OB_INVALID_ID  0
 #define OB_APP_MIN_COLUMN_ID  500
 
-const std::set<std::string> FUNCTION_CAN_WITH_PARAM_STAR{
-    "COUNT", "COUNT_BIG"
-};
-
-const std::set<std::string> AGGREGATE_FUNCTIONS{
-        "COUNT", "SUM", "MAX", "MIN", "AVG", "STDEV",
-        "STDEVP", "VAR", "VARP", "CHECKSUM_AGG", "COUNT_BIG"
-};
-
-const std::set<std::string> FUNCTIONS_ONLY_CAN_WITH_ONE_PARAM{
-    "COUNT", "SUM", "MAX", "MIN", "AVG"
-};
-
-const std::set<std::string> FUNCTIONS_CAN_WITH_OPTION_AS{
-    "CAST"
-};
-
 const std::set<std::string> TABLE_HINT_WORDS{
     "INDEX", "FORCESEEK", "FORCESCAN", "HOLDLOCK", "NOLOCK",
     "NOWAIT", "PAGLOCK", "READCOMMITTED", "READCOMMITTEDLOCK",
     "READPAST", "READUNCOMMITTED", "REPEATABLEREAD", "ROWLOCK",
     "SERIALIZABLE", "SNAPSHOT", "SPATIAL_WINDOW_MAX_CELLS",
     "TABLOCK", "TABLOCKX", "UPDLOCK", "XLOCK"
+};
+
+enum DATABASE_TYPE
+{
+    DBMS_SQL2003,
+    DBMS_TSQL
 };
 
 #ifndef YYtypeDEF_YY_SCANNER_T

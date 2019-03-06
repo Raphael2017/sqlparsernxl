@@ -26,6 +26,7 @@ struct ParseResult : public IParseResult
     int errFirstColumn;
     std::string errDetail;
     std::stringstream buf_;
+    DATABASE_TYPE type_;
 
     // implement of IParseResult
     virtual bool IsAccept() const override;
@@ -71,23 +72,9 @@ struct Node : public INode
     static std::string SerializeNonRecursive(Node* root);
     std::string serialize();
 
-    static void find_node(Node* root, NodeType target, std::list<Node*>& ret);
-    static void find_node_non_recursive(Node* root, NodeType target, std::list<Node*>& ret);
-
-
-    /*
-     * Node* curNode
-     * Entry environment_list
-     * Order preOrder
-     * */
-
     static Node* remove_parens(Node* node);
     static bool is_with_parens(Node* node);
 
-    static bool IS_CAN_WITH_STAR_FUNCTION(const std::string& func);
-    static bool IS_AGGREGATE_FUNCTION(const std::string& func);
-    static bool IS_ONE_PARAM_FUNCTION(const std::string& func);
-    static bool IS_CAN_WITH_AS_FUNCTION(const std::string& func);
     static void print(Node*, int = 0);
 
 
@@ -119,13 +106,6 @@ private:
 private:
     static int GetKey(const std::string&);
     static bool Divide(const std::string&, std::vector<std::string>&);  // "abc{12}XYZ"
-private:
-private:
-    static void find_table_direct_ref(Node* root, std::list<Node*>& ret);
-    static void find_table_direct_ref_non_recursive(Node* root, std::list<Node*>& ret);
-
-    static void find_table_direct_ref(Node** root, std::list<Node**>& ret);
-    static void find_table_direct_ref_non_recursive(Node** root, std::list<Node**>& ret);
 
 private:
     static Node* addjust_cross_join(Node* root, Node* cj);

@@ -16,7 +16,6 @@
 #endif //SQLPARSER_EXPORT
 #endif //WIN32
 
-
 struct INode
 {
     virtual ~INode(){}
@@ -66,6 +65,7 @@ struct IPlan
     virtual IStmt* GetQuery(uint64_t query_id) = 0;
     virtual void SetDefaultSchema(const std::string& default_schema) = 0;
     virtual void SetDefaultDatabase(const std::string& default_database) = 0;
+    virtual DATABASE_TYPE GetDatabaseType() = 0;
     virtual std::string GetDefaultDatabase() = 0;
     virtual void AddTableStructure(
             const std::string& schema,
@@ -80,11 +80,14 @@ struct ITableItem
     virtual TableItemType GetTableItemType() = 0;
     virtual uint64_t GetTableID() = 0;
     virtual uint64_t GetQueryID() = 0;
+
     virtual std::string GetTableName() = 0;
-    virtual std::string GetTableAliasName() = 0;
     virtual std::string GetSchemaName() = 0;
     virtual std::string GetDatabaseName() = 0;
     virtual std::string GetServerName() = 0;
+
+
+    virtual std::string GetTableAliasName() = 0;
     virtual std::string GetTableHint() = 0;
     virtual std::string GetTableObject() = 0;
     virtual bool SetText(
@@ -137,14 +140,14 @@ struct IDeleteStmt
 
 extern "C"
 {
-SQLPARSER_PUBLIC_API IParseResult* ParseSql(const std::string& sql);
+SQLPARSER_PUBLIC_API IParseResult* ParseSql(const std::string& sql, DATABASE_TYPE dbms);
 SQLPARSER_PUBLIC_API void DestroyParseResult(IParseResult*);
 SQLPARSER_PUBLIC_API IPlan* CreatePlan(const BaseTableVisit& baseTableVisit,
                   const BaseTableColumnVisit& baseTableColumnVisit,
                   const StartNewStmt& startNewStmt,
                   const WhereClauseVisit& whereClauseVisit,
                   const ErrorOccur& errorOccur,
-                  void* context, INode*);
+                  void* context, IParseResult*);
 SQLPARSER_PUBLIC_API void VisitPlan(IPlan*);
 SQLPARSER_PUBLIC_API void DestroyPlan(IPlan*);
 }

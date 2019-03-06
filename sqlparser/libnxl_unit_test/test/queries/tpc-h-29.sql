@@ -502,7 +502,7 @@ FROM
     (Emp1, Emp2, Emp3, Emp4, Emp5)
     )AS unpvt;
 
-SELECT c.FirstName, c.LastName, e.JobTitle, a.AddressLine1, a.City,
+SELECT c.[FirstName], c.[LastName], e.JobTitle, a.AddressLine1, a.City,
        sp.Name AS [State/Province], a.PostalCode
        INTO dbo.EmployeeAddresses
 FROM Person.Person AS c
@@ -514,3 +514,131 @@ FROM Person.Person AS c
             ON bea.AddressID = a.AddressID
        JOIN Person.StateProvince as sp
             ON sp.StateProvinceID = a.StateProvinceID;
+
+SELECT a, b
+FROM (VALUES (1,2), 
+			 (3,4), 
+			 (5,6), 
+			 (7,8), 
+			 (9,10)) AS MyTable(a,b)
+
+SELECT ProductID, a.Name, Color
+FROM Production.Product AS a
+		INNER JOIN (VALUES ('Blade'),
+						   ('Crown Race'),
+						   ('AWC Logo Cap')) AS b(Name)
+		ON a.Name = b.Name
+
+SELECT VendorID, Employee, Orders
+FROM (
+	  SELECT VendorID, Emp1, Emp2, Emp3, Emp4, Emp5
+	  FROM pvt
+	 ) p
+UNPIVOT
+	(
+		Orders FOR Employee IN (Emp1, Emp2, Emp3, Emp4, Emp5)
+	) AS unpvt
+
+SELECT * FROM ServerName.DBName.do.TestTable TestTable;
+
+SELECT CAST(SalesOrderID AS INT),
+	   CONVERT(INT, SalesOrderID)
+FROM Sales.SalesOrderDetail
+WHERE SalesOrderDetailID = 1;
+
+SELECT TOP (1+@localvar) PERCENT *
+FROM Production.Product
+ORDER BY Name ASC;
+
+SELECT TOP (1+2) PERCENT *
+FROM Production.Product
+ORDER BY Name DESC;
+
+SELECT TOP (NULL) PERCENT *
+FROM Production.Product
+ORDER BY NAME ASC;
+
+SELECT TOP (1+@localvar) *
+FROM Production.Product
+ORDER BY name DESC;
+
+SELECT TOP (@localvar) PERCENT WITH TIES *
+FROM Production.Product
+ORDER BY NAME ASC;
+
+SELECT TOP (@localvar) WITH TIES *
+FROM Production.Product
+ORDER BY NAME ASC;
+
+SELECT TOP 10.5 PERCENT WITH TIES *
+FROM Production.Product
+ORDER BY NAME ASC;
+
+SELECT LastName, FirstName, JobTitle
+FROM dbo.EmployeeOne
+UNION ALL
+(
+SELECT LastName, FirstName, JobTitle
+FROM dbo.EmployeeTwo
+UNION
+SELECT LastName, FirstName, JobTitle
+FROM dbo.EmployeeThree
+);
+
+SELECT LastName, FirstName, JobTitle
+FROM dbo.EmployeeOne
+UNION
+SELECT LastName, FirstName, JobTitle
+FROM dbo.EmployeeTwo
+UNION
+SELECT LastName, FirstName, JobTitle
+FROM dbo.EmployeeThree
+
+SELECT pp.LastName, pp.FirstName, e.JobTitle
+INTO dbo.EmployeeOne
+FROM Person.Person AS pp
+	  JOIN HumanResources.Employee AS e
+	  ON e.BusinessEntityID = pp.BusinessEntityID
+WHERE LastName = 'Johnson';
+
+SELECT ProductID, SUM(LineTotal) AS Total
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+HAVING COUNT(*) > 1500;
+
+SELECT ProductID, Total = SUM(LineTotal)
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+HAVING SUM(LineTotal) > $2000000.00;
+
+UPDATE HumanResources.Department
+SET Name = N'MyNewName'
+WHERE DepartmentID BETWEEN 1 AND 2
+
+UPDATE HumanResources.Employee
+SET VacationHours =
+	( CASE
+		WHEN SalariedFlag = 0 THEN VacationHours + @NewHours
+		ELSE @NewHours
+	  END 
+	)
+WHERE CurrentFlag = 1;
+
+UPDATE TOP (10) HumanResources.Employee
+SET VacationHours = VacationHours * 1.25,
+    ModifiedDate  = GETDATE()
+OUTPUT inserted.BusinessEntityID,
+       deleted.VacationHours,
+       inserted.VacationHours,
+       inserted.ModifiedDate
+INTO @MyTableVar;
+
+UPDATE Production.Product
+SET ListPrice = ListPrice * 1.10
+WHERE ProductNumber LIKE @Product
+OPTION (OPTIMIZE FOR (@Product = 'BK-%'));
+
+UPDATE Production.Product
+WITH (TABLOCK)
+SET ListPrice = ListPrice * 1.10
+WHERE ProductNumber LIKE 'BK-%';

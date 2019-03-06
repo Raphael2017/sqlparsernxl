@@ -1,4 +1,4 @@
--- left JOIN right USING(field1,field2)
+-- SqlServer not support USING
 SELECT f.color,
        c.is_primary,
        c.is_dark,

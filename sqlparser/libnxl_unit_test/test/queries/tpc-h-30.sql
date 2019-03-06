@@ -125,3 +125,13 @@ OUTPUT inserted.BusinessEntityID,
        inserted.VacationHours,
        inserted.ModifiedDate
 
+UPDATE SR
+SET RETAIL_PRICE *= 1.1
+FROM (
+  SELECT *
+  FROM PRODUCT
+      JOIN PRICE
+      ON PRODUCT.ID = PRICE.ID
+      ) AS SR
+WHERE ProductNumber LIKE 'BU-%';
+
