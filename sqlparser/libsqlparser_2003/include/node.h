@@ -117,6 +117,9 @@ private:
     static Node* make_query_hint(const std::string&, Node*);
     static bool check_update_item(Node*, Node*&);
     friend int yyparse (ParseResult* result, yyscan_t scanner);
+    static Node* NAME_CHAIN_TO_TABLE_IDENT(Node*);
+    static Node* NAME_CHAIN_STAR_TO_NAME_FIELD(Node*);
+    static Node* NAME_CHAIN_TO_NAME_FIELD(Node*);
 
 public:
     // implement INode

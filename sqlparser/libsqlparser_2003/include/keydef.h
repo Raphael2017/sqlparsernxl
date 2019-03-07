@@ -181,10 +181,9 @@ enum NodeType
     E_DML_SELECT_LIST,
     E_DML_SELECT_ITEM,
     E_OUTPUT_CLAUSE,
-
     E_USE,
-
     E_DELETE,
+    E_NAME_CHAIN,
 
     E_NODETYPE_END
 };

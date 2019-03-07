@@ -254,6 +254,7 @@ bool Node::IsList(Node* root)
         case E_UPDATE_ELEM_LIST:
         case E_DML_SELECT_LIST:
         case E_OPT_DERIVED_COLUMN_LIST:
+        case E_NAME_CHAIN:
         {
             ret = true;
         }
@@ -829,5 +830,30 @@ bool Node::check_update_item(Node* root, Node*& out_expr)
         }
     }
     return false;
+}
+
+Node* Node::NAME_CHAIN_TO_TABLE_IDENT(Node* root)
+{
+    assert(root->nodeType_ == E_NAME_CHAIN);
+    std::list<Node*> ls;
+    ToList(root, ls);
+    if (ls.size() > 3)
+        return nullptr;
+    int i = 0;
+    Node* ret = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, nullptr, nullptr, nullptr, nullptr);
+    for (auto it = ls.rbegin(); it != ls.rend(); ++it,++i)
+    {
+        ret->setChild(i, *it);
+    }
+}
+
+Node* Node::NAME_CHAIN_STAR_TO_NAME_FIELD(Node* root)
+{
+
+}
+
+Node* Node::NAME_CHAIN_TO_NAME_FIELD(Node* root)
+{
+
 }
 
