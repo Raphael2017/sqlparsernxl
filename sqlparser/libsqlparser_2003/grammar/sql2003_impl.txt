@@ -1,0 +1,533 @@
+-- Reference document list
+-- https://github.com/Raphael2017/SQL/blob/master/sql-2003-2.bnf
+-- http://www.contrib.andrew.cmu.edu/~shadow/sql/sql1992.txt
+
+<direct SQL statement> ::= <directly executable statement> <semicolon>
+
+<directly executable statement> ::= <direct SQL data statement>
+
+<direct SQL data statement> ::=
+    <delete statement: searched>
+  | <update statement: searched>
+  | <direct select statement: multiple rows>
+
+<delete statement: searched> ::=
+    DELETE FROM <target table> [ WHERE <search condition> ]
+
+<update statement: searched> ::=
+    UPDATE <target table> SET <set clause list> [ WHERE <search condition> ]
+
+<set clause list> ::= <set clause> [ { <comma> <set clause> }... ]
+
+<set clause> ::= <set target> <equals operator> <update source>
+
+<set target> ::= <update target>
+
+<update target> ::= <object column>
+
+<direct select statement: multiple rows> ::=
+    <cursor specification>
+
+<cursor specification> ::=
+    <query expression> [ <order by clause> ] [ <updatability clause> ]
+
+<updatability clause> ::=
+    FOR { READ ONLY | UPDATE [ OF <column name list> ] }
+
+<order by clause> ::= ORDER BY <sort specification list>
+
+<sort specification list> ::=
+    <sort specification> [ { <comma> <sort specification> }... ]
+
+<sort specification> ::= <sort key> [ <ordering specification> ]
+
+<sort key> ::= <value expression>
+
+<query expression> ::=
+    [ <with clause> ] <query expression body>
+
+<with clause> ::= WITH [ RECURSIVE ] <with list>
+
+<with list> ::=
+    <with list element> [ { <comma> <with list element> }... ]
+
+<with list element> ::=
+    <query name> [ <left paren> <with column list> <right paren> ]
+    AS <left paren> <query expression> <right paren>
+
+<with column list> ::= <column name list>
+
+<query expression body> ::= <non-join query expression>
+
+<non-join query expression> ::=
+    <non-join query term>
+  | <query expression body> UNION [ ALL | DISTINCT ] [ <corresponding spec> ] <query term>
+  | <query expression body> EXCEPT [ ALL | DISTINCT ] [ <corresponding spec> ] <query term>
+
+<query term> ::= <non-join query term>
+
+<non-join query term> ::=
+    <non-join query primary>
+  | <query term> INTERSECT [ ALL ] [ <corresponding spec> ] <query primary>
+
+<query primary> ::= <non-join query primary>
+
+<non-join query primary> ::=
+    <simple table>
+  | <left paren> <non-join query expression> <right paren>
+
+<simple table> ::= <query specification>
+
+<query specification> ::=
+    SELECT [ <set quantifier> ] <select list> <table expression>
+
+<select list> ::= <select sublist> [ { <comma> <select sublist> }... ]
+
+<select sublist> ::=
+    <asterisk>
+  | <derived column>
+  | <qualified asterisk>
+
+<derived column> ::= <value expression> [ <as clause> ]
+
+<qualified asterisk> ::=
+    <asterisked identifier chain> <period> <asterisk>
+
+<asterisked identifier chain> ::=
+    <asterisked identifier> [ { <period> <asterisked identifier> }... ]
+
+<asterisked identifier> ::= <identifier>
+
+<table expression> ::=
+    <from clause> [ <where clause> ] [ <group by clause> ] [ <having clause> ]
+
+<having clause> ::= HAVING <search condition>
+
+<where clause> ::= WHERE <search condition>
+
+<group by clause> ::=
+    GROUP BY [ <set quantifier> ] <grouping element list>
+
+<grouping element list> ::=
+    <grouping element> [ { <comma> <grouping element> }... ]
+
+<grouping element> ::= <ordinary grouping set>
+
+<ordinary grouping set> ::=
+    <grouping column reference>
+  | <left paren> <grouping column reference list> <right paren>
+
+<grouping column reference> ::= <column reference> [ <collate clause> ]
+
+<collate clause> ::= COLLATE <collation name>
+
+<collation name> ::= <schema qualified name>
+
+<schema qualified name> ::=
+    [ <schema name> <period> ] <qualified identifier>
+
+<grouping column reference list> ::=
+    <grouping column reference> [ { <comma> <grouping column reference> }... ]
+
+<column reference> ::= <basic identifier chain>
+
+<from clause> ::= FROM <table reference list>
+
+<table reference list> ::=
+    <table reference> [ { <comma> <table reference> }... ]
+
+<table reference> ::= <table primary or joined table>
+
+<table primary or joined table> ::= <table primary> | <joined table>
+
+<table primary> ::=
+    <table or query name> [ [ AS ] <correlation name> [ <left paren> <derived column list> <right paren> ] ]
+  | <derived table> [ AS ] <correlation name> [ <left paren> <derived column list> <right paren> ]
+  | <left paren> <joined table> <right paren>
+
+<joined table> ::=
+    <cross join>
+  | <qualified join>
+  | <natural join>
+
+<cross join> ::= <table reference> CROSS JOIN <table primary>
+
+<qualified join> ::=
+    <table reference> [ <join type> ] JOIN <table reference> <join specification>
+
+<join specification> ::=
+    <join condition>
+  | <named columns join>
+
+<join condition> ::= ON <search condition>
+
+<named columns join> ::= USING <left paren> <join column list> <right paren>
+
+<natural join> ::=
+    <table reference> NATURAL [ <join type> ] JOIN <table primary>
+
+<derived table> ::= <subquery>
+
+<subquery> ::= <left paren> <query expression> <right paren>
+
+<search condition> ::= <expression>
+
+<value expression> ::= <expression>
+
+<expression> ::=
+    <arithmetic expression>
+  | <expression> <collate clause>
+  | <expression> <comp op> <expression>
+  | <expression> <comp op> <quantifier> <subquery>
+  | <expression> [ NOT ] LIKE <expression>
+  | <expression> <logic op> <expression>
+  | NOT <expression>
+  | <expression> IS [ NOT ] NULL
+  | <expression> IS [ NOT ] <truth value>
+  | <expression> [ NOT ] BETWEEN <arithmetic expression> AND <arithmetic expression>
+  | <expression> IN <in predicate value>
+  | <expression> <concatenation operator> <expression>
+
+<arithmetic expression> ::=
+    <simple expression>
+  | <plus sign> <arithmetic expression>
+  | <minus sign> <arithmetic expression>
+  | <arithmetic expression> <arithmetic op> <arithmetic expression>
+
+<simple expression> ::=
+    <column reference>
+  | <expression const>
+  | <subquery>
+  | <case expression>
+  | EXISTS <subquery>
+  | <function expression>
+  | <left paren> <expression list> <right paren>
+
+<function expression> ::=
+    <scalar function expression>
+  | <rank window function expression>
+  | <aggregate windowed function expression>
+  | <sql2003 keyword function expression>
+  | <other function expression>
+
+<other function expression> ::=
+    CAST <left paren> <expression> AS <data type> <right paren>
+  | CONVERT <left paren> <expression> USING <identifier chain> <right paren>
+  | COALESCE <left paren> <expression list> <right paren>
+  | CURRENT_TIMESTAMP
+  | CURRENT_TIMESTAMP <left paren> <int number> <right paren>
+  | CURRENT_USER
+  | NULLIF <left paren> <expression> <comma> <expression> <right paren>
+  | SESSION_USER
+  | SYSTEM_USER
+
+<scalar function expression> ::=
+    <identifier chain> <left paren> <right paren>
+  | <identifier chain> <left paren> <expression list> <right paren>
+
+<rank window function expression> ::=
+    <rank function name> <left paren> <right paren> <over clause>
+
+<sql2003 keyword function expression> ::=
+    <non second primary datetime field> <left paren> <expression> <right paren>
+  | RIGHT <left paren> <right paren>
+  | LEFT <left paren> <right paren>
+
+<aggregate windowed function expression> ::=
+    <aggregate function name> <left paren> [ <set quantifier> ] <expression> <right paren> [ <over clause> ]
+  | COUNT <left paren> <asterisk> <right paren> [ <over clause> ]
+  | GROUPING <left paren> <expression> <right paren>
+
+<over clause> ::=
+    OVER <left paren> [ <partition by clause> ] [ <order by clause> ] [ <row or range clause> ] <right paren>
+
+<partition by clause> ::= PARTITION BY <expression list>
+
+<row or range clause> ::=
+    ROWS <window frame extent>
+  | RANGE <window frame extent>
+
+<window frame extent> ::= <window frame start> | <window frame between>
+
+<window frame start> ::= UNBOUNDED PRECEDING | <window frame preceding> | CURRENT ROW
+
+<window frame preceding> ::= <unsigned value specification> PRECEDING
+
+<window frame between> ::= BETWEEN <window frame bound 1> AND <window frame bound 2>
+
+<window frame bound 1> ::= <window frame bound>
+
+<window frame bound 2> ::= <window frame bound>
+
+<window frame bound> ::=
+    <window frame start>
+  | UNBOUNDED FOLLOWING
+  |	<window frame following>
+
+<window frame following> ::= <int number> FOLLOWING
+
+<case expression> ::=
+    CASE [ <case arg> ] <when clause list> [ <case default> ] END
+
+<case arg> ::= <expression>
+
+<when clause list> ::= <when clause> [ { <comma> <when clause> }... ]
+
+<when clause> ::= WHEN <expression> THEN <expression>
+
+<case default> ::= ELSE <expression>
+
+<expression list> ::=
+    <expression> [ { <comma> <expression> }... ]
+
+<in predicate value> ::=
+    <subquery>
+  | <left paren> <expression list> <right paren>
+
+<data type> ::=
+    <predefined type>
+  | <user defined type name>
+  | <reference type>
+  | <collection type>
+
+<predefined type> ::=
+    <character string type> [ CHARACTER SET <character set specification> ] [ <collate clause> ]
+  |	<national character string type> [ <collate clause> ]
+  |	<binary large object string type>
+  |	<numeric type>
+  |	<boolean type>
+  |	<datetime type>
+  | <interval type>
+
+<character string type> ::=
+    CHARACTER [ <left paren> <length> <right paren> ]
+  | CHAR [ <left paren> <length> <right paren> ]
+  | CHARACTER VARYING <left paren> <length> <right paren>
+  | CHAR VARYING <left paren> <length> <right paren>
+  | VARCHAR <left paren> <length> <right paren>
+  |	CHARACTER LARGE OBJECT [ <left paren> <large object length> <right paren> ]
+  |	CHAR LARGE OBJECT [ <left paren> <large object length> <right paren> ]
+  | CLOB [ <left paren> <large object length> <right paren> ]
+
+<national character string type> ::=
+    NATIONAL CHARACTER [ <left paren> <length> <right paren> ]
+  | NATIONAL CHAR [ <left paren> <length> <right paren> ]
+  | NCHAR [ <left paren> <length> <right paren> ]
+  |	NATIONAL CHARACTER VARYING <left paren> <length> <right paren>
+  |	NATIONAL CHAR VARYING <left paren> <length> <right paren>
+  |	NCHAR VARYING <left paren> <length> <right paren>
+  |	NATIONAL CHARACTER LARGE OBJECT [ <left paren> <large object length> <right paren> ]
+  |	NCHAR LARGE OBJECT [ <left paren> <large object length> <right paren> ]
+  | NCLOB [ <left paren> <large object length> <right paren> ]
+
+<binary large object string type> ::=
+    BINARY LARGE OBJECT [ <left paren> <large object length> <right paren> ]
+  | BLOB [ <left paren> <large object length> <right paren> ]
+
+<numeric type> ::= <exact numeric type> | <approximate numeric type>
+
+<exact numeric type> ::=
+    NUMERIC [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
+  | DECIMAL [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
+  |	DEC [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
+  |	SMALLINT
+  |	INTEGER
+  |	INT
+  | BIGINT
+
+<approximate numeric type> ::=
+    FLOAT [ <left paren> <precision> <right paren> ]
+  |	REAL
+  | DOUBLE PRECISION
+
+<precision> ::= <int number>
+
+<scale> ::= <int number>
+
+<boolean type> ::= BOOLEAN
+
+<datetime type> ::=
+    DATE
+  |	TIME [ <left paren> <time precision> <right paren> ]
+                                [ <with or without time zone> ]
+  | TIMESTAMP [ <left paren> <timestamp precision> <right paren> ]
+                                [ <with or without time zone> ]
+
+<with or without time zone> ::= WITH TIME ZONE | WITHOUT TIME ZONE
+
+<time precision> ::= <int number>
+
+<timestamp precision> ::= <int number>
+
+<interval type> ::= INTERVAL <interval qualifier>
+
+<interval qualifier> ::=
+		<start field> TO <end field>
+	|	<single datetime field>
+
+<start field> ::=
+    <non-second primary datetime field>
+        [ <left paren> <interval leading field precision> <right paren> ]
+
+<end field> ::=
+		<non-second primary datetime field>
+	|	SECOND [ <left paren> <interval fractional seconds precision> <right paren> ]
+
+<single datetime field> ::=
+		<non-second primary datetime field>
+		    [ <left paren> <interval leading field precision> <right paren> ]
+	|	SECOND [ <left paren> <interval leading field precision>
+	        [ <comma> <interval fractional seconds precision> ] <right paren> ]
+
+<primary datetime field> ::=
+		<non-second primary datetime field>
+	|	SECOND
+
+<non-second primary datetime field> ::= YEAR | MONTH | DAY | HOUR | MINUTE
+
+<interval fractional seconds precision> ::= <int number>
+
+<interval leading field precision> ::= <int number>
+
+<character set specification> ::= <identifier chain>
+
+<large object length> ::=
+    <unsigned integer> [ <multiplier> ] [ <char length units> ]
+
+<char length units> ::= CHARACTERS | CODE_UNITS | OCTETS
+
+<unsigned integer> ::= <int number>
+
+<multiplier> ::= K | M | G
+
+<length> ::= <int number>
+
+<join column list> ::= <column name list>
+
+<derived column list> ::= <column name list>
+
+<column name list> ::=
+    <column name> [ { <comma> <column name> }... ]
+
+<table or query name> ::= <table name>
+
+<correlation name> ::= <identifier>
+
+<object column> ::= <column name>
+
+<column name> ::= <identifier>
+
+<target table> ::= <table name>
+
+<table name> ::= <local or schema qualified name>
+
+<local or schema qualified name> ::=
+    [ <local or schema qualifier> <period> ] <qualified identifier>
+
+<local or schema qualifier> ::= <schema name>
+
+<basic identifier chain> ::= <identifier chain>
+
+<identifier chain> ::= <identifier> [ { <period> <identifier> }... ]
+
+<schema name> ::=
+    [ <catalog name> <period> ] <unqualified schema name>
+
+<catalog name> ::= <identifier>
+
+<unqualified schema name> ::= <identifier>
+
+<qualified identifier> ::= <identifier>
+
+<identifier> ::= <actual identifier>
+
+<actual identifier> ::=
+    <regular identifier> | <delimited identifier>
+
+<delimited identifier> ::=
+    <double quote> <delimited identifier body> <double quote>
+
+<rank function name> ::= RANK | DENSE_RANK | ROW_NUMBER
+
+<expression const> ::=
+    <string> | <int number> | <float number>
+  | <truth value> | NULL | DEFAULT
+
+<comp op> ::=
+    <equals operator>
+  | <less than operator> <greater than operator>
+  | <less than operator>
+  | <greater than operator>
+  | <less than operator> <equals operator>
+  | <greater than operator> <equals operator>
+
+<arithmetic op> ::=
+    <plus sign> | <minus sign> | <asterisk>
+  | <solidus> | <percent> | <circumflex>
+
+<string> ::=
+    <quote> <string body> <quote>
+  | N <quote> <string body> <quote>
+
+<set quantifier> ::= DISTINCT | ALL
+
+<ordering specification> ::= ASC | DESC
+
+<join type> ::= INNER | <outer join type> [ OUTER ]
+
+<outer join type> ::= LEFT | RIGHT | FULL
+
+<truth value> ::= TRUE | FALSE | UNKNOWN
+
+<aggregate function name> ::=
+    AVG | MAX | MIN | SUM
+  | STDDEV_POP | STDDEV_SAMP
+  | VAR_POP | VAR_SAMP | COUNT
+
+<int number> ::= <digit>...
+
+<concatenation operator> ::= <vertical bar> <vertical bar>
+
+<logic op> ::= AND | OR
+
+<period> ::= .
+
+<semicolon> ::= ;
+
+<quote> ::= '
+
+<double quote> ::= "
+
+<comma> ::= ,
+
+<left paren> ::= (
+
+<right paren> ::= )
+
+<asterisk> ::= *
+
+<plus sign> ::= +
+
+<minus sign> ::= -
+
+<less than operator> ::= <
+
+<equals operator> ::= =
+
+<greater than operator> ::= >
+
+<vertical bar> ::= |
+
+<solidus> ::= /
+
+<percent> ::= %
+
+<circumflex> ::= ^
+
+<digit> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+<string body> ::= !! See the Syntax Rules
+
+<float number> ::= !! See the Syntax Rules
+
+<delimited identifier body> ::= !! See the Syntax Rules
