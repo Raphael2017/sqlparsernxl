@@ -28,17 +28,25 @@ namespace resolve
     struct SelectStmt;
     struct UpdateStmt;
     struct DeleteStmt;
+    struct InsertStmt;
     struct SqlRawExpr;
     struct RawExpr;
     struct LogicPlan;
     struct ResultPlan;
     struct JoinedTable;
 
-    int resolve(ResultPlan* plan, Node* node);
+    int resolve(ResultPlan* plan, Node* node, uint64_t& query_id);
 
     int resolve_multi_statements(ResultPlan* plan, Node* node);
 
     int resolve_use_statement(
+            ResultPlan* plan,
+            Node* node,
+            uint64_t& query_id,
+            Stmt* parent = nullptr,
+            ScopeType scope = E_SCOPE_WHATEVER);
+
+    int resolve_insert_statement(
             ResultPlan* plan,
             Node* node,
             uint64_t& query_id,
@@ -129,6 +137,12 @@ namespace resolve
             ResultPlan* plan,
             Node* node,
             DeleteStmt* parent
+    );
+
+    int resolve_insert_clause(
+            ResultPlan* plan,
+            Node* node,
+            InsertStmt* parent
     );
 
     int resolve_independ_expr(

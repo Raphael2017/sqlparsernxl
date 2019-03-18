@@ -7,9 +7,34 @@
 <directly executable statement> ::= <direct SQL data statement>
 
 <direct SQL data statement> ::=
-    <delete statement: searched>
+    <insert statement>
+  | <delete statement: searched>
   | <update statement: searched>
   | <direct select statement: multiple rows>
+
+<insert statement> ::= INSERT INTO <insertion target> <insert columns and source>
+
+<insert columns and source> ::=
+    <from subquery>
+  |	<from constructor>
+  | <from default>
+
+<from subquery> ::=
+    [ <left paren> <insert column list> <right paren> ] <insert query expression>
+
+<insert query expression> ::= <subquery> | <query expression>
+
+<from constructor> ::=
+    [ <left paren> <insert column list> <right paren> ] <contextually typed table value constructor>
+
+<contextually typed table value constructor> ::=
+    VALUES <expression list>
+
+<from default> ::= DEFAULT VALUES
+
+<insertion target> ::= <table name>
+
+<insert column list> ::= <column name list>
 
 <delete statement: searched> ::=
     DELETE FROM <target table> [ WHERE <search condition> ]
@@ -170,7 +195,9 @@
 
 <subquery> ::= <left paren> <query expression> <right paren>
 
-<search condition> ::= <expression>
+<search condition> ::= <boolean value expression>
+
+<boolean value expression> ::= <expression>
 
 <value expression> ::= <expression>
 

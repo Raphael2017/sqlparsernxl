@@ -48,7 +48,7 @@ struct IPlan;
 struct IWhereCluase;
 typedef std::function<void(IPlan*, ITableItem*)> BaseTableVisit;
 typedef std::function<void(IPlan*, ITableColumnRefItem*)> BaseTableColumnVisit;
-typedef std::function<void(IPlan*)> StartNewStmt;
+typedef std::function<void(IPlan*, uint64_t last_stmt)> StartNewStmt;
 typedef std::function<void(IPlan*, IWhereCluase*)> WhereClauseVisit;
 typedef std::function<void(IPlan*)> ErrorOccur;
 struct IWhereCluase
@@ -136,6 +136,13 @@ struct IDeleteStmt
     virtual ~IDeleteStmt() {}
     virtual bool IsBasicTableOrAlias() = 0;
     virtual ITableItem* GetDeleteTable() = 0;
+};
+
+struct IInsertStmt
+{
+    virtual ~IInsertStmt() {}
+    virtual bool IsBasicTableOrAlias() = 0;
+    virtual ITableItem* GetInsertTable() = 0;
 };
 
 extern "C"

@@ -121,6 +121,8 @@ private:
     static Node* NAME_CHAIN_STAR_TO_NAME_FIELD(Node*);
     static Node* NAME_CHAIN_TO_NAME_FIELD(Node*);
 
+    static bool CHECK_FUNCTION_CALL_WITH_STAR(Node*);
+
 public:
     // implement INode
     virtual NodeType GetType();

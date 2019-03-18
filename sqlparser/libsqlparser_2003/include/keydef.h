@@ -185,6 +185,10 @@ enum NodeType
     E_DELETE,
     E_NAME_CHAIN,
 
+    E_INSERT,
+    E_INSERT_COLUMNS_AND_SOURCE,
+    E_VALUES_CTOR,
+
     E_NODETYPE_END
 };
 
@@ -194,6 +198,7 @@ enum StmtType
     E_STMT_TYPE_SELECT,
     E_STMT_TYPE_UPDATE,
     E_STMT_TYPE_DELETE,
+    E_STMT_TYPE_INSERT,
     E_STMT_TYPE_USE,
 };
 

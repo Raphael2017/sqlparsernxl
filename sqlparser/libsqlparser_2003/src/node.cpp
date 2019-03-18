@@ -845,15 +845,24 @@ Node* Node::NAME_CHAIN_TO_TABLE_IDENT(Node* root)
     {
         ret->setChild(i, *it);
     }
+    return nullptr;
 }
 
 Node* Node::NAME_CHAIN_STAR_TO_NAME_FIELD(Node* root)
 {
-
+    return nullptr;
 }
 
 Node* Node::NAME_CHAIN_TO_NAME_FIELD(Node* root)
 {
+    return nullptr;
+}
 
+bool Node::CHECK_FUNCTION_CALL_WITH_STAR(Node* node)
+{
+    assert(node->isTerminalToken);
+    std::string word = node->terminalToken_.yytex;
+    std::transform(word.begin(), word.end(), word.begin(), ::toupper);
+    return word == "COUNT";
 }
 

@@ -516,7 +516,7 @@ SQL2003_STYPE * yyget_lval ( yyscan_t yyscanner );
 
 void yyset_lval ( SQL2003_STYPE * yylval_param , yyscan_t yyscanner );
 
-       SQL2003_LTYPE *yyget_lloc ( yyscan_t yyscanner );
+SQL2003_LTYPE *yyget_lloc ( yyscan_t yyscanner );
     
         void yyset_lloc ( SQL2003_LTYPE * yylloc_param , yyscan_t yyscanner );
     
@@ -731,7 +731,7 @@ extern int yylex \
 #undef yyTABLES_NAME
 #endif
 
-#line 391 "./sqlparser.l"
+#line 396 "sqlparser_sql2003.l"
 
 
 #line 738 "sqlparser_sql2003_flex.h"

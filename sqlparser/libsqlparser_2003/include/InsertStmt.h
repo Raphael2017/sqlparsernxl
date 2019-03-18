@@ -1,27 +1,27 @@
-#ifndef DELETE_STMT_H
-#define DELETE_STMT_H
+#ifndef INSERT_STMT_H
+#define INSERT_STMT_H
 
 #include "Interface.h"
 #include "Stmt.h"
 
 namespace resolve
 {
-    struct DeleteStmt : public Stmt, public IDeleteStmt
+    struct InsertStmt : public Stmt, public IInsertStmt
     {
     public:
-        ~DeleteStmt();
-        bool set_delete_table(
+        ~InsertStmt();
+        bool set_insert_table(
                 ResultPlan* plan,
                 const std::string& schema_name,
                 const std::string& table_name,
                 TableRef*& out_table_ref);
     private:
-        TableRef*  delete_table_{nullptr};
+        TableRef*  insert_table_{nullptr};
     public:
-        virtual StmtType GetStmtType() override { return  E_STMT_TYPE_DELETE; }
+        virtual StmtType GetStmtType() override { return  E_STMT_TYPE_INSERT; }
 
         virtual bool IsBasicTableOrAlias() override;
-        virtual ITableItem* GetDeleteTable() override;
+        virtual ITableItem* GetInsertTable() override;
     };
 }
 

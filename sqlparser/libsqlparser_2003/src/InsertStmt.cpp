@@ -1,4 +1,4 @@
-#include "DeleteStmt.h"
+#include "InsertStmt.h"
 #include "ResultPlan.h"
 #include "LogicPlan.h"
 #include "TableRef.h"
@@ -7,8 +7,8 @@
 
 namespace resolve
 {
-    DeleteStmt::~DeleteStmt() { delete(delete_table_); delete_table_ = nullptr;}
-    bool DeleteStmt::set_delete_table(resolve::ResultPlan *plan, const std::string &schema_name,
+    InsertStmt::~InsertStmt() { delete(insert_table_); insert_table_ = nullptr;}
+    bool InsertStmt::set_insert_table(resolve::ResultPlan *plan, const std::string &schema_name,
                                       const std::string &table_name, resolve::TableRef *&out_table_ref){
         uint64_t out_query_id = OB_INVALID_ID;
         size_t out_index = 0;
@@ -24,7 +24,7 @@ namespace resolve
                 {
                     local_table_id = dynamic_cast<BaseTableRef*>(tbi)->GetTableID();
                 }
-                delete_table_ = tbi->clone();
+                insert_table_ = tbi->clone();
                 fd = true;
                 break;
             }
@@ -40,7 +40,7 @@ namespace resolve
                         t->GetSchemaName() == schema_name)
                     {
                         local_table_id = t->GetTableID();
-                        delete_table_ = tbi->clone();
+                        insert_table_ = tbi->clone();
                         fd = true;
                         break;
                     }
@@ -114,26 +114,25 @@ namespace resolve
                     assert(false);
                 }
             }
-            delete_table_ = tb;
+            insert_table_ = tb;
             out_table_ref = tb;
         }
         return true;
     }
 
-    bool DeleteStmt::IsBasicTableOrAlias()
+    bool InsertStmt::IsBasicTableOrAlias()
     {
-        if (delete_table_ == nullptr)
+        if (insert_table_ == nullptr)
             return false;
         else
         {
-            auto tp = delete_table_->get_table_ref_type();
+            auto tp = insert_table_->get_table_ref_type();
             return tp == TableRef::BASE_TABLE_DIRECT_REF ||
                    tp == TableRef::BASE_TABLE_ALIAS_REF;
         }
     }
 
-    ITableItem* DeleteStmt::GetDeleteTable()
-    {
-        return delete_table_;
+    ITableItem* InsertStmt::GetInsertTable(){
+        return insert_table_;
     }
 }

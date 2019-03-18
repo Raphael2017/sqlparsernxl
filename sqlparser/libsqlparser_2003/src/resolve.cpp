@@ -15,10 +15,11 @@
 #include "join.h"
 #include "UseStmt.h"
 #include "DeleteStmt.h"
+#include "InsertStmt.h"
 
 namespace resolve
 {
-    int resolve(ResultPlan* plan, Node* node)
+    int resolve(ResultPlan* plan, Node* node, uint64_t& query_id)
     {
         assert(node != nullptr);
         assert(plan != nullptr);
@@ -32,25 +33,31 @@ namespace resolve
                 break;
             case E_SELECT:
             {
-                uint64_t query_id = OB_INVALID_ID;
+                query_id = OB_INVALID_ID;
                 resolve_select_statement(plan, node, query_id);
             }
                 break;
             case E_UPDATE:
             {
-                uint64_t query_id = OB_INVALID_ID;
+                query_id = OB_INVALID_ID;
                 resolve_update_statement(plan, node, query_id);
             }
                 break;
             case E_DELETE:
             {
-                uint64_t query_id = OB_INVALID_ID;
+                query_id = OB_INVALID_ID;
                 resolve_delete_statement(plan, node, query_id);
+            }
+                break;
+            case E_INSERT:
+            {
+                query_id = OB_INVALID_ID;
+                resolve_insert_statement(plan, node, query_id);
             }
                 break;
             case E_USE:
             {
-                uint64_t query_id = OB_INVALID_ID;
+                query_id = OB_INVALID_ID;
                 resolve_use_statement(plan, node, query_id);
             }
                 break;
@@ -63,15 +70,14 @@ namespace resolve
 
     int resolve_multi_statements(ResultPlan* plan, Node* node)
     {
-        assert(node->nodeType_ == E_STMT_LIST);
         std::list<Node*> stmts;
         Node::ToList(plan->tree_root_, stmts);
-
+        uint64_t query_id = OB_INVALID_ID;
         for (auto stmt : stmts)
         {
-            plan->startNewStmt_(plan);
             plan->reset();
-            resolve::resolve(plan, stmt);
+            resolve(plan, stmt, query_id);
+            plan->startNewStmt_(plan, query_id);
         }
         return 0;
     }
@@ -114,6 +120,29 @@ namespace resolve
         resolve_where_clause(plan, node->getChild(E_UPDATE_OPT_WHERE), node, update_stmt);
         resolve_update_items(plan, node->getChild(E_UPDATE_UPDATE_ELEM_LIST), update_stmt);
 
+        return 0;
+    }
+
+    int resolve_insert_statement(
+            ResultPlan* plan,
+            Node* node,
+            uint64_t& query_id,
+            Stmt* parent/* = nullptr*/,
+            ScopeType scope/* = E_SCOPE_WHATEVER*/)
+    {
+        assert(node->nodeType_ == E_INSERT);
+        query_id = plan->logicPlan_->generate_query_id();
+        InsertStmt* insert_stmt = dynamic_cast<InsertStmt*>(plan->logicPlan_->add_query(E_STMT_TYPE_INSERT));
+        insert_stmt->set_query_id(query_id);
+        insert_stmt->set_parent(parent);
+
+        resolve_insert_clause(plan, node->getChild(E_INSERT_INSERT_RELATION), insert_stmt);
+        Node* cols_and_src = node->getChild(E_INSERT_INSERT_COLUMNS_AND_SOURCE);
+        assert(cols_and_src != nullptr);
+        Node* src = cols_and_src->getChild(1);
+        assert(src != nullptr);
+        uint64_t sql_raw_expr_id = OB_INVALID_ID;
+        resolve_independ_expr(plan, src, sql_raw_expr_id, parent);
         return 0;
     }
 
@@ -458,6 +487,47 @@ namespace resolve
                     }
                 }
 
+            }
+            case E_TEMP_VARIABLE:
+            {
+
+            }
+            default:
+                break;  /* todo */
+        }
+        return 0;
+    }
+
+    int resolve_insert_clause(
+            ResultPlan* plan,
+            Node* node,
+            InsertStmt* parent
+    )
+    {
+        assert(node);
+        switch (node->nodeType_)
+        {
+            case E_TABLE_IDENT:
+            {
+                Node* schema_node = node->getChild(E_TABLE_IDENT_SCHEMA);
+                Node* table_node = node->getChild(E_TABLE_IDENT_OBJECT);
+                assert(table_node != nullptr);
+                std::string table_name = table_node->terminalToken_.str;
+                std::string schema_name = schema_node ? schema_node->terminalToken_.str : "";
+                TableRef* tbi = nullptr;
+                parent->set_insert_table(plan, schema_name, table_name, tbi);
+                if (tbi)
+                {
+                    if (tbi->get_table_ref_type() == TableRef::BASE_TABLE_DIRECT_REF ||
+                        tbi->get_table_ref_type() == TableRef::BASE_TABLE_ALIAS_REF)
+                    {
+                        BaseTableRef* btbi = dynamic_cast<BaseTableRef*>(tbi);
+                        btbi->table_name_ = table_name;
+                        btbi->schema_name_ = schema_name = schema_node ? schema_node->terminalToken_.str : plan->local_table_mgr->get_default_schema();
+                        btbi->table_object_ = node->serialize();
+                        btbi->default_schema_ = (schema_node == nullptr);
+                    }
+                }
             }
             case E_TEMP_VARIABLE:
             {

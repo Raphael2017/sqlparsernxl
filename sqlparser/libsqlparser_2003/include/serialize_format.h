@@ -153,6 +153,7 @@ Form INSERTED_DML_SELECT_ITEM_SERIALIZE_FORMAT
 Form E_USE_SERIALIZE_FORMAT                 {{1,"USE "}, {0,"",0,""}};
 Form DELETE_SERIALIZE_FORMAT                {{0,"",0," "}, {1, "DELETE "}, {0,"",1," "}, {0,"FROM ",2," "}, {0,"",3," "},
                                              {0,"",4," "}, {0,"",5," "}, {0,"",6," "}, {0,"",7," "}};
+Form INSERT_SERIALIZE_FORMAT                {{1,"INSERT INTO "}, {0,"",0," "}, {0, "",1,""}};
 #endif
 
 

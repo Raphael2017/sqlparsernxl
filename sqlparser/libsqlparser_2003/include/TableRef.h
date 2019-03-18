@@ -13,6 +13,7 @@ namespace resolve
     struct SelectItem;
     struct UpdateStmt;
     struct DeleteStmt;
+    struct InsertStmt;
     struct TableRef : ITableItem
     {
     public:
@@ -127,6 +128,7 @@ namespace resolve
     friend struct SqlRawExpr;
     friend struct UpdateStmt;
     friend struct DeleteStmt;
+    friend struct InsertStmt;
     friend struct BaseTableAliasRef;
     friend int resolve_update_clause(
             ResultPlan* plan,
@@ -137,6 +139,11 @@ namespace resolve
             ResultPlan* plan,
             Node* node,
             DeleteStmt* parent
+    );
+    friend int resolve_insert_clause(
+            ResultPlan* plan,
+            Node* node,
+            InsertStmt* parent
     );
     };
 

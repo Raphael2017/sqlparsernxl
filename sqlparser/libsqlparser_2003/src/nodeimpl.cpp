@@ -38,8 +38,7 @@ void VisitPlan(IPlan* p)
     if (!plan->tree_root_)
         return;
 
-    resolve::resolve(plan, plan->tree_root_);
-
+    resolve::resolve_multi_statements(plan, plan->tree_root_);
 }
 
 IParseResult* ParseSql(const std::string &sql, DATABASE_TYPE dbms)

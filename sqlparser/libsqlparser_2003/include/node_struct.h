@@ -501,6 +501,29 @@
 ///////////////////////////////////////////
 
 /*
+ * E_INSERT
+ * */
+#define E_INSERT_PROPERTY_CNT           2
+#define E_INSERT_INSERT_RELATION        0
+#define E_INSERT_INSERT_COLUMNS_AND_SOURCE     1
+///////////////////////////////////////////
+
+/*
+ * E_INSERT_COLUMNS_AND_SOURCE
+ * */
+#define E_INSERT_COLUMNS_AND_SOURCE_PROPERTY_CNT 2
+#define E_INSERT_COLUMNS_AND_SOURCE_COLUMNS      0
+#define E_INSERT_COLUMNS_AND_SOURCE_SOURCE       1
+///////////////////////////////////////////
+
+/*
+ * E_VALUES_CTOR
+ * */
+#define E_VALUES_CTOR_PROPERTY_CNT           1
+#define E_VALUES_CTOR_SRC                    0
+//////////////////////////////////////////
+
+/*
  * E_USE
  * */
 #define E_USE_PROPERTY_CNT              1
