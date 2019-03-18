@@ -35,6 +35,7 @@ namespace resolve
                 {
                     select_->setChild(E_DELETE_OPT_WHERE, where);
                 }
+                    break;
                 default:
                     assert(false);  /* unreachable */
                     break;

@@ -385,6 +385,39 @@ insert into user select * from item;
 insert into user values (89+-1, 'new'||'name', 45, 'have identifer');
 insert into user (user_id, user_name) select item_id, item_name from item;
 
+INSERT INTO Cities (Location) VALUES ( CONVERT('12.3:46.2' USING POINT) );
+INSERT INTO Production.UnitMeasure VALUES (N'FT', N'Feet', '20080414');
+INSERT INTO Production.UnitMeasure VALUES (N'FT2', N'Square Feet ', '20080923'), (N'Y', N'Yards', '20080923'), (N'Y3', N'Cubic Yards', '20080923');
+INSERT INTO Production.UnitMeasure (Name, UnitMeasureCode, ModifiedDate) VALUES (N'Square Yards', N'Y2', GETDATE());
+INSERT INTO dbo.T1 (column_4) VALUES ('Explicit value');
+INSERT INTO dbo.T1 (column_2, column_4) VALUES ('Explicit value', 'Explicit value');
+INSERT INTO dbo.T1 (column_2) VALUES ('Explicit value');
+INSERT INTO T1 DEFAULT VALUES;
+INSERT INTO dbo.T1 (column_2) VALUES (NEWID());
+INSERT INTO dbo.EmployeeSales
+    SELECT 'SELECT', sp.BusinessEntityID, c.LastName, sp.SalesYTD
+    FROM Sales.SalesPerson AS sp
+    INNER JOIN Person.Person AS c
+        ON sp.BusinessEntityID = c.BusinessEntityID
+    WHERE sp.BusinessEntityID LIKE '2%'
+    ORDER BY sp.BusinessEntityID, c.LastName;
+INSERT INTO EmployeeTitles
+    SELECT EmployeeKey, LastName, Title
+    FROM ssawPDW.dbo.DimEmployee
+    WHERE EndDate IS NULL;
+
+DELETE FROM Production.ProductCostHistory
+WHERE StandardCost > 1000.00;
+
+DELETE FROM Production.ProductCostHistory
+WHERE StandardCost BETWEEN 12.00 AND 14.00
+      AND EndDate IS NULL;
+
+DELETE FROM Sales.SalesPersonQuotaHistory
+WHERE BusinessEntityID IN
+    (SELECT BusinessEntityID
+     FROM Sales.SalesPerson
+     WHERE SalesYTD > 2500000.00);
 
 
 
