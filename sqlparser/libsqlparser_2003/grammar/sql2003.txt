@@ -1,0 +1,4 @@
+https://github.com/ronsavage/SQL/blob/master/sql-2003-2.bnf
+http://www.contrib.andrew.cmu.edu/~shadow/sql/sql1992.txt
+https://blog.csdn.net/lengye7/article/details/80606489
+https://github.com/Raphael2017/sqlparsernxl/blob/master/sqlparser/libsqlparser_2003/grammar/sql2003_impl.txt
