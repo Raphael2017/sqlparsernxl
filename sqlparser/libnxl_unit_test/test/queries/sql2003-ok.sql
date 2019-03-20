@@ -933,14 +933,6 @@ FROM   sales.salesterritory AS st
                      ON st.territoryid = sp.territoryid;
 
 UPDATE item
-SET    item_name = item_name
-                   || ''jiu gui jiu'',
-       item_cost = 89,
-       item_price = 99
-WHERE  item_id = (SELECT Max(item_id)
-                  FROM   item);
-
-UPDATE item
 SET    item_name = 'jiu gui jiu',
        item_cost = 89,
        item_price = 99
@@ -1019,7 +1011,7 @@ WHERE  departmentid = 4;
 
 UPDATE production.product
 SET    listprice = listprice * 1.10
-WHERE  productnumber LIKE 'BK-%'
+WHERE  productnumber LIKE 'BK-%';
 
 INSERT INTO USER
 VALUES      (100,
@@ -1162,7 +1154,7 @@ WHERE ProductKey IN (
     SELECT T1.ProductKey FROM dbo.DimProduct T1
     JOIN dbo.DimProductSubcategory T2
     ON T1.ProductSubcategoryKey = T2.ProductSubcategoryKey
-    WHERE T2.EnglishProductSubcategoryName = 'Road Bikes' )
+    WHERE T2.EnglishProductSubcategoryName = 'Road Bikes' );
 
 DELETE FROM USER
 WHERE  user_name = 'zhang wu ji';
