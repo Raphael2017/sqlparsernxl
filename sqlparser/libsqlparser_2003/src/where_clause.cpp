@@ -44,8 +44,10 @@ namespace resolve
         else
         {
             Node* ori_expr = where_->getChild(E_WHERE_CLAUSE_EXPR);
+            Node* ori_expr_paren = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, E_PARENS_PROPERTY_CNT, ori_expr);
+            ori_expr_paren->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
             Node* cond = Node::makeTerminalNode(E_STRING, condition);
-            Node* new_expr = Node::makeNonTerminalNode(E_OP_AND, E_OP_BINARY_PROPERTY_CNT, ori_expr, cond);
+            Node* new_expr = Node::makeNonTerminalNode(E_OP_AND, E_OP_BINARY_PROPERTY_CNT, ori_expr_paren, cond);
             new_expr->serialize_format = &OP_AND_SERIALIZE_FORMAT;
             where_->setChild(E_WHERE_CLAUSE_EXPR, new_expr);
         }
