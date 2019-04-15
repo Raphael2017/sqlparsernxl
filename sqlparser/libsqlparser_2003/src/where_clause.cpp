@@ -1,6 +1,7 @@
 #include "where_clause.h"
 #include "node.h"
 #include <assert.h>
+#include "serialize_format.h"
 
 namespace resolve
 {

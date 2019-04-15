@@ -5,6 +5,7 @@
 #include <stack>
 #include "sqlparser_sql2003_bison.h"
 #include <assert.h>
+#include "serialize_format.h"
 
 std::string NodeTypeToString(NodeType tp)
 {
@@ -425,8 +426,7 @@ void Node::print(Node* root, int lvl /*= 0*/)
     }
 }
 
-#ifndef S_F_2
-#else
+
 std::string Node::SerializeNonRecursive(Node* root)
 {
     if (!root)
@@ -458,8 +458,8 @@ std::string Node::SerializeNonRecursive(Node* root)
             }
             else
             {
-                for (auto rit = lpNode.node->serialize_format->rbegin();
-                     rit != lpNode.node->serialize_format->rend(); ++rit)
+                auto serialize_format_tmp = lpNode.node->serialize_format->compact_;
+                for (auto rit = serialize_format_tmp->rbegin(); rit != serialize_format_tmp->rend(); ++rit)
                 {
                     if (rit->is_simple == 1)
                     {
@@ -495,7 +495,7 @@ std::string Node::serialize()
     std::string ret = "";
     if (!isTerminalToken)
     {
-        for (auto info : *serialize_format)
+        for (auto info : *(serialize_format->compact_))
         {
             if (info.is_simple == 1)
             {
@@ -520,8 +520,6 @@ std::string Node::serialize()
 
     return ret;
 }
-
-#endif
 
 Node* Node::getParent()
 {

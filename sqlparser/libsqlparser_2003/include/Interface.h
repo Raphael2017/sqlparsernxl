@@ -157,6 +157,9 @@ SQLPARSER_PUBLIC_API IPlan* CreatePlan(const BaseTableVisit& baseTableVisit,
                   void* context, IParseResult*);
 SQLPARSER_PUBLIC_API void VisitPlan(IPlan*);
 SQLPARSER_PUBLIC_API void DestroyPlan(IPlan*);
+
+SQLPARSER_PUBLIC_API bool CompressSql(const std::string& sql, std::string& out_sql);
+SQLPARSER_PUBLIC_API bool BeautifySql(const std::string& sql, std::string& out_sql);
 }
 
 #endif

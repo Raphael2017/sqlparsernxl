@@ -50,6 +50,8 @@ struct TerminalToken
     int column{0};
 };
 
+struct _FmCB;
+
 struct Node : public INode
 {
     static Node* makeTerminalNode(NodeType tp, const std::string&);
@@ -93,7 +95,7 @@ struct Node : public INode
     NodeType nodeType_;
     bool isTerminalToken;
     TerminalToken terminalToken_;
-    Form* serialize_format;     // ["function ", "{1}", "(", "{2}", ")", "{3}", "end"]
+    const _FmCB *serialize_format;
 
 private:
 #ifdef NODE_CHILDREN_DEBUG

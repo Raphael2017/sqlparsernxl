@@ -48,7 +48,7 @@
 extern int sql2003_debug;
 #endif
 /* "%code requires" blocks.  */
-#line 41 "./sqlparser_sql2003.y" /* yacc.c:1909  */
+#line 42 "./sqlparser_sql2003.y" /* yacc.c:1909  */
 
 // %code requires block
 
@@ -220,7 +220,7 @@ extern int sql2003_debug;
 
 union SQL2003_STYPE
 {
-#line 84 "./sqlparser_sql2003.y" /* yacc.c:1909  */
+#line 85 "./sqlparser_sql2003.y" /* yacc.c:1909  */
 
     struct Node* node;
     int    ival;

@@ -15,6 +15,7 @@
 
 #include "sqlparser_sql2003_bison.h"
 #include "sqlparser_sql2003_flex.h"
+#include "serialize_format.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -1457,7 +1458,7 @@ when_clause_list:
   | when_clause when_clause_list
 {
     $$ = Node::makeNonTerminalNode(E_WHEN_LIST, E_LIST_PROPERTY_CNT, $1, $2);
-    $$->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
+    $$->serialize_format = &SPACE_LIST_SERIALIZE_FORMAT;
 }
 ;
 

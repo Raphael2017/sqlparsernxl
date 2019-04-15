@@ -88,6 +88,7 @@
 
 #include "sqlparser_sql2003_bison.h"
 #include "sqlparser_sql2003_flex.h"
+#include "serialize_format.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -105,7 +106,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 }
 
 
-#line 109 "sqlparser_sql2003_bison.cpp" /* yacc.c:339  */
+#line 110 "sqlparser_sql2003_bison.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -143,13 +144,13 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 extern int sql2003_debug;
 #endif
 /* "%code requires" blocks.  */
-#line 41 "./sqlparser_sql2003.y" /* yacc.c:355  */
+#line 42 "./sqlparser_sql2003.y" /* yacc.c:355  */
 
 // %code requires block
 
 #include "node.h"
 
-#line 153 "sqlparser_sql2003_bison.cpp" /* yacc.c:355  */
+#line 154 "sqlparser_sql2003_bison.cpp" /* yacc.c:355  */
 
 /* Token type.  */
 #ifndef SQL2003_TOKENTYPE
@@ -315,12 +316,12 @@ extern int sql2003_debug;
 
 union SQL2003_STYPE
 {
-#line 84 "./sqlparser_sql2003.y" /* yacc.c:355  */
+#line 85 "./sqlparser_sql2003.y" /* yacc.c:355  */
 
     struct Node* node;
     int    ival;
 
-#line 324 "sqlparser_sql2003_bison.cpp" /* yacc.c:355  */
+#line 325 "sqlparser_sql2003_bison.cpp" /* yacc.c:355  */
 };
 
 typedef union SQL2003_STYPE SQL2003_STYPE;
@@ -350,7 +351,7 @@ int sql2003_parse (ParseResult* result, yyscan_t scanner);
 
 /* Copy the second part of user declarations.  */
 
-#line 354 "sqlparser_sql2003_bison.cpp" /* yacc.c:358  */
+#line 355 "sqlparser_sql2003_bison.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -664,46 +665,46 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   218,   218,   228,   229,   237,   238,   239,   243,   247,
-     248,   249,   253,   261,   266,   271,   276,   281,   290,   299,
-     316,   333,   334,   342,   357,   361,   366,   374,   380,   390,
-     391,   395,   421,   447,   473,   502,   507,   511,   512,   516,
-     520,   527,   528,   537,   551,   552,   560,   561,   565,   573,
-     574,   582,   591,   594,   598,   605,   606,   616,   621,   629,
-     630,   639,   647,   648,   652,   660,   661,   669,   670,   674,
-     681,   682,   690,   695,   703,   711,   720,   721,   729,   730,
-     738,   743,   748,   753,   758,   767,   772,   776,   777,   782,
-     788,   794,   801,   807,   814,   820,   827,   833,   840,   846,
-     853,   859,   866,   872,   879,   885,   896,   901,   906,   911,
-     916,   921,   926,   931,   983,   988,   993,   999,  1004,  1010,
-    1016,  1025,  1036,  1047,  1058,  1066,  1070,  1071,  1076,  1077,
-    1085,  1086,  1087,  1088,  1089,  1090,  1091,  1095,  1096,  1097,
-    1103,  1104,  1105,  1106,  1114,  1115,  1120,  1125,  1130,  1135,
-    1140,  1145,  1150,  1155,  1163,  1164,  1165,  1170,  1175,  1200,
-    1205,  1230,  1235,  1260,  1265,  1290,  1295,  1320,  1325,  1350,
-    1355,  1360,  1365,  1370,  1375,  1380,  1385,  1390,  1395,  1400,
-    1405,  1410,  1415,  1420,  1425,  1433,  1434,  1443,  1451,  1452,
-    1456,  1457,  1465,  1473,  1474,  1483,  1484,  1485,  1486,  1491,
-    1497,  1503,  1509,  1515,  1527,  1539,  1549,  1550,  1551,  1552,
-    1553,  1554,  1555,  1556,  1557,  1561,  1570,  1571,  1572,  1576,
-    1582,  1594,  1600,  1607,  1614,  1621,  1630,  1637,  1644,  1651,
-    1658,  1667,  1674,  1684,  1689,  1694,  1699,  1704,  1709,  1714,
-    1719,  1727,  1733,  1742,  1744,  1746,  1748,  1750,  1752,  1754,
-    1756,  1758,  1760,  1762,  1764,  1766,  1768,  1770,  1772,  1774,
-    1776,  1778,  1780,  1782,  1784,  1786,  1788,  1790,  1792,  1794,
-    1796,  1801,  1802,  1803,  1804,  1808,  1816,  1824,  1830,  1835,
-    1843,  1848,  1853,  1858,  1859,  1864,  1865,  1866,  1867,  1868,
-    1869,  1873,  1881,  1886,  1890,  1895,  1899,  1900,  1905,  1912,
-    1917,  1918,  1923,  1928,  1935,  1939,  1943,  1947,  1951,  1958,
-    1965,  1969,  1974,  1979,  1984,  1988,  1992,  1996,  2001,  2006,
-    2011,  2015,  2019,  2026,  2027,  2031,  2036,  2041,  2045,  2050,
-    2055,  2059,  2064,  2069,  2073,  2077,  2081,  2085,  2092,  2097,
-    2101,  2105,  2112,  2117,  2121,  2126,  2130,  2135,  2140,  2145,
-    2150,  2154,  2159,  2163,  2168,  2175,  2180,  2184,  2189,  2196,
-    2201,  2205,  2210,  2214,  2219,  2223,  2228,  2233,  2238,  2243,
-    2247,  2252,  2256,  2261,  2268,  2273,  2278,  2283,  2291,  2295,
-    2299,  2306,  2310,  2314,  2321,  2325,  2332,  2333,  2334,  2337,
-    2341,  2342,  2347
+       0,   219,   219,   229,   230,   238,   239,   240,   244,   248,
+     249,   250,   254,   262,   267,   272,   277,   282,   291,   300,
+     317,   334,   335,   343,   358,   362,   367,   375,   381,   391,
+     392,   396,   422,   448,   474,   503,   508,   512,   513,   517,
+     521,   528,   529,   538,   552,   553,   561,   562,   566,   574,
+     575,   583,   592,   595,   599,   606,   607,   617,   622,   630,
+     631,   640,   648,   649,   653,   661,   662,   670,   671,   675,
+     682,   683,   691,   696,   704,   712,   721,   722,   730,   731,
+     739,   744,   749,   754,   759,   768,   773,   777,   778,   783,
+     789,   795,   802,   808,   815,   821,   828,   834,   841,   847,
+     854,   860,   867,   873,   880,   886,   897,   902,   907,   912,
+     917,   922,   927,   932,   984,   989,   994,  1000,  1005,  1011,
+    1017,  1026,  1037,  1048,  1059,  1067,  1071,  1072,  1077,  1078,
+    1086,  1087,  1088,  1089,  1090,  1091,  1092,  1096,  1097,  1098,
+    1104,  1105,  1106,  1107,  1115,  1116,  1121,  1126,  1131,  1136,
+    1141,  1146,  1151,  1156,  1164,  1165,  1166,  1171,  1176,  1201,
+    1206,  1231,  1236,  1261,  1266,  1291,  1296,  1321,  1326,  1351,
+    1356,  1361,  1366,  1371,  1376,  1381,  1386,  1391,  1396,  1401,
+    1406,  1411,  1416,  1421,  1426,  1434,  1435,  1444,  1452,  1453,
+    1457,  1458,  1466,  1474,  1475,  1484,  1485,  1486,  1487,  1492,
+    1498,  1504,  1510,  1516,  1528,  1540,  1550,  1551,  1552,  1553,
+    1554,  1555,  1556,  1557,  1558,  1562,  1571,  1572,  1573,  1577,
+    1583,  1595,  1601,  1608,  1615,  1622,  1631,  1638,  1645,  1652,
+    1659,  1668,  1675,  1685,  1690,  1695,  1700,  1705,  1710,  1715,
+    1720,  1728,  1734,  1743,  1745,  1747,  1749,  1751,  1753,  1755,
+    1757,  1759,  1761,  1763,  1765,  1767,  1769,  1771,  1773,  1775,
+    1777,  1779,  1781,  1783,  1785,  1787,  1789,  1791,  1793,  1795,
+    1797,  1802,  1803,  1804,  1805,  1809,  1817,  1825,  1831,  1836,
+    1844,  1849,  1854,  1859,  1860,  1865,  1866,  1867,  1868,  1869,
+    1870,  1874,  1882,  1887,  1891,  1896,  1900,  1901,  1906,  1913,
+    1918,  1919,  1924,  1929,  1936,  1940,  1944,  1948,  1952,  1959,
+    1966,  1970,  1975,  1980,  1985,  1989,  1993,  1997,  2002,  2007,
+    2012,  2016,  2020,  2027,  2028,  2032,  2037,  2042,  2046,  2051,
+    2056,  2060,  2065,  2070,  2074,  2078,  2082,  2086,  2093,  2098,
+    2102,  2106,  2113,  2118,  2122,  2127,  2131,  2136,  2141,  2146,
+    2151,  2155,  2160,  2164,  2169,  2176,  2181,  2185,  2190,  2197,
+    2202,  2206,  2211,  2215,  2220,  2224,  2229,  2234,  2239,  2244,
+    2248,  2253,  2257,  2262,  2269,  2274,  2279,  2284,  2292,  2296,
+    2300,  2307,  2311,  2315,  2322,  2326,  2333,  2334,  2335,  2338,
+    2342,  2343,  2348
 };
 #endif
 
@@ -2008,621 +2009,621 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocatio
   switch (yytype)
     {
           case 3: /* NAME  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2014 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2015 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 4: /* STRING  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2020 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2021 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 5: /* INTNUM  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2026 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2027 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 6: /* BOOL  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2032 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2033 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 7: /* APPROXNUM  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2038 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2039 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 8: /* NULLX  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2044 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2045 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 9: /* UNKNOWN  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2050 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2051 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 10: /* QUESTIONMARK  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2056 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2057 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 166: /* sql_stmt  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2062 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2063 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 167: /* stmt_list  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2068 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2069 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 168: /* stmt  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2074 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2075 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 169: /* dql_stmt  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2080 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2081 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 170: /* dml_stmt  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2086 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2087 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 171: /* insert_stmt  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2092 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2093 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 172: /* insert_columns_and_source  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2098 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2099 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 173: /* from_constructor  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2104 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2105 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 174: /* delete_stmt  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2110 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2111 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 175: /* update_stmt  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2116 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2117 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 176: /* update_elem_list  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2122 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2123 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 177: /* update_elem  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2128 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2129 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 178: /* select_stmt  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2134 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2135 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 179: /* select_with_parens  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2140 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2141 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 180: /* select_no_parens  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2146 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2147 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 181: /* select_clause  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2152 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2153 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 182: /* simple_select  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2158 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2159 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 183: /* opt_into_clause  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2164 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2165 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 184: /* opt_top  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2170 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2171 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 185: /* opt_for_clause  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2176 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2177 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 186: /* opt_where  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2182 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2183 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 187: /* opt_from_clause  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2188 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2189 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 188: /* opt_groupby  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2194 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2195 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 189: /* opt_order_by  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2200 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2201 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 190: /* order_by  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2206 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2207 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 191: /* sort_list  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2212 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2213 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 192: /* sort_key  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2218 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2219 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 193: /* opt_asc_desc  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2224 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2225 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 194: /* opt_having  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2230 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2231 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 195: /* with_clause  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2236 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2237 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 196: /* with_list  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2242 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2243 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 197: /* common_table_expr  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2248 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2249 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 198: /* opt_derived_column_list  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2254 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2255 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 199: /* simple_ident_list_with_parens  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2260 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2261 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 200: /* simple_ident_list  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2266 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2267 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 201: /* opt_distinct  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2272 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2273 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 202: /* select_expr_list  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2278 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2279 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 203: /* projection  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2284 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2285 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 204: /* from_list  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2290 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2291 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 205: /* table_factor  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2296 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2297 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 206: /* table_factor_non_join  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2302 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2303 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 207: /* opt_for_system_time  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2308 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2309 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 208: /* opt_with_table_hint  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2314 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2315 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 209: /* opt_simple_ident_list_with_parens  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2320 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2321 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 210: /* column_ref  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2326 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2327 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 211: /* relation_factor  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2332 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2333 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 212: /* joined_table  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2338 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2339 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 213: /* join_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2344 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2345 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 216: /* expr_list  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2350 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2351 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 217: /* expr_const  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2356 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2357 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 218: /* simple_expr  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2362 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2363 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 219: /* arith_expr  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2368 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2369 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 220: /* expr  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2374 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2375 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 221: /* in_expr  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2380 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2381 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 222: /* case_expr  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2386 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2387 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 223: /* case_arg  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2392 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2393 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 224: /* when_clause_list  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2398 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2399 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 225: /* when_clause  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2404 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2405 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 226: /* case_default  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2410 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2411 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 227: /* func_expr  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2416 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2417 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 228: /* aggregate_windowed_function  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2422 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2423 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 229: /* aggregate_function_name  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2428 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2429 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 230: /* ranking_windowed_function  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2434 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2435 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 231: /* ranking_function_name  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2440 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2441 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 232: /* scalar_function  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2446 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2447 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 233: /* function_call_keyword  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2452 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2453 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 234: /* over_clause  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2458 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2459 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 235: /* row_or_range_clause  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2464 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2465 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 236: /* window_frame_extent  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2470 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2471 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 237: /* data_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2476 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2477 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 238: /* user_defined_type_name  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2482 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2483 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 239: /* reference_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2488 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2489 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 240: /* collection_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2494 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2495 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 241: /* predefined_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2500 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2501 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 242: /* interval_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2506 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2507 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 243: /* interval_qualifier  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2512 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2513 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 244: /* start_field  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2518 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2519 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 245: /* end_field  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2524 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2525 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 246: /* single_datetime_field  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2530 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2531 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 247: /* non_second_primary_datetime_field  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2536 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2537 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 248: /* boolean_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2542 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2543 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 249: /* datetime_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2548 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2549 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 250: /* numeric_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2554 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2555 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 251: /* exact_numeric_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2560 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2561 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 252: /* approximate_numeric_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2566 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2567 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 253: /* character_string_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2572 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2573 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 254: /* binary_large_object_string_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2578 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2579 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 255: /* national_character_string_type  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2584 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2585 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 256: /* large_object_length  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2590 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2591 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 257: /* char_length_units  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2596 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2597 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 258: /* multiplier  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2602 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2603 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 259: /* distinct_or_all  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2608 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2609 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 261: /* relation_name  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2614 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2615 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 262: /* column_label  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2620 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2621 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
     case 263: /* collate_clause  */
-#line 93 "./sqlparser_sql2003.y" /* yacc.c:1257  */
+#line 94 "./sqlparser_sql2003.y" /* yacc.c:1257  */
       { delete(((*yyvaluep).node)); }
-#line 2626 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
+#line 2627 "sqlparser_sql2003_bison.cpp" /* yacc.c:1257  */
         break;
 
 
@@ -2730,7 +2731,7 @@ YYLTYPE yylloc = yyloc_default;
   yychar = YYEMPTY; /* Cause a token to be read.  */
 
 /* User initialization code.  */
-#line 63 "./sqlparser_sql2003.y" /* yacc.c:1429  */
+#line 64 "./sqlparser_sql2003.y" /* yacc.c:1429  */
 {
 	// Initialize
 	yylloc.first_column = 0;
@@ -2739,7 +2740,7 @@ YYLTYPE yylloc = yyloc_default;
 	yylloc.last_line = 0;
 }
 
-#line 2743 "sqlparser_sql2003_bison.cpp" /* yacc.c:1429  */
+#line 2744 "sqlparser_sql2003_bison.cpp" /* yacc.c:1429  */
   yylsp[0] = yylloc;
   goto yysetstate;
 
@@ -2926,97 +2927,97 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 219 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 220 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = (yyvsp[-1].node);
     result->result_tree_ = (yyvsp[-1].node);
     result->accept = true;
     YYACCEPT;
 }
-#line 2937 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 2938 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 230 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 231 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_STMT_LIST, E_LIST_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &SEMICOLON_LIST_SERIALIZE_FORMAT;
 }
-#line 2946 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 2947 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 237 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 238 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 2952 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 2953 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 254 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 255 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_INSERT, E_INSERT_PROPERTY_CNT, (yyvsp[-1].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &INSERT_SERIALIZE_FORMAT;
 }
-#line 2961 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 2962 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 262 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 263 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_INSERT_COLUMNS_AND_SOURCE, E_INSERT_COLUMNS_AND_SOURCE_PROPERTY_CNT, nullptr, (yyvsp[0].node));
     (yyval.node)->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
 }
-#line 2970 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 2971 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 267 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 268 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_INSERT_COLUMNS_AND_SOURCE, E_INSERT_COLUMNS_AND_SOURCE_PROPERTY_CNT, (yyvsp[-1].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
 }
-#line 2979 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 2980 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 272 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 273 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_INSERT_COLUMNS_AND_SOURCE, E_INSERT_COLUMNS_AND_SOURCE_PROPERTY_CNT, (yyvsp[-1].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
 }
-#line 2988 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 2989 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 277 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 278 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_INSERT_COLUMNS_AND_SOURCE, E_INSERT_COLUMNS_AND_SOURCE_PROPERTY_CNT, nullptr, (yyvsp[0].node));
     (yyval.node)->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
 }
-#line 2997 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 2998 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 282 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 283 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* src = Node::makeTerminalNode(E_IDENTIFIER, "DEFAULT VALUES");
     (yyval.node) = Node::makeNonTerminalNode(E_INSERT_COLUMNS_AND_SOURCE, E_INSERT_COLUMNS_AND_SOURCE_PROPERTY_CNT, nullptr, src);
     (yyval.node)->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
 }
-#line 3007 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3008 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 291 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 292 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_VALUES_CTOR, E_VALUES_CTOR_PROPERTY_CNT, (yyvsp[0].node));
     (yyval.node)->serialize_format = &TABLE_VALUE_CTOR_SERIALIZE_FORMAT;
 }
-#line 3016 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3017 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 300 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 301 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_DELETE, E_DELETE_PROPERTY_CNT,
     		nullptr,	/* E_DELETE_OPT_WITH 0 */
@@ -3029,11 +3030,11 @@ yyreduce:
     		nullptr 	/* E_DELETE_OPT_QUERY_HINT 7 */);
     (yyval.node)->serialize_format = &DELETE_SERIALIZE_FORMAT;
 }
-#line 3033 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3034 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 317 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 318 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_UPDATE, E_UPDATE_PROPERTY_CNT,
     		nullptr,	/* E_UPDATE_OPT_WITH 0 */
@@ -3047,20 +3048,20 @@ yyreduce:
     		nullptr		/* E_UPDATE_OPT_QUERY_HINT 8 */);
     (yyval.node)->serialize_format = &UPDATE_SERIALIZE_FORMAT;
 }
-#line 3051 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3052 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 335 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 336 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_UPDATE_ELEM_LIST, E_LIST_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
 }
-#line 3060 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3061 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 343 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 344 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* t = nullptr;
     if (!Node::check_update_item((yyvsp[0].node), t))
@@ -3071,50 +3072,50 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_UPDATE_ELEM, E_UPDATE_ELEM_PROPERTY_CNT, (yyvsp[0].node));
     (yyval.node)->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-#line 3075 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3076 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 362 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 363 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, E_PARENS_PROPERTY_CNT, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 3084 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3085 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 367 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 368 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, E_PARENS_PROPERTY_CNT, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 3093 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3094 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 375 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 376 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = (yyvsp[-2].node);
     (yyval.node)->setChild(E_SELECT_ORDER_BY, (yyvsp[-1].node));
     (yyval.node)->setChild(E_SELECT_FOR_CLAUSE, (yyvsp[0].node));
 }
-#line 3103 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3104 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 381 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 382 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = (yyvsp[-2].node);
     (yyval.node)->setChild(E_SELECT_ORDER_BY, (yyvsp[-1].node));
     (yyval.node)->setChild(E_SELECT_FOR_CLAUSE, (yyvsp[0].node));
     (yyval.node)->setChild(E_SELECT_OPT_WITH, (yyvsp[-3].node));
 }
-#line 3114 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3115 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 397 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 398 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
                     (yyvsp[-7].node),             /* E_SELECT_DISTINCT 0 */
@@ -3139,11 +3140,11 @@ yyreduce:
                     );
     (yyval.node)->serialize_format = &SELECT_SERIALIZE_FORMAT;
 }
-#line 3143 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3144 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 422 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 423 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* set_op = Node::makeTerminalNode(E_SET_UNION, "UNION");
     (yyval.node) = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
@@ -3169,11 +3170,11 @@ yyreduce:
                         );
     (yyval.node)->serialize_format = &SELECT_UNION_SERIALIZE_FORMAT;
 }
-#line 3173 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3174 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 448 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 449 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* set_op = Node::makeTerminalNode(E_SET_INTERSECT, "INTERSECT");
     (yyval.node) = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
@@ -3199,11 +3200,11 @@ yyreduce:
                         );
     (yyval.node)->serialize_format = &SELECT_INTERSECT_SERIALIZE_FORMAT;
 }
-#line 3203 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3204 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 474 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 475 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* set_op = Node::makeTerminalNode(E_SET_EXCEPT, "EXCEPT");
     (yyval.node) = Node::makeNonTerminalNode(E_SELECT, E_SELECT_PROPERTY_CNT,
@@ -3229,264 +3230,264 @@ yyreduce:
                         );
     (yyval.node)->serialize_format = &SELECT_EXCEPT_SERIALIZE_FORMAT;
 }
-#line 3233 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3234 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 502 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 503 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 3239 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3240 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 507 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 508 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 3245 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3246 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 511 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 512 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 3251 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3252 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 513 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 514 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "FOR UPDATE");
 }
-#line 3259 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3260 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 517 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 518 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "FOR UPDATE OF "+(yyvsp[0].node)->text());
 }
-#line 3267 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3268 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 521 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 522 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "FOR READ ONLY");
 }
-#line 3275 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3276 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 527 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 528 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 3281 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3282 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 529 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 530 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_WHERE_CLAUSE, E_WHERE_CLAUSE_PROPERTY_CNT, (yyvsp[0].node));
     (yyval.node)->serialize_format = &WHERE_SERIALIZE_FORMAT;
 }
-#line 3290 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3291 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 538 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 539 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_FROM_CLAUSE, E_FROM_CLAUSE_PROPERTY_CNT, (yyvsp[0].node));
     (yyval.node)->serialize_format = &FROM_SERIALIZE_FORMAT;
 }
-#line 3299 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3300 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 551 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 552 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 3305 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3306 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 553 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 554 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_GROUP_BY, E_GROUP_BY_PROPERTY_CNT, (yyvsp[0].node), (yyvsp[-1].node));
     (yyval.node)->serialize_format = &GROUP_BY_SERIALIZE_FORMAT;
 }
-#line 3314 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3315 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 560 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 561 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 3320 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3321 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 566 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 567 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_ORDER_BY, E_ORDER_BY_PROPERTY_CNT, (yyvsp[0].node), nullptr);
     (yyval.node)->serialize_format = &ORDER_BY_SERIALIZE_FORMAT;
 }
-#line 3329 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3330 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 575 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 576 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_SORT_LIST, E_LIST_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
 }
-#line 3338 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3339 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 583 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 584 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_SORT_KEY, E_SORT_KEY_PROPERTY_CNT, (yyvsp[-1].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &SORT_KEY_SERIALIZE_FORMAT;
 }
-#line 3347 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3348 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 591 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 592 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_SORT_ASC, "");
 }
-#line 3355 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3356 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 595 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 596 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_SORT_ASC, "ASC");
 }
-#line 3363 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3364 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 599 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 600 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_SORT_DESC, "DESC");
 }
-#line 3371 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3372 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 605 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 606 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 3377 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3378 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 607 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 608 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_HAVING, E_HAVING_PROPERTY_CNT, (yyvsp[0].node));
     (yyval.node)->serialize_format = &HAVING_SERIALIZE_FORMAT;
 }
-#line 3386 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3387 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 617 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 618 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OPT_WITH_CLAUSE, E_OPT_WITH_CLAUSE_PROPERTY_CNT, (yyvsp[0].node));
     (yyval.node)->serialize_format = &WITH_CLAUSE_SERIALIZE_FORMAT;
 }
-#line 3395 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3396 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 622 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 623 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OPT_WITH_CLAUSE, E_OPT_WITH_CLAUSE_PROPERTY_CNT, (yyvsp[0].node));
     (yyval.node)->serialize_format = &WITH_RECURSIVE_CLAUSE_SERIALIZE_FORMAT;
 }
-#line 3404 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3405 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 631 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 632 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_WITH_LIST, E_LIST_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
 }
-#line 3413 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3414 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 640 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 641 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_COMMON_TABLE_EXPR, E_COMMON_TABLE_EXPR_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &COMMON_TABLE_EXPR_SERIALIZE_FORMAT;
 }
-#line 3422 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3423 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 647 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 648 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 3428 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3429 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 653 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 654 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_SIMPLE_IDENT_LIST_WITH_PARENS, E_PARENS_PROPERTY_CNT, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 3437 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3438 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 662 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 663 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_SIMPLE_IDENT_LIST, E_LIST_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
 }
-#line 3446 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3447 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 669 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 670 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 3452 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3453 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 671 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 672 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_ALL, "ALL");
 }
-#line 3460 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3461 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 675 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 676 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_DISTINCT, "DISTINCT");
 }
-#line 3468 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3469 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 683 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 684 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_SELECT_EXPR_LIST, E_LIST_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
 }
-#line 3477 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3478 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 691 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 692 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_PROJECT_STRING, E_PROJECT_STRING_PROPERTY_CNT, (yyvsp[0].node));
     (yyval.node)->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-#line 3486 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3487 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 696 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 697 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* alias_node = Node::makeNonTerminalNode(E_ALIAS, E_ALIAS_PROPERTY_CNT, (yyvsp[-1].node), (yyvsp[0].node), nullptr, nullptr, nullptr);
     alias_node->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
@@ -3494,11 +3495,11 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_PROJECT_STRING, E_PROJECT_STRING_PROPERTY_CNT, alias_node);
     (yyval.node)->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-#line 3498 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3499 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 704 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 705 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* alias_node = Node::makeNonTerminalNode(E_ALIAS, E_ALIAS_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node), nullptr, nullptr, nullptr);
     alias_node->serialize_format = &AS_SERIALIZE_FORMAT;
@@ -3506,410 +3507,410 @@ yyreduce:
     (yyval.node) = Node::makeNonTerminalNode(E_PROJECT_STRING, E_PROJECT_STRING_PROPERTY_CNT, alias_node);
     (yyval.node)->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-#line 3510 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3511 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 712 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 713 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* star_node = Node::makeTerminalNode(E_STAR, "*");
     (yyval.node) = Node::makeNonTerminalNode(E_PROJECT_STRING, E_PROJECT_STRING_PROPERTY_CNT, star_node);
     (yyval.node)->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-#line 3520 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3521 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 722 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 723 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_FROM_LIST, E_LIST_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
 }
-#line 3529 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3530 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 739 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 740 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_ALIAS, E_ALIAS_PROPERTY_CNT, (yyvsp[-2].node), nullptr, nullptr, (yyvsp[0].node), (yyvsp[-1].node));
     (yyval.node)->serialize_format = &PENTA_SERIALIZE_FORMAT_0;
 }
-#line 3538 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3539 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 744 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 745 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_ALIAS, E_ALIAS_PROPERTY_CNT, (yyvsp[-4].node), (yyvsp[-1].node), nullptr, (yyvsp[0].node), (yyvsp[-3].node));
     (yyval.node)->serialize_format = &AS_SERIALIZE_FORMAT;
 }
-#line 3547 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3548 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 749 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 750 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_ALIAS, E_ALIAS_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[-1].node), nullptr, (yyvsp[0].node), (yyvsp[-2].node));
     (yyval.node)->serialize_format = &PENTA_SERIALIZE_FORMAT_0;
 }
-#line 3556 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3557 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 754 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 755 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_ALIAS, E_ALIAS_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[-1].node), (yyvsp[0].node), nullptr, nullptr);
     (yyval.node)->serialize_format = &AS_SERIALIZE_FORMAT;
 }
-#line 3565 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3566 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 759 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 760 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_ALIAS, E_ALIAS_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node), nullptr, nullptr);
     (yyval.node)->serialize_format = &QUADRUPLE_SERIALIZE_FORMAT;
 }
-#line 3574 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3575 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 767 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 768 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 3580 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3581 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 772 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 773 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 3586 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3587 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 776 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 777 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 3592 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3593 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 783 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 784 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			(yyvsp[0].node), nullptr, nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-#line 3602 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3603 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 789 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 790 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			(yyvsp[0].node), (yyvsp[-2].node), nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_1;
 }
-#line 3612 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3613 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 795 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 796 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, (yyvsp[-2].node), nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_1;
 }
-#line 3623 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3624 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 802 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 803 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			(yyvsp[0].node), (yyvsp[-2].node), (yyvsp[-4].node), nullptr, nullptr);
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_2;
 }
-#line 3633 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3634 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 93:
-#line 808 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 809 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, (yyvsp[-2].node), (yyvsp[-4].node), nullptr, nullptr);
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_2;
 }
-#line 3644 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3645 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 94:
-#line 815 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 816 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			(yyvsp[0].node), (yyvsp[-2].node), (yyvsp[-4].node), (yyvsp[-6].node), nullptr);
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_3;
 }
-#line 3654 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3655 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 95:
-#line 821 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 822 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, (yyvsp[-2].node), (yyvsp[-4].node), (yyvsp[-6].node), nullptr);
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_3;
 }
-#line 3665 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3666 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 96:
-#line 828 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 829 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			(yyvsp[0].node), (yyvsp[-2].node), nullptr, (yyvsp[-5].node), nullptr);
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_3;
 }
-#line 3675 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3676 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 97:
-#line 834 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 835 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, (yyvsp[-2].node), nullptr, (yyvsp[-5].node), nullptr);
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_3;
 }
-#line 3686 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3687 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 98:
-#line 841 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 842 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			(yyvsp[0].node), (yyvsp[-2].node), (yyvsp[-4].node), (yyvsp[-6].node), (yyvsp[-8].node));
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-#line 3696 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3697 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 99:
-#line 847 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 848 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, (yyvsp[-2].node), (yyvsp[-4].node), (yyvsp[-6].node), (yyvsp[-8].node));
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-#line 3707 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3708 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 100:
-#line 854 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 855 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			(yyvsp[0].node), (yyvsp[-2].node), (yyvsp[-4].node), nullptr, (yyvsp[-7].node));
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-#line 3717 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3718 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 101:
-#line 860 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 861 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, (yyvsp[-2].node), (yyvsp[-4].node), nullptr, (yyvsp[-7].node));
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-#line 3728 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3729 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 102:
-#line 867 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 868 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			(yyvsp[0].node), (yyvsp[-2].node), nullptr, (yyvsp[-5].node), (yyvsp[-7].node));
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-#line 3738 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3739 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 103:
-#line 873 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 874 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, (yyvsp[-2].node), nullptr, (yyvsp[-5].node), (yyvsp[-7].node));
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-#line 3749 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3750 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 104:
-#line 880 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 881 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			(yyvsp[0].node), (yyvsp[-2].node), nullptr, nullptr, (yyvsp[-6].node));
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-#line 3759 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3760 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 105:
-#line 886 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 887 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, (yyvsp[-2].node), nullptr, nullptr, (yyvsp[-6].node));
     (yyval.node)->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-#line 3770 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3771 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 106:
-#line 897 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 898 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, (yyvsp[0].node), nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-#line 3779 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3780 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 107:
-#line 902 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 903 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, (yyvsp[0].node), (yyvsp[-2].node), nullptr, nullptr);
     (yyval.node)->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_1;
 }
-#line 3788 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3789 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 108:
-#line 907 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 908 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, (yyvsp[0].node), (yyvsp[-2].node), (yyvsp[-4].node), nullptr);
     (yyval.node)->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
 }
-#line 3797 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3798 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 109:
-#line 912 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 913 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, (yyvsp[0].node), nullptr, (yyvsp[-3].node), nullptr);
     (yyval.node)->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
 }
-#line 3806 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3807 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 110:
-#line 917 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 918 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, (yyvsp[0].node), (yyvsp[-2].node), (yyvsp[-4].node), (yyvsp[-6].node));
     (yyval.node)->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
 }
-#line 3815 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3816 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 111:
-#line 922 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 923 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, (yyvsp[0].node), (yyvsp[-2].node), nullptr, (yyvsp[-5].node));
     (yyval.node)->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
 }
-#line 3824 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3825 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 112:
-#line 927 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 928 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, (yyvsp[0].node), nullptr, (yyvsp[-3].node), (yyvsp[-5].node));
     (yyval.node)->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
 }
-#line 3833 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3834 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 113:
-#line 932 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 933 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, (yyvsp[0].node), nullptr, nullptr, (yyvsp[-4].node));
     (yyval.node)->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
 }
-#line 3842 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3843 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 114:
-#line 984 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 985 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_JOINED_TABLE_WITH_PARENS, E_PARENS_PROPERTY_CNT, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 3851 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3852 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 115:
-#line 989 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 990 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, (yyvsp[-4].node), (yyvsp[-5].node), (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &JOINED_TB_1_SERIALIZE_FORMAT;
 }
-#line 3860 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3861 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 116:
-#line 994 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 995 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* nd = Node::makeTerminalNode(E_JOIN_INNER, "");
     (yyval.node) = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &JOINED_TB_1_SERIALIZE_FORMAT;
 }
-#line 3870 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3871 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 117:
-#line 1000 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1001 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, (yyvsp[-4].node), (yyvsp[-5].node), (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &JOINED_TB_USING_SERIALIZE_FORMAT;
 }
-#line 3879 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3880 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 118:
-#line 1005 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1006 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* nd = Node::makeTerminalNode(E_JOIN_INNER, "");
     (yyval.node) = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &JOINED_TB_USING_SERIALIZE_FORMAT;
 }
-#line 3889 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3890 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 119:
-#line 1011 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1012 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* nd = Node::makeTerminalNode(E_JOIN_CROSS, "CROSS");
     (yyval.node) = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, (yyvsp[-3].node), (yyvsp[0].node), nullptr);
     (yyval.node)->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
 }
-#line 3899 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3900 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 120:
-#line 1017 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1018 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* nd = Node::makeTerminalNode(E_JOIN_NATURAL, "NATURAL " + (yyvsp[-2].node)->text());
     (yyval.node) = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, (yyvsp[-4].node), (yyvsp[0].node), nullptr);
     (yyval.node)->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
 }
-#line 3909 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3910 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 121:
-#line 1026 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1027 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     if ((yyvsp[-1].ival))
     {
@@ -3920,11 +3921,11 @@ yyreduce:
         (yyval.node) = Node::makeTerminalNode(E_JOIN_FULL, "FULL"+Node::convert_join_hint((yyvsp[0].ival)));
     }
 }
-#line 3924 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3925 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 122:
-#line 1037 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1038 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     if ((yyvsp[-1].ival))
     {
@@ -3935,11 +3936,11 @@ yyreduce:
         (yyval.node) = Node::makeTerminalNode(E_JOIN_LEFT, "LEFT"+Node::convert_join_hint((yyvsp[0].ival)));
     }
 }
-#line 3939 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3940 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 123:
-#line 1048 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1049 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     if ((yyvsp[-1].ival))
     {
@@ -3950,170 +3951,170 @@ yyreduce:
         (yyval.node) = Node::makeTerminalNode(E_JOIN_RIGHT, "RIGHT"+Node::convert_join_hint((yyvsp[0].ival)));
     }
 }
-#line 3954 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3955 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 124:
-#line 1059 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1060 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_JOIN_INNER, "INNER"+Node::convert_join_hint((yyvsp[0].ival)));
 }
-#line 3962 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3963 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 125:
-#line 1066 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1067 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.ival) = 0; }
-#line 3968 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3969 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 126:
-#line 1070 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1071 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.ival) = 0; }
-#line 3974 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3975 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 127:
-#line 1071 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1072 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.ival) = 1; /*this is a flag*/}
-#line 3980 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3981 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 129:
-#line 1078 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1079 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_EXPR_LIST, E_LIST_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
 }
-#line 3989 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3990 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 136:
-#line 1091 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1092 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_STRING, "DEFAULT"); }
-#line 3995 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 3996 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 139:
-#line 1098 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1099 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     // expect cover '(' expr ')'
     (yyval.node) = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, E_PARENS_PROPERTY_CNT, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 4005 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4006 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 143:
-#line 1107 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1108 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_EXISTS, E_OP_UNARY_PROPERTY_CNT, (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_EXISTS_SERIALIZE_FORMAT;
 }
-#line 4014 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4015 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 145:
-#line 1116 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1117 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_POS, E_OP_UNARY_PROPERTY_CNT, (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_POS_SERIALIZE_FORMAT;
 }
-#line 4023 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4024 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 146:
-#line 1121 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1122 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NEG, E_OP_UNARY_PROPERTY_CNT, (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_NEG_SERIALIZE_FORMAT;
 }
-#line 4032 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4033 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 147:
-#line 1126 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1127 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_ADD, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_ADD_SERIALIZE_FORMAT;
 }
-#line 4041 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4042 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 148:
-#line 1131 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1132 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_MINUS, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_MINUS_SERIALIZE_FORMAT;
 }
-#line 4050 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4051 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 149:
-#line 1136 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1137 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_MUL, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_MUL_SERIALIZE_FORMAT;
 }
-#line 4059 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4060 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 150:
-#line 1141 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1142 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_DIV, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_DIV_SERIALIZE_FORMAT;
 }
-#line 4068 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4069 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 151:
-#line 1146 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1147 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_REM, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_REM_SERIALIZE_FORMAT;
 }
-#line 4077 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4078 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 152:
-#line 1151 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1152 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_POW, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_POW_SERIALIZE_FORMAT;
 }
-#line 4086 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4087 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 153:
-#line 1156 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1157 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_MOD, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_MOD_SERIALIZE_FORMAT;
 }
-#line 4095 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4096 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 156:
-#line 1166 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1167 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_COLLATE, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-1].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &SORT_KEY_SERIALIZE_FORMAT;
 }
-#line 4104 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4105 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 157:
-#line 1171 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1172 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_LE, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_LE_SERIALIZE_FORMAT;
 }
-#line 4113 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4114 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 158:
-#line 1176 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1177 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_LE, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[0].node));
     switch ((yyvsp[-1].ival))
@@ -4138,20 +4139,20 @@ yyreduce:
             break;
     }
 }
-#line 4142 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4143 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 159:
-#line 1201 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1202 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_LT, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_LT_SERIALIZE_FORMAT;
 }
-#line 4151 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4152 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 160:
-#line 1206 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1207 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_LT, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[0].node));
     switch ((yyvsp[-1].ival))
@@ -4176,20 +4177,20 @@ yyreduce:
             break;
     }
 }
-#line 4180 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4181 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 161:
-#line 1231 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1232 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_EQ, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_EQ_SERIALIZE_FORMAT;
 }
-#line 4189 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4190 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 162:
-#line 1236 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1237 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_EQ, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[0].node));
     switch ((yyvsp[-1].ival))
@@ -4214,20 +4215,20 @@ yyreduce:
             break;
     }
 }
-#line 4218 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4219 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 163:
-#line 1261 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1262 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_GE, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_GE_SERIALIZE_FORMAT;
 }
-#line 4227 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4228 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 164:
-#line 1266 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1267 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_GE, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[0].node));
     switch ((yyvsp[-1].ival))
@@ -4252,20 +4253,20 @@ yyreduce:
             break;
     }
 }
-#line 4256 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4257 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 165:
-#line 1291 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1292 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_GT, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_GT_SERIALIZE_FORMAT;
 }
-#line 4265 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4266 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 166:
-#line 1296 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1297 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_GT, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[0].node));
     switch ((yyvsp[-1].ival))
@@ -4290,20 +4291,20 @@ yyreduce:
             break;
     }
 }
-#line 4294 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4295 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 167:
-#line 1321 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1322 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NE, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_NE_SERIALIZE_FORMAT;
 }
-#line 4303 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4304 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 168:
-#line 1326 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1327 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NE, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[0].node));
     switch ((yyvsp[-1].ival))
@@ -4328,252 +4329,252 @@ yyreduce:
             break;
     }
 }
-#line 4332 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4333 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 169:
-#line 1351 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1352 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_LIKE, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_LIKE_SERIALIZE_FORMAT;
 }
-#line 4341 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4342 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 170:
-#line 1356 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1357 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NOT_LIKE, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_NOT_LIKE_SERIALIZE_FORMAT;
 }
-#line 4350 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4351 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 171:
-#line 1361 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1362 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_AND, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_AND_SERIALIZE_FORMAT;
 }
-#line 4359 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4360 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 172:
-#line 1366 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1367 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_OR, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_OR_SERIALIZE_FORMAT;
 }
-#line 4368 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4369 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 173:
-#line 1371 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1372 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NOT, E_OP_UNARY_PROPERTY_CNT, (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_NOT_SERIALIZE_FORMAT;
 }
-#line 4377 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4378 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 174:
-#line 1376 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1377 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IS, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IS_SERIALIZE_FORMAT;
 }
-#line 4386 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4387 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 175:
-#line 1381 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1382 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IS_NOT, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
 }
-#line 4395 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4396 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 176:
-#line 1386 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1387 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IS, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IS_SERIALIZE_FORMAT;
 }
-#line 4404 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4405 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 177:
-#line 1391 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1392 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IS_NOT, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
 }
-#line 4413 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4414 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 178:
-#line 1396 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1397 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IS, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IS_SERIALIZE_FORMAT;
 }
-#line 4422 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4423 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 179:
-#line 1401 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1402 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IS_NOT, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
 }
-#line 4431 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4432 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 180:
-#line 1406 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1407 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_BTW, E_OP_TERNARY_PROPERTY_CNT, (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_BETWEEN_SERIALIZE_FORMAT;
 }
-#line 4440 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4441 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 181:
-#line 1411 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1412 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NOT_BTW, E_OP_TERNARY_PROPERTY_CNT, (yyvsp[-5].node), (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_NOT_BETWEEN_SERIALIZE_FORMAT;
 }
-#line 4449 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4450 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 182:
-#line 1416 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1417 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_IN, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_IN_SERIALIZE_FORMAT;
 }
-#line 4458 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4459 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 183:
-#line 1421 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1422 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_NOT_IN, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_NOT_IN_SERIALIZE_FORMAT;
 }
-#line 4467 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4468 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 184:
-#line 1426 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1427 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OP_CNN, E_OP_BINARY_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &OP_CNN_SERIALIZE_FORMAT;
 }
-#line 4476 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4477 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 186:
-#line 1435 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1436 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, E_PARENS_PROPERTY_CNT, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
 }
-#line 4485 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4486 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 187:
-#line 1444 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1445 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_CASE, E_CASE_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node));
     (yyval.node)->serialize_format = &CASE_SERIALIZE_FORMAT;
 }
-#line 4494 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4495 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 188:
-#line 1451 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1452 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 4500 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4501 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 191:
-#line 1458 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1459 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_WHEN_LIST, E_LIST_PROPERTY_CNT, (yyvsp[-1].node), (yyvsp[0].node));
-    (yyval.node)->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
+    (yyval.node)->serialize_format = &SPACE_LIST_SERIALIZE_FORMAT;
 }
-#line 4509 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4510 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 192:
-#line 1466 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1467 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_WHEN, E_WHEN_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[0].node));
     (yyval.node)->serialize_format = &WHEN_SERIALIZE_FORMAT;
 }
-#line 4518 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4519 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 193:
-#line 1473 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1474 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = nullptr; }
-#line 4524 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4525 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 194:
-#line 1475 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1476 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_CASE_DEFAULT, E_CASE_DEFAULT_PROPERTY_CNT, (yyvsp[0].node));
     (yyval.node)->serialize_format = &ELSE_SERIALIZE_FORMAT;
 }
-#line 4533 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4534 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 199:
-#line 1492 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1493 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		(yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node), nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4543 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4544 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 200:
-#line 1498 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1499 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		(yyvsp[-3].node), (yyvsp[-1].node), nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4553 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4554 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 201:
-#line 1504 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1505 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		(yyvsp[-5].node), (yyvsp[-2].node), (yyvsp[0].node), (yyvsp[-3].node), nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_DIS_OVER_SERIALIZE_FORMAT;
 }
-#line 4563 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4564 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 202:
-#line 1510 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1511 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		(yyvsp[-4].node), (yyvsp[-1].node), nullptr, (yyvsp[-2].node), nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_DIS_OVER_SERIALIZE_FORMAT;
 }
-#line 4573 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4574 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 203:
-#line 1516 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1517 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     if (!Node::CHECK_FUNCTION_CALL_WITH_STAR((yyvsp[-4].node)))
     {
@@ -4585,11 +4586,11 @@ yyreduce:
     		(yyvsp[-4].node), star, (yyvsp[0].node), nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4589 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4590 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 204:
-#line 1528 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1529 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     if (!Node::CHECK_FUNCTION_CALL_WITH_STAR((yyvsp[-3].node)))
     {
@@ -4601,167 +4602,167 @@ yyreduce:
     		(yyvsp[-3].node), star, nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4605 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4606 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 205:
-#line 1540 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1541 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "GROUPING");
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		fun_name, (yyvsp[-1].node), nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4616 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4617 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 206:
-#line 1549 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1550 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "AVG"); }
-#line 4622 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4623 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 207:
-#line 1550 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1551 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "MAX"); }
-#line 4628 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4629 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 208:
-#line 1551 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1552 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "MIN"); }
-#line 4634 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4635 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 209:
-#line 1552 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1553 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "SUM"); }
-#line 4640 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4641 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 210:
-#line 1553 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1554 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "STDDEV_POP"); }
-#line 4646 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4647 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 211:
-#line 1554 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1555 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "STDDEV_SAMP"); }
-#line 4652 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4653 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 212:
-#line 1555 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1556 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "VAR_POP"); }
-#line 4658 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4659 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 213:
-#line 1556 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1557 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "VAR_SAMP"); }
-#line 4664 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4665 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 214:
-#line 1557 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1558 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "COUNT"); }
-#line 4670 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4671 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 215:
-#line 1562 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1563 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		(yyvsp[-3].node), nullptr, (yyvsp[0].node), nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4680 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4681 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 216:
-#line 1570 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1571 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "RANK"); }
-#line 4686 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4687 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 217:
-#line 1571 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1572 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "DENSE_RANK"); }
-#line 4692 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4693 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 218:
-#line 1572 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1573 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "ROW_NUMBER"); }
-#line 4698 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4699 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 219:
-#line 1577 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1578 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		(yyvsp[-2].node), nullptr, nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4708 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4709 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 220:
-#line 1583 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1584 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		(yyvsp[-3].node), (yyvsp[-1].node), nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4718 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4719 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 221:
-#line 1595 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1596 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		(yyvsp[-3].node), (yyvsp[-1].node), nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4728 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4729 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 222:
-#line 1601 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1602 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "RIGHT");
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		fun_name, nullptr, nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4739 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4740 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 223:
-#line 1608 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1609 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "LEFT");
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		fun_name, nullptr, nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4750 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4751 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 224:
-#line 1615 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1616 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CAST");
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		fun_name, (yyvsp[-3].node), nullptr, nullptr, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &FUN_CALL_AS_SERIALIZE_FORMAT;
 }
-#line 4761 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4762 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 225:
-#line 1622 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1623 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* transcoding_name = Node::makeTerminalNode(E_STRING, (yyvsp[-1].node)->text());
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CONVERT");
@@ -4770,55 +4771,55 @@ yyreduce:
         		fun_name, (yyvsp[-3].node), nullptr, nullptr, transcoding_name);
     (yyval.node)->serialize_format = &FUN_CALL_USING_SERIALIZE_FORMAT;
 }
-#line 4774 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4775 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 226:
-#line 1631 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1632 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "COALESCE");
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		fun_name, (yyvsp[-1].node), nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4785 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4786 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 227:
-#line 1638 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1639 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CURRENT_TIMESTAMP");
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		fun_name, nullptr, nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-#line 4796 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4797 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 228:
-#line 1645 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1646 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CURRENT_TIMESTAMP");
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		fun_name, (yyvsp[-1].node), nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4807 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4808 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 229:
-#line 1652 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1653 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "CURRENT_USER");
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		fun_name, nullptr, nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-#line 4818 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4819 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 230:
-#line 1659 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1660 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* expr_list = Node::makeNonTerminalNode(E_EXPR_LIST, E_LIST_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[-1].node));
     expr_list->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
@@ -4827,1157 +4828,1157 @@ yyreduce:
     		fun_name, expr_list, nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-#line 4831 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4832 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 231:
-#line 1668 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1669 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "SESSION_USER");
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		fun_name, nullptr, nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-#line 4842 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4843 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 232:
-#line 1675 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1676 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "SYSTEM_USER");
     (yyval.node) = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
     		fun_name, nullptr, nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-#line 4853 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4854 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 233:
-#line 1685 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1686 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node));
     (yyval.node)->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
 }
-#line 4862 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4863 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 234:
-#line 1690 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1691 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, nullptr, (yyvsp[-2].node), (yyvsp[-1].node));
     (yyval.node)->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
 }
-#line 4871 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4872 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 235:
-#line 1695 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1696 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, (yyvsp[-2].node), nullptr, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
 }
-#line 4880 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4881 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 236:
-#line 1700 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1701 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, (yyvsp[-2].node), (yyvsp[-1].node), nullptr);
     (yyval.node)->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
 }
-#line 4889 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4890 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 237:
-#line 1705 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1706 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, (yyvsp[-1].node), nullptr, nullptr);
     (yyval.node)->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
 }
-#line 4898 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4899 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 238:
-#line 1710 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1711 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, nullptr, (yyvsp[-1].node), nullptr);
     (yyval.node)->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
 }
-#line 4907 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4908 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 239:
-#line 1715 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1716 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, nullptr, nullptr, (yyvsp[-1].node));
     (yyval.node)->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
 }
-#line 4916 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4917 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 240:
-#line 1720 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1721 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, nullptr, nullptr, nullptr);
     (yyval.node)->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
 }
-#line 4925 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4926 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 241:
-#line 1728 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1729 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* rows = Node::makeTerminalNode(E_IDENTIFIER, "ROWS");
     (yyval.node) = Node::makeNonTerminalNode(E_ROWS_CLAUSE, E_ROWS_CLAUSE_PROPERTY_CNT, rows, (yyvsp[0].node));
     (yyval.node)->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
 }
-#line 4935 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4936 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 242:
-#line 1734 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1735 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     Node* range = Node::makeTerminalNode(E_IDENTIFIER, "RANGE");
     (yyval.node) = Node::makeNonTerminalNode(E_RANGE_CLAUSE, E_RANGE_CLAUSE_PROPERTY_CNT, range, (yyvsp[0].node));
     (yyval.node)->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
 }
-#line 4945 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4946 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 243:
-#line 1743 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1744 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "UNBOUNDED PRECEDING"); }
-#line 4951 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4952 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 244:
-#line 1745 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1746 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, (yyvsp[-1].node)->text()+"PRECEDING"); delete((yyvsp[-1].node)); }
-#line 4957 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4958 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 245:
-#line 1747 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1748 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "CURRENT ROW"); }
-#line 4963 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4964 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 246:
-#line 1749 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1750 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED PRECEDING"); }
-#line 4969 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4970 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 247:
-#line 1751 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1752 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+(yyvsp[-4].node)->text()+" PRECEDING AND UNBOUNDED PRECEDING"); delete((yyvsp[-4].node)); }
-#line 4975 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4976 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 248:
-#line 1753 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1754 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND UNBOUNDED PRECEDING"); }
-#line 4981 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4982 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 249:
-#line 1755 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1756 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED PRECEDING"); }
-#line 4987 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4988 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 250:
-#line 1757 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1758 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+(yyvsp[-4].node)->text()+" FOLLOWING AND UNBOUNDED PRECEDING"); delete((yyvsp[-4].node)); }
-#line 4993 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 4994 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 251:
-#line 1759 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1760 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND "+(yyvsp[-1].node)->text()+" PRECEDING"); delete((yyvsp[-1].node));}
-#line 4999 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5000 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 252:
-#line 1761 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1762 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+(yyvsp[-4].node)->text()+" PRECEDING AND "+(yyvsp[-1].node)->text()+" PRECEDING"); delete((yyvsp[-4].node)); delete((yyvsp[-1].node)); }
-#line 5005 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5006 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 253:
-#line 1763 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1764 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND "+(yyvsp[-1].node)->text()+" PRECEDING"); delete((yyvsp[-1].node)); }
-#line 5011 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5012 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 254:
-#line 1765 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1766 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND "+(yyvsp[-1].node)->text()+" PRECEDING"); delete((yyvsp[-1].node)); }
-#line 5017 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5018 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 255:
-#line 1767 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1768 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+(yyvsp[-4].node)->text()+" FOLLOWING AND "+(yyvsp[-1].node)->text()+" PRECEDING"); delete((yyvsp[-4].node)); delete((yyvsp[-1].node)); }
-#line 5023 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5024 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 256:
-#line 1769 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1770 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW"); }
-#line 5029 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5030 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 257:
-#line 1771 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1772 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+(yyvsp[-4].node)->text()+" PRECEDING AND CURRENT ROW"); delete((yyvsp[-4].node)); }
-#line 5035 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5036 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 258:
-#line 1773 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1774 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND CURRENT ROW"); }
-#line 5041 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5042 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 259:
-#line 1775 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1776 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND CURRENT ROW"); }
-#line 5047 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5048 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 260:
-#line 1777 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1778 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+(yyvsp[-4].node)->text()+" FOLLOWING AND CURRENT ROW"); delete((yyvsp[-4].node)); }
-#line 5053 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5054 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 261:
-#line 1779 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1780 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING"); }
-#line 5059 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5060 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 262:
-#line 1781 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1782 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+(yyvsp[-4].node)->text()+" PRECEDING AND UNBOUNDED FOLLOWING"); delete((yyvsp[-4].node)); }
-#line 5065 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5066 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 263:
-#line 1783 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1784 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING"); }
-#line 5071 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5072 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 264:
-#line 1785 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1786 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED FOLLOWING"); }
-#line 5077 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5078 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 265:
-#line 1787 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1788 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+(yyvsp[-4].node)->text()+" FOLLOWING AND UNBOUNDED FOLLOWING"); delete((yyvsp[-4].node)); }
-#line 5083 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5084 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 266:
-#line 1789 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1790 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND DECIMAL FOLLOWING"); }
-#line 5089 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5090 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 267:
-#line 1791 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1792 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+(yyvsp[-4].node)->text()+" PRECEDING AND "+(yyvsp[-1].node)->text()+" FOLLOWING"); delete((yyvsp[-4].node)); delete((yyvsp[-1].node)); }
-#line 5095 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5096 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 268:
-#line 1793 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1794 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND "+(yyvsp[-1].node)->text()+" FOLLOWING"); delete((yyvsp[-1].node)); }
-#line 5101 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5102 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 269:
-#line 1795 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1796 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND "+(yyvsp[-1].node)->text()+" FOLLOWING"); delete((yyvsp[-1].node)); }
-#line 5107 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5108 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 270:
-#line 1797 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1798 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.node) = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+(yyvsp[-4].node)->text()+" FOLLOWING AND "+(yyvsp[-1].node)->text()+" FOLLOWING"); delete((yyvsp[-4].node)); delete((yyvsp[-1].node)); }
-#line 5113 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5114 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 275:
-#line 1809 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1810 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[0].node)->text());
     delete((yyvsp[0].node));
 }
-#line 5122 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5123 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 276:
-#line 1817 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1818 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "REF("+(yyvsp[-3].node)->text()+")SCOPE "+(yyvsp[0].node)->text());
     delete((yyvsp[-3].node));delete((yyvsp[0].node));
 }
-#line 5131 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5132 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 277:
-#line 1825 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1826 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[-4].node)->text()+" ARRAY("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-4].node));
     delete((yyvsp[-1].node));
 }
-#line 5141 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5142 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 278:
-#line 1831 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1832 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[-1].node)->text()+" ARRAY");
     delete((yyvsp[-1].node));
 }
-#line 5150 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5151 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 279:
-#line 1836 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1837 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[-1].node)->text()+" MULTISET");
     delete((yyvsp[-1].node));
 }
-#line 5159 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5160 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 280:
-#line 1844 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1845 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[-4].node)->text()+" CHARACTER SET "+(yyvsp[-1].node)->text()+(yyvsp[0].node)->text());
     delete((yyvsp[-4].node));delete((yyvsp[-1].node));delete((yyvsp[0].node));
 }
-#line 5168 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5169 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 281:
-#line 1849 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1850 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[-3].node)->text()+" CHARACTER SET "+(yyvsp[0].node)->text());
     delete((yyvsp[-3].node));delete((yyvsp[0].node));
 }
-#line 5177 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5178 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 282:
-#line 1854 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1855 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[-1].node)->text()+(yyvsp[0].node)->text());
     delete((yyvsp[-1].node));delete((yyvsp[0].node));
 }
-#line 5186 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5187 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 284:
-#line 1860 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1861 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[-1].node)->text()+(yyvsp[0].node)->text());
     delete((yyvsp[-1].node));delete((yyvsp[0].node));
 }
-#line 5195 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5196 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 291:
-#line 1874 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1875 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "INTERVAL "+(yyvsp[0].node)->text());
     delete((yyvsp[0].node));
 }
-#line 5204 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5205 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 292:
-#line 1882 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1883 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[-2].node)->text()+" TO "+(yyvsp[0].node)->text());
     delete((yyvsp[-2].node));delete((yyvsp[0].node));
 }
-#line 5213 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5214 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 294:
-#line 1891 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1892 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[-3].node)->text()+"("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5222 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5223 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 297:
-#line 1901 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1902 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "SECOND("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5231 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5232 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 298:
-#line 1906 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1907 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "SECOND");
 }
-#line 5239 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5240 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 299:
-#line 1913 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1914 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[-3].node)->text()+"("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-3].node));delete((yyvsp[-1].node));
 }
-#line 5248 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5249 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 301:
-#line 1919 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1920 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "SECOND("+(yyvsp[-3].node)->text()+","+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-3].node));delete((yyvsp[-1].node));
 }
-#line 5257 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5258 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 302:
-#line 1924 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1925 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "SECOND("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5266 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5267 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 303:
-#line 1929 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1930 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "SECOND");
 }
-#line 5274 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5275 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 304:
-#line 1936 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1937 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "YEAR");
 }
-#line 5282 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5283 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 305:
-#line 1940 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1941 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "MONTH");
 }
-#line 5290 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5291 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 306:
-#line 1944 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1945 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "DAY");
 }
-#line 5298 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5299 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 307:
-#line 1948 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1949 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "HOUR");
 }
-#line 5306 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5307 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 308:
-#line 1952 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1953 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "MINUTE");
 }
-#line 5314 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5315 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 309:
-#line 1959 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1960 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "BOOLEAN");
 }
-#line 5322 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5323 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 310:
-#line 1966 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1967 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "DATE");
 }
-#line 5330 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5331 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 311:
-#line 1970 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1971 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "TIME("+(yyvsp[-4].node)->text()+") WITH TIME ZONE");
     delete((yyvsp[-4].node));
 }
-#line 5339 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5340 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 312:
-#line 1975 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1976 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "TIME("+(yyvsp[-4].node)->text()+") WITHOUT TIME ZONE");
     delete((yyvsp[-4].node));
 }
-#line 5348 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5349 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 313:
-#line 1980 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1981 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "TIME("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5357 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5358 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 314:
-#line 1985 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1986 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "TIME WITH TIME ZONE");
 }
-#line 5365 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5366 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 315:
-#line 1989 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1990 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "TIME WITHOUT TIME ZONE");
 }
-#line 5373 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5374 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 316:
-#line 1993 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1994 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "TIME");
 }
-#line 5381 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5382 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 317:
-#line 1997 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 1998 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "TIMESTAMP("+(yyvsp[-4].node)->text()+") WITH TIME ZONE");
     delete((yyvsp[-4].node));
 }
-#line 5390 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5391 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 318:
-#line 2002 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2003 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "TIMESTAMP("+(yyvsp[-4].node)->text()+") WITHOUT TIME ZONE");
     delete((yyvsp[-4].node));
 }
-#line 5399 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5400 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 319:
-#line 2007 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2008 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "TIMESTAMP("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5408 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5409 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 320:
-#line 2012 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2013 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "TIMESTAMP WITH TIME ZONE");
 }
-#line 5416 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5417 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 321:
-#line 2016 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2017 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "TIMESTAMP WITHOUT TIME ZONE");
 }
-#line 5424 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5425 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 322:
-#line 2020 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2021 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "TIMESTAMP");
 }
-#line 5432 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5433 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 325:
-#line 2032 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2033 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NUMERIC("+(yyvsp[-3].node)->text()+","+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-3].node));delete((yyvsp[-1].node));
 }
-#line 5441 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5442 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 326:
-#line 2037 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2038 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NUMERIC("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5450 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5451 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 327:
-#line 2042 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2043 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NUMERIC");
 }
-#line 5458 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5459 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 328:
-#line 2046 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2047 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "DECIMAL("+(yyvsp[-3].node)->text()+","+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-3].node));delete((yyvsp[-1].node));
 }
-#line 5467 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5468 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 329:
-#line 2051 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2052 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "DECIMAL("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5476 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5477 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 330:
-#line 2056 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2057 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "DECIMAL");
 }
-#line 5484 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5485 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 331:
-#line 2060 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2061 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "DEC("+(yyvsp[-3].node)->text()+","+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-3].node));delete((yyvsp[-1].node));
 }
-#line 5493 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5494 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 332:
-#line 2065 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2066 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "DEC("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5502 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5503 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 333:
-#line 2070 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2071 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "DEC");
 }
-#line 5510 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5511 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 334:
-#line 2074 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2075 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "SMALLINT");
 }
-#line 5518 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5519 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 335:
-#line 2078 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2079 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "INTEGER");
 }
-#line 5526 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5527 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 336:
-#line 2082 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2083 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "INT");
 }
-#line 5534 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5535 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 337:
-#line 2086 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2087 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "BIGINT");
 }
-#line 5542 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5543 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 338:
-#line 2093 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2094 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "FLOAT("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5551 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5552 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 339:
-#line 2098 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2099 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "FLOAT");
 }
-#line 5559 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5560 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 340:
-#line 2102 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2103 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "REAL");
 }
-#line 5567 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5568 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 341:
-#line 2106 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2107 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "DOUBLE PRECISION");
 }
-#line 5575 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5576 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 342:
-#line 2113 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2114 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CHARACTER("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5584 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5585 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 343:
-#line 2118 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2119 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CHARACTER");
 }
-#line 5592 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5593 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 344:
-#line 2122 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2123 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CHAR("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5601 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5602 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 345:
-#line 2127 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2128 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CHAR");
 }
-#line 5609 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5610 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 346:
-#line 2131 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2132 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CHARACTER VARYING("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5618 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5619 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 347:
-#line 2136 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2137 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CHAR VARYING("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5627 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5628 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 348:
-#line 2141 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2142 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "VARCHAR("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5636 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5637 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 349:
-#line 2146 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2147 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CHARACTER LARGE OBJECT("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5645 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5646 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 350:
-#line 2151 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2152 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CHARACTER LARGE OBJECT");
 }
-#line 5653 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5654 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 351:
-#line 2155 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2156 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CHAR LARGE OBJECT("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5662 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5663 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 352:
-#line 2160 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2161 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CHAR LARGE OBJECT");
 }
-#line 5670 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5671 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 353:
-#line 2164 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2165 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CLOB("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5679 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5680 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 354:
-#line 2169 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2170 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CLOB");
 }
-#line 5687 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5688 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 355:
-#line 2176 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2177 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "BINARY LARGE OBJECT("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5696 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5697 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 356:
-#line 2181 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2182 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "BINARY LARGE OBJECT");
 }
-#line 5704 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5705 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 357:
-#line 2185 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2186 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "BLOB("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5713 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5714 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 358:
-#line 2190 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2191 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "BLOB");
 }
-#line 5721 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5722 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 359:
-#line 2197 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2198 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NATIONAL CHARACTER("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5730 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5731 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 360:
-#line 2202 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2203 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NATIONAL CHARACTER");
 }
-#line 5738 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5739 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 361:
-#line 2206 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2207 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NATIONAL CHAR("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5747 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5748 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 362:
-#line 2211 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2212 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NATIONAL CHAR");
 }
-#line 5755 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5756 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 363:
-#line 2215 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2216 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NCHAR("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5764 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5765 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 364:
-#line 2220 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2221 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NCHAR");
 }
-#line 5772 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5773 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 365:
-#line 2224 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2225 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NATIONAL CHARACTER VARYING("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5781 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5782 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 366:
-#line 2229 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2230 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NATIONAL CHAR VARYING("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5790 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5791 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 367:
-#line 2234 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2235 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NCHAR VARYING("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5799 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5800 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 368:
-#line 2239 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2240 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NATIONAL CHARACTER LARGE OBJECT("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5808 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5809 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 369:
-#line 2244 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2245 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NATIONAL CHARACTER LARGE OBJECT");
 }
-#line 5816 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5817 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 370:
-#line 2248 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2249 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NCHAR LARGE OBJECT("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5825 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5826 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 371:
-#line 2253 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2254 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NCHAR LARGE OBJECT");
 }
-#line 5833 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5834 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 372:
-#line 2257 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2258 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NCLOB("+(yyvsp[-1].node)->text()+")");
     delete((yyvsp[-1].node));
 }
-#line 5842 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5843 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 373:
-#line 2262 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2263 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "NCLOB");
 }
-#line 5850 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5851 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 374:
-#line 2269 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2270 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[-2].node)->text()+" "+(yyvsp[-1].node)->text()+" "+(yyvsp[0].node)->text());
     delete((yyvsp[-2].node));delete((yyvsp[-1].node));delete((yyvsp[0].node));
 }
-#line 5859 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5860 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 375:
-#line 2274 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2275 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[-1].node)->text()+" "+(yyvsp[0].node)->text());
     delete((yyvsp[-1].node));delete((yyvsp[0].node));
 }
-#line 5868 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5869 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 376:
-#line 2279 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2280 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[-1].node)->text()+" "+(yyvsp[0].node)->text());
     delete((yyvsp[-1].node));delete((yyvsp[0].node));
 }
-#line 5877 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5878 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 377:
-#line 2284 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2285 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, (yyvsp[0].node)->text());
     delete((yyvsp[0].node));
 }
-#line 5886 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5887 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 378:
-#line 2292 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2293 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CHARACTERS");
 }
-#line 5894 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5895 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 379:
-#line 2296 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2297 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "CODE_UNITS");
 }
-#line 5902 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5903 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 380:
-#line 2300 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2301 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "OCTETS");
 }
-#line 5910 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5911 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 381:
-#line 2307 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2308 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "K");
 }
-#line 5918 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5919 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 382:
-#line 2311 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2312 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "M");
 }
-#line 5926 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5927 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 383:
-#line 2315 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2316 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "G");
 }
-#line 5934 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5935 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 384:
-#line 2322 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2323 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_ALL, "ALL");
 }
-#line 5942 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5943 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 385:
-#line 2326 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2327 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_DISTINCT, "DISTINCT");
 }
-#line 5950 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5951 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 386:
-#line 2332 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2333 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.ival) = 0; }
-#line 5956 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5957 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 387:
-#line 2333 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2334 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.ival) = 1; }
-#line 5962 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5963 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 388:
-#line 2334 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2335 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     { (yyval.ival) = 2; }
-#line 5968 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5969 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
   case 392:
-#line 2348 "./sqlparser_sql2003.y" /* yacc.c:1646  */
+#line 2349 "./sqlparser_sql2003.y" /* yacc.c:1646  */
     {
     (yyval.node) = Node::makeTerminalNode(E_STRING, "COLLATE "+(yyvsp[0].node)->text());
     delete((yyvsp[0].node));
 }
-#line 5977 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5978 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 5981 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
+#line 5982 "sqlparser_sql2003_bison.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -6212,7 +6213,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 2354 "./sqlparser_sql2003.y" /* yacc.c:1906  */
+#line 2355 "./sqlparser_sql2003.y" /* yacc.c:1906  */
 
 /*********************************
  ** Section 4: Additional C code

@@ -4,6 +4,14 @@
 #include "resolve.h"
 #include "ResultPlan.h"
 
+bool CompressSql(const std::string& sql, std::string& out_sql) {
+    return parser::compress_sql(sql, out_sql);
+}
+
+bool BeautifySql(const std::string& sql, std::string& out_sql) {
+    return parser::beautify_sql(sql, out_sql);
+}
+
 IPlan* CreatePlan(
         const BaseTableVisit& baseTableVisit,
         const BaseTableColumnVisit& baseTableColumnVisit,

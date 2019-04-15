@@ -4,7 +4,6 @@
 #include <list>
 #include <string>
 #include <set>
-#include "serialize_format.h"
 #include "node_struct.h"
 
 enum NodeType
