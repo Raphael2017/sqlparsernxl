@@ -123,12 +123,12 @@ Form PENTA_SERIALIZE_FORMAT_0_C               {{0,"",0,""}, {0," ",4,""}, {0," "
 /* PENTA_SERIALIZE_FORMAT_0_B */
 FmCB PENTA_SERIALIZE_FORMAT_0                 {&PENTA_SERIALIZE_FORMAT_0_C, &PENTA_SERIALIZE_FORMAT_0_C};
 
-Form JOINED_TB_1_SERIALIZE_FORMAT_C           {{0,"",1," "}, {0,"",0,""}, {1," JOIN "}, {0,"",2,""}, {1,"ON "}, {0,"",3,""}};
+Form JOINED_TB_1_SERIALIZE_FORMAT_C           {{0,"",1," "}, {0,"",0,""}, {1," JOIN "}, {0,"",2,""}, {1," ON "}, {0,"",3,""}};
 Form JOINED_TB_1_SERIALIZE_FORMAT_B           {{0,"",1," "}, {0,"\n",0," "}, {1,"JOIN "}, {0,"",2,""}, {1,"\n",-1,"ON "}, {0,"",3,""}};
 FmCB JOINED_TB_1_SERIALIZE_FORMAT             {&JOINED_TB_1_SERIALIZE_FORMAT_C, &JOINED_TB_1_SERIALIZE_FORMAT_B};
 
 
-Form JOINED_TB_USING_SERIALIZE_FORMAT_C       {{0,"",1," "}, {0,"",0,""}, {1," JOIN "}, {0,"",2,""}, {1,"USING"}, {0,"",3,""}};
+Form JOINED_TB_USING_SERIALIZE_FORMAT_C       {{0,"",1," "}, {0,"",0,""}, {1," JOIN "}, {0,"",2,""}, {1," USING"}, {0,"",3,""}};
 Form JOINED_TB_USING_SERIALIZE_FORMAT_B       {{0,"",1," "}, {0,"\n",0,""}, {1," JOIN "}, {0,"",2,""}, {1,"\n",-1,"USING"}, {0,"",3,""}};
 FmCB JOINED_TB_USING_SERIALIZE_FORMAT         {&JOINED_TB_USING_SERIALIZE_FORMAT_C, &JOINED_TB_USING_SERIALIZE_FORMAT_B};
 
