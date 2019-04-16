@@ -206,7 +206,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> large_object_length multiplier char_length_units
 %type <node> interval_type interval_qualifier start_field end_field
 %type <node> single_datetime_field non_second_primary_datetime_field
-%type <node> name_chain
+%type <node> name_r
 
 %start sql_stmt
 %%
@@ -637,7 +637,7 @@ with_list:
 
 /*todo sql2003 support <search or cycle clause> */
 common_table_expr:
-    NAME opt_derived_column_list AS select_with_parens
+    name_r opt_derived_column_list AS select_with_parens
 {
     $$ = Node::makeNonTerminalNode(E_COMMON_TABLE_EXPR, E_COMMON_TABLE_EXPR_PROPERTY_CNT, $1, $2, $4);
     $$->serialize_format = &COMMON_TABLE_EXPR_SERIALIZE_FORMAT;
@@ -658,8 +658,8 @@ simple_ident_list_with_parens:
 ;
 
 simple_ident_list:
-    NAME
-  | NAME ',' simple_ident_list
+    name_r
+  | name_r ',' simple_ident_list
 {
     $$ = Node::makeNonTerminalNode(E_SIMPLE_IDENT_LIST, E_LIST_PROPERTY_CNT, $1, $3);
     $$->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
@@ -780,110 +780,110 @@ opt_simple_ident_list_with_parens:
 
 /* keep these that can solve <identifier chain> in sql2003 */
 column_ref:
-		 			    NAME
+		 			    name_r
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			$1, nullptr, nullptr, nullptr, nullptr);
     $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-    |   		           NAME '.' NAME
+    |   		           name_r '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			$3, $1, nullptr, nullptr, nullptr);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_1;
 }
-    |   			   NAME '.' '*'
+    |   			   name_r '.' '*'
 {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, $1, nullptr, nullptr, nullptr);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_1;
 }
-    |		          NAME '.' NAME '.' NAME
+    |		          name_r '.' name_r '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			$5, $3, $1, nullptr, nullptr);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_2;
 }
-    |		          NAME '.' NAME '.' '*'
+    |		          name_r '.' name_r '.' '*'
 {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, $3, $1, nullptr, nullptr);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_2;
 }
-    |	         NAME '.' NAME '.' NAME '.' NAME
+    |	         name_r '.' name_r '.' name_r '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			$7, $5, $3, $1, nullptr);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_3;
 }
-    |            NAME '.' NAME '.' NAME '.' '*'
+    |            name_r '.' name_r '.' name_r '.' '*'
 {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, $5, $3, $1, nullptr);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_3;
 }
-    |	         NAME '.'      '.' NAME '.' NAME
+    |	         name_r '.'      '.' name_r '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			$6, $4, nullptr, $1, nullptr);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_3;
 }
-    |            NAME '.'      '.' NAME '.' '*'
+    |            name_r '.'      '.' name_r '.' '*'
 {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, $4, nullptr, $1, nullptr);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_3;
 }
-    |   NAME '.' NAME '.' NAME '.' NAME '.' NAME
+    |   name_r '.' name_r '.' name_r '.' name_r '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			$9, $7, $5, $3, $1);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-    |   NAME '.' NAME '.' NAME '.' NAME '.' '*'
+    |   name_r '.' name_r '.' name_r '.' name_r '.' '*'
 {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, $7, $5, $3, $1);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-    |   NAME '.'      '.' NAME '.' NAME '.' NAME
+    |   name_r '.'      '.' name_r '.' name_r '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			$8, $6, $4, nullptr, $1);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-    |   NAME '.'      '.' NAME '.' NAME '.' '*'
+    |   name_r '.'      '.' name_r '.' name_r '.' '*'
 {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, $6, $4, nullptr, $1);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-    |   NAME '.' NAME '.'      '.' NAME '.' NAME
+    |   name_r '.' name_r '.'      '.' name_r '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			$8, $6, nullptr, $3, $1);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-    |   NAME '.' NAME '.'      '.' NAME '.' '*'
+    |   name_r '.' name_r '.'      '.' name_r '.' '*'
 {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			nd, $6, nullptr, $3, $1);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-    |   NAME '.'      '.'      '.' NAME '.' NAME
+    |   name_r '.'      '.'      '.' name_r '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
     			$7, $5, nullptr, nullptr, $1);
     $$->serialize_format = &OP_NAME_FIELD_SERIALIZE_FORMAT_4;
 }
-    |   NAME '.'      '.'      '.' NAME '.' '*'
+    |   name_r '.'      '.'      '.' name_r '.' '*'
 {
     Node* nd = Node::makeTerminalNode(E_STAR, "*");
     $$ = Node::makeNonTerminalNode(E_OP_NAME_FIELD, E_OP_NAME_FIELD_PROPERTY_CNT,
@@ -894,91 +894,47 @@ column_ref:
 
 /* keep these that can solve <identifier chain> in sql2003 */
 relation_factor:
-    	                         NAME
+    	                         name_r
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $1, nullptr, nullptr, nullptr);
     $$->serialize_format = &SINGLE_SERIALIZE_FORMAT;
 }
-  |                     NAME '.' NAME
+  |                     name_r '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $3, $1, nullptr, nullptr);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_1;
 }
-  |            NAME '.' NAME '.' NAME
+  |            name_r '.' name_r '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $5, $3, $1, nullptr);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
 }
-  |            NAME '.'      '.' NAME
+  |            name_r '.'      '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $4, nullptr, $1, nullptr);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_2;
 }
-  |   NAME '.' NAME '.' NAME '.' NAME
+  |   name_r '.' name_r '.' name_r '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $7, $5, $3, $1);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
 }
-  |   NAME '.'      '.' NAME '.' NAME
+  |   name_r '.'      '.' name_r '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $6, $4, nullptr, $1);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
 }
-  |   NAME '.' NAME '.'      '.' NAME
+  |   name_r '.' name_r '.'      '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $6, nullptr, $3, $1);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
 }
-  |   NAME '.'      '.'      '.' NAME
+  |   name_r '.'      '.'      '.' name_r
 {
     $$ = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, $5, nullptr, nullptr, $1);
     $$->serialize_format = &TABLE_IDENT_SERIALIZE_FORMAT_3;
 }
 ;
-
-/*
-relation_factor:
-    name_chain
-{
-    $$ = Node::NAME_CHAIN_TO_TABLE_IDENT($1);
-    if (!$$)
-    {
-        yyerror(&@1, result, scanner, "Illegal reference table ");
-        YYABORT;
-    }
-}
-;
-
-column_ref:
-    name_chain '.' '*'
-{
-    $$ = Node::NAME_CHAIN_STAR_TO_NAME_FIELD($1);
-    if (!$$)
-    {
-        yyerror(&@1, result, scanner, "Illegal reference column ");
-        YYABORT;
-    }
-}
-  | name_chain
-{
-    $$ = Node::NAME_CHAIN_TO_NAME_FIELD($1);
-    if (!$$)
-    {
-        yyerror(&@1, result, scanner, "Illegal reference column ");
-        YYABORT;
-    }
-}
-;*/
-
-name_chain:
-    NAME	%prec UMINUS
-  | NAME '.' name_chain
-{
-    $$ = Node::makeNonTerminalNode(E_NAME_CHAIN, 2, $1, $3);
-    /* do not use this directly */
-}
-;
-
 
 joined_table:
     '(' joined_table ')'
@@ -1537,13 +1493,6 @@ aggregate_windowed_function:
     		$1, star, nullptr, nullptr, nullptr);
     $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
-  |                GROUPING '('                 expr ')'	/* sql2003 support <grouping operation> */
-{
-    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "GROUPING");
-    $$ = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
-    		fun_name, $3, nullptr, nullptr, nullptr);
-    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
-}
 ;
 
 aggregate_function_name:
@@ -1556,6 +1505,7 @@ aggregate_function_name:
   | VAR_POP		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "VAR_POP"); }
   | VAR_SAMP		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "VAR_SAMP"); }
   | COUNT		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "COUNT"); }
+  | GROUPING		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "GROUPING"); }
 ;
 
 ranking_windowed_function:
@@ -2335,11 +2285,11 @@ all_some_any:
   | ANY		{ $$ = 2; }
 
 relation_name:
-    NAME
+    name_r
 ;
 
 column_label:
-    NAME
+    name_r
   | STRING
 ;
 
@@ -2350,6 +2300,45 @@ collate_clause:
     $$ = Node::makeTerminalNode(E_STRING, "COLLATE "+$2->text());
     delete($2);
 }
+;
+
+
+/* NAME with some non-reserved words tested in sqlserver */
+name_r:
+    NAME
+  | aggregate_function_name	%prec UMINUS
+  | ranking_function_name	%prec UMINUS
+  | non_second_primary_datetime_field	%prec UMINUS
+  | K			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "K"); }
+  | M			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "M"); }
+  | G			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "G"); }
+  | ARRAY		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ARRAY"); }
+  | BINARY		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BINARY"); }
+  | CAST %prec UMINUS	{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CAST"); }
+  | CHARACTERS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CHARACTERS"); }
+  | CODE_UNITS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CODE_UNITS"); }
+  | CORRESPONDING	{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CORRESPONDING"); }
+  | FOLLOWING		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "FOLLOWING"); }
+  | INTERVAL		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "INTERVAL"); }
+  | LARGE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "LARGE"); }
+  | MULTISET		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "MULTISET"); }
+  | OBJECT		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "OBJECT"); }
+  | OCTETS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "OCTETS"); }
+  | ONLY		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ONLY"); }
+  | PARTITION		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "PARTITION"); }
+  | PRECEDING		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "PRECEDING"); }
+  | PRECISION		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "PRECISION"); }
+  | RANGE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "RANGE"); }
+  | RECURSIVE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "RECURSIVE"); }
+  | REF			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "REF"); }
+  | ROW			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ROW"); }
+  | ROWS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ROWS"); }
+  | SCOPE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "SCOPE"); }
+  | SECOND		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "SECOND"); }
+  | UNBOUNDED		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "UNBOUNDED"); }
+  | VARCHAR		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "VARCHAR"); }
+  | WITHOUT		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "WITHOUT"); }
+  | ZONE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ZONE"); }
 ;
 
 %%
