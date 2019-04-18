@@ -47,9 +47,10 @@
 /*
  * E_GROUP_BY
  * */
-#define E_GROUP_BY_PROPERTY_CNT         1
+#define E_GROUP_BY_PROPERTY_CNT         2
 
 #define E_GROUP_BY_EXPR_LIST            0
+#define E_GROUP_BY_SET_FLAG             1
 //////////////////////////////////////////
 
 /*

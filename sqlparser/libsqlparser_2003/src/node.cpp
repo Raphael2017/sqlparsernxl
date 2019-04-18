@@ -205,6 +205,15 @@ Node* Node::makeTerminalNode(NodeType tp, const std::string& yytext)
     ret->nodeType_ = tp;
     ret->isTerminalToken = true;
     ret->terminalToken_.yytex = yytext;
+    switch (tp) {
+        case E_IDENTIFIER:
+        case E_STRING: {
+            ret->terminalToken_.str = yytext;
+        }
+            break;
+        default:
+            break;
+    }
     return ret;
 }
 

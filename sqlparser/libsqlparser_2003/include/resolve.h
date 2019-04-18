@@ -74,6 +74,24 @@ namespace resolve
             Stmt* parent = nullptr,
             ScopeType scope = E_SCOPE_WHATEVER);
 
+    int resolve_group_by_clause(
+            ResultPlan *plan,
+            Node *node,
+            Stmt *parent
+            );
+
+    int resolve_having_clause(
+            ResultPlan *plan,
+            Node *node,
+            Stmt *parent
+            );
+
+    int resolve_order_by_clause(
+            ResultPlan *plan,
+            Node *node,
+            Stmt *parent
+            );
+
     int resolve_cte_clause(
             ResultPlan* plan,
             Node* node,

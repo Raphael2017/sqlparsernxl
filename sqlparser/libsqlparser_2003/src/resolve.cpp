@@ -202,6 +202,64 @@ namespace resolve
 
             resolve_where_clause(plan, node->getChild(E_SELECT_OPT_WHERE), node, select_stmt);
             resolve_select_items(plan, node->getChild(E_SELECT_SELECT_EXPR_LIST), select_stmt, scope);
+            resolve_group_by_clause(plan, node->getChild(E_SELECT_GROUP_BY), select_stmt);
+            resolve_having_clause(plan, node->getChild(E_SELECT_HAVING), select_stmt);
+            resolve_order_by_clause(plan, node->getChild(E_SELECT_ORDER_BY), select_stmt);
+        }
+        return 0;
+    }
+
+    int resolve_group_by_clause(
+            ResultPlan *plan,
+            Node *node,
+            Stmt *parent
+    ) {
+        if (!node)
+            return 0;
+        assert(node->nodeType_ == E_GROUP_BY);
+        Node *expr_list = node->getChild(E_GROUP_BY_EXPR_LIST);
+        assert(expr_list);
+        std::list<Node*> ls;
+        Node::ToList(expr_list, ls);
+        for (Node *expr : ls) {
+            uint64_t sql_raw_expr_id = OB_INVALID_ID;
+            resolve_independ_expr(plan, expr, sql_raw_expr_id, parent);
+        }
+        return 0;
+    }
+
+    int resolve_having_clause(
+            ResultPlan *plan,
+            Node *node,
+            Stmt *parent
+    ) {
+        if (!node)
+            return 0;
+        assert(node->nodeType_ == E_HAVING);
+        Node *expr = node->getChild(E_HAVING_EXPR);
+        assert(expr);
+        uint64_t sql_raw_expr_id = OB_INVALID_ID;
+        resolve_independ_expr(plan, expr, sql_raw_expr_id, parent);
+        return 0;
+    }
+
+    int resolve_order_by_clause(
+            ResultPlan *plan,
+            Node *node,
+            Stmt *parent
+    ) {
+        if (!node)
+            return 0;
+        assert(node->nodeType_ == E_ORDER_BY);
+        Node *sort_list = node->getChild(E_ORDER_BY_SORT_LIST);
+        assert(sort_list);
+        std::list<Node*> ls;
+        Node::ToList(sort_list, ls);
+        for (Node *sort_key : ls) {
+            assert(sort_key->nodeType_ == E_SORT_KEY);
+            Node *expr = sort_key->getChild(E_SORT_KEY_EXPR);
+            uint64_t sql_raw_expr_id = OB_INVALID_ID;
+            resolve_independ_expr(plan, expr, sql_raw_expr_id, parent);
         }
         return 0;
     }
