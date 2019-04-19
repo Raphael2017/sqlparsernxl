@@ -100,6 +100,7 @@ bool parser::parse_sql2003(const std::string& sql, ParseResult* result)
 bool parser::parse_tsql(const std::string &sql, ParseResult *result)
 {
     /* todo */
+    result->accept = false;
     return false;
     /*
     yyscan_t scanner;

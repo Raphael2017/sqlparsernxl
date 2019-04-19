@@ -69,7 +69,7 @@
 
 space         [ \t\n\r\f]
 non_newline   [^\n\r]
-sql_comment   ("--"{non_newline}*)
+sql_comment   (("--"|"#"){non_newline}*)
 whitespace    ({space}+|{sql_comment})
 hint_begin    (\/\*\+({space}*hint{space}+)?)
 c_cmt_begin   \/\*(?:[^\+])
