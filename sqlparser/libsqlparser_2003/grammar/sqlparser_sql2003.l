@@ -81,7 +81,7 @@ identifer         ([A-Za-z_][A_Za-z0-9_]*)
 system_variable  (@@[A-Za-z_][A_Za-z0-9_]*)
 temp_variable (@[A-Za-z_][A_Za-z0-9_]*)
 
-
+hex           (("0X"|"0x")[0-9a-fA-F]+)
 quote         '
 nquote        "N'"
 sqbegin       {quote}
@@ -242,12 +242,20 @@ NULL    {
     return SQL2003_NULLX;
 }
 
+("0X"|"0x")[0-9a-fA-F]+ {
+    Node* nd = Node::makeTerminalNode(E_INT, yytext);
+    yylval->node = nd;
+    return SQL2003_INTNUM;
+}
+
 [0-9]+  {
     Node* nd = Node::makeTerminalNode(E_INT, yytext);
     yylval->node = nd;
     nd->terminalToken_.i = atoi(yytext);
     return SQL2003_INTNUM;
 }
+
+
 
 [0-9]+E[-+]?[0-9]+ |
 [0-9]+"."[0-9]*E[-+]?[0-9]+ |

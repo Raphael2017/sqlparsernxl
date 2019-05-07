@@ -629,8 +629,8 @@ namespace resolve
         }
         else if (table_node->nodeType_ == E_TABLE_IDENT)
         {
-            table_node = table_node->getChild(E_TABLE_IDENT_OBJECT);
             schema_node = table_node->getChild(E_TABLE_IDENT_SCHEMA);
+            table_node = table_node->getChild(E_TABLE_IDENT_OBJECT);
         }
 
         switch (table_node->nodeType_)
