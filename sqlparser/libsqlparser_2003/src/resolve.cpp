@@ -638,7 +638,7 @@ namespace resolve
             case E_IDENTIFIER:
             {
                 std::string table_name = table_node->terminalToken_.str;
-                std::string alias_name = alias_node ? alias_node->terminalToken_.str : "";
+                std::string alias_name = alias_node ? alias_node->terminalToken_.yytex : "";
                 std::string schema_name = schema_node ? schema_node->terminalToken_.str : "";
                 parent->add_table_item(plan, schema_name, table_name, alias_name, out_table_id, node);
             }

@@ -356,7 +356,7 @@ FALSE   {
     return SQL2003_NAME;
 }
 
-[A-Za-z][A-Za-z0-9_]* {
+[A-Za-z_][A-Za-z0-9_]* {
 	Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
 	yylval->node = nd;
 	nd->terminalToken_.str = yytext;
