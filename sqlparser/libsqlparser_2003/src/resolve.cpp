@@ -31,7 +31,7 @@ namespace resolve
                 resolve_multi_statements(plan, node);
             }
                 break;
-            case E_SELECT:
+            case E_DIRECT_SELECT:
             {
                 query_id = OB_INVALID_ID;
                 resolve_select_statement(plan, node, query_id);
@@ -173,23 +173,36 @@ namespace resolve
             Stmt* parent/* = nullptr*/,
             ScopeType scope/* = E_SCOPE_WHATEVER*/)
     {
-        if (node->nodeType_ == E_SELECT_WITH_PARENS)
-            node = Node::remove_parens(node);
-        assert(node->nodeType_ == E_SELECT);
+        Node *with = nullptr;
+        Node *select_clause = node;
+        Node *order_by = nullptr;
+        if (node->nodeType_ == E_DIRECT_SELECT) {
+            with = node->getChild(E_DIRECT_SELECT_WITH);
+            select_clause = node->getChild(E_DIRECT_SELECT_SELECT_CLAUSE);
+            order_by = node->getChild(E_DIRECT_SELECT_ORDER);
+        }
+
+        if (select_clause->nodeType_ == E_SELECT_WITH_PARENS) {
+            select_clause = Node::remove_parens(select_clause);
+        }
+
+        assert(select_clause->nodeType_ == E_SELECT);
         query_id = plan->logicPlan_->generate_query_id();
         SelectStmt* select_stmt = dynamic_cast<SelectStmt*>(plan->logicPlan_->add_query(E_STMT_TYPE_SELECT));
         select_stmt->set_query_id(query_id);
         select_stmt->set_parent(parent);
 
-        Node* set_op = node->getChild(E_SELECT_SET_OPERATION);
+        resolve_cte_clause(plan, with, select_stmt);
+
+        Node* set_op = select_clause->getChild(E_SELECT_SET_OPERATION);
         if (set_op != nullptr)
         {
             /*select with set operation*/
-            Node* former = node->getChild(E_SELECT_FORMER_SELECT_STMT);
+            Node* former = select_clause->getChild(E_SELECT_FORMER_SELECT_STMT);
             uint64_t left_query_id = OB_INVALID_ID;
             resolve_select_statement(plan, former, left_query_id, select_stmt);
             select_stmt->set_set_op_left_query_id(left_query_id);
-            Node* latter = node->getChild(E_SELECT_LATER_SELECT_STMT);
+            Node* latter = select_clause->getChild(E_SELECT_LATER_SELECT_STMT);
             uint64_t  right_query_id = OB_INVALID_ID;
             resolve_select_statement(plan, latter, right_query_id, select_stmt);
             select_stmt->set_set_op_right_query_id(right_query_id);
@@ -197,15 +210,13 @@ namespace resolve
         else
         {
             /*simple select*/
-            resolve_cte_clause(plan, node->getChild(E_SELECT_OPT_WITH), select_stmt);
-            resolve_from_clause(plan, node->getChild(E_SELECT_FROM_LIST), select_stmt);
-
-            resolve_where_clause(plan, node->getChild(E_SELECT_OPT_WHERE), node, select_stmt);
-            resolve_select_items(plan, node->getChild(E_SELECT_SELECT_EXPR_LIST), select_stmt, scope);
-            resolve_group_by_clause(plan, node->getChild(E_SELECT_GROUP_BY), select_stmt);
-            resolve_having_clause(plan, node->getChild(E_SELECT_HAVING), select_stmt);
-            resolve_order_by_clause(plan, node->getChild(E_SELECT_ORDER_BY), select_stmt);
+            resolve_from_clause(plan, select_clause->getChild(E_SELECT_FROM_LIST), select_stmt);
+            resolve_where_clause(plan, select_clause->getChild(E_SELECT_OPT_WHERE), select_clause, select_stmt);
+            resolve_select_items(plan, select_clause->getChild(E_SELECT_SELECT_EXPR_LIST), select_stmt, scope);
+            resolve_group_by_clause(plan, select_clause->getChild(E_SELECT_GROUP_BY), select_stmt);
+            resolve_having_clause(plan, select_clause->getChild(E_SELECT_HAVING), select_stmt);
         }
+        resolve_order_by_clause(plan, order_by, select_stmt);
         return 0;
     }
 

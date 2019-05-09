@@ -42,6 +42,8 @@ enum NodeType
 
     /* nonterminal */
 
+    E_DIRECT_SELECT,
+
     E_STMT_LIST,
     E_SELECT,
     E_SELECT_WITH_PARENS,

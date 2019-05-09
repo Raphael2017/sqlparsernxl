@@ -1,18 +1,9 @@
 -- tools
--- select a.name 表名,b.name 字段名,c.name 字段类型,c.length 字段长度 from sysobjects a,syscolumns b,systypes c where a.id=b.id and a.name='LINEITEM' and a.xtype='U' and b.xtype=c.xtype
+-- select a.name TABLE_NAME,b.name COLUMN_NAME,c.name COLUMN_DATA_TYPE,c.length COLUMN_DATA_LENGTH from sysobjects a,syscolumns b,systypes c where a.id=b.id and a.name='LINEITEM' and a.xtype='U' and b.xtype=c.xtype
 -- https://www.cnblogs.com/sunxuchu/p/5578057.html
 -- [DATABASE].[SCHEMA].[TABLE]  means table object
 
 -- [TEST01].[SA].[LINEITEM]
--- 表名	    字段名	            字段类型	  字段长度
--- LINEITEM	line_item_id	    int	      4
--- LINEITEM	l_returnflag	    int	      4
--- LINEITEM	l_linestatus	    int	      4
--- LINEITEM	l_extendedprice	  money	    8
--- LINEITEM	l_tax	            money	    8
--- LINEITEM	l_shipdate	      datetime	8
--- LINEITEM	l_quantity	      decimal	  17
--- LINEITEM	l_discount	      decimal	  17
 IF OBJECT_ID('TEST01.SA.LINEITEM','U') is not null
     Drop table TEST01.SA.LINEITEM;
 
@@ -49,16 +40,13 @@ VALUES (3           ,0           ,'10'           ,'0.1'  ,'1908-12-01', 12.34   
 SELECT case ROW_NUMBER() OVER ( ORDER BY line_item_id ) when 1 then 'TEST01.SA.LINEITEM:  ' else null end , * FROM TEST01.SA.LINEITEM;
 
 -- [TEST01].[SA].[CUSTOMER]
--- 表名	    字段名	            字段类型	  字段长度
--- CUSTOMER	customer_id	      int	      4
--- CUSTOMER	c_custkey	        nvarchar	8000
--- CUSTOMER	c_mktsegment	    nvarchar	8000
 IF OBJECT_ID('TEST01.SA.CUSTOMER','U') is not null
     Drop table TEST01.SA.CUSTOMER;
 CREATE TABLE TEST01.SA.CUSTOMER (
 customer_id int IDENTITY (1,1) PRIMARY KEY ,
 c_custkey nVarChar(50) default '',
 c_mktsegment nVarChar(50) default '',
+c_privilege_level int,
 );
 
 INSERT INTO TEST01.SA.CUSTOMER
@@ -123,7 +111,7 @@ SELECT case ROW_NUMBER() OVER ( ORDER BY order_id ) when 1 then 'TEST01.SA.ORDER
 --    user can {SELECT | UPDATE | DELETE} this table object without any restrictions
 --    user can't {INSERT} this table object
 -- else if (user.u_management_level == 2)
---    user can {SELECT | UPDATE | DELETE} this table object with record.c_privilege_level < 2
+--    user can {SELECT | UPDATE | DELETE} this table object with record.c_privilege_level < 1
 --    user can't {INSERT} this table object
 --
 
@@ -225,8 +213,8 @@ ORDER  BY revenue DESC,
 
 -- select case 4  (MULTI-TABLE QUERY)
 -- In this case, user want to collect count of orders from table orders which has
--- at least one matching record in the lineitem table, matching condition is the
--- order key and commit date less than receipt date
+-- at least one matching record in the orders table, matching condition is the
+-- customer key and commit date less than receipt date
 --
 SELECT o_orderpriority,
        Count(*) AS ORDER_COUNT
@@ -234,9 +222,8 @@ FROM   sa.orders
 WHERE  o_orderdate >= '1983-07-01'
        AND o_orderdate < Dateadd(mm, 3, Cast('1993-07-01' AS datetime))
        AND EXISTS (SELECT *
-                   FROM   sa.lineitem
-                   WHERE  l_orderkey = o_orderkey
-                          AND l_commitdate < l_receiptdate)
+                   FROM   sa.customer
+                   WHERE  c_custkey = o_custkey)
 GROUP  BY o_orderpriority
 ORDER  BY o_orderpriority;
 

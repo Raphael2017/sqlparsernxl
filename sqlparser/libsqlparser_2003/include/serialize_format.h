@@ -58,6 +58,11 @@ Form SELECT_SERIALIZE_FORMAT_B                {{0,"",16,"\n"}, {1,"SELECT "}, {0
     {0,"",7," "}, {0,"",9," "}, {0,"\n",10," "}, {0,"",11," "}, {0,"\n",12," "}, {0,"",14," "}, {0,"",17,""}};
 FmCB SELECT_SERIALIZE_FORMAT                  {&SELECT_SERIALIZE_FORMAT_C, &SELECT_SERIALIZE_FORMAT_B};
 
+Form SELECT_DIRECT_SERIALIZE_FORMAT_C         {{0,"",0," "}, {0,"",1," "}, {0,"",2," "}, {0,"",3," "}};
+Form SELECT_DIRECT_SERIALIZE_FORMAT_B         {{0,"",0,"\n"}, {0,"",1," "}, {0,"\n",2," "}, {0,"\n",3," "}};
+FmCB SELECT_DIRECT_SERIALIZE_FORMAT           {&SELECT_DIRECT_SERIALIZE_FORMAT_C, &SELECT_DIRECT_SERIALIZE_FORMAT_B};
+
+
 Form SINGLE_WITH_PARENS_SERIALIZE_FORMAT_C    {{1,"("}, {0,"",0,""}, {1,")"}};
 /* SINGLE_WITH_PARENS_SERIALIZE_FORMAT_B */
 FmCB SINGLE_WITH_PARENS_SERIALIZE_FORMAT      {&SINGLE_WITH_PARENS_SERIALIZE_FORMAT_C, &SINGLE_WITH_PARENS_SERIALIZE_FORMAT_C};
@@ -107,7 +112,7 @@ Form DOUBLE_SERIALIZE_FORMAT_C                {{0,"",0," "}, {0,"",1,""}};
 /* DOUBLE_SERIALIZE_FORMAT_B */
 FmCB DOUBLE_SERIALIZE_FORMAT                  {&DOUBLE_SERIALIZE_FORMAT_C, &DOUBLE_SERIALIZE_FORMAT_C};
 
-Form AS_SERIALIZE_FORMAT_C                    {{0,"",0,""}, {0," ",4,""}, {1," AS "}, {0,"",1,""}, {0," ",2,""}, {0," ",3,""}};
+Form AS_SERIALIZE_FORMAT_C                    {{0,"",0,""}, {0," ",4,""}, {0," AS ",1,""}, {0," ",2,""}, {0," ",3,""}};
 /* AS_SERIALIZE_FORMAT_B */
 FmCB AS_SERIALIZE_FORMAT                      {&AS_SERIALIZE_FORMAT_C, &AS_SERIALIZE_FORMAT_C};
 

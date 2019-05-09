@@ -445,6 +445,16 @@
 //////////////////////////////////////////
 
 /*
+ * E_DIRECT_SELECT
+ * */
+#define E_DIRECT_SELECT_PROPERTY_CNT    4
+#define E_DIRECT_SELECT_WITH            0
+#define E_DIRECT_SELECT_SELECT_CLAUSE   1
+#define E_DIRECT_SELECT_ORDER           2
+#define E_DIRECT_SELECT_FOR             3
+//////////////////////////////////////////
+
+/*
  * E_SELECT
  * */
 #define E_SELECT_PROPERTY_CNT           19

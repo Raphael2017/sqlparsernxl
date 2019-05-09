@@ -236,7 +236,7 @@ TEST(TPCHQueryGrammarTests)
         }
         if (parseResult->IsAccept())
         {
-            if (concatenated.back() != ';')
+            if (concatenated.length() > 0 && concatenated.back() != ';')
                 concatenated += ";";
             concatenated += query;
         }
@@ -244,6 +244,14 @@ TEST(TPCHQueryGrammarTests)
     }
 
     auto t1 = TTT(concatenated);
+    std::string tmp = "";
+    CompressSql(concatenated, tmp);
+    printf("\n#####################\n");
+    printf(tmp.c_str());
+    BeautifySql(concatenated, tmp);
+    printf("\n#####################\n");
+    printf(tmp.c_str());
+
     if (t1 != TTT(t1))
         mt::printFailed("SERIALIZE");
     else

@@ -13,7 +13,9 @@ add_subdirectory(libnxl/sql)
 add_subdirectory(libnxl/tsql)
 add_subdirectory(testlibnxl)
 add_subdirectory(libsqlparser)
+add_subdirectory(libsqlparser_2003)
 
 add_subdirectory(LR)
 
+add_subdirectory(testsql2003)
 add_subdirectory(libnxl_unit_test)
