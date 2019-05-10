@@ -873,3 +873,69 @@ bool Node::CHECK_FUNCTION_CALL_WITH_STAR(Node* node)
     return word == "COUNT";
 }
 
+const _FmCB *Node::comp_all_some_any_op_form(int n, int m) {
+    const _FmCB *ret = nullptr;
+    switch (m) {
+        case 0: {
+            if (comp_op == &OP_LE_SERIALIZE_FORMAT)
+                ret = &OP_LE_ALL_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_LT_SERIALIZE_FORMAT)
+                ret = &OP_LT_ALL_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_GE_SERIALIZE_FORMAT)
+                ret = &OP_GE_ALL_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_GT_SERIALIZE_FORMAT)
+                ret = &OP_GT_ALL_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_EQ_SERIALIZE_FORMAT)
+                ret = &OP_EQ_ALL_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_NE_SERIALIZE_FORMAT)
+                ret = &OP_NE_ALL_SERIALIZE_FORMAT;
+        } break;
+        case 1: {
+            if (comp_op == &OP_LE_SERIALIZE_FORMAT)
+                ret = &OP_LE_SOME_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_LT_SERIALIZE_FORMAT)
+                ret = &OP_LT_SOME_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_GE_SERIALIZE_FORMAT)
+                ret = &OP_GE_SOME_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_GT_SERIALIZE_FORMAT)
+                ret = &OP_GT_SOME_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_EQ_SERIALIZE_FORMAT)
+                ret = &OP_EQ_SOME_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_NE_SERIALIZE_FORMAT)
+                ret = &OP_NE_SOME_SERIALIZE_FORMAT;
+        } break;
+        case 2: {
+            if (comp_op == &OP_LE_SERIALIZE_FORMAT)
+                ret = &OP_LE_ANY_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_LT_SERIALIZE_FORMAT)
+                ret = &OP_LT_ANY_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_GE_SERIALIZE_FORMAT)
+                ret = &OP_GE_ANY_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_GT_SERIALIZE_FORMAT)
+                ret = &OP_GT_ANY_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_EQ_SERIALIZE_FORMAT)
+                ret = &OP_EQ_ANY_SERIALIZE_FORMAT;
+            else if (comp_op == &OP_NE_SERIALIZE_FORMAT)
+                ret = &OP_NE_ANY_SERIALIZE_FORMAT;
+        } break;
+        default:{ } break;
+    }
+    assert(ret != nullptr);
+    return ret;
+}
+
+NodeType Node::comp_op_type(int k) {
+    if (comp_op == &OP_LE_SERIALIZE_FORMAT || comp_op == &OP_LE_ALL_SERIALIZE_FORMAT || comp_op == &OP_LE_SOME_SERIALIZE_FORMAT || comp_op == &OP_LE_ANY_SERIALIZE_FORMAT)
+        return E_OP_LE;
+    else if (comp_op == &OP_LT_SERIALIZE_FORMAT || comp_op == &OP_LT_ALL_SERIALIZE_FORMAT || comp_op == &OP_LT_SOME_SERIALIZE_FORMAT || comp_op == &OP_LT_ANY_SERIALIZE_FORMAT)
+        return E_OP_LT;
+    else if (comp_op == &OP_GE_SERIALIZE_FORMAT || comp_op == &OP_GE_ALL_SERIALIZE_FORMAT || comp_op == &OP_GE_SOME_SERIALIZE_FORMAT || comp_op == &OP_GE_ANY_SERIALIZE_FORMAT)
+        return E_OP_GE;
+    else if (comp_op == &OP_GT_SERIALIZE_FORMAT || comp_op == &OP_GT_ALL_SERIALIZE_FORMAT || comp_op == &OP_GT_SOME_SERIALIZE_FORMAT || comp_op == &OP_GT_ANY_SERIALIZE_FORMAT)
+        return E_OP_GT;
+    else if (comp_op == &OP_EQ_SERIALIZE_FORMAT || comp_op == &OP_EQ_ALL_SERIALIZE_FORMAT || comp_op == &OP_EQ_SOME_SERIALIZE_FORMAT || comp_op == &OP_EQ_ANY_SERIALIZE_FORMAT)
+        return E_OP_EQ;
+    else if (comp_op == &OP_NE_SERIALIZE_FORMAT || comp_op == &OP_NE_ALL_SERIALIZE_FORMAT || comp_op == &OP_NE_SOME_SERIALIZE_FORMAT || comp_op == &OP_NE_ANY_SERIALIZE_FORMAT)
+        return E_OP_NE;
+    //assert(false);
+}
