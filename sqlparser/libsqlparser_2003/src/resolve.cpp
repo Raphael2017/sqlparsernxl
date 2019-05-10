@@ -304,7 +304,7 @@ namespace resolve
         Node* subquery = node->getChild(E_COMMON_TABLE_EXPR_SUBQUERY);
         assert(subquery && subquery->nodeType_ == E_SELECT_WITH_PARENS);
         subquery = Node::remove_parens(subquery);
-        assert(subquery->nodeType_ == E_SELECT);
+        assert(subquery->nodeType_ == E_SELECT || subquery->nodeType_ == E_DIRECT_SELECT);
         uint64_t query_id = OB_INVALID_ID;
 
         Node* tb = node->getChild(E_COMMON_TABLE_EXPR_TABLE);
@@ -654,6 +654,7 @@ namespace resolve
                 parent->add_table_item(plan, schema_name, table_name, alias_name, out_table_id, node);
             }
                 break;
+            case E_DIRECT_SELECT:
             case E_SELECT:
             {
                 //assert(alias_node != nullptr);  // The alias is actually not optional at all.

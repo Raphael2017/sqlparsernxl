@@ -1162,6 +1162,16 @@ WHERE  user_name = 'zhang wu ji';
 DELETE FROM USER
 WHERE  item_name = 'jiu yin zhen jing';
 
+-- hex number
+SELECT 0xABC123ABC __HEX__HJ FROM AAAA;
+
+-- identifier start with _
+SELECT qty _QTY, PRODUCT AS P_T FROM SALES;
+
+SELECT * FROM A UNION SELECT * FROM B INTERSECT SELECT * FROM C;
+
+(SELECT * FROM A UNION SELECT * FROM B) INTERSECT SELECT * FROM C
+
 
 
 

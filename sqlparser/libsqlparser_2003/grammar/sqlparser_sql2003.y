@@ -359,7 +359,7 @@ select_stmt:
 ;
 
 query_expression:
-    query_expression_body
+    query_expression_body %prec UMINUS
 {
     $$ = Node::makeNonTerminalNode(E_DIRECT_SELECT, E_DIRECT_SELECT_PROPERTY_CNT, nullptr, $1, nullptr, nullptr);
     $$->serialize_format = &SELECT_DIRECT_SERIALIZE_FORMAT;
@@ -458,11 +458,15 @@ query_term:
 
 query_primary:
     simple_table
-  | select_with_parens
+  | '(' query_expression_body ')'
+{
+    $$ = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, E_PARENS_PROPERTY_CNT, $2);
+    $$->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
+}
 ;
 
 select_with_parens:
-    '(' query_expression_body ')'
+    '(' select_stmt ')'
 {
     $$ = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, E_PARENS_PROPERTY_CNT, $2);
     $$->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
@@ -2282,6 +2286,10 @@ name_r:
   | VARCHAR		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "VARCHAR"); }
   | WITHOUT		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "WITHOUT"); }
   | ZONE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ZONE"); }
+  | ERROR		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ERROR"); }
+  | FOR			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "FOR"); }
+  | OF			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "OF"); }
+  | READ		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "READ"); }
 ;
 
 %%
