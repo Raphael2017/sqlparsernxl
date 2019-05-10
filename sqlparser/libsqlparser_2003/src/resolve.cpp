@@ -843,12 +843,15 @@ namespace resolve
     {
         if (!node)
             return 0;
-        if (node->nodeType_ == E_SELECT)
+        if (node->nodeType_ == E_SELECT || node->nodeType_ == E_DIRECT_SELECT)
         {
             uint64_t query_id = OB_INVALID_ID;
             resolve_select_statement(plan, node, query_id, parent);
             return 0;
         }
+        /*
+         * we donot resolve expr, just find subquery and resolve it
+         * */
         for (size_t i = 0; i < node->getChildrenCount(); ++i)
         {
             Node* child = node->getChild(i);
@@ -954,6 +957,7 @@ namespace resolve
                 resolve_expr(plan, nd, sql_raw_expr, parent, out_raw_expr);
             }
                 break;
+            case E_DIRECT_SELECT:
             case E_SELECT:
             {
                 uint64_t query_id = OB_INVALID_ID;
