@@ -22,7 +22,9 @@
 <from subquery> ::=
     [ <left paren> <insert column list> <right paren> ] <insert query expression>
 
-<insert query expression> ::= <subquery> | <query expression>
+<insert query expression> ::=
+    <subquery>
+  | <query expression>
 
 <from constructor> ::=
     [ <left paren> <insert column list> <right paren> ] <contextually typed table value constructor>
@@ -63,7 +65,7 @@
 
 <sort specification> ::= <sort key> [ <ordering specification> ]
 
-<sort key> ::= <value expression>
+<sort key> ::= <row value ctor>
 
 <query expression> ::=
     [ <with clause> ] <query expression body>
@@ -104,7 +106,7 @@
   | <derived column>
   | <qualified asterisk>
 
-<derived column> ::= <value expression> [ <as clause> ]
+<derived column> ::= <row value ctor> [ <as clause> ]
 
 <qualified asterisk> ::=
     <asterisked identifier chain> <period> <asterisk>
@@ -186,40 +188,64 @@
 
 <subquery> ::= <left paren> <query expression> <right paren>
 
-<search condition> ::= <boolean term> | <search condition> OR <boolean term>
+<search condition> ::=
+    <boolean term>
+  | <search condition> OR <boolean term>
 
-<boolean term> ::= <boolean factor> | <boolean term> AND <boolean factor>
+<boolean term> ::=
+    <boolean factor>
+  | <boolean term> AND <boolean factor>
 
-<boolean factor> ::= <boolean test> | NOT <boolean factor>
+<boolean factor> ::=
+    <boolean test>
+  | NOT <boolean factor>
 
 <boolean test> ::= <boolean primary> [ IS [ NOT ] <truth value> ]
 
 <truth value> ::= TRUE | FALSE | UNKNOWN
 
-<boolean primary> ::= predicate | <left paren> <search condition> <right paren>
+<boolean primary> ::=
+    predicate
+  | <left paren> <search condition> <right paren>
 
-<predicate> ::= <row value ctor> <comp op> <row value ctor>
-              | <row value ctor> <comp op> <quantifier> <subquery>
-              | <row value ctor> [ NOT ] BETWEEN <row value ctor> AND <row value ctor>
-              | <row value ctor> [ NOT ] LIKE <row value ctor>
-              | <row value ctor> [ NOT ] IN <in predicate value>
-              | <row value ctor> IS [ NOT ] NULL
-              | EXISTS <subquery>
+<predicate> ::=
+    <row value ctor> <comp op> <row value ctor>
+  | <row value ctor> <comp op> <quantifier> <subquery>
+  | <row value ctor> [ NOT ] BETWEEN <row value ctor> AND <row value ctor>
+  | <row value ctor> [ NOT ] LIKE <row value ctor>
+  | <row value ctor> [ NOT ] IN <in predicate value>
+  | <row value ctor> IS [ NOT ] NULL
+  | EXISTS <subquery>
 
-<in predicate value> ::= <subquery> | <left paren> <row value ctor list> <right paren>
+<in predicate value> ::=
+    <subquery>
+  | <left paren> <row value ctor list> <right paren>
 
-<row value ctor> ::= <factor 0> | <row value ctor> <cnn op> <factor 0>
+<row value ctor> ::=
+    <factor 0>
+  | <row value ctor> <cnn op> <factor 0>
 
-<factor 0> ::= [ <factor 0> <plus or minus op> ] <factor 1>
+<factor 0> ::=
+    <factor 1>
+  | <factor 0> <plus or minus op> ] <factor 1>
 
-<factor 1> ::= [ <factor 1> <mul or div or per or mod op> ] <factor 2>
+<factor 1> ::=
+    <factor 2>
+  | <factor 1> <mul or div or per or mod op> <factor 2>
 
-<factor 2> ::= [ <factor 2> <circumflex> ] <factor 3>
+<factor 2> ::=
+    <factor 3>
+  | <factor 2> <circumflex> <factor 3>
 
 <factor 3> ::= [ <plus or minus op> ] <factor 4>
 
-<factor 4> ::= <column reference> | <expression const> | <function expression> | <subquery> |
-               <case expression>  | <left paren> <row value ctor list> <right paren>
+<factor 4> ::=
+    <column reference>
+  | <expression const>
+  | <function expression>
+  | <subquery>
+  | <case expression>
+  | <left paren> <row value ctor list> <right paren>
 
 <row value ctor list> ::= <row value ctor> [ { <comma> <row value ctor> }... ]
 
@@ -464,7 +490,7 @@
 
 <expression const> ::=
     <string> | <int number> | <float number>
-  | <truth value> | NULL | DEFAULT
+  | <truth value> | NULL | DEFAULT | <question mark>
 
 <comp op> ::=
     <equals operator>
@@ -534,6 +560,8 @@
 <percent> ::= %
 
 <circumflex> ::= ^
+
+<question mark> ::= ?
 
 <digit> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
