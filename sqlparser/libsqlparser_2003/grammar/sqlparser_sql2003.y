@@ -85,6 +85,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 {
     struct Node* node;
     int    ival;
+    NodeType nodetype;
 }
 
 
@@ -186,7 +187,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> expr_const
 %type <node> search_condition boolean_term boolean_factor boolean_test boolean_primary truth_value
 %type <node> predicate row_expr row_expr_list factor0 factor1 factor2 factor3 factor4
-%type <ival> comp_op plus_minus_op star_div_percent_mod_op comp_all_some_any_op
+%type <nodetype> comp_op plus_minus_op star_div_percent_mod_op comp_all_some_any_op
 %type <node> column_ref
 %type <node> case_expr func_expr in_expr function_call_keyword
 %type <node> case_arg when_clause_list when_clause case_default
@@ -462,7 +463,7 @@ query_primary:
 ;
 
 select_with_parens:
-    '(' select_stmt ')'
+    '(' query_expression ')'
 {
     $$ = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, E_PARENS_PROPERTY_CNT, $2);
     $$->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
@@ -968,13 +969,13 @@ join_outer:
   | OUTER                       { $$ = 1; /*this is a flag*/}
 ;
 
-/* search condition grammar */
+/* <search condition> grammar */
 search_condition:
     boolean_term
   | search_condition OR boolean_term
 {
     $$ = Node::makeNonTerminalNode(E_OP_OR, E_OP_BINARY_PROPERTY_CNT, $1, $3);
-    $$->serialize_format = &OP_OR_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_OR);
 }
 ;
 
@@ -983,7 +984,7 @@ boolean_term:
   | boolean_term AND boolean_factor
 {
     $$ = Node::makeNonTerminalNode(E_OP_AND, E_OP_BINARY_PROPERTY_CNT, $1, $3);
-    $$->serialize_format = &OP_AND_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_AND);
 }
 ;
 
@@ -992,7 +993,7 @@ boolean_factor:
   | NOT boolean_factor
 {
     $$ = Node::makeNonTerminalNode(E_OP_NOT, E_OP_UNARY_PROPERTY_CNT, $2);
-    $$->serialize_format = &OP_NOT_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_NOT);
 }
 ;
 
@@ -1001,12 +1002,12 @@ boolean_test:
   | boolean_primary IS truth_value
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS, E_OP_BINARY_PROPERTY_CNT, $1, $3);
-    $$->serialize_format = &OP_IS_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_IS);
 }
   | boolean_primary IS NOT truth_value
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS_NOT, E_OP_BINARY_PROPERTY_CNT, $1, $4);
-    $$->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_IS_NOT);
 }
 ;
 
@@ -1022,61 +1023,62 @@ boolean_primary:
 predicate:
     row_expr comp_op row_expr
 {
-    $$ = Node::makeNonTerminalNode(E_OP_LE, E_OP_BINARY_PROPERTY_CNT, $1, $3);
-    $$->serialize_format = $2;
+    $$ = Node::makeNonTerminalNode($2, E_OP_BINARY_PROPERTY_CNT, $1, $3);
+    $$->serialize_format = Node::op_serialize_format($2);
 }
   | row_expr comp_all_some_any_op select_with_parens
 {
-    $$ = Node::makeNonTerminalNode(E_OP_LE, E_OP_BINARY_PROPERTY_CNT, $1, $3);
-    $$->serialize_format = $2;
+    $$ = Node::makeNonTerminalNode($2, E_OP_BINARY_PROPERTY_CNT, $1, $3);
+    $$->serialize_format = Node::op_serialize_format($2);
 }
   | row_expr BETWEEN row_expr AND row_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_BTW, E_OP_TERNARY_PROPERTY_CNT, $1, $3, $5);
-    $$->serialize_format = &OP_BETWEEN_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_BTW);
 }
   | row_expr NOT BETWEEN row_expr AND row_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NOT_BTW, E_OP_TERNARY_PROPERTY_CNT, $1, $4, $6);
-    $$->serialize_format = &OP_NOT_BETWEEN_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_NOT_BTW);
 }
   | row_expr LIKE row_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_LIKE, E_OP_BINARY_PROPERTY_CNT, $1, $3);
-    $$->serialize_format = &OP_LIKE_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_LIKE);
 }
   | row_expr NOT LIKE row_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NOT_LIKE, E_OP_BINARY_PROPERTY_CNT, $1, $4);
-    $$->serialize_format = &OP_NOT_LIKE_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_NOT_LIKE);
 }
   | row_expr IN in_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_IN, E_OP_BINARY_PROPERTY_CNT, $1, $3);
-    $$->serialize_format = &OP_IN_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_IN);
 }
   | row_expr NOT IN in_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NOT_IN, E_OP_BINARY_PROPERTY_CNT, $1, $4);
-    $$->serialize_format = &OP_NOT_IN_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_NOT_IN);
 }
   | row_expr IS NULLX
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS, E_OP_BINARY_PROPERTY_CNT, $1, $3);
-    $$->serialize_format = &OP_IS_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_IS);
 }
   | row_expr IS NOT NULLX
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS_NOT, E_OP_BINARY_PROPERTY_CNT, $1, $4);
-    $$->serialize_format = &OP_IS_NOT_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_IS_NOT);
 }
   | EXISTS select_with_parens
 {
     $$ = Node::makeNonTerminalNode(E_OP_EXISTS, E_OP_UNARY_PROPERTY_CNT, $2);
-    $$->serialize_format = &OP_EXISTS_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_EXISTS);
 }
 ;
 
+/* <row value ctor> */
 row_expr:
     factor0
   | row_expr collate_clause
@@ -1087,7 +1089,7 @@ row_expr:
   | row_expr CNNOP factor0
 {
     $$ = Node::makeNonTerminalNode(E_OP_CNN, E_OP_BINARY_PROPERTY_CNT, $1, $3);
-    $$->serialize_format = &OP_CNN_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_CNN);
 }
 ;
 
@@ -1096,7 +1098,7 @@ factor0:
   | factor0 plus_minus_op factor1
 {
     $$ = Node::makeNonTerminalNode(E_OP_ADD, E_OP_BINARY_PROPERTY_CNT, $1, $3);
-    $$->serialize_format = $2;
+    $$->serialize_format = Node::op_serialize_format($2);
 }
 ;
 
@@ -1105,7 +1107,7 @@ factor1:
   | factor1 star_div_percent_mod_op factor2
 {
     $$ = Node::makeNonTerminalNode(E_OP_MUL, E_OP_BINARY_PROPERTY_CNT, $1, $3);
-    $$->serialize_format = $2;
+    $$->serialize_format = Node::op_serialize_format($2);
 }
 ;
 
@@ -1114,7 +1116,7 @@ factor2:
   | factor2 '^' factor3
 {
     $$ = Node::makeNonTerminalNode(E_OP_POW, E_OP_BINARY_PROPERTY_CNT, $1, $3);
-    $$->serialize_format = &OP_POW_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_POW);
 }
 ;
 
@@ -1123,12 +1125,12 @@ factor3:
   | '+' factor3
 {
     $$ = Node::makeNonTerminalNode(E_OP_POS, E_OP_UNARY_PROPERTY_CNT, $2);
-    $$->serialize_format = &OP_POS_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_POS);
 }
   | '-' factor3
 {
     $$ = Node::makeNonTerminalNode(E_OP_NEG, E_OP_UNARY_PROPERTY_CNT, $2);
-    $$->serialize_format = &OP_NEG_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_OP_NEG);
 }
 ;
 
@@ -1209,7 +1211,7 @@ case_expr:
     CASE case_arg when_clause_list case_default END
 {
     $$ = Node::makeNonTerminalNode(E_CASE, E_CASE_PROPERTY_CNT, $2, $3, $4);
-    $$->serialize_format = &CASE_SERIALIZE_FORMAT;
+    $$->serialize_format = Node::op_serialize_format(E_CASE);
 }
 ;
 

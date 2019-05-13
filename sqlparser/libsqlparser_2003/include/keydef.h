@@ -100,6 +100,28 @@ enum NodeType
     E_OP_GE,
     E_OP_GT,
     E_OP_NE,
+
+    E_OP_LE_ALL,
+    E_OP_LT_ALL,
+    E_OP_EQ_ALL,
+    E_OP_GE_ALL,
+    E_OP_GT_ALL,
+    E_OP_NE_ALL,
+
+    E_OP_LE_SOME,
+    E_OP_LT_SOME,
+    E_OP_EQ_SOME,
+    E_OP_GE_SOME,
+    E_OP_GT_SOME,
+    E_OP_NE_SOME,
+
+    E_OP_LE_ANY,
+    E_OP_LT_ANY,
+    E_OP_EQ_ANY,
+    E_OP_GE_ANY,
+    E_OP_GT_ANY,
+    E_OP_NE_ANY,
+
     E_OP_LIKE,
     E_OP_NOT_LIKE,
     E_OP_AND,

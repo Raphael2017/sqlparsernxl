@@ -124,8 +124,8 @@ private:
     static Node* NAME_CHAIN_TO_NAME_FIELD(Node*);
 
     static bool CHECK_FUNCTION_CALL_WITH_STAR(Node*);
-    static const _FmCB *comp_all_some_any_op_form(int n, int m);
-    static NodeType comp_op_type(int k);
+    static NodeType comp_all_some_any_op_form(NodeType op, int all_some_any);
+    static const _FmCB *op_serialize_format(NodeType tp);
 
 public:
     // implement INode

@@ -873,69 +873,121 @@ bool Node::CHECK_FUNCTION_CALL_WITH_STAR(Node* node)
     return word == "COUNT";
 }
 
-const _FmCB *Node::comp_all_some_any_op_form(int n, int m) {
-    const _FmCB *ret = nullptr;
-    switch (m) {
-        case 0: {
-            if (comp_op == &OP_LE_SERIALIZE_FORMAT)
-                ret = &OP_LE_ALL_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_LT_SERIALIZE_FORMAT)
-                ret = &OP_LT_ALL_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_GE_SERIALIZE_FORMAT)
-                ret = &OP_GE_ALL_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_GT_SERIALIZE_FORMAT)
-                ret = &OP_GT_ALL_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_EQ_SERIALIZE_FORMAT)
-                ret = &OP_EQ_ALL_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_NE_SERIALIZE_FORMAT)
-                ret = &OP_NE_ALL_SERIALIZE_FORMAT;
+NodeType Node::comp_all_some_any_op_form(NodeType op, int all_some_any) {
+    NodeType ret = E_NODETYPE_BEGIN;
+    switch (op) {
+        case E_OP_LE: {
+            switch (all_some_any) {
+                case 0: { ret = E_OP_LE_ALL; } break;
+                case 1: { ret = E_OP_LE_SOME; } break;
+                case 2: { ret = E_OP_LE_ANY; } break;
+                default:
+                    assert(false);
+            }
         } break;
-        case 1: {
-            if (comp_op == &OP_LE_SERIALIZE_FORMAT)
-                ret = &OP_LE_SOME_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_LT_SERIALIZE_FORMAT)
-                ret = &OP_LT_SOME_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_GE_SERIALIZE_FORMAT)
-                ret = &OP_GE_SOME_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_GT_SERIALIZE_FORMAT)
-                ret = &OP_GT_SOME_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_EQ_SERIALIZE_FORMAT)
-                ret = &OP_EQ_SOME_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_NE_SERIALIZE_FORMAT)
-                ret = &OP_NE_SOME_SERIALIZE_FORMAT;
+        case E_OP_LT: {
+            switch (all_some_any) {
+                case 0: { ret = E_OP_LT_ALL; } break;
+                case 1: { ret = E_OP_LT_SOME; } break;
+                case 2: { ret = E_OP_LT_ANY; } break;
+                default:
+                    assert(false);
+            }
         } break;
-        case 2: {
-            if (comp_op == &OP_LE_SERIALIZE_FORMAT)
-                ret = &OP_LE_ANY_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_LT_SERIALIZE_FORMAT)
-                ret = &OP_LT_ANY_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_GE_SERIALIZE_FORMAT)
-                ret = &OP_GE_ANY_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_GT_SERIALIZE_FORMAT)
-                ret = &OP_GT_ANY_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_EQ_SERIALIZE_FORMAT)
-                ret = &OP_EQ_ANY_SERIALIZE_FORMAT;
-            else if (comp_op == &OP_NE_SERIALIZE_FORMAT)
-                ret = &OP_NE_ANY_SERIALIZE_FORMAT;
+        case E_OP_EQ: {
+            switch (all_some_any) {
+                case 0: { ret = E_OP_EQ_ALL; } break;
+                case 1: { ret = E_OP_EQ_SOME; } break;
+                case 2: { ret = E_OP_EQ_ANY; } break;
+                default:
+                    assert(false);
+            }
         } break;
-        default:{ } break;
+        case E_OP_NE: {
+            switch (all_some_any) {
+                case 0: { ret = E_OP_NE_ALL; } break;
+                case 1: { ret = E_OP_NE_SOME; } break;
+                case 2: { ret = E_OP_NE_ANY; } break;
+                default:
+                    assert(false);
+            }
+        } break;
+        case E_OP_GE: {
+            switch (all_some_any) {
+                case 0: { ret = E_OP_GE_ALL; } break;
+                case 1: { ret = E_OP_GE_SOME; } break;
+                case 2: { ret = E_OP_GE_ANY; } break;
+                default:
+                    assert(false);
+            }
+        } break;
+        case E_OP_GT: {
+            switch (all_some_any) {
+                case 0: { ret = E_OP_GT_ALL; } break;
+                case 1: { ret = E_OP_GT_SOME; } break;
+                case 2: { ret = E_OP_GT_ANY; } break;
+                default:
+                    assert(false);
+            }
+        } break;
+        default:
+            assert(false);
     }
-    assert(ret != nullptr);
     return ret;
 }
 
-NodeType Node::comp_op_type(int k) {
-    if (comp_op == &OP_LE_SERIALIZE_FORMAT || comp_op == &OP_LE_ALL_SERIALIZE_FORMAT || comp_op == &OP_LE_SOME_SERIALIZE_FORMAT || comp_op == &OP_LE_ANY_SERIALIZE_FORMAT)
-        return E_OP_LE;
-    else if (comp_op == &OP_LT_SERIALIZE_FORMAT || comp_op == &OP_LT_ALL_SERIALIZE_FORMAT || comp_op == &OP_LT_SOME_SERIALIZE_FORMAT || comp_op == &OP_LT_ANY_SERIALIZE_FORMAT)
-        return E_OP_LT;
-    else if (comp_op == &OP_GE_SERIALIZE_FORMAT || comp_op == &OP_GE_ALL_SERIALIZE_FORMAT || comp_op == &OP_GE_SOME_SERIALIZE_FORMAT || comp_op == &OP_GE_ANY_SERIALIZE_FORMAT)
-        return E_OP_GE;
-    else if (comp_op == &OP_GT_SERIALIZE_FORMAT || comp_op == &OP_GT_ALL_SERIALIZE_FORMAT || comp_op == &OP_GT_SOME_SERIALIZE_FORMAT || comp_op == &OP_GT_ANY_SERIALIZE_FORMAT)
-        return E_OP_GT;
-    else if (comp_op == &OP_EQ_SERIALIZE_FORMAT || comp_op == &OP_EQ_ALL_SERIALIZE_FORMAT || comp_op == &OP_EQ_SOME_SERIALIZE_FORMAT || comp_op == &OP_EQ_ANY_SERIALIZE_FORMAT)
-        return E_OP_EQ;
-    else if (comp_op == &OP_NE_SERIALIZE_FORMAT || comp_op == &OP_NE_ALL_SERIALIZE_FORMAT || comp_op == &OP_NE_SOME_SERIALIZE_FORMAT || comp_op == &OP_NE_ANY_SERIALIZE_FORMAT)
-        return E_OP_NE;
-    //assert(false);
+const _FmCB *Node::op_serialize_format(NodeType tp) {
+    const _FmCB *ret = nullptr;
+    switch (tp) {
+        case E_OP_LE: { ret = &OP_LE_SERIALIZE_FORMAT; } break;
+        case E_OP_LT: { ret = &OP_LT_SERIALIZE_FORMAT; } break;
+        case E_OP_EQ: { ret = &OP_EQ_SERIALIZE_FORMAT; } break;
+        case E_OP_GE: { ret = &OP_GE_SERIALIZE_FORMAT; } break;
+        case E_OP_GT: { ret = &OP_GT_SERIALIZE_FORMAT; } break;
+        case E_OP_NE: { ret = &OP_NE_SERIALIZE_FORMAT; } break;
+        case E_OP_LE_ALL: { ret = &OP_LE_ALL_SERIALIZE_FORMAT; } break;
+        case E_OP_LT_ALL: { ret = &OP_LT_ALL_SERIALIZE_FORMAT; } break;
+        case E_OP_EQ_ALL: { ret = &OP_EQ_ALL_SERIALIZE_FORMAT; } break;
+        case E_OP_GE_ALL: { ret = &OP_GE_ALL_SERIALIZE_FORMAT; } break;
+        case E_OP_GT_ALL: { ret = &OP_GT_ALL_SERIALIZE_FORMAT; } break;
+        case E_OP_NE_ALL: { ret = &OP_NE_ALL_SERIALIZE_FORMAT; } break;
+        case E_OP_LE_SOME: { ret = &OP_LE_SOME_SERIALIZE_FORMAT; } break;
+        case E_OP_LT_SOME: { ret = &OP_LT_SOME_SERIALIZE_FORMAT; } break;
+        case E_OP_EQ_SOME: { ret = &OP_EQ_SOME_SERIALIZE_FORMAT; } break;
+        case E_OP_GE_SOME: { ret = &OP_GE_SOME_SERIALIZE_FORMAT; } break;
+        case E_OP_GT_SOME: { ret = &OP_GT_SOME_SERIALIZE_FORMAT; } break;
+        case E_OP_NE_SOME: { ret = &OP_NE_SOME_SERIALIZE_FORMAT; } break;
+        case E_OP_LE_ANY: { ret = &OP_LE_ANY_SERIALIZE_FORMAT; } break;
+        case E_OP_LT_ANY: { ret = &OP_LT_ANY_SERIALIZE_FORMAT; } break;
+        case E_OP_EQ_ANY: { ret = &OP_EQ_ANY_SERIALIZE_FORMAT; } break;
+        case E_OP_GE_ANY: { ret = &OP_GE_ANY_SERIALIZE_FORMAT; } break;
+        case E_OP_GT_ANY: { ret = &OP_GT_ANY_SERIALIZE_FORMAT; } break;
+        case E_OP_NE_ANY: { ret = &OP_NE_ANY_SERIALIZE_FORMAT; } break;
+        case E_OP_OR: { ret = &OP_OR_SERIALIZE_FORMAT; } break;
+        case E_OP_AND: { ret = &OP_AND_SERIALIZE_FORMAT; } break;
+        case E_OP_NOT: { ret = &OP_NOT_SERIALIZE_FORMAT; } break;
+        case E_OP_IS: { ret = &OP_IS_SERIALIZE_FORMAT; } break;
+        case E_OP_IS_NOT: { ret = &OP_IS_NOT_SERIALIZE_FORMAT; } break;
+        case E_OP_BTW: { ret = &OP_BETWEEN_SERIALIZE_FORMAT; } break;
+        case E_OP_NOT_BTW: { ret = &OP_NOT_BETWEEN_SERIALIZE_FORMAT; } break;
+        case E_OP_LIKE: { ret = &OP_LIKE_SERIALIZE_FORMAT; } break;
+        case E_OP_NOT_LIKE: { ret = &OP_NOT_LIKE_SERIALIZE_FORMAT; } break;
+        case E_OP_IN: { ret = &OP_IN_SERIALIZE_FORMAT; } break;
+        case E_OP_NOT_IN: { ret = &OP_NOT_IN_SERIALIZE_FORMAT; } break;
+        case E_OP_EXISTS: { ret = &OP_EXISTS_SERIALIZE_FORMAT; } break;
+        case E_OP_CNN: { ret = &OP_CNN_SERIALIZE_FORMAT; } break;
+        case E_OP_POW: { ret = &OP_POW_SERIALIZE_FORMAT; } break;
+        case E_OP_POS: { ret = &OP_POS_SERIALIZE_FORMAT; } break;
+        case E_OP_NEG: { ret = &OP_NEG_SERIALIZE_FORMAT; } break;
+        case E_OP_ADD: { ret = &OP_ADD_SERIALIZE_FORMAT; } break;
+        case E_OP_MINUS: { ret = &OP_MINUS_SERIALIZE_FORMAT; } break;
+        case E_OP_MUL: { ret = &OP_MUL_SERIALIZE_FORMAT; } break;
+        case E_OP_DIV: { ret = &OP_DIV_SERIALIZE_FORMAT; } break;
+        case E_OP_REM: { ret = &OP_REM_SERIALIZE_FORMAT; } break;
+        case E_OP_MOD: { ret = &OP_MOD_SERIALIZE_FORMAT; } break;
+        case E_CASE: { ret = &CASE_SERIALIZE_FORMAT; } break;
+        default:
+            assert(false/* to do */);
+    }
+    return ret;
 }

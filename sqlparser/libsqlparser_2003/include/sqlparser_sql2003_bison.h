@@ -224,7 +224,7 @@ union SQL2003_STYPE
 
     struct Node* node;
     int    ival;
-    const _FmCB *form;
+    NodeType nodetype;
 
 #line 230 "sqlparser_sql2003_bison.h" /* yacc.c:1909  */
 };

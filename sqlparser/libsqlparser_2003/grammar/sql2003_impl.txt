@@ -28,7 +28,7 @@
     [ <left paren> <insert column list> <right paren> ] <contextually typed table value constructor>
 
 <contextually typed table value constructor> ::=
-    VALUES <expression list>
+    VALUES <row value ctor list>
 
 <from default> ::= DEFAULT VALUES
 
@@ -54,10 +54,7 @@
     <cursor specification>
 
 <cursor specification> ::=
-    <query expression> [ <order by clause> ] [ <updatability clause> ]
-
-<updatability clause> ::=
-    FOR { READ ONLY | UPDATE [ OF <column name list> ] }
+    <query expression> [ <order by clause> ]
 
 <order by clause> ::= ORDER BY <sort specification list>
 
@@ -82,24 +79,18 @@
 
 <with column list> ::= <column name list>
 
-<query expression body> ::= <non-join query expression>
+<query expression body> ::=
+    <query term>
+  | <query expression body> UNION [ ALL | DISTINCT ] <query term>
+  | <query expression body> EXCEPT [ ALL | DISTINCT ] <query term>
 
-<non-join query expression> ::=
-    <non-join query term>
-  | <query expression body> UNION [ ALL | DISTINCT ] [ <corresponding spec> ] <query term>
-  | <query expression body> EXCEPT [ ALL | DISTINCT ] [ <corresponding spec> ] <query term>
+<query term> ::=
+    <query primary>
+  | <query term> INTERSECT [ ALL | DISTINCT ] <query primary>
 
-<query term> ::= <non-join query term>
-
-<non-join query term> ::=
-    <non-join query primary>
-  | <query term> INTERSECT [ ALL ] [ <corresponding spec> ] <query primary>
-
-<query primary> ::= <non-join query primary>
-
-<non-join query primary> ::=
+<query primary> ::=
     <simple table>
-  | <left paren> <non-join query expression> <right paren>
+  | <left paren> <query expression body> <right paren>
 
 <simple table> ::= <query specification>
 
@@ -195,40 +186,42 @@
 
 <subquery> ::= <left paren> <query expression> <right paren>
 
-<search condition> ::= <boolean value expression>
+<search condition> ::= <boolean term> | <search condition> OR <boolean term>
 
-<boolean value expression> ::= <expression>
+<boolean term> ::= <boolean factor> | <boolean term> AND <boolean factor>
 
-<value expression> ::= <expression>
+<boolean factor> ::= <boolean test> | NOT <boolean factor>
 
-<expression> ::=
-    <arithmetic expression>
-  | <expression> <collate clause>
-  | <expression> <comp op> <expression>
-  | <expression> <comp op> <quantifier> <subquery>
-  | <expression> [ NOT ] LIKE <expression>
-  | <expression> <logic op> <expression>
-  | NOT <expression>
-  | <expression> IS [ NOT ] NULL
-  | <expression> IS [ NOT ] <truth value>
-  | <expression> [ NOT ] BETWEEN <arithmetic expression> AND <arithmetic expression>
-  | <expression> IN <in predicate value>
-  | <expression> <concatenation operator> <expression>
+<boolean test> ::= <boolean primary> [ IS [ NOT ] <truth value> ]
 
-<arithmetic expression> ::=
-    <simple expression>
-  | <plus sign> <arithmetic expression>
-  | <minus sign> <arithmetic expression>
-  | <arithmetic expression> <arithmetic op> <arithmetic expression>
+<truth value> ::= TRUE | FALSE | UNKNOWN
 
-<simple expression> ::=
-    <column reference>
-  | <expression const>
-  | <subquery>
-  | <case expression>
-  | EXISTS <subquery>
-  | <function expression>
-  | <left paren> <expression list> <right paren>
+<boolean primary> ::= predicate | <left paren> <search condition> <right paren>
+
+<predicate> ::= <row value ctor> <comp op> <row value ctor>
+              | <row value ctor> <comp op> <quantifier> <subquery>
+              | <row value ctor> [ NOT ] BETWEEN <row value ctor> AND <row value ctor>
+              | <row value ctor> [ NOT ] LIKE <row value ctor>
+              | <row value ctor> [ NOT ] IN <in predicate value>
+              | <row value ctor> IS [ NOT ] NULL
+              | EXISTS <subquery>
+
+<in predicate value> ::= <subquery> | <left paren> <row value ctor list> <right paren>
+
+<row value ctor> ::= <factor 0> | <row value ctor> <cnn op> <factor 0>
+
+<factor 0> ::= [ <factor 0> <plus or minus op> ] <factor 1>
+
+<factor 1> ::= [ <factor 1> <mul or div or per or mod op> ] <factor 2>
+
+<factor 2> ::= [ <factor 2> <circumflex> ] <factor 3>
+
+<factor 3> ::= [ <plus or minus op> ] <factor 4>
+
+<factor 4> ::= <column reference> | <expression const> | <function expression> | <subquery> |
+               <case expression>  | <left paren> <row value ctor list> <right paren>
+
+<row value ctor list> ::= <row value ctor> [ { <comma> <row value ctor> }... ]
 
 <function expression> ::=
     <scalar function expression>
@@ -238,37 +231,37 @@
   | <other function expression>
 
 <other function expression> ::=
-    CAST <left paren> <expression> AS <data type> <right paren>
-  | CONVERT <left paren> <expression> USING <identifier chain> <right paren>
-  | COALESCE <left paren> <expression list> <right paren>
+    CAST <left paren> <row value ctor> AS <data type> <right paren>
+  | CONVERT <left paren> <row value ctor> USING <identifier chain> <right paren>
+  | COALESCE <left paren> <row value ctor> <right paren>
   | CURRENT_TIMESTAMP
   | CURRENT_TIMESTAMP <left paren> <int number> <right paren>
   | CURRENT_USER
-  | NULLIF <left paren> <expression> <comma> <expression> <right paren>
+  | NULLIF <left paren> <row value ctor> <comma> <row value ctor> <right paren>
   | SESSION_USER
   | SYSTEM_USER
 
 <scalar function expression> ::=
     <identifier chain> <left paren> <right paren>
-  | <identifier chain> <left paren> <expression list> <right paren>
+  | <identifier chain> <left paren> <row value ctor list> <right paren>
 
 <rank window function expression> ::=
     <rank function name> <left paren> <right paren> <over clause>
 
 <sql2003 keyword function expression> ::=
-    <non second primary datetime field> <left paren> <expression> <right paren>
+    <non second primary datetime field> <left paren> <row value ctor> <right paren>
   | RIGHT <left paren> <right paren>
   | LEFT <left paren> <right paren>
 
 <aggregate windowed function expression> ::=
-    <aggregate function name> <left paren> [ <set quantifier> ] <expression> <right paren> [ <over clause> ]
+    <aggregate function name> <left paren> [ <set quantifier> ] <row value ctor> <right paren> [ <over clause> ]
   | COUNT <left paren> <asterisk> <right paren> [ <over clause> ]
-  | GROUPING <left paren> <expression> <right paren>
+  | GROUPING <left paren> <row value ctor> <right paren>
 
 <over clause> ::=
     OVER <left paren> [ <partition by clause> ] [ <order by clause> ] [ <row or range clause> ] <right paren>
 
-<partition by clause> ::= PARTITION BY <expression list>
+<partition by clause> ::= PARTITION BY <row value ctor list>
 
 <row or range clause> ::=
     ROWS <window frame extent>
@@ -296,20 +289,13 @@
 <case expression> ::=
     CASE [ <case arg> ] <when clause list> [ <case default> ] END
 
-<case arg> ::= <expression>
+<case arg> ::= <row value ctor>
 
 <when clause list> ::= <when clause> [ { <comma> <when clause> }... ]
 
-<when clause> ::= WHEN <expression> THEN <expression>
+<when clause> ::= WHEN <search condition> THEN <row value ctor> | WHEN <row value ctor> THEN <row value ctor>
 
-<case default> ::= ELSE <expression>
-
-<expression list> ::=
-    <expression> [ { <comma> <expression> }... ]
-
-<in predicate value> ::=
-    <subquery>
-  | <left paren> <expression list> <right paren>
+<case default> ::= ELSE <row value ctor>
 
 <data type> ::=
     <predefined type>
@@ -488,9 +474,9 @@
   | <less than operator> <equals operator>
   | <greater than operator> <equals operator>
 
-<arithmetic op> ::=
-    <plus sign> | <minus sign> | <asterisk>
-  | <solidus> | <percent> | <circumflex>
+<plus or minus op> ::= <plus sign> | <minus sign>
+
+<mul or div or per or mod op> ::= <asterisk> | <solidus> | <percent> | MOD
 
 <string> ::=
     <quote> <string body> <quote>
@@ -504,8 +490,6 @@
 
 <outer join type> ::= LEFT | RIGHT | FULL
 
-<truth value> ::= TRUE | FALSE | UNKNOWN
-
 <aggregate function name> ::=
     AVG | MAX | MIN | SUM
   | STDDEV_POP | STDDEV_SAMP
@@ -513,7 +497,7 @@
 
 <int number> ::= <digit>...
 
-<concatenation operator> ::= <vertical bar> <vertical bar>
+<cnn op> ::= <vertical bar> <vertical bar>
 
 <logic op> ::= AND | OR
 
