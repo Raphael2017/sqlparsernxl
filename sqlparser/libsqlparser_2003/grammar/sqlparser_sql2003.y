@@ -122,7 +122,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 //%left 	'^'
 %right 	UMINUS
 %left 	'(' ')'
-//%left '.'
+%left '.'
 
 
 %token ALL AND ANY ARRAY AS ASC
@@ -356,7 +356,7 @@ select_stmt:
 ;
 
 query_expression:
-    query_expression_body %prec UMINUS
+    query_expression_body %prec '.'
 {
     $$ = Node::makeNonTerminalNode(E_DIRECT_SELECT, E_DIRECT_SELECT_PROPERTY_CNT, nullptr, $1, nullptr, nullptr);
     $$->serialize_format = &SELECT_DIRECT_SERIALIZE_FORMAT;
