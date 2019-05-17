@@ -205,7 +205,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> large_object_length multiplier char_length_units
 %type <node> interval_type interval_qualifier start_field end_field
 %type <node> single_datetime_field non_second_primary_datetime_field
-%type <node> name_r
+%type <node> name_r reserved
 
 %start sql_stmt
 %%
@@ -1756,10 +1756,6 @@ datetime_type:
 {
     $$ = Node::makeTerminalNode(E_STRING, "TIME WITHOUT TIME ZONE");
 }
-  | TIME
-{
-    $$ = Node::makeTerminalNode(E_STRING, "TIME");
-}
   | TIMESTAMP '(' INTNUM ')' WITH TIME ZONE
 {
     $$ = Node::makeTerminalNode(E_STRING, "TIMESTAMP("+$3->text()+") WITH TIME ZONE");
@@ -1787,6 +1783,10 @@ datetime_type:
 {
     $$ = Node::makeTerminalNode(E_STRING, "TIMESTAMP");
 }
+  | TIME
+{
+    $$ = Node::makeTerminalNode(E_STRING, "TIME");
+}
 ;
 
 numeric_type:
@@ -1805,10 +1805,6 @@ exact_numeric_type:
     $$ = Node::makeTerminalNode(E_STRING, "NUMERIC("+$3->text()+")");
     delete($3);
 }
-  | NUMERIC
-{
-    $$ = Node::makeTerminalNode(E_STRING, "NUMERIC");
-}
   | DECIMAL '(' INTNUM ',' INTNUM ')'
 {
     $$ = Node::makeTerminalNode(E_STRING, "DECIMAL("+$3->text()+","+$5->text()+")");
@@ -1818,10 +1814,6 @@ exact_numeric_type:
 {
     $$ = Node::makeTerminalNode(E_STRING, "DECIMAL("+$3->text()+")");
     delete($3);
-}
-  | DECIMAL
-{
-    $$ = Node::makeTerminalNode(E_STRING, "DECIMAL");
 }
   | DEC '(' INTNUM ',' INTNUM ')'
 {
@@ -1853,6 +1845,14 @@ exact_numeric_type:
 {
     $$ = Node::makeTerminalNode(E_STRING, "BIGINT");
 }
+  | NUMERIC
+{
+    $$ = Node::makeTerminalNode(E_STRING, "NUMERIC");
+}
+  | DECIMAL
+{
+    $$ = Node::makeTerminalNode(E_STRING, "DECIMAL");
+}
 ;
 
 approximate_numeric_type:
@@ -1860,6 +1860,10 @@ approximate_numeric_type:
 {
     $$ = Node::makeTerminalNode(E_STRING, "FLOAT("+$3->text()+")");
     delete($3);
+}
+  | DOUBLE PRECISION
+{
+    $$ = Node::makeTerminalNode(E_STRING, "DOUBLE PRECISION");
 }
   | FLOAT
 {
@@ -1869,10 +1873,6 @@ approximate_numeric_type:
 {
     $$ = Node::makeTerminalNode(E_STRING, "REAL");
 }
-  | DOUBLE PRECISION
-{
-    $$ = Node::makeTerminalNode(E_STRING, "DOUBLE PRECISION");
-}
 ;
 
 character_string_type:
@@ -1881,18 +1881,10 @@ character_string_type:
     $$ = Node::makeTerminalNode(E_STRING, "CHARACTER("+$3->text()+")");
     delete($3);
 }
-  | CHARACTER
-{
-    $$ = Node::makeTerminalNode(E_STRING, "CHARACTER");
-}
   | CHAR '(' INTNUM ')'
 {
     $$ = Node::makeTerminalNode(E_STRING, "CHAR("+$3->text()+")");
     delete($3);
-}
-  | CHAR
-{
-    $$ = Node::makeTerminalNode(E_STRING, "CHAR");
 }
   | CHARACTER VARYING '(' INTNUM ')'
 {
@@ -1935,6 +1927,14 @@ character_string_type:
   | CLOB
 {
     $$ = Node::makeTerminalNode(E_STRING, "CLOB");
+}
+  | CHAR
+{
+    $$ = Node::makeTerminalNode(E_STRING, "CHAR");
+}
+  | CHARACTER
+{
+    $$ = Node::makeTerminalNode(E_STRING, "CHARACTER");
 }
 ;
 
@@ -1983,10 +1983,6 @@ national_character_string_type:
     $$ = Node::makeTerminalNode(E_STRING, "NCHAR("+$3->text()+")");
     delete($3);
 }
-  | NCHAR
-{
-    $$ = Node::makeTerminalNode(E_STRING, "NCHAR");
-}
   | NATIONAL CHARACTER VARYING '(' INTNUM ')'
 {
     $$ = Node::makeTerminalNode(E_STRING, "NATIONAL CHARACTER VARYING("+$5->text()+")");
@@ -2028,6 +2024,10 @@ national_character_string_type:
   | NCLOB
 {
     $$ = Node::makeTerminalNode(E_STRING, "NCLOB");
+}
+  | NCHAR
+{
+    $$ = Node::makeTerminalNode(E_STRING, "NCHAR");
 }
 ;
 
@@ -2126,10 +2126,14 @@ collate_clause:
 ;
 
 
-/* NAME with some non-reserved words tested in sqlserver */
+/* NAME with some non-reserved words */
 name_r:
     NAME
-  | aggregate_function_name	%prec UMINUS
+  | reserved
+;
+
+reserved:
+    aggregate_function_name	%prec UMINUS
   | ranking_function_name	%prec UMINUS
   | non_second_primary_datetime_field	%prec UMINUS
   | K			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "K"); }

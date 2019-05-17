@@ -306,7 +306,7 @@ FALSE   {
 }
 
 <sq>{sqdouble} {
-    ((ParseResult*)yyextra)->buf_ << '\'';
+    ((ParseResult*)yyextra)->buf_ << "''";
 }
 
 <sq>{sqcontent} {

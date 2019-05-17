@@ -1156,7 +1156,7 @@ static const flex_int16_t yy_chk[1371] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "sqlparser_sql2003.l"
+#line 1 "./sqlparser_sql2003.l"
 /**
  * lexer
  *
@@ -1165,7 +1165,7 @@ static const flex_int16_t yy_chk[1371] =
 /***************************
  ** Section 1: Definitions
  ***************************/
-#line 12 "sqlparser_sql2003.l"
+#line 12 "./sqlparser_sql2003.l"
 
 #include "node.h"
 #include "sqlparser_sql2003_bison.h"
@@ -1489,7 +1489,7 @@ YY_DECL
 		}
 
 	{
-#line 104 "sqlparser_sql2003.l"
+#line 104 "./sqlparser_sql2003.l"
 
 #line 1495 "sqlparser_sql2003_flex.cpp"
 
@@ -1546,677 +1546,677 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 105 "sqlparser_sql2003.l"
+#line 105 "./sqlparser_sql2003.l"
 TOKEN(ALL)
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 106 "sqlparser_sql2003.l"
+#line 106 "./sqlparser_sql2003.l"
 TOKEN(AND)
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 107 "sqlparser_sql2003.l"
+#line 107 "./sqlparser_sql2003.l"
 TOKEN(ANY)
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 108 "sqlparser_sql2003.l"
+#line 108 "./sqlparser_sql2003.l"
 TOKEN(ARRAY)
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 109 "sqlparser_sql2003.l"
+#line 109 "./sqlparser_sql2003.l"
 TOKEN(AS)
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 110 "sqlparser_sql2003.l"
+#line 110 "./sqlparser_sql2003.l"
 TOKEN(ASC)
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 111 "sqlparser_sql2003.l"
+#line 111 "./sqlparser_sql2003.l"
 TOKEN(AVG)
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 112 "sqlparser_sql2003.l"
+#line 112 "./sqlparser_sql2003.l"
 TOKEN(BETWEEN)
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 113 "sqlparser_sql2003.l"
+#line 113 "./sqlparser_sql2003.l"
 TOKEN(BIGINT)
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 114 "sqlparser_sql2003.l"
+#line 114 "./sqlparser_sql2003.l"
 TOKEN(BINARY)
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 115 "sqlparser_sql2003.l"
+#line 115 "./sqlparser_sql2003.l"
 TOKEN(BLOB)
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 116 "sqlparser_sql2003.l"
+#line 116 "./sqlparser_sql2003.l"
 TOKEN(BOOLEAN)
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 117 "sqlparser_sql2003.l"
+#line 117 "./sqlparser_sql2003.l"
 TOKEN(BY)
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 118 "sqlparser_sql2003.l"
+#line 118 "./sqlparser_sql2003.l"
 TOKEN(CASE)
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 119 "sqlparser_sql2003.l"
+#line 119 "./sqlparser_sql2003.l"
 TOKEN(CAST)
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 120 "sqlparser_sql2003.l"
+#line 120 "./sqlparser_sql2003.l"
 TOKEN(CHAR)
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 121 "sqlparser_sql2003.l"
+#line 121 "./sqlparser_sql2003.l"
 TOKEN(CHARACTER)
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 122 "sqlparser_sql2003.l"
+#line 122 "./sqlparser_sql2003.l"
 TOKEN(CHARACTERS)
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 123 "sqlparser_sql2003.l"
+#line 123 "./sqlparser_sql2003.l"
 TOKEN(CLOB)
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 124 "sqlparser_sql2003.l"
+#line 124 "./sqlparser_sql2003.l"
 TOKEN(COALESCE)
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 125 "sqlparser_sql2003.l"
+#line 125 "./sqlparser_sql2003.l"
 TOKEN(CODE_UNITS)
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 126 "sqlparser_sql2003.l"
+#line 126 "./sqlparser_sql2003.l"
 TOKEN(COLLATE)
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 127 "sqlparser_sql2003.l"
+#line 127 "./sqlparser_sql2003.l"
 TOKEN(CONVERT)
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 128 "sqlparser_sql2003.l"
+#line 128 "./sqlparser_sql2003.l"
 TOKEN(CORRESPONDING)
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 129 "sqlparser_sql2003.l"
+#line 129 "./sqlparser_sql2003.l"
 TOKEN(COUNT)
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 130 "sqlparser_sql2003.l"
+#line 130 "./sqlparser_sql2003.l"
 TOKEN(CROSS)
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 131 "sqlparser_sql2003.l"
+#line 131 "./sqlparser_sql2003.l"
 TOKEN(CURRENT)
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 132 "sqlparser_sql2003.l"
+#line 132 "./sqlparser_sql2003.l"
 TOKEN(CURRENT_TIMESTAMP)
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 133 "sqlparser_sql2003.l"
+#line 133 "./sqlparser_sql2003.l"
 TOKEN(CURRENT_USER)
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 134 "sqlparser_sql2003.l"
+#line 134 "./sqlparser_sql2003.l"
 TOKEN(DATE)
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 135 "sqlparser_sql2003.l"
+#line 135 "./sqlparser_sql2003.l"
 TOKEN(DAY)
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 136 "sqlparser_sql2003.l"
+#line 136 "./sqlparser_sql2003.l"
 TOKEN(DEC)
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 137 "sqlparser_sql2003.l"
+#line 137 "./sqlparser_sql2003.l"
 TOKEN(DECIMAL)
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 138 "sqlparser_sql2003.l"
+#line 138 "./sqlparser_sql2003.l"
 TOKEN(DEFAULT)
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 139 "sqlparser_sql2003.l"
+#line 139 "./sqlparser_sql2003.l"
 TOKEN(DELETE)
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 140 "sqlparser_sql2003.l"
+#line 140 "./sqlparser_sql2003.l"
 TOKEN(DENSE_RANK)
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 141 "sqlparser_sql2003.l"
+#line 141 "./sqlparser_sql2003.l"
 TOKEN(DESC)
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 142 "sqlparser_sql2003.l"
+#line 142 "./sqlparser_sql2003.l"
 TOKEN(DISTINCT)
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 143 "sqlparser_sql2003.l"
+#line 143 "./sqlparser_sql2003.l"
 TOKEN(DOUBLE)
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 144 "sqlparser_sql2003.l"
+#line 144 "./sqlparser_sql2003.l"
 TOKEN(ELSE)
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 145 "sqlparser_sql2003.l"
+#line 145 "./sqlparser_sql2003.l"
 TOKEN(END)
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 146 "sqlparser_sql2003.l"
+#line 146 "./sqlparser_sql2003.l"
 TOKEN(END_P)
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 147 "sqlparser_sql2003.l"
+#line 147 "./sqlparser_sql2003.l"
 TOKEN(EXCEPT)
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 148 "sqlparser_sql2003.l"
+#line 148 "./sqlparser_sql2003.l"
 TOKEN(EXISTS)
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 149 "sqlparser_sql2003.l"
+#line 149 "./sqlparser_sql2003.l"
 TOKEN(FLOAT)
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 150 "sqlparser_sql2003.l"
+#line 150 "./sqlparser_sql2003.l"
 TOKEN(FOLLOWING)
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 151 "sqlparser_sql2003.l"
+#line 151 "./sqlparser_sql2003.l"
 TOKEN(FOR)
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 152 "sqlparser_sql2003.l"
+#line 152 "./sqlparser_sql2003.l"
 TOKEN(FROM)
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 153 "sqlparser_sql2003.l"
+#line 153 "./sqlparser_sql2003.l"
 TOKEN(FULL)
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 154 "sqlparser_sql2003.l"
+#line 154 "./sqlparser_sql2003.l"
 TOKEN(G)
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 155 "sqlparser_sql2003.l"
+#line 155 "./sqlparser_sql2003.l"
 TOKEN(GROUP)
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 156 "sqlparser_sql2003.l"
+#line 156 "./sqlparser_sql2003.l"
 TOKEN(GROUPING)
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 157 "sqlparser_sql2003.l"
+#line 157 "./sqlparser_sql2003.l"
 TOKEN(HAVING)
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 158 "sqlparser_sql2003.l"
+#line 158 "./sqlparser_sql2003.l"
 TOKEN(HOUR)
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 159 "sqlparser_sql2003.l"
+#line 159 "./sqlparser_sql2003.l"
 TOKEN(IN)
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 160 "sqlparser_sql2003.l"
+#line 160 "./sqlparser_sql2003.l"
 TOKEN(INNER)
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 161 "sqlparser_sql2003.l"
+#line 161 "./sqlparser_sql2003.l"
 TOKEN(INSERT)
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 162 "sqlparser_sql2003.l"
+#line 162 "./sqlparser_sql2003.l"
 TOKEN(INT)
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 163 "sqlparser_sql2003.l"
+#line 163 "./sqlparser_sql2003.l"
 TOKEN(INTEGER)
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 164 "sqlparser_sql2003.l"
+#line 164 "./sqlparser_sql2003.l"
 TOKEN(INTERSECT)
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 165 "sqlparser_sql2003.l"
+#line 165 "./sqlparser_sql2003.l"
 TOKEN(INTERVAL)
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 166 "sqlparser_sql2003.l"
+#line 166 "./sqlparser_sql2003.l"
 TOKEN(INTO)
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 167 "sqlparser_sql2003.l"
+#line 167 "./sqlparser_sql2003.l"
 TOKEN(IS)
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 168 "sqlparser_sql2003.l"
+#line 168 "./sqlparser_sql2003.l"
 TOKEN(JOIN)
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 169 "sqlparser_sql2003.l"
+#line 169 "./sqlparser_sql2003.l"
 TOKEN(K)
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 170 "sqlparser_sql2003.l"
+#line 170 "./sqlparser_sql2003.l"
 TOKEN(LARGE)
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 171 "sqlparser_sql2003.l"
+#line 171 "./sqlparser_sql2003.l"
 TOKEN(LEFT)
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 172 "sqlparser_sql2003.l"
+#line 172 "./sqlparser_sql2003.l"
 TOKEN(LIKE)
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 173 "sqlparser_sql2003.l"
+#line 173 "./sqlparser_sql2003.l"
 TOKEN(M)
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 174 "sqlparser_sql2003.l"
+#line 174 "./sqlparser_sql2003.l"
 TOKEN(MAX)
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 175 "sqlparser_sql2003.l"
+#line 175 "./sqlparser_sql2003.l"
 TOKEN(MIN)
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 176 "sqlparser_sql2003.l"
+#line 176 "./sqlparser_sql2003.l"
 TOKEN(MINUTE)
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 177 "sqlparser_sql2003.l"
+#line 177 "./sqlparser_sql2003.l"
 TOKEN(MOD)
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 178 "sqlparser_sql2003.l"
+#line 178 "./sqlparser_sql2003.l"
 TOKEN(MONTH)
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 179 "sqlparser_sql2003.l"
+#line 179 "./sqlparser_sql2003.l"
 TOKEN(MULTISET)
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 180 "sqlparser_sql2003.l"
+#line 180 "./sqlparser_sql2003.l"
 TOKEN(NATIONAL)
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 181 "sqlparser_sql2003.l"
+#line 181 "./sqlparser_sql2003.l"
 TOKEN(NATURAL)
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 182 "sqlparser_sql2003.l"
+#line 182 "./sqlparser_sql2003.l"
 TOKEN(NCHAR)
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 183 "sqlparser_sql2003.l"
+#line 183 "./sqlparser_sql2003.l"
 TOKEN(NCLOB)
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 184 "sqlparser_sql2003.l"
+#line 184 "./sqlparser_sql2003.l"
 TOKEN(NOT)
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 185 "sqlparser_sql2003.l"
+#line 185 "./sqlparser_sql2003.l"
 TOKEN(NULLIF)
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 186 "sqlparser_sql2003.l"
+#line 186 "./sqlparser_sql2003.l"
 TOKEN(NUMERIC)
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 187 "sqlparser_sql2003.l"
+#line 187 "./sqlparser_sql2003.l"
 TOKEN(OBJECT)
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 188 "sqlparser_sql2003.l"
+#line 188 "./sqlparser_sql2003.l"
 TOKEN(OCTETS)
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 189 "sqlparser_sql2003.l"
+#line 189 "./sqlparser_sql2003.l"
 TOKEN(OF)
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 190 "sqlparser_sql2003.l"
+#line 190 "./sqlparser_sql2003.l"
 TOKEN(ON)
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 191 "sqlparser_sql2003.l"
+#line 191 "./sqlparser_sql2003.l"
 TOKEN(ONLY)
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 192 "sqlparser_sql2003.l"
+#line 192 "./sqlparser_sql2003.l"
 TOKEN(OR)
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 193 "sqlparser_sql2003.l"
+#line 193 "./sqlparser_sql2003.l"
 TOKEN(ORDER)
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 194 "sqlparser_sql2003.l"
+#line 194 "./sqlparser_sql2003.l"
 TOKEN(OUTER)
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 195 "sqlparser_sql2003.l"
+#line 195 "./sqlparser_sql2003.l"
 TOKEN(OVER)
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 196 "sqlparser_sql2003.l"
+#line 196 "./sqlparser_sql2003.l"
 TOKEN(PARTITION)
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 197 "sqlparser_sql2003.l"
+#line 197 "./sqlparser_sql2003.l"
 TOKEN(PRECEDING)
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 198 "sqlparser_sql2003.l"
+#line 198 "./sqlparser_sql2003.l"
 TOKEN(PRECISION)
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 199 "sqlparser_sql2003.l"
+#line 199 "./sqlparser_sql2003.l"
 TOKEN(RANGE)
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 200 "sqlparser_sql2003.l"
+#line 200 "./sqlparser_sql2003.l"
 TOKEN(RANK)
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 201 "sqlparser_sql2003.l"
+#line 201 "./sqlparser_sql2003.l"
 TOKEN(READ)
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 202 "sqlparser_sql2003.l"
+#line 202 "./sqlparser_sql2003.l"
 TOKEN(REAL)
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 203 "sqlparser_sql2003.l"
+#line 203 "./sqlparser_sql2003.l"
 TOKEN(RECURSIVE)
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 204 "sqlparser_sql2003.l"
+#line 204 "./sqlparser_sql2003.l"
 TOKEN(REF)
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 205 "sqlparser_sql2003.l"
+#line 205 "./sqlparser_sql2003.l"
 TOKEN(RIGHT)
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 206 "sqlparser_sql2003.l"
+#line 206 "./sqlparser_sql2003.l"
 TOKEN(ROW)
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 207 "sqlparser_sql2003.l"
+#line 207 "./sqlparser_sql2003.l"
 TOKEN(ROWS)
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 208 "sqlparser_sql2003.l"
+#line 208 "./sqlparser_sql2003.l"
 TOKEN(ROW_NUMBER)
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 209 "sqlparser_sql2003.l"
+#line 209 "./sqlparser_sql2003.l"
 TOKEN(SCOPE)
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 210 "sqlparser_sql2003.l"
+#line 210 "./sqlparser_sql2003.l"
 TOKEN(SECOND)
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 211 "sqlparser_sql2003.l"
+#line 211 "./sqlparser_sql2003.l"
 TOKEN(SELECT)
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 212 "sqlparser_sql2003.l"
+#line 212 "./sqlparser_sql2003.l"
 TOKEN(SESSION_USER)
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 213 "sqlparser_sql2003.l"
+#line 213 "./sqlparser_sql2003.l"
 TOKEN(SET)
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 214 "sqlparser_sql2003.l"
+#line 214 "./sqlparser_sql2003.l"
 TOKEN(SMALLINT)
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 215 "sqlparser_sql2003.l"
+#line 215 "./sqlparser_sql2003.l"
 TOKEN(SOME)
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 216 "sqlparser_sql2003.l"
+#line 216 "./sqlparser_sql2003.l"
 TOKEN(STDDEV_POP)
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 217 "sqlparser_sql2003.l"
+#line 217 "./sqlparser_sql2003.l"
 TOKEN(STDDEV_SAMP)
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 218 "sqlparser_sql2003.l"
+#line 218 "./sqlparser_sql2003.l"
 TOKEN(SUM)
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 219 "sqlparser_sql2003.l"
+#line 219 "./sqlparser_sql2003.l"
 TOKEN(SYSTEM_USER)
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 220 "sqlparser_sql2003.l"
+#line 220 "./sqlparser_sql2003.l"
 TOKEN(THEN)
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 221 "sqlparser_sql2003.l"
+#line 221 "./sqlparser_sql2003.l"
 TOKEN(TIME)
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 222 "sqlparser_sql2003.l"
+#line 222 "./sqlparser_sql2003.l"
 TOKEN(TIMESTAMP)
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 223 "sqlparser_sql2003.l"
+#line 223 "./sqlparser_sql2003.l"
 TOKEN(TO)
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 224 "sqlparser_sql2003.l"
+#line 224 "./sqlparser_sql2003.l"
 TOKEN(UNBOUNDED)
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 225 "sqlparser_sql2003.l"
+#line 225 "./sqlparser_sql2003.l"
 TOKEN(UNION)
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 226 "sqlparser_sql2003.l"
+#line 226 "./sqlparser_sql2003.l"
 TOKEN(UPDATE)
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 227 "sqlparser_sql2003.l"
+#line 227 "./sqlparser_sql2003.l"
 TOKEN(USING)
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 228 "sqlparser_sql2003.l"
+#line 228 "./sqlparser_sql2003.l"
 TOKEN(VALUES)
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 229 "sqlparser_sql2003.l"
+#line 229 "./sqlparser_sql2003.l"
 TOKEN(VARCHAR)
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 230 "sqlparser_sql2003.l"
+#line 230 "./sqlparser_sql2003.l"
 TOKEN(VARYING)
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 231 "sqlparser_sql2003.l"
+#line 231 "./sqlparser_sql2003.l"
 TOKEN(VAR_POP)
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 232 "sqlparser_sql2003.l"
+#line 232 "./sqlparser_sql2003.l"
 TOKEN(VAR_SAMP)
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-#line 233 "sqlparser_sql2003.l"
+#line 233 "./sqlparser_sql2003.l"
 TOKEN(WHEN)
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
-#line 234 "sqlparser_sql2003.l"
+#line 234 "./sqlparser_sql2003.l"
 TOKEN(WHERE)
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-#line 235 "sqlparser_sql2003.l"
+#line 235 "./sqlparser_sql2003.l"
 TOKEN(WITH)
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 236 "sqlparser_sql2003.l"
+#line 236 "./sqlparser_sql2003.l"
 TOKEN(WITHOUT)
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-#line 237 "sqlparser_sql2003.l"
+#line 237 "./sqlparser_sql2003.l"
 TOKEN(YEAR)
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-#line 238 "sqlparser_sql2003.l"
+#line 238 "./sqlparser_sql2003.l"
 TOKEN(ZONE)
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-#line 240 "sqlparser_sql2003.l"
+#line 240 "./sqlparser_sql2003.l"
 {
     yylval->node = Node::makeTerminalNode(E_NULL, yytext);
     return SQL2003_NULLX;
@@ -2224,7 +2224,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
-#line 245 "sqlparser_sql2003.l"
+#line 245 "./sqlparser_sql2003.l"
 {
     Node* nd = Node::makeTerminalNode(E_INT, yytext);
     yylval->node = nd;
@@ -2233,7 +2233,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
-#line 251 "sqlparser_sql2003.l"
+#line 251 "./sqlparser_sql2003.l"
 {
     Node* nd = Node::makeTerminalNode(E_INT, yytext);
     yylval->node = nd;
@@ -2242,12 +2242,12 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case 138:
-#line 261 "sqlparser_sql2003.l"
+#line 261 "./sqlparser_sql2003.l"
 case 139:
-#line 262 "sqlparser_sql2003.l"
+#line 262 "./sqlparser_sql2003.l"
 case 140:
 YY_RULE_SETUP
-#line 262 "sqlparser_sql2003.l"
+#line 262 "./sqlparser_sql2003.l"
 {
     Node* nd = Node::makeTerminalNode(E_DOUBLE, yytext);
     yylval->node = nd;
@@ -2256,10 +2256,10 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case 141:
-#line 270 "sqlparser_sql2003.l"
+#line 270 "./sqlparser_sql2003.l"
 case 142:
 YY_RULE_SETUP
-#line 270 "sqlparser_sql2003.l"
+#line 270 "./sqlparser_sql2003.l"
 {
     Node* nd = Node::makeTerminalNode(E_DOUBLE, yytext);
     yylval->node = nd;
@@ -2269,7 +2269,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 143:
 YY_RULE_SETUP
-#line 277 "sqlparser_sql2003.l"
+#line 277 "./sqlparser_sql2003.l"
 {
     Node* nd = Node::makeTerminalNode(E_BOOL, yytext);
     yylval->node = nd;
@@ -2279,7 +2279,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 144:
 YY_RULE_SETUP
-#line 284 "sqlparser_sql2003.l"
+#line 284 "./sqlparser_sql2003.l"
 {
     yylval->node = Node::makeTerminalNode(E_NULL, yytext);
     return SQL2003_UNKNOWN;
@@ -2287,7 +2287,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 145:
 YY_RULE_SETUP
-#line 289 "sqlparser_sql2003.l"
+#line 289 "./sqlparser_sql2003.l"
 {
     Node* nd = Node::makeTerminalNode(E_BOOL, yytext);
     yylval->node = nd;
@@ -2297,7 +2297,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 146:
 YY_RULE_SETUP
-#line 296 "sqlparser_sql2003.l"
+#line 296 "./sqlparser_sql2003.l"
 {
     BEGIN(sq);
     ((ParseResult*)yyextra)->buf_ = std::stringstream{};
@@ -2306,7 +2306,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 147:
 YY_RULE_SETUP
-#line 302 "sqlparser_sql2003.l"
+#line 302 "./sqlparser_sql2003.l"
 {
     BEGIN(sq);
     ((ParseResult*)yyextra)->buf_ = std::stringstream{};
@@ -2315,22 +2315,22 @@ YY_RULE_SETUP
 	YY_BREAK
 case 148:
 YY_RULE_SETUP
-#line 308 "sqlparser_sql2003.l"
+#line 308 "./sqlparser_sql2003.l"
 {
-    ((ParseResult*)yyextra)->buf_ << '\'';
+    ((ParseResult*)yyextra)->buf_ << "''";
 }
 	YY_BREAK
 case 149:
 /* rule 149 can match eol */
 YY_RULE_SETUP
-#line 312 "sqlparser_sql2003.l"
+#line 312 "./sqlparser_sql2003.l"
 {
     ((ParseResult*)yyextra)->buf_ << yytext;
 }
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
-#line 316 "sqlparser_sql2003.l"
+#line 316 "./sqlparser_sql2003.l"
 {
     BEGIN(INITIAL);
     ((ParseResult*)yyextra)->buf_ << '\'';
@@ -2342,7 +2342,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 151:
 YY_RULE_SETUP
-#line 325 "sqlparser_sql2003.l"
+#line 325 "./sqlparser_sql2003.l"
 {
     BEGIN(sb);
     ((ParseResult*)yyextra)->buf_ = std::stringstream{};
@@ -2352,14 +2352,14 @@ YY_RULE_SETUP
 case 152:
 /* rule 152 can match eol */
 YY_RULE_SETUP
-#line 331 "sqlparser_sql2003.l"
+#line 331 "./sqlparser_sql2003.l"
 {
     ((ParseResult*)yyextra)->buf_ << yytext;
 }
 	YY_BREAK
 case 153:
 YY_RULE_SETUP
-#line 335 "sqlparser_sql2003.l"
+#line 335 "./sqlparser_sql2003.l"
 {
     BEGIN(INITIAL);
     ((ParseResult*)yyextra)->buf_ << ']';
@@ -2371,7 +2371,7 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(sq):
-#line 345 "sqlparser_sql2003.l"
+#line 345 "./sqlparser_sql2003.l"
 {
   fprintf(stderr, "[SQL-Lexer-Error] Unterminated string\n");
   return SQL2003_ERROR;
@@ -2379,7 +2379,7 @@ case YY_STATE_EOF(sq):
 	YY_BREAK
 case 154:
 YY_RULE_SETUP
-#line 350 "sqlparser_sql2003.l"
+#line 350 "./sqlparser_sql2003.l"
 {
     Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
     yylval->node = nd;
@@ -2391,7 +2391,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 155:
 YY_RULE_SETUP
-#line 359 "sqlparser_sql2003.l"
+#line 359 "./sqlparser_sql2003.l"
 {
 	Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
 	yylval->node = nd;
@@ -2404,68 +2404,68 @@ YY_RULE_SETUP
 case 156:
 /* rule 156 can match eol */
 YY_RULE_SETUP
-#line 368 "sqlparser_sql2003.l"
+#line 368 "./sqlparser_sql2003.l"
 { /* ignore */ }
 	YY_BREAK
 case 157:
 /* rule 157 can match eol */
 YY_RULE_SETUP
-#line 369 "sqlparser_sql2003.l"
+#line 369 "./sqlparser_sql2003.l"
 { /* ignore */ }
 	YY_BREAK
 case 158:
 YY_RULE_SETUP
-#line 371 "sqlparser_sql2003.l"
+#line 371 "./sqlparser_sql2003.l"
 { return yytext[0];}
 	YY_BREAK
 case 159:
 YY_RULE_SETUP
-#line 373 "sqlparser_sql2003.l"
+#line 373 "./sqlparser_sql2003.l"
 { return SQL2003_CNNOP; }
 	YY_BREAK
 case 160:
 YY_RULE_SETUP
-#line 374 "sqlparser_sql2003.l"
+#line 374 "./sqlparser_sql2003.l"
 { return SQL2003_COMP_EQ; }
 	YY_BREAK
 case 161:
 YY_RULE_SETUP
-#line 375 "sqlparser_sql2003.l"
+#line 375 "./sqlparser_sql2003.l"
 { return SQL2003_COMP_GE; }
 	YY_BREAK
 case 162:
 YY_RULE_SETUP
-#line 376 "sqlparser_sql2003.l"
+#line 376 "./sqlparser_sql2003.l"
 { return SQL2003_COMP_GT; }
 	YY_BREAK
 case 163:
 YY_RULE_SETUP
-#line 377 "sqlparser_sql2003.l"
+#line 377 "./sqlparser_sql2003.l"
 { return SQL2003_COMP_LE; }
 	YY_BREAK
 case 164:
 YY_RULE_SETUP
-#line 378 "sqlparser_sql2003.l"
+#line 378 "./sqlparser_sql2003.l"
 { return SQL2003_COMP_LT; }
 	YY_BREAK
 case 165:
 YY_RULE_SETUP
-#line 379 "sqlparser_sql2003.l"
+#line 379 "./sqlparser_sql2003.l"
 { return SQL2003_COMP_NE; }
 	YY_BREAK
 case 166:
 YY_RULE_SETUP
-#line 380 "sqlparser_sql2003.l"
+#line 380 "./sqlparser_sql2003.l"
 { return SQL2003_COMP_NE; }
 	YY_BREAK
 case 167:
 YY_RULE_SETUP
-#line 382 "sqlparser_sql2003.l"
+#line 382 "./sqlparser_sql2003.l"
 
 	YY_BREAK
 case 168:
 YY_RULE_SETUP
-#line 384 "sqlparser_sql2003.l"
+#line 384 "./sqlparser_sql2003.l"
 {
     Node* nd = Node::makeTerminalNode(E_QUESTIONMARK, yytext);
     yylval->node = nd;
@@ -2475,12 +2475,12 @@ YY_RULE_SETUP
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(hint):
 case YY_STATE_EOF(sb):
-#line 391 "sqlparser_sql2003.l"
+#line 391 "./sqlparser_sql2003.l"
 { return SQL2003_END_P; }
 	YY_BREAK
 case 169:
 YY_RULE_SETUP
-#line 393 "sqlparser_sql2003.l"
+#line 393 "./sqlparser_sql2003.l"
 {
     fprintf(stderr, "[SQL-Lexer-Error] Unknown Character: %c\n", yytext[0]);
     return SQL2003_ERROR;
@@ -2488,7 +2488,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 170:
 YY_RULE_SETUP
-#line 397 "sqlparser_sql2003.l"
+#line 397 "./sqlparser_sql2003.l"
 ECHO;
 	YY_BREAK
 #line 2495 "sqlparser_sql2003_flex.cpp"
@@ -3645,7 +3645,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 397 "sqlparser_sql2003.l"
+#line 397 "./sqlparser_sql2003.l"
 
 /***************************
  ** Section 3: User code
