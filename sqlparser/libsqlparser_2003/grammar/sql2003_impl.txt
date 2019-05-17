@@ -20,11 +20,7 @@
   | <from default>
 
 <from subquery> ::=
-    [ <left paren> <insert column list> <right paren> ] <insert query expression>
-
-<insert query expression> ::=
-    <subquery>
-  | <query expression>
+    [ <left paren> <insert column list> <right paren> ] <query expression>
 
 <from constructor> ::=
     [ <left paren> <insert column list> <right paren> ] <contextually typed table value constructor>
