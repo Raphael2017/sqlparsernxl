@@ -81,7 +81,6 @@ identifer         ([A-Za-z_][A_Za-z0-9_]*)
 system_variable  (@@[A-Za-z_][A_Za-z0-9_]*)
 temp_variable (@[A-Za-z_][A_Za-z0-9_]*)
 
-hex           (("0X"|"0x")[0-9a-fA-F]+)
 quote         '
 nquote        "N'"
 sqbegin       {quote}
@@ -97,6 +96,7 @@ rsqbracket      \]
 sbbegin         {lsqbracket}
 sbend           {rsqbracket}
 sbcontent       [^\]]*
+rsqbracketdouble {rsqbracket}{rsqbracket}
 
 /***************************
  ** Section 3: Rules
@@ -322,10 +322,19 @@ FALSE   {
     return SQL2003_STRING;
 }
 
+<sq><<EOF>>  {
+  fprintf(stderr, "[SQL-Lexer-Error] Unterminated string\n");
+  return SQL2003_ERROR;
+}
+
 {sbbegin}   {
     BEGIN(sb);
     ((ParseResult*)yyextra)->buf_ = std::stringstream{};
     ((ParseResult*)yyextra)->buf_ << '[';
+}
+
+<sb>{rsqbracketdouble} {
+    ((ParseResult*)yyextra)->buf_ << "]]";
 }
 
 <sb>{sbcontent} {
@@ -342,12 +351,13 @@ FALSE   {
     return SQL2003_NAME;
 }
 
-<sq><<EOF>>  {
-  fprintf(stderr, "[SQL-Lexer-Error] Unterminated string\n");
-  return SQL2003_ERROR;
+<sb><<EOF>> {
+    fprintf(stderr, "[SQL-Lexer-Error] Unterminated identifier WITH '['\n");
+    return SQL2003_ERROR;
 }
 
-\"[^\"\n]+\" {
+
+\"(\"\"|[^"\\\n])+\" {
     Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
     yylval->node = nd;
     nd->terminalToken_.str = std::string(yytext+1, yytext + strlen(yytext) - 1);
