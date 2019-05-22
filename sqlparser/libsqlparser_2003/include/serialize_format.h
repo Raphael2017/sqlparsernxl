@@ -38,7 +38,7 @@ struct _FmCB {
 };
 #define FmCB const _FmCB
 
-Form SEMICOLON_LIST_SERIALIZE_FORMAT_C        {{0,"",0,""}, {1,"; "}, {0,"",1,""}};
+Form SEMICOLON_LIST_SERIALIZE_FORMAT_C        {{0,"",0,""}, {1,";\n"}, {0,"",1,""}};
 Form SEMICOLON_LIST_SERIALIZE_FORMAT_B        {{0,"",0,""}, {1,"; "}, {0,"\n",1,""}};
 FmCB SEMICOLON_LIST_SERIALIZE_FORMAT          {&SEMICOLON_LIST_SERIALIZE_FORMAT_C, &SEMICOLON_LIST_SERIALIZE_FORMAT_B};
 

@@ -9,6 +9,7 @@
 #include "keydef.h"
 #include <functional>
 #include <set>
+#include <sstream>
 #include "Interface.h"
 
 #define NODE_CHILDREN_DEBUG
@@ -73,6 +74,7 @@ struct Node : public INode
      * */
     static std::string SerializeNonRecursive(Node* root);
     std::string serialize();
+    void serialize(std::stringstream& buf);
 
     static Node* remove_parens(Node* node);
     static bool is_with_parens(Node* node);

@@ -7,15 +7,17 @@
 
 #include "serialize_format.h"
 
+#include <sstream>
+
 struct _Buf {
     _Buf() : line_(0), col_(0) {}
     /* no \n */
     void append(const std::string& ap) {
-        s_ += ap;
+        s_ << ap;
         col_ += ap.length();
     }
     void new_line() {
-        s_ += "\n";
+        s_ << "\n";
         line_++;
         col_ = 0;
     }
@@ -23,9 +25,9 @@ struct _Buf {
         append(std::string(n, ' '));
     }
     int get_col() const { return col_; }
-    std::string get_str() const { return s_; }
+    std::string get_str() const { return s_.str(); }
 private:
-    std::string s_;
+    std::stringstream s_;
     int line_;
     int col_;
 };

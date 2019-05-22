@@ -501,33 +501,37 @@ std::string Node::SerializeNonRecursive(Node* root)
 
 std::string Node::serialize()
 {
-    std::string ret = "";
+    std::stringstream buf{};
+    serialize(buf);
+    return buf.str();
+}
+
+void Node::serialize(std::stringstream& buf) {
     if (!isTerminalToken)
     {
         for (auto info : *(serialize_format->compact_))
         {
             if (info.is_simple == 1)
             {
-                ret += info.s0;
+                buf << info.s0;
             }
             else
             {
                 Node* child = getChild(info.key);
                 if (child)
                 {
-                    ret += info.s0;
-                    ret += child->serialize();
-                    ret += info.s2;
+                    buf << info.s0;
+                    child->serialize(buf);
+                    buf << info.s2;
                 }
             }
         }
     }
     else
     {
-        ret = terminalToken_.yytex;
+        //ret = terminalToken_.yytex;
+        buf << terminalToken_.yytex;
     }
-
-    return ret;
 }
 
 Node* Node::getParent()
