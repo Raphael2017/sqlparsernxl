@@ -249,8 +249,8 @@
     <scalar function expression>
   | <rank window function expression>
   | <aggregate windowed function expression>
-  | <sql2003 keyword function expression>
   | <other function expression>
+--  | <sql2003 keyword function expression>
 
 <other function expression> ::=
     CAST <left paren> <row value ctor> AS <data type> <right paren>

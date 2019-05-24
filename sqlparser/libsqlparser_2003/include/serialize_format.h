@@ -277,7 +277,7 @@ Form OP_NE_ANY_SERIALIZE_FORMAT_C             {{0,"",0,""}, {1," <> ANY "}, {0,"
 /* OP_NE_ANY_SERIALIZE_FORMAT_B */
 FmCB OP_NE_ANY_SERIALIZE_FORMAT               {&OP_NE_ANY_SERIALIZE_FORMAT_C, &OP_NE_ANY_SERIALIZE_FORMAT_C};
 
-Form OP_LIKE_SERIALIZE_FORMAT_C               {{0,"",0,""}, {1," LIKE "}, {0,"",1,""}};
+Form OP_LIKE_SERIALIZE_FORMAT_C               {{0,"",0,""}, {1," LIKE "}, {0,"",1,""}, {0," ESCAPE ",2,""}};
 /* OP_LIKE_SERIALIZE_FORMAT_B */
 FmCB OP_LIKE_SERIALIZE_FORMAT                 {&OP_LIKE_SERIALIZE_FORMAT_C, &OP_LIKE_SERIALIZE_FORMAT_C};
 

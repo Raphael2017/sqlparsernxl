@@ -135,7 +135,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
        CURRENT_TIMESTAMP CURRENT_USER
 %token DATE DAY DEC DECIMAL DEFAULT DELETE
        DENSE_RANK DESC DISTINCT DOUBLE
-%token ELSE END END_P ERROR EXCEPT EXISTS
+%token ELSE END END_P ESCAPE ERROR EXCEPT EXISTS
 %token FLOAT FOLLOWING FOR FROM FULL
 %token G GROUP GROUPING
 %token HAVING HOUR
@@ -199,7 +199,8 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> update_elem_list update_elem
 %type <node> collate_clause
 %type <ival> all_some_any
-%type <node> user_defined_type_name reference_type collection_type predefined_type boolean_type
+%type <node> user_defined_type_name reference_type predefined_type boolean_type
+%type <node> collection_type
 %type <node> datetime_type numeric_type exact_numeric_type approximate_numeric_type character_string_type
 %type <node> binary_large_object_string_type national_character_string_type
 %type <node> large_object_length multiplier char_length_units
@@ -1046,6 +1047,11 @@ predicate:
     $$ = Node::makeNonTerminalNode(E_OP_LIKE, E_OP_BINARY_PROPERTY_CNT, $1, $3);
     $$->serialize_format = Node::op_serialize_format(E_OP_LIKE);
 }
+  | row_expr LIKE row_expr ESCAPE row_expr
+{
+    $$ = Node::makeNonTerminalNode(E_OP_LIKE, E_OP_TERNARY_PROPERTY_CNT, $1, $3, $5);
+    $$->serialize_format = Node::op_serialize_format(E_OP_LIKE);
+}
   | row_expr NOT LIKE row_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_NOT_LIKE, E_OP_BINARY_PROPERTY_CNT, $1, $4);
@@ -1779,14 +1785,6 @@ datetime_type:
 {
     $$ = Node::makeTerminalNode(E_STRING, "TIMESTAMP WITHOUT TIME ZONE");
 }
-  | TIMESTAMP
-{
-    $$ = Node::makeTerminalNode(E_STRING, "TIMESTAMP");
-}
-  | TIME
-{
-    $$ = Node::makeTerminalNode(E_STRING, "TIME");
-}
 ;
 
 numeric_type:
@@ -2170,6 +2168,8 @@ reserved:
   | FOR			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "FOR"); }
   | OF			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "OF"); }
   | READ		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "READ"); }
+  | TIMESTAMP		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "TIMESTAMP"); }
+  | TIME		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "TIME");  }
 ;
 
 %%
