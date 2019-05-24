@@ -208,7 +208,7 @@
     <row value ctor> <comp op> <row value ctor>
   | <row value ctor> <comp op> <quantifier> <subquery>
   | <row value ctor> [ NOT ] BETWEEN <row value ctor> AND <row value ctor>
-  | <row value ctor> [ NOT ] LIKE <row value ctor>
+  | <row value ctor> [ NOT ] LIKE <row value ctor> [ ESCAPE <row value ctor> ]
   | <row value ctor> [ NOT ] IN <in predicate value>
   | <row value ctor> IS [ NOT ] NULL
   | EXISTS <subquery>

@@ -1057,6 +1057,11 @@ predicate:
     $$ = Node::makeNonTerminalNode(E_OP_NOT_LIKE, E_OP_BINARY_PROPERTY_CNT, $1, $4);
     $$->serialize_format = Node::op_serialize_format(E_OP_NOT_LIKE);
 }
+  | row_expr NOT LIKE row_expr ESCAPE row_expr
+{
+    $$ = Node::makeNonTerminalNode(E_OP_NOT_LIKE, E_OP_TERNARY_PROPERTY_CNT, $1, $4, $6);
+    $$->serialize_format = Node::op_serialize_format(E_OP_NOT_LIKE);
+}
   | row_expr IN in_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_IN, E_OP_BINARY_PROPERTY_CNT, $1, $3);
