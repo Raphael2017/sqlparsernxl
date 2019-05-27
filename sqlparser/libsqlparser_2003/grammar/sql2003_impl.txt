@@ -48,6 +48,8 @@
 
 <update target> ::= <object column>
 
+<update source> ::= <row value ctor>
+
 <direct select statement: multiple rows> ::=
     <cursor specification>
 

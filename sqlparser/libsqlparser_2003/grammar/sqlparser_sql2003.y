@@ -187,7 +187,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> expr_const
 %type <node> search_condition boolean_term boolean_factor boolean_test boolean_primary truth_value
 %type <node> predicate row_expr row_expr_list factor0 factor1 factor2 factor3 factor4
-%type <nodetype> comp_op plus_minus_op star_div_percent_mod_op comp_all_some_any_op
+%type <nodetype> comp_op plus_minus_op star_div_percent_mod_op comp_all_some_any_op cnn_op
 %type <node> column_ref
 %type <node> case_expr func_expr in_expr function_call_keyword
 %type <node> case_arg when_clause_list when_clause case_default
@@ -1097,10 +1097,10 @@ row_expr:
     $$ = Node::makeNonTerminalNode(E_OP_COLLATE, E_OP_BINARY_PROPERTY_CNT, $1, $2);
     $$->serialize_format = &SORT_KEY_SERIALIZE_FORMAT;
 }
-  | row_expr CNNOP factor0
+  | row_expr cnn_op factor0
 {
     $$ = Node::makeNonTerminalNode(E_OP_CNN, E_OP_BINARY_PROPERTY_CNT, $1, $3);
-    $$->serialize_format = Node::op_serialize_format(E_OP_CNN);
+    $$->serialize_format = Node::op_serialize_format($2);
 }
 ;
 
@@ -1180,13 +1180,23 @@ truth_value: BOOL | UNKNOWN
 ;
 
 comp_op:
-    COMP_LE	{ $$ = E_OP_LE; }
-  | COMP_LT	{ $$ = E_OP_LT; }
-  | COMP_GE	{ $$ = E_OP_GE; }
-  | COMP_GT	{ $$ = E_OP_GT; }
-  | COMP_EQ	{ $$ = E_OP_EQ; }
-  | COMP_NE	{ $$ = E_OP_NE; }
+    COMP_LE		{ $$ = E_OP_LE; }
+  | COMP_LT		{ $$ = E_OP_LT; }
+  | COMP_GE		{ $$ = E_OP_GE; }
+  | COMP_GT		{ $$ = E_OP_GT; }
+  | COMP_EQ		{ $$ = E_OP_EQ; }
+  | COMP_NE		{ $$ = E_OP_NE; }
+  | COMP_GT COMP_EQ	{ $$ = E_OP_GE; }	/* this means qty >     = 15 is ok */
+  | COMP_LT COMP_EQ	{ $$ = E_OP_LE; }	/* this means qty <     = 15 is ok */
+  | COMP_LT COMP_GT	{ $$ = E_OP_NE; }	/* this means qty <     > 15 is ok */
+  | '!' COMP_EQ		{ $$ = E_OP_NE; }	/* this means qty !     = 15 is ok */
 ;
+
+cnn_op:
+    CNNOP		{ $$ = E_OP_CNN; }
+  | '|' '|'		{ $$ = E_OP_CNN; }	/* this means 'asd' |     | 'qwe' is ok */
+;
+
 
 comp_all_some_any_op:
     comp_op all_some_any
