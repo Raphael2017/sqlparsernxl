@@ -131,11 +131,12 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token CASE CAST CHAR CHARACTER CHARACTERS CLOB
        CNNOP COALESCE CODE_UNITS COLLATE COMP_EQ
        COMP_GE COMP_GT COMP_LE COMP_LT COMP_NE
-       CONVERT CORRESPONDING COUNT CROSS CURRENT
-       CURRENT_TIMESTAMP CURRENT_USER
+       CONVERT CORRESPONDING COUNT CROSS CUME_DIST
+       CURRENT CURRENT_TIMESTAMP CURRENT_USER
 %token DATE DAY DEC DECIMAL DEFAULT DELETE
        DENSE_RANK DESC DISTINCT DOUBLE
-%token ELSE END END_P ESCAPE ERROR EXCEPT EXISTS
+%token ELSE END END_P ESCAPE ERROR EXCEPT EXCLUDE
+%token EXISTS
 %token FLOAT FOLLOWING FOR FROM FULL
 %token G GROUP GROUPING
 %token HAVING HOUR
@@ -146,16 +147,16 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token LARGE LEFT LIKE
 %token M MAX MIN MINUTE MOD MONTH
        MULTISET
-%token NATIONAL NATURAL NCHAR NCLOB NOT NULLIF
+%token NATIONAL NATURAL NCHAR NCLOB NO NOT NULLIF
        NUMERIC
 %token OBJECT OCTETS OF ON ONLY OR
-       ORDER OUTER OVER
-%token PARTITION PRECEDING PRECISION
+       ORDER OTHERS OUTER OVER
+%token PARTITION PERCENT_RANK PRECEDING PRECISION
 %token RANGE RANK READ REAL RECURSIVE REF
        RIGHT ROW ROWS ROW_NUMBER
-%token SCOPE SECOND SELECT SESSION_USER SET SMALLINT
+%token SCOPE SECOND SELECT SESSION_USER SET SETS SMALLINT
        SOME STDDEV_POP STDDEV_SAMP SUM SYSTEM_USER
-%token THEN TIME TIMESTAMP TO
+%token THEN TIES TIME TIMESTAMP TO
 %token UNBOUNDED UNION UPDATE USING
 %token VALUES VARCHAR VARYING VAR_POP VAR_SAMP
 %token WHEN WHERE WITH WITHOUT
@@ -173,7 +174,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> delete_stmt
 %type <node> insert_stmt
 %type <node> insert_columns_and_source from_constructor
-%type <node> opt_from_clause table_factor_non_join data_type
+%type <node> opt_from_clause table_primary_non_join data_type
 %type <node> label opt_as_label as_label
 %type <node> select_with_parens query_expression query_expression_body
 %type <node> query_term query_primary simple_table
@@ -181,7 +182,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> opt_where opt_groupby opt_order_by order_by opt_having
 %type <node> sort_list sort_key opt_asc_desc
 %type <node> opt_distinct distinct_or_all projection
-%type <node> from_list table_factor table_term relation_factor joined_table
+%type <node> from_list table_reference table_primary relation_factor joined_table
 %type <node> join_type
 %type <ival> join_outer
 %type <node> expr_const
@@ -193,7 +194,11 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> case_arg when_clause_list when_clause case_default
 %type <node> with_clause with_list common_table_expr opt_derived_column_list
 %type <node> simple_ident_list simple_ident_list_with_parens opt_simple_ident_list_with_parens
-%type <node> over_clause row_or_range_clause window_frame_extent
+%type <node> over_clause window_name window_specification window_specification_details
+%type <node> opt_existing_window_name opt_window_partition_clause
+%type <node> opt_window_frame_clause window_frame_units window_frame_extent opt_window_frame_exclusion
+%type <node> window_frame_start window_frame_between window_frame_preceding window_frame_bound
+%type <node> window_frame_following
 %type <node> aggregate_windowed_function ranking_windowed_function scalar_function
 %type <node> aggregate_function_name ranking_function_name
 %type <node> update_elem_list update_elem
@@ -207,6 +212,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> interval_type interval_qualifier start_field end_field
 %type <node> single_datetime_field non_second_primary_datetime_field
 %type <node> name_r reserved
+%type <node> grouping_element_list grouping_element
 
 %start sql_stmt
 %%
@@ -517,18 +523,33 @@ opt_from_clause:
 }
 ;
 
-/* sql2003 support opt_distinct */
-/* sql2003 support <ordinary grouping set> */
-/* todo sql2003 support <rollup list> */
-/* todo sql2003 support <cube list> */
-/* todo sql2003 support <grouping sets specification> */
-/* todo sql2003 support <empty grouping set> */
 opt_groupby:
     /*EMPTY*/	{ $$ = nullptr; }
-  | GROUP BY opt_distinct row_expr_list
+  | GROUP BY opt_distinct grouping_element_list
 {
     $$ = Node::makeNonTerminalNode(E_GROUP_BY, E_GROUP_BY_PROPERTY_CNT, $4, $3);
     $$->serialize_format = &GROUP_BY_SERIALIZE_FORMAT;
+}
+;
+
+grouping_element_list:
+    grouping_element
+  | grouping_element ',' grouping_element_list
+{
+    $$ = Node::makeNonTerminalNode(E_EXPR_LIST, E_LIST_PROPERTY_CNT, $1, $3);
+    $$->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+}
+;
+
+grouping_element:
+    '(' ')'	{ $$ = Node::makeTerminalNode(E_IDENTIFIER,"()"); }	/* sql2003 support <empty grouping set> */
+  | row_expr								/* sql2003 support <ordinary grouping set> <rollup list> <cube list> */
+  | GROUPING SETS '(' grouping_element_list ')'				/* sql2003 support <grouping sets specification> */
+{
+    Node* fun_name = Node::makeTerminalNode(E_IDENTIFIER, "GROUPING SETS");
+    $$ = Node::makeNonTerminalNode(E_FUN_CALL, E_FUN_CALL_PROPERTY_CNT,
+        		fun_name, $4, nullptr, nullptr, nullptr);
+    $$->serialize_format = &FUN_CALL_1_OVER_SERIALIZE_FORMAT;
 }
 ;
 
@@ -686,21 +707,21 @@ projection:
 ;
 
 from_list:
-    table_factor
-  | table_factor ',' from_list
+    table_reference
+  | table_reference ',' from_list
 {
     $$ = Node::makeNonTerminalNode(E_FROM_LIST, E_LIST_PROPERTY_CNT, $1, $3);
     $$->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
 }
 ;
 
-table_factor:
-    table_term
+table_reference:
+    table_primary
   | joined_table
 ;
 
-table_term:
-    table_factor_non_join
+table_primary:
+    table_primary_non_join
   | '(' joined_table ')'
 {
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE_WITH_PARENS, E_PARENS_PROPERTY_CNT, $2);
@@ -712,7 +733,7 @@ table_term:
 /* todo sql2003 support <collection derived table> */
 /* todo sql2003 support <table function derived table> */
 /* todo sql2003 support <only spec> */
-table_factor_non_join:
+table_primary_non_join:
     relation_factor opt_as_label
 {
     $$ = Node::makeNonTerminalNode(E_ALIAS, E_ALIAS_PROPERTY_CNT, $1, $2, nullptr, nullptr, nullptr);
@@ -889,35 +910,35 @@ relation_factor:
 ;
 
 joined_table:
-    table_factor join_type JOIN table_term ON search_condition
+    table_reference join_type JOIN table_reference ON search_condition
 {
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, $2, $1, $4, $6);
     $$->serialize_format = &JOINED_TB_1_SERIALIZE_FORMAT;
 }
-  | table_factor JOIN table_term ON search_condition
+  | table_reference JOIN table_reference ON search_condition
 {
     Node* nd = Node::makeTerminalNode(E_JOIN_INNER, "");
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, $1, $3, $5);
     $$->serialize_format = &JOINED_TB_1_SERIALIZE_FORMAT;
 }
-  | table_factor join_type JOIN table_term USING simple_ident_list_with_parens
+  | table_reference join_type JOIN table_reference USING simple_ident_list_with_parens
 {
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, $2, $1, $4, $6);
     $$->serialize_format = &JOINED_TB_USING_SERIALIZE_FORMAT;
 }
-  | table_factor JOIN table_term USING simple_ident_list_with_parens
+  | table_reference JOIN table_reference USING simple_ident_list_with_parens
 {
     Node* nd = Node::makeTerminalNode(E_JOIN_INNER, "");
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, $1, $3, $5);
     $$->serialize_format = &JOINED_TB_USING_SERIALIZE_FORMAT;
 }
-  | table_factor CROSS JOIN table_term
+  | table_reference CROSS JOIN table_primary
 {
     Node* nd = Node::makeTerminalNode(E_JOIN_CROSS, "CROSS");
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, $1, $4, nullptr);
     $$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
 }
-  | table_factor NATURAL join_type JOIN table_term
+  | table_reference NATURAL join_type JOIN table_primary
 {
     Node* nd = Node::makeTerminalNode(E_JOIN_NATURAL, "NATURAL " + $3->text());
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, $1, $5, nullptr);
@@ -1357,7 +1378,97 @@ ranking_windowed_function:
 ranking_function_name:
     RANK		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "RANK"); }
   | DENSE_RANK		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "DENSE_RANK"); }
+  | PERCENT_RANK	{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "PERCENT_RANK"); }
+  | CUME_DIST		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CUME_DIST"); }
   | ROW_NUMBER		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ROW_NUMBER"); }
+;
+
+over_clause:
+    OVER window_name
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "OVER "+ $2->text()); delete($2); }
+  | OVER window_specification
+{ $$ = $2; }
+;
+
+window_specification:
+    '(' window_specification_details ')'
+{ $$ = $2; }
+;
+
+window_name:
+    name_r
+;
+
+window_specification_details:
+    opt_existing_window_name opt_window_partition_clause opt_order_by opt_window_frame_clause
+{
+    $$ = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, $1, $2, $3, $4);
+    $$->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
+}
+;
+
+opt_existing_window_name:
+    /* EMPTY */	{ $$ = nullptr; }
+  | window_name
+;
+
+opt_window_partition_clause:
+    /* EMPTY */ { $$ = nullptr; }
+  | PARTITION BY row_expr_list
+{ $$ = $3; }
+;
+
+opt_window_frame_clause:
+    /* EMPTY */ { $$ = nullptr; }
+  | window_frame_units window_frame_extent opt_window_frame_exclusion
+{
+    std::string s3 = $3 ? $3->text() : "";
+    $$ = Node::makeTerminalNode(E_IDENTIFIER, $1->text()+" "+$2->text()+" "+s3);
+    delete($1); delete($2); delete($3);
+}
+;
+
+window_frame_units:
+    ROWS	{ $$ = Node::makeTerminalNode(E_IDENTIFIER,"ROWS"); }
+  | RANGE	{ $$ = Node::makeTerminalNode(E_IDENTIFIER,"RANGE"); }
+;
+
+window_frame_extent:
+    window_frame_start
+  | window_frame_between
+;
+
+window_frame_start:
+    UNBOUNDED PRECEDING		{ $$ = Node::makeTerminalNode(E_IDENTIFIER,"UNBOUNDED PRECEDING"); }
+  | CURRENT ROW			{ $$ = Node::makeTerminalNode(E_IDENTIFIER,"CURRENT ROW"); }
+  | window_frame_preceding
+;
+
+window_frame_preceding:
+    expr_const PRECEDING	{ $$ = Node::makeTerminalNode(E_IDENTIFIER,$1->text()+" PRECEDING"); delete($1); }
+;
+
+window_frame_between:
+    BETWEEN window_frame_bound AND window_frame_bound
+{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" AND "+$4->text()); delete($2); delete($4); }
+;
+
+window_frame_bound:
+    window_frame_start
+  | UNBOUNDED FOLLOWING		{ $$ = Node::makeTerminalNode(E_IDENTIFIER,"UNBOUNDED FOLLOWING"); }
+  | window_frame_following
+;
+
+window_frame_following:
+    expr_const FOLLOWING	{ $$ = Node::makeTerminalNode(E_IDENTIFIER,$1->text()+" FOLLOWING"); delete($1); }
+;
+
+opt_window_frame_exclusion:
+    /* EMPTY */	{ $$ = nullptr; }
+  | EXCLUDE CURRENT ROW		{ $$ = Node::makeTerminalNode(E_IDENTIFIER,"EXCLUDE CURRENT ROW"); }
+  | EXCLUDE GROUP		{ $$ = Node::makeTerminalNode(E_IDENTIFIER,"EXCLUDE GROUP"); }
+  | EXCLUDE TIES		{ $$ = Node::makeTerminalNode(E_IDENTIFIER,"EXCLUDE TIES"); }
+  | EXCLUDE NO OTHERS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER,"EXCLUDE NO OTHERS"); }
 ;
 
 scalar_function:
@@ -1468,121 +1579,7 @@ function_call_keyword:
 }
 ;
 
-over_clause:
-    OVER '(' PARTITION BY row_expr_list order_by row_or_range_clause ')'
-{
-    $$ = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, $5, $6, $7);
-    $$->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
-}
-  | OVER '('                        order_by row_or_range_clause ')'
-{
-    $$ = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, nullptr, $3, $4);
-    $$->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
-}
-  | OVER '(' PARTITION BY row_expr_list          row_or_range_clause ')'
-{
-    $$ = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, $5, nullptr, $6);
-    $$->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
-}
-  | OVER '(' PARTITION BY row_expr_list order_by                     ')'
-{
-    $$ = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, $5, $6, nullptr);
-    $$->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
-}
-  | OVER '(' PARTITION BY row_expr_list                              ')'
-{
-    $$ = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, $5, nullptr, nullptr);
-    $$->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
-}
-  | OVER '('                        order_by                     ')'
-{
-    $$ = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, nullptr, $3, nullptr);
-    $$->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
-}
-  | OVER '('                                 row_or_range_clause ')'
-{
-    $$ = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, nullptr, nullptr, $3);
-    $$->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
-}
-  | OVER '('                                                     ')'
-{
-    $$ = Node::makeNonTerminalNode(E_OVER_CLAUSE, E_OVER_CLAUSE_PROPERTY_CNT, nullptr, nullptr, nullptr);
-    $$->serialize_format = &OVER_CLAUSE_SERIALIZE_FORMAT;
-}
-;
 
-row_or_range_clause:
-    ROWS window_frame_extent
-{
-    Node* rows = Node::makeTerminalNode(E_IDENTIFIER, "ROWS");
-    $$ = Node::makeNonTerminalNode(E_ROWS_CLAUSE, E_ROWS_CLAUSE_PROPERTY_CNT, rows, $2);
-    $$->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
-}
-  | RANGE window_frame_extent
-{
-    Node* range = Node::makeTerminalNode(E_IDENTIFIER, "RANGE");
-    $$ = Node::makeNonTerminalNode(E_RANGE_CLAUSE, E_RANGE_CLAUSE_PROPERTY_CNT, range, $2);
-    $$->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
-}
-;
-
-window_frame_extent:
-    UNBOUNDED PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "UNBOUNDED PRECEDING"); }
-  | INTNUM PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, $1->text()+"PRECEDING"); delete($1); }
-  | CURRENT ROW
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CURRENT ROW"); }
-  | BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED PRECEDING"); }
-  | BETWEEN INTNUM PRECEDING   AND UNBOUNDED PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND UNBOUNDED PRECEDING"); delete($2); }
-  | BETWEEN CURRENT ROW         AND UNBOUNDED PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND UNBOUNDED PRECEDING"); }
-  | BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED PRECEDING"); }
-  | BETWEEN INTNUM FOLLOWING   AND UNBOUNDED PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND UNBOUNDED PRECEDING"); delete($2); }
-  | BETWEEN UNBOUNDED PRECEDING AND INTNUM PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND "+$5->text()+" PRECEDING"); delete($5);}
-  | BETWEEN INTNUM PRECEDING   AND INTNUM PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND "+$5->text()+" PRECEDING"); delete($2); delete($5); }
-  | BETWEEN CURRENT ROW         AND INTNUM PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND "+$5->text()+" PRECEDING"); delete($5); }
-  | BETWEEN UNBOUNDED FOLLOWING AND INTNUM PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND "+$5->text()+" PRECEDING"); delete($5); }
-  | BETWEEN INTNUM FOLLOWING   AND INTNUM PRECEDING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND "+$5->text()+" PRECEDING"); delete($2); delete($5); }
-  | BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW"); }
-  | BETWEEN INTNUM PRECEDING   AND CURRENT ROW
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND CURRENT ROW"); delete($2); }
-  | BETWEEN CURRENT ROW         AND CURRENT ROW
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND CURRENT ROW"); }
-  | BETWEEN UNBOUNDED FOLLOWING AND CURRENT ROW
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND CURRENT ROW"); }
-  | BETWEEN INTNUM FOLLOWING   AND CURRENT ROW
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND CURRENT ROW"); delete($2); }
-  | BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING"); }
-  | BETWEEN INTNUM PRECEDING   AND UNBOUNDED FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND UNBOUNDED FOLLOWING"); delete($2); }
-  | BETWEEN CURRENT ROW         AND UNBOUNDED FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING"); }
-  | BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND UNBOUNDED FOLLOWING"); }
-  | BETWEEN INTNUM FOLLOWING   AND UNBOUNDED FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND UNBOUNDED FOLLOWING"); delete($2); }
-  | BETWEEN UNBOUNDED PRECEDING AND DECIMAL FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED PRECEDING AND DECIMAL FOLLOWING"); }
-  | BETWEEN INTNUM PRECEDING   AND INTNUM FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" PRECEDING AND "+$5->text()+" FOLLOWING"); delete($2); delete($5); }
-  | BETWEEN CURRENT ROW         AND INTNUM FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN CURRENT ROW AND "+$5->text()+" FOLLOWING"); delete($5); }
-  | BETWEEN UNBOUNDED FOLLOWING AND INTNUM FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN UNBOUNDED FOLLOWING AND "+$5->text()+" FOLLOWING"); delete($5); }
-  | BETWEEN INTNUM FOLLOWING   AND INTNUM FOLLOWING
-{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BETWEEN "+$2->text()+" FOLLOWING AND "+$5->text()+" FOLLOWING"); delete($2); delete($5); }
 
 /* todo sql2003 support <row type> */
 data_type:
@@ -2146,45 +2143,50 @@ name_r:
 ;
 
 reserved:
-    aggregate_function_name	%prec UMINUS
-  | ranking_function_name	%prec UMINUS
-  | non_second_primary_datetime_field	%prec UMINUS
-  | K			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "K"); }
-  | M			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "M"); }
-  | G			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "G"); }
-  | ARRAY		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ARRAY"); }
-  | BINARY		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BINARY"); }
-  | CAST %prec UMINUS	{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CAST"); }
-  | CHARACTERS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CHARACTERS"); }
-  | CODE_UNITS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CODE_UNITS"); }
-  | CORRESPONDING	{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CORRESPONDING"); }
-  | FOLLOWING		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "FOLLOWING"); }
-  | INTERVAL		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "INTERVAL"); }
-  | LARGE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "LARGE"); }
-  | MULTISET		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "MULTISET"); }
-  | OBJECT		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "OBJECT"); }
-  | OCTETS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "OCTETS"); }
-  | ONLY		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ONLY"); }
-  | PARTITION		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "PARTITION"); }
-  | PRECEDING		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "PRECEDING"); }
-  | PRECISION		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "PRECISION"); }
-  | RANGE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "RANGE"); }
-  | RECURSIVE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "RECURSIVE"); }
-  | REF			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "REF"); }
-  | ROW			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ROW"); }
-  | ROWS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ROWS"); }
-  | SCOPE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "SCOPE"); }
-  | SECOND		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "SECOND"); }
-  | UNBOUNDED		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "UNBOUNDED"); }
-  | VARCHAR		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "VARCHAR"); }
-  | WITHOUT		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "WITHOUT"); }
-  | ZONE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ZONE"); }
-  | ERROR		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ERROR"); }
-  | FOR			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "FOR"); }
-  | OF			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "OF"); }
-  | READ		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "READ"); }
-  | TIMESTAMP		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "TIMESTAMP"); }
-  | TIME		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "TIME");  }
+    aggregate_function_name	%prec UMINUS						/* SQL-2003-N */
+  | ranking_function_name	%prec UMINUS						/* SQL-2003-N */
+  | non_second_primary_datetime_field	%prec UMINUS					/* SQL-2003-R, here is non-reserved */
+  | K			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "K"); }		/* SQL-2003-N */
+  | M			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "M"); }		/* SQL-2003-N */
+  | G			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "G"); }		/* SQL-2003-N */
+  | ARRAY		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ARRAY"); }		/* SQL-2003-R, here is non-reserved */
+  | BINARY		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "BINARY"); }	/* SQL-2003-R, here is non-reserved */
+  | CAST %prec UMINUS	{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CAST"); }		/* SQL-2003-R, here is non-reserved */
+  | CHARACTERS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CHARACTERS"); }	/* SQL-2003-N */
+  | CODE_UNITS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CODE_UNITS"); }	/* SQL-2003-N */
+  | CORRESPONDING	{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CORRESPONDING"); }	/* SQL-2003-R, here is non-reserved */
+  | FOLLOWING		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "FOLLOWING"); }	/* SQL-2003-N */
+  | INTERVAL		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "INTERVAL"); }	/* SQL-2003-R, here is non-reserved */
+  | LARGE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "LARGE"); }		/* SQL-2003-R, here is non-reserved */
+  | MULTISET		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "MULTISET"); }	/* SQL-2003-R, here is non-reserved */
+  | OBJECT		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "OBJECT"); }	/* SQL-2003-N */
+  | OCTETS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "OCTETS"); }	/* SQL-2003-N */
+  | ONLY		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ONLY"); }		/* SQL-2003-R, here is non-reserved */
+  | PRECEDING		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "PRECEDING"); }	/* SQL-2003-N */
+  | PRECISION		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "PRECISION"); }	/* SQL-2003-R, here is non-reserved */
+  | RECURSIVE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "RECURSIVE"); }	/* SQL-2003-R, here is non-reserved */
+  | REF			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "REF"); }		/* SQL-2003-R, here is non-reserved */
+  | ROW			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ROW"); }		/* SQL-2003-R, here is non-reserved */
+  | SCOPE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "SCOPE"); }		/* SQL-2003-N */
+  | SECOND		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "SECOND"); }	/* SQL-2003-R, here is non-reserved */
+  | UNBOUNDED		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "UNBOUNDED"); }	/* SQL-2003-N */
+  | VARCHAR		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "VARCHAR"); }	/* SQL-2003-R, here is non-reserved */
+  | WITHOUT		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "WITHOUT"); }	/* SQL-2003-R, here is non-reserved */
+  | ZONE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ZONE"); }		/* SQL-2003-N */
+  | FOR			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "FOR"); }		/* SQL-2003-R, here is non-reserved */
+  | OF			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "OF"); }		/* SQL-2003-R, here is non-reserved */
+  | READ		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "READ"); }		/* SQL-2003-N */
+  | TIMESTAMP		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "TIMESTAMP"); }	/* SQL-2003-R, here is non-reserved */
+  | TIME		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "TIME");  }		/* SQL-2003-R, here is non-reserved */
+  | DESC		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "DESC"); }		/* SQL-2003-N */
+  | TIES		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "TIES"); }		/* SQL-2003-N */
+  | SETS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "SETS"); }		/* SQL-2003-N */
+  | OTHERS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "OTHERS"); }	/* SQL-2003-N */
+  | EXCLUDE		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "EXCLUDE"); }	/* SQL-2003-N */
+  | ASC			{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "ASC"); }		/* SQL-2003-N */
+  | COALESCE %prec UMINUS	{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "COALESCE"); }	/* SQL-2003-N */
+  | CONVERT %prec UMINUS	{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "CONVERT"); }	/* SQL-2003-N */
+  | NULLIF %prec UMINUS		{ $$ = Node::makeTerminalNode(E_IDENTIFIER, "NULLIF"); }	/* SQL-2003-N */
 ;
 
 %%

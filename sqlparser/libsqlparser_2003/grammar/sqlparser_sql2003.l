@@ -102,141 +102,148 @@ rsqbracketdouble {rsqbracket}{rsqbracket}
  ** Section 3: Rules
  ***************************/
 %%
-ALL                 TOKEN(ALL)
-AND                 TOKEN(AND)
-ANY                 TOKEN(ANY)
-ARRAY               TOKEN(ARRAY)
-AS                  TOKEN(AS)
-ASC                 TOKEN(ASC)
-AVG                 TOKEN(AVG)
-BETWEEN             TOKEN(BETWEEN)
-BIGINT              TOKEN(BIGINT)
-BINARY              TOKEN(BINARY)
-BLOB                TOKEN(BLOB)
-BOOLEAN             TOKEN(BOOLEAN)
-BY                  TOKEN(BY)
-CASE                TOKEN(CASE)
-CAST                TOKEN(CAST)
-CHAR                TOKEN(CHAR)
-CHARACTER           TOKEN(CHARACTER)
-CHARACTERS          TOKEN(CHARACTERS)
-CLOB                TOKEN(CLOB)
-COALESCE            TOKEN(COALESCE)
-CODE_UNITS          TOKEN(CODE_UNITS)
-COLLATE             TOKEN(COLLATE)
-CONVERT             TOKEN(CONVERT)
-CORRESPONDING       TOKEN(CORRESPONDING)
-COUNT               TOKEN(COUNT)
-CROSS               TOKEN(CROSS)
-CURRENT             TOKEN(CURRENT)
-CURRENT_TIMESTAMP   TOKEN(CURRENT_TIMESTAMP)
-CURRENT_USER        TOKEN(CURRENT_USER)
-DATE                TOKEN(DATE)
-DAY                 TOKEN(DAY)
-DEC                 TOKEN(DEC)
-DECIMAL             TOKEN(DECIMAL)
-DEFAULT             TOKEN(DEFAULT)
-DELETE              TOKEN(DELETE)
-DENSE_RANK          TOKEN(DENSE_RANK)
-DESC                TOKEN(DESC)
-DISTINCT            TOKEN(DISTINCT)
-DOUBLE              TOKEN(DOUBLE)
-ELSE                TOKEN(ELSE)
-END                 TOKEN(END)
-END_P               TOKEN(END_P)
-ESCAPE              TOKEN(ESCAPE)
-EXCEPT              TOKEN(EXCEPT)
-EXISTS              TOKEN(EXISTS)
-FLOAT               TOKEN(FLOAT)
-FOLLOWING           TOKEN(FOLLOWING)
-FOR                 TOKEN(FOR)
-FROM                TOKEN(FROM)
-FULL                TOKEN(FULL)
-G                   TOKEN(G)
-GROUP               TOKEN(GROUP)
-GROUPING            TOKEN(GROUPING)
-HAVING              TOKEN(HAVING)
-HOUR                TOKEN(HOUR)
-IN                  TOKEN(IN)
-INNER               TOKEN(INNER)
-INSERT              TOKEN(INSERT)
-INT                 TOKEN(INT)
-INTEGER             TOKEN(INTEGER)
-INTERSECT           TOKEN(INTERSECT)
-INTERVAL            TOKEN(INTERVAL)
-INTO                TOKEN(INTO)
-IS                  TOKEN(IS)
-JOIN                TOKEN(JOIN)
-K                   TOKEN(K)
-LARGE               TOKEN(LARGE)
-LEFT                TOKEN(LEFT)
-LIKE                TOKEN(LIKE)
-M                   TOKEN(M)
-MAX                 TOKEN(MAX)
-MIN                 TOKEN(MIN)
-MINUTE              TOKEN(MINUTE)
-MOD                 TOKEN(MOD)
-MONTH               TOKEN(MONTH)
-MULTISET            TOKEN(MULTISET)
-NATIONAL            TOKEN(NATIONAL)
-NATURAL             TOKEN(NATURAL)
-NCHAR               TOKEN(NCHAR)
-NCLOB               TOKEN(NCLOB)
-NOT                 TOKEN(NOT)
-NULLIF              TOKEN(NULLIF)
-NUMERIC             TOKEN(NUMERIC)
-OBJECT              TOKEN(OBJECT)
-OCTETS              TOKEN(OCTETS)
-OF                  TOKEN(OF)
-ON                  TOKEN(ON)
-ONLY                TOKEN(ONLY)
-OR                  TOKEN(OR)
-ORDER               TOKEN(ORDER)
-OUTER               TOKEN(OUTER)
-OVER                TOKEN(OVER)
-PARTITION           TOKEN(PARTITION)
-PRECEDING           TOKEN(PRECEDING)
-PRECISION           TOKEN(PRECISION)
-RANGE               TOKEN(RANGE)
-RANK                TOKEN(RANK)
-READ                TOKEN(READ)
-REAL                TOKEN(REAL)
-RECURSIVE           TOKEN(RECURSIVE)
-REF                 TOKEN(REF)
-RIGHT               TOKEN(RIGHT)
-ROW                 TOKEN(ROW)
-ROWS                TOKEN(ROWS)
-ROW_NUMBER          TOKEN(ROW_NUMBER)
-SCOPE               TOKEN(SCOPE)
-SECOND              TOKEN(SECOND)
-SELECT              TOKEN(SELECT)
-SESSION_USER        TOKEN(SESSION_USER)
-SET                 TOKEN(SET)
-SMALLINT            TOKEN(SMALLINT)
-SOME                TOKEN(SOME)
-STDDEV_POP          TOKEN(STDDEV_POP)
-STDDEV_SAMP         TOKEN(STDDEV_SAMP)
-SUM                 TOKEN(SUM)
-SYSTEM_USER         TOKEN(SYSTEM_USER)
-THEN                TOKEN(THEN)
-TIME                TOKEN(TIME)
-TIMESTAMP           TOKEN(TIMESTAMP)
-TO                  TOKEN(TO)
-UNBOUNDED           TOKEN(UNBOUNDED)
-UNION               TOKEN(UNION)
-UPDATE              TOKEN(UPDATE)
-USING               TOKEN(USING)
-VALUES              TOKEN(VALUES)
-VARCHAR             TOKEN(VARCHAR)
-VARYING             TOKEN(VARYING)
-VAR_POP             TOKEN(VAR_POP)
-VAR_SAMP            TOKEN(VAR_SAMP)
-WHEN                TOKEN(WHEN)
-WHERE               TOKEN(WHERE)
-WITH                TOKEN(WITH)
-WITHOUT             TOKEN(WITHOUT)
-YEAR                TOKEN(YEAR)
-ZONE                TOKEN(ZONE)
+ALL                 TOKEN(ALL)              /* SQL-2003-R */
+AND                 TOKEN(AND)              /* SQL-2003-R */
+ANY                 TOKEN(ANY)              /* SQL-2003-R */
+ARRAY               TOKEN(ARRAY)            /* SQL-2003-R */
+AS                  TOKEN(AS)               /* SQL-2003-R */
+ASC                 TOKEN(ASC)              /* SQL-2003-N */
+AVG                 TOKEN(AVG)              /* SQL-2003-N */
+BETWEEN             TOKEN(BETWEEN)          /* SQL-2003-R */
+BIGINT              TOKEN(BIGINT)           /* SQL-2003-R */
+BINARY              TOKEN(BINARY)           /* SQL-2003-R */
+BLOB                TOKEN(BLOB)             /* SQL-2003-R */
+BOOLEAN             TOKEN(BOOLEAN)          /* SQL-2003-R */
+BY                  TOKEN(BY)               /* SQL-2003-R */
+CASE                TOKEN(CASE)             /* SQL-2003-R */
+CAST                TOKEN(CAST)             /* SQL-2003-R */
+CHAR                TOKEN(CHAR)             /* SQL-2003-R */
+CHARACTER           TOKEN(CHARACTER)        /* SQL-2003-R */
+CHARACTERS          TOKEN(CHARACTERS)       /* SQL-2003-N */
+CLOB                TOKEN(CLOB)             /* SQL-2003-R */
+COALESCE            TOKEN(COALESCE)         /* SQL-2003-N */
+CODE_UNITS          TOKEN(CODE_UNITS)       /* SQL-2003-N */
+COLLATE             TOKEN(COLLATE)          /* SQL-2003-R */
+CONVERT             TOKEN(CONVERT)          /* SQL-2003-N */
+CORRESPONDING       TOKEN(CORRESPONDING)    /* SQL-2003-R */
+COUNT               TOKEN(COUNT)            /* SQL-2003-N */
+CROSS               TOKEN(CROSS)            /* SQL-2003-R */
+CUME_DIST           TOKEN(CUME_DIST)        /* SQL-2003-N */
+CURRENT             TOKEN(CURRENT)          /* SQL-2003-R */
+CURRENT_TIMESTAMP   TOKEN(CURRENT_TIMESTAMP)/* SQL-2003-R */
+CURRENT_USER        TOKEN(CURRENT_USER)     /* SQL-2003-R */
+DATE                TOKEN(DATE)             /* SQL-2003-R */
+DAY                 TOKEN(DAY)              /* SQL-2003-R */
+DEC                 TOKEN(DEC)              /* SQL-2003-R */
+DECIMAL             TOKEN(DECIMAL)          /* SQL-2003-R */
+DEFAULT             TOKEN(DEFAULT)          /* SQL-2003-R */
+DELETE              TOKEN(DELETE)           /* SQL-2003-R */
+DENSE_RANK          TOKEN(DENSE_RANK)       /* SQL-2003-N */
+DESC                TOKEN(DESC)             /* SQL-2003-N */
+DISTINCT            TOKEN(DISTINCT)         /* SQL-2003-R */
+DOUBLE              TOKEN(DOUBLE)           /* SQL-2003-R */
+ELSE                TOKEN(ELSE)             /* SQL-2003-R */
+END                 TOKEN(END)              /* SQL-2003-R */
+END_P               TOKEN(END_P)            /* LEX-INNER  */
+ESCAPE              TOKEN(ESCAPE)           /* SQL-2003-R */
+EXCEPT              TOKEN(EXCEPT)           /* SQL-2003-R */
+EXCLUDE             TOKEN(EXCLUDE)          /* SQL-2003-N */
+EXISTS              TOKEN(EXISTS)           /* SQL-2003-R */
+FLOAT               TOKEN(FLOAT)            /* SQL-2003-R */
+FOLLOWING           TOKEN(FOLLOWING)        /* SQL-2003-N */
+FOR                 TOKEN(FOR)              /* SQL-2003-R */
+FROM                TOKEN(FROM)             /* SQL-2003-R */
+FULL                TOKEN(FULL)             /* SQL-2003-R */
+G                   TOKEN(G)                /* SQL-2003-N */
+GROUP               TOKEN(GROUP)            /* SQL-2003-R */
+GROUPING            TOKEN(GROUPING)         /* SQL-2003-R */
+HAVING              TOKEN(HAVING)           /* SQL-2003-R */
+HOUR                TOKEN(HOUR)             /* SQL-2003-R */
+IN                  TOKEN(IN)               /* SQL-2003-R */
+INNER               TOKEN(INNER)            /* SQL-2003-R */
+INSERT              TOKEN(INSERT)           /* SQL-2003-R */
+INT                 TOKEN(INT)              /* SQL-2003-R */
+INTEGER             TOKEN(INTEGER)          /* SQL-2003-R */
+INTERSECT           TOKEN(INTERSECT)        /* SQL-2003-R */
+INTERVAL            TOKEN(INTERVAL)         /* SQL-2003-R */
+INTO                TOKEN(INTO)             /* SQL-2003-R */
+IS                  TOKEN(IS)               /* SQL-2003-R */
+JOIN                TOKEN(JOIN)             /* SQL-2003-R */
+K                   TOKEN(K)                /* SQL-2003-N */
+LARGE               TOKEN(LARGE)            /* SQL-2003-R */
+LEFT                TOKEN(LEFT)             /* SQL-2003-R */
+LIKE                TOKEN(LIKE)             /* SQL-2003-R */
+M                   TOKEN(M)                /* SQL-2003-N */
+MAX                 TOKEN(MAX)              /* SQL-2003-N */
+MIN                 TOKEN(MIN)              /* SQL-2003-N */
+MINUTE              TOKEN(MINUTE)           /* SQL-2003-R */
+MOD                 TOKEN(MOD)              /* SQL-2003-N, here is reserved as an operator */
+MONTH               TOKEN(MONTH)            /* SQL-2003-R */
+MULTISET            TOKEN(MULTISET)         /* SQL-2003-R */
+NATIONAL            TOKEN(NATIONAL)         /* SQL-2003-R */
+NATURAL             TOKEN(NATURAL)          /* SQL-2003-R */
+NCHAR               TOKEN(NCHAR)            /* SQL-2003-R */
+NCLOB               TOKEN(NCLOB)            /* SQL-2003-R */
+NO                  TOKEN(NO)               /* SQL-2003-R */
+NOT                 TOKEN(NOT)              /* SQL-2003-R */
+NULLIF              TOKEN(NULLIF)           /* SQL-2003-N */
+NUMERIC             TOKEN(NUMERIC)          /* SQL-2003-R */
+OBJECT              TOKEN(OBJECT)           /* SQL-2003-N */
+OCTETS              TOKEN(OCTETS)           /* SQL-2003-N */
+OF                  TOKEN(OF)               /* SQL-2003-R */
+ON                  TOKEN(ON)               /* SQL-2003-R */
+ONLY                TOKEN(ONLY)             /* SQL-2003-R */
+OR                  TOKEN(OR)               /* SQL-2003-R */
+ORDER               TOKEN(ORDER)            /* SQL-2003-R */
+OTHERS              TOKEN(OTHERS)           /* SQL-2003-N */
+OUTER               TOKEN(OUTER)            /* SQL-2003-R */
+OVER                TOKEN(OVER)             /* SQL-2003-R */
+PARTITION           TOKEN(PARTITION)        /* SQL-2003-R */
+PERCENT_RANK        TOKEN(PERCENT_RANK)     /* SQL-2003-N */
+PRECEDING           TOKEN(PRECEDING)        /* SQL-2003-N */
+PRECISION           TOKEN(PRECISION)        /* SQL-2003-R */
+RANGE               TOKEN(RANGE)            /* SQL-2003-R */
+RANK                TOKEN(RANK)             /* SQL-2003-N */
+READ                TOKEN(READ)             /* SQL-2003-N */
+REAL                TOKEN(REAL)             /* SQL-2003-R */
+RECURSIVE           TOKEN(RECURSIVE)        /* SQL-2003-R */
+REF                 TOKEN(REF)              /* SQL-2003-R */
+RIGHT               TOKEN(RIGHT)            /* SQL-2003-R */
+ROW                 TOKEN(ROW)              /* SQL-2003-R */
+ROWS                TOKEN(ROWS)             /* SQL-2003-R */
+ROW_NUMBER          TOKEN(ROW_NUMBER)       /* SQL-2003-N */
+SCOPE               TOKEN(SCOPE)            /* SQL-2003-? */
+SECOND              TOKEN(SECOND)           /* SQL-2003-R */
+SELECT              TOKEN(SELECT)           /* SQL-2003-R */
+SESSION_USER        TOKEN(SESSION_USER)     /* SQL-2003-R */
+SET                 TOKEN(SET)              /* SQL-2003-R */
+SETS                TOKEN(SETS)             /* SQL-2003-N */
+SMALLINT            TOKEN(SMALLINT)         /* SQL-2003-R */
+SOME                TOKEN(SOME)             /* SQL-2003-R */
+STDDEV_POP          TOKEN(STDDEV_POP)       /* SQL-2003-N */
+STDDEV_SAMP         TOKEN(STDDEV_SAMP)      /* SQL-2003-N */
+SUM                 TOKEN(SUM)              /* SQL-2003-N */
+SYSTEM_USER         TOKEN(SYSTEM_USER)      /* SQL-2003-R */
+THEN                TOKEN(THEN)             /* SQL-2003-R */
+TIES                TOKEN(TIES)             /* SQL-2003-N */
+TIME                TOKEN(TIME)             /* SQL-2003-R */
+TIMESTAMP           TOKEN(TIMESTAMP)        /* SQL-2003-R */
+TO                  TOKEN(TO)               /* SQL-2003-R */
+UNBOUNDED           TOKEN(UNBOUNDED)        /* SQL-2003-N */
+UNION               TOKEN(UNION)            /* SQL-2003-R */
+UPDATE              TOKEN(UPDATE)           /* SQL-2003-R */
+USING               TOKEN(USING)            /* SQL-2003-R */
+VALUES              TOKEN(VALUES)           /* SQL-2003-R */
+VARCHAR             TOKEN(VARCHAR)          /* SQL-2003-R */
+VARYING             TOKEN(VARYING)          /* SQL-2003-R */
+VAR_POP             TOKEN(VAR_POP)          /* SQL-2003-R */
+VAR_SAMP            TOKEN(VAR_SAMP)         /* SQL-2003-R */
+WHEN                TOKEN(WHEN)             /* SQL-2003-R */
+WHERE               TOKEN(WHERE)            /* SQL-2003-R */
+WITH                TOKEN(WITH)             /* SQL-2003-R */
+WITHOUT             TOKEN(WITHOUT)          /* SQL-2003-R */
+YEAR                TOKEN(YEAR)             /* SQL-2003-R */
+ZONE                TOKEN(ZONE)             /* SQL-2003-N */
 
 NULL    {
     yylval->node = Node::makeTerminalNode(E_NULL, yytext);

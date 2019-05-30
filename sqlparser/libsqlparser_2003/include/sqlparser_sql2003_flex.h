@@ -731,7 +731,7 @@ extern int yylex \
 #undef yyTABLES_NAME
 #endif
 
-#line 408 "sqlparser_sql2003.l"
+#line 415 "sqlparser_sql2003.l"
 
 
 #line 738 "sqlparser_sql2003_flex.h"

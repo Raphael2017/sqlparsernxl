@@ -429,11 +429,12 @@
 /*
  * E_OVER_CLAUSE
  * */
-#define E_OVER_CLAUSE_PROPERTY_CNT		3
+#define E_OVER_CLAUSE_PROPERTY_CNT		4
 
-#define E_OVER_CLAUSE_PARTITION_BY		0
-#define E_OVER_CLAUSE_ORDER_BY			1
-#define E_OVER_CLAUSE_ROW_RANGE			2
+#define E_OVER_CLAUSE_EXISTING_WINDOW_NAME 0
+#define E_OVER_CLAUSE_PARTITION_BY		1
+#define E_OVER_CLAUSE_ORDER_BY			2
+#define E_OVER_CLAUSE_ROW_RANGE			3
  /////////////////////////////////////////
 
 /*
