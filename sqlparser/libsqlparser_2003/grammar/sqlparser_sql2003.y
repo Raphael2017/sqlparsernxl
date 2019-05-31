@@ -363,7 +363,7 @@ select_stmt:
 ;
 
 query_expression:
-    query_expression_body %prec '.'
+    query_expression_body
 {
     $$ = Node::makeNonTerminalNode(E_DIRECT_SELECT, E_DIRECT_SELECT_PROPERTY_CNT, nullptr, $1, nullptr, nullptr);
     $$->serialize_format = &SELECT_DIRECT_SERIALIZE_FORMAT;
@@ -462,15 +462,11 @@ query_term:
 
 query_primary:
     simple_table
-  | '(' query_expression_body ')'
-{
-    $$ = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, E_PARENS_PROPERTY_CNT, $2);
-    $$->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
-}
+  | select_with_parens
 ;
 
 select_with_parens:
-    '(' query_expression ')'
+    '(' query_expression_body ')'
 {
     $$ = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, E_PARENS_PROPERTY_CNT, $2);
     $$->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;

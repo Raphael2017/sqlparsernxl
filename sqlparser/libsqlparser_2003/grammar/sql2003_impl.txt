@@ -127,7 +127,12 @@
 <grouping element list> ::=
     <grouping element> [ { <comma> <grouping element> }... ]
 
-<grouping element> ::= <ordinary grouping set>
+<grouping element> ::=
+    <ordinary grouping set>
+  | <empty grouping set>
+  | <grouping sets specification>
+
+<grouping sets specification> ::= GROUPING SETS <left paren> <grouping element list> <right paren>
 
 <ordinary grouping set> ::=
     <grouping column reference>
@@ -484,7 +489,7 @@
 <delimited identifier> ::=
     <double quote> <delimited identifier body> <double quote>
 
-<rank function name> ::= RANK | DENSE_RANK | ROW_NUMBER
+<rank function name> ::= RANK | DENSE_RANK | ROW_NUMBER | PERCENT_RANK | CUME_DIST
 
 <expression const> ::=
     <string> | <int number> | <float number>
