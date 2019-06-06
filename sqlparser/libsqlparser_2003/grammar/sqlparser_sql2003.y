@@ -182,12 +182,15 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> opt_where opt_groupby opt_order_by order_by opt_having
 %type <node> sort_list sort_key opt_asc_desc
 %type <node> opt_distinct distinct_or_all projection
-%type <node> from_list table_reference table_primary relation_factor joined_table
+%type <node> from_list table_reference table_primary relation_factor
+%type <node> joined_table cross_join qualified_join natural_join
 %type <node> join_type
 %type <ival> join_outer
 %type <node> expr_const
 %type <node> search_condition boolean_term boolean_factor boolean_test boolean_primary truth_value
-%type <node> predicate row_expr row_expr_list factor0 factor1 factor2 factor3 factor4
+%type <node> predicate comparison_predicate between_predicate in_predicate like_predicate
+%type <node> null_predicate quantified_comparison_predicate exists_predicate
+%type <node> row_expr row_expr_list factor0 factor1 factor2 factor3 factor4
 %type <nodetype> comp_op plus_minus_op star_div_percent_mod_op comp_all_some_any_op cnn_op
 %type <node> column_ref
 %type <node> case_expr func_expr in_expr function_call_keyword
@@ -213,6 +216,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> single_datetime_field non_second_primary_datetime_field
 %type <node> name_r reserved
 %type <node> grouping_element_list grouping_element
+%type <node> subquery row_subquery table_subquery
 
 %start sql_stmt
 %%
@@ -462,9 +466,14 @@ query_term:
 
 query_primary:
     simple_table
-  | select_with_parens
+  | '(' query_expression_body ')'
+{
+    $$ = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, E_PARENS_PROPERTY_CNT, $2);
+    $$->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
+}
 ;
 
+/* here is different with sql2003 and generate one reduce/reduce error */
 select_with_parens:
     '(' query_expression_body ')'
 {
@@ -472,6 +481,12 @@ select_with_parens:
     $$->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
 }
 ;
+
+subquery: select_with_parens;
+
+table_subquery: subquery;
+
+row_subquery: subquery;
 
 simple_table:
     SELECT opt_distinct select_expr_list opt_from_clause opt_where opt_groupby opt_having
@@ -629,7 +644,7 @@ with_list:
 
 /*todo sql2003 support <search or cycle clause> */
 common_table_expr:
-    name_r opt_derived_column_list AS select_with_parens
+    name_r opt_derived_column_list AS table_subquery
 {
     $$ = Node::makeNonTerminalNode(E_COMMON_TABLE_EXPR, E_COMMON_TABLE_EXPR_PROPERTY_CNT, $1, $2, $4);
     $$->serialize_format = &COMMON_TABLE_EXPR_SERIALIZE_FORMAT;
@@ -735,7 +750,7 @@ table_primary_non_join:
     $$ = Node::makeNonTerminalNode(E_ALIAS, E_ALIAS_PROPERTY_CNT, $1, $2, nullptr, nullptr, nullptr);
     $$->serialize_format = &AS_SERIALIZE_FORMAT;
 }
-  | select_with_parens as_label opt_simple_ident_list_with_parens
+  | table_subquery as_label opt_simple_ident_list_with_parens
 {
     $$ = Node::makeNonTerminalNode(E_ALIAS, E_ALIAS_PROPERTY_CNT, $1, $2, $3, nullptr, nullptr);
     $$->serialize_format = &AS_SERIALIZE_FORMAT;
@@ -905,7 +920,14 @@ relation_factor:
 }
 ;
 
+/* todo sql2003 support <union join> ??? */
 joined_table:
+    qualified_join
+  | cross_join
+  | natural_join
+;
+
+qualified_join:
     table_reference join_type JOIN table_reference ON search_condition
 {
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, $2, $1, $4, $6);
@@ -928,13 +950,19 @@ joined_table:
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, $1, $3, $5);
     $$->serialize_format = &JOINED_TB_USING_SERIALIZE_FORMAT;
 }
-  | table_reference CROSS JOIN table_primary
+;
+
+cross_join:
+    table_reference CROSS JOIN table_primary
 {
     Node* nd = Node::makeTerminalNode(E_JOIN_CROSS, "CROSS");
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, $1, $4, nullptr);
     $$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
 }
-  | table_reference NATURAL join_type JOIN table_primary
+;
+
+natural_join:
+    table_reference NATURAL join_type JOIN table_primary
 {
     Node* nd = Node::makeTerminalNode(E_JOIN_NATURAL, "NATURAL " + $3->text());
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, $1, $5, nullptr);
@@ -1038,18 +1066,44 @@ boolean_primary:
 }
 ;
 
+/* todo sql2003 support <similar predicate> */
+/* todo sql2003 support <unique predicate> */
+/* todo sql2003 support <normalized predicate> */
+/* todo sql2003 support <match predicate> */
+/* todo sql2003 support <overlaps predicate> */
+/* todo sql2003 support <distinct predicate> */
+/* todo sql2003 support <member predicate> */
+/* todo sql2003 support <submultiset predicate> */
+/* todo sql2003 support <set predicate> */
+/* todo sql2003 support <type predicate> */
 predicate:
+    comparison_predicate
+  | between_predicate
+  | in_predicate
+  | like_predicate
+  | null_predicate
+  | quantified_comparison_predicate
+  | exists_predicate
+;
+
+comparison_predicate:
     row_expr comp_op row_expr
 {
     $$ = Node::makeNonTerminalNode($2, E_OP_BINARY_PROPERTY_CNT, $1, $3);
     $$->serialize_format = Node::op_serialize_format($2);
 }
-  | row_expr comp_all_some_any_op select_with_parens
+;
+
+quantified_comparison_predicate:
+    row_expr comp_all_some_any_op table_subquery
 {
     $$ = Node::makeNonTerminalNode($2, E_OP_BINARY_PROPERTY_CNT, $1, $3);
     $$->serialize_format = Node::op_serialize_format($2);
 }
-  | row_expr BETWEEN row_expr AND row_expr
+;
+
+between_predicate:
+    row_expr BETWEEN row_expr AND row_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_BTW, E_OP_TERNARY_PROPERTY_CNT, $1, $3, $5);
     $$->serialize_format = Node::op_serialize_format(E_OP_BTW);
@@ -1059,7 +1113,10 @@ predicate:
     $$ = Node::makeNonTerminalNode(E_OP_NOT_BTW, E_OP_TERNARY_PROPERTY_CNT, $1, $4, $6);
     $$->serialize_format = Node::op_serialize_format(E_OP_NOT_BTW);
 }
-  | row_expr LIKE row_expr
+;
+
+like_predicate:
+    row_expr LIKE row_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_LIKE, E_OP_BINARY_PROPERTY_CNT, $1, $3);
     $$->serialize_format = Node::op_serialize_format(E_OP_LIKE);
@@ -1079,7 +1136,10 @@ predicate:
     $$ = Node::makeNonTerminalNode(E_OP_NOT_LIKE, E_OP_TERNARY_PROPERTY_CNT, $1, $4, $6);
     $$->serialize_format = Node::op_serialize_format(E_OP_NOT_LIKE);
 }
-  | row_expr IN in_expr
+;
+
+in_predicate:
+    row_expr IN in_expr
 {
     $$ = Node::makeNonTerminalNode(E_OP_IN, E_OP_BINARY_PROPERTY_CNT, $1, $3);
     $$->serialize_format = Node::op_serialize_format(E_OP_IN);
@@ -1089,7 +1149,10 @@ predicate:
     $$ = Node::makeNonTerminalNode(E_OP_NOT_IN, E_OP_BINARY_PROPERTY_CNT, $1, $4);
     $$->serialize_format = Node::op_serialize_format(E_OP_NOT_IN);
 }
-  | row_expr IS NULLX
+;
+
+null_predicate:
+    row_expr IS NULLX
 {
     $$ = Node::makeNonTerminalNode(E_OP_IS, E_OP_BINARY_PROPERTY_CNT, $1, $3);
     $$->serialize_format = Node::op_serialize_format(E_OP_IS);
@@ -1099,7 +1162,10 @@ predicate:
     $$ = Node::makeNonTerminalNode(E_OP_IS_NOT, E_OP_BINARY_PROPERTY_CNT, $1, $4);
     $$->serialize_format = Node::op_serialize_format(E_OP_IS_NOT);
 }
-  | EXISTS select_with_parens
+;
+
+exists_predicate:
+    EXISTS table_subquery
 {
     $$ = Node::makeNonTerminalNode(E_OP_EXISTS, E_OP_UNARY_PROPERTY_CNT, $2);
     $$->serialize_format = Node::op_serialize_format(E_OP_EXISTS);
@@ -1165,6 +1231,7 @@ factor3:
 factor4:
     column_ref
   | expr_const
+  | row_subquery
   | '(' row_expr_list ')'
 {
     $$ = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, E_PARENS_PROPERTY_CNT, $2);
@@ -1172,7 +1239,6 @@ factor4:
 }
   | case_expr
   | func_expr
-  | select_with_parens
 ;
 
 row_expr_list:
@@ -1185,7 +1251,7 @@ row_expr_list:
 ;
 
 in_expr:
-    select_with_parens
+    table_subquery
   | '(' row_expr_list ')'
 {
     $$ = Node::makeNonTerminalNode(E_EXPR_LIST_WITH_PARENS, E_PARENS_PROPERTY_CNT, $2);

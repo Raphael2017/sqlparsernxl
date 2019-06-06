@@ -74,7 +74,7 @@ whitespace    ({space}+|{sql_comment})
 hint_begin    (\/\*\+({space}*hint{space}+)?)
 c_cmt_begin   \/\*(?:[^\+])
 c_cmt_end     \*+\/
-c_cmt_cnt     [^*/]+
+c_cmt_cnt     ([^*]|\*+[^/*])*
 c_comment     ({c_cmt_begin}{c_cmt_cnt}{c_cmt_end})
 comment       ({c_comment}|{sql_comment})
 identifer         ([A-Za-z_][A_Za-z0-9_]*)
