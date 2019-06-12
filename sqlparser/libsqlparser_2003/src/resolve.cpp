@@ -522,6 +522,13 @@ namespace resolve
             UpdateStmt* parent
     )
     {
+        assert(node);
+        std::list<Node*> ls;
+        Node::ToList(node, ls);
+        for (auto it : ls) {
+            uint64_t sql_raw_expr_id = OB_INVALID_ID;
+            resolve_independ_expr(plan, it, sql_raw_expr_id, parent);
+        }
         return 0;
     }
 
