@@ -129,8 +129,16 @@
 
 <grouping element> ::=
     <ordinary grouping set>
+  | <rollup list>
+  | <cube list>
   | <empty grouping set>
   | <grouping sets specification>
+
+<rollup list> ::= ROLLUP <left paren> <ordinary grouping set list> <right paren>
+
+<cube list> ::= CUBE <left paren> <ordinary grouping set list> <right paren>
+
+<ordinary grouping set list> ::= <ordinary grouping set> [ { <comma> <ordinary grouping set> }... ]
 
 <grouping sets specification> ::= GROUPING SETS <left paren> <grouping element list> <right paren>
 
@@ -574,6 +582,7 @@
 
 <delimited identifier body> ::= !! See the Syntax Rules
 
+-- SQL-2003-R means reserved keywords in SQL-2003,
 <keywords> ::=
   ALL                               /* SQL-2003-R */
 | AND                               /* SQL-2003-R */
@@ -601,6 +610,7 @@
 | CORRESPONDING                     /* SQL-2003-R */
 | COUNT                             /* SQL-2003-N */
 | CROSS                             /* SQL-2003-R */
+| CUBE                              /* SQL-2003-R */
 | CUME_DIST                         /* SQL-2003-N */
 | CURRENT                           /* SQL-2003-R */
 | CURRENT_TIMESTAMP                 /* SQL-2003-R */
@@ -681,6 +691,7 @@
 | RECURSIVE                         /* SQL-2003-R */
 | REF                               /* SQL-2003-R */
 | RIGHT                             /* SQL-2003-R */
+| ROLLUP                            /* SQL-2003-R */
 | ROW                               /* SQL-2003-R */
 | ROWS                              /* SQL-2003-R */
 | ROW_NUMBER                        /* SQL-2003-N */
