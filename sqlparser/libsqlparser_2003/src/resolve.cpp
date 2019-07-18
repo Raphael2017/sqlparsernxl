@@ -484,6 +484,7 @@ namespace resolve
         {
             case E_TABLE_IDENT:
             {
+                Node *database_node = node->getChild(E_TABLE_IDENT_DATABASE);
                 Node* schema_node = node->getChild(E_TABLE_IDENT_SCHEMA);
                 Node* table_node = node->getChild(E_TABLE_IDENT_OBJECT);
                 assert(table_node != nullptr);
@@ -501,6 +502,8 @@ namespace resolve
                         btbi->schema_name_ = schema_name = schema_node ? schema_node->terminalToken_.str : plan->local_table_mgr->get_default_schema();
                         btbi->table_object_ = node->serialize();
                         btbi->default_schema_ = (schema_node == nullptr);
+                        btbi->database_name_ = database_node ? database_node->terminalToken_.str : plan->local_table_mgr->get_default_database();
+                        btbi->default_database_ = (database_node == nullptr);
                     }
                 }
 
@@ -543,6 +546,7 @@ namespace resolve
         {
             case E_TABLE_IDENT:
             {
+                Node *database_node = node->getChild(E_TABLE_IDENT_DATABASE);
                 Node* schema_node = node->getChild(E_TABLE_IDENT_SCHEMA);
                 Node* table_node = node->getChild(E_TABLE_IDENT_OBJECT);
                 assert(table_node != nullptr);
@@ -560,6 +564,8 @@ namespace resolve
                         btbi->schema_name_ = schema_name = schema_node ? schema_node->terminalToken_.str : plan->local_table_mgr->get_default_schema();
                         btbi->table_object_ = node->serialize();
                         btbi->default_schema_ = (schema_node == nullptr);
+                        btbi->database_name_ = database_node ? database_node->terminalToken_.str : plan->local_table_mgr->get_default_database();
+                        btbi->default_database_ = (database_node == nullptr);
                     }
                 }
 
@@ -585,6 +591,7 @@ namespace resolve
         {
             case E_TABLE_IDENT:
             {
+                Node *database_node = node->getChild(E_TABLE_IDENT_DATABASE);
                 Node* schema_node = node->getChild(E_TABLE_IDENT_SCHEMA);
                 Node* table_node = node->getChild(E_TABLE_IDENT_OBJECT);
                 assert(table_node != nullptr);
@@ -602,6 +609,8 @@ namespace resolve
                         btbi->schema_name_ = schema_name = schema_node ? schema_node->terminalToken_.str : plan->local_table_mgr->get_default_schema();
                         btbi->table_object_ = node->serialize();
                         btbi->default_schema_ = (schema_node == nullptr);
+                        btbi->database_name_ = database_node ? database_node->terminalToken_.str : plan->local_table_mgr->get_default_database();
+                        btbi->default_database_ = (database_node == nullptr);
                     }
                 }
             }

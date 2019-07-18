@@ -466,16 +466,22 @@ query_term:
 
 query_primary:
     simple_table
-  | '(' query_expression_body ')'
+  | '(' query_expression ')'	/* in sql2003 spec, here should be <query expression body> here generate a reduce/reduce error, however it works (all test passed) */
 {
-    $$ = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, E_PARENS_PROPERTY_CNT, $2);
+    if ($2->getChild(E_DIRECT_SELECT_WITH)) {
+	yyerror(&@1, result, scanner, "error use common table expression");
+	YYABORT;
+    }
+    $$ = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, E_PARENS_PROPERTY_CNT, $2->getChild(E_DIRECT_SELECT_SELECT_CLAUSE));
     $$->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;
+    $2->setChild(E_DIRECT_SELECT_SELECT_CLAUSE, nullptr);
+    delete($2);
 }
 ;
 
-/* here is different with sql2003 and generate one reduce/reduce error */
+/* here generate a reduce/reduce error, however it works (all test passed) */
 select_with_parens:
-    '(' query_expression_body ')'
+    '(' query_expression ')'
 {
     $$ = Node::makeNonTerminalNode(E_SELECT_WITH_PARENS, E_PARENS_PROPERTY_CNT, $2);
     $$->serialize_format = &SINGLE_WITH_PARENS_SERIALIZE_FORMAT;

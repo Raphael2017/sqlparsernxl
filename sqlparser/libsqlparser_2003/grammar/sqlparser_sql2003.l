@@ -17,6 +17,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+std::string escape_double_quotation(const std::string& src) {
+    std::string ret = "";
+    for (size_t i = 0; i < src.length(); ++i) {
+        if (src[i] == '"' && src[1+i] == '"') {
+            ret += '"';
+            ++i;    // skip one
+        }
+        else
+            ret += src[i];
+    }
+    return ret;
+}
+
 #define YY_USER_ACTION \
 		yylloc->first_line = yylloc->last_line; \
 		yylloc->first_column = yylloc->last_column; \
@@ -368,7 +381,7 @@ FALSE   {
 \"(\"\"|[^"\\\n])+\" {
     Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
     yylval->node = nd;
-    nd->terminalToken_.str = std::string(yytext+1, yytext + strlen(yytext) - 1);
+    nd->terminalToken_.str = escape_double_quotation(std::string(yytext+1, yytext + strlen(yytext) - 1));    /* todo convert "" */
     nd->terminalToken_.line = yylloc->first_line;
     nd->terminalToken_.column = yylloc->first_column;
     return SQL2003_NAME;
@@ -410,7 +423,7 @@ FALSE   {
 
 .   {
     fprintf(stderr, "[SQL-Lexer-Error] Unknown Character: %c\n", yytext[0]);
-    return SQL2003_ERROR;
+    return SQL2003_ERROR;   /* todo ignore or return ERROR */
 }
 %%
 /***************************
