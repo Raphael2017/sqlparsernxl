@@ -2,6 +2,24 @@
 -- https://github.com/Raphael2017/SQL/blob/master/sql-2003-2.bnf
 -- http://www.contrib.andrew.cmu.edu/~shadow/sql/sql1992.txt
 
+<SQL control statement> ::= <call statement>
+
+<call statement> ::=
+    CALL <routine invocation>
+  | <left brace> CALL <routine invocation> <right brace>    -- for sqlserver
+
+<routine invocation> ::= <routine name> <SQL argument list>
+
+<routine name> ::= [ <schema name> <period> ] <qualified identifier>
+
+<SQL argument list> ::= <left paren> [ <SQL argument> [ { <comma> <SQL argument> }... ] ] <right paren>
+
+<SQL argument> ::= <value expression> [ AS <data type> ]
+
+<value expression> ::=
+    <search condition>      -- <boolean value expression>
+  | <row value ctor>        -- <common value expression> <row value expression>
+
 <direct SQL statement> ::= <directly executable statement> <semicolon>
 
 <directly executable statement> ::= <direct SQL data statement>
@@ -551,6 +569,10 @@
 <left paren> ::= (
 
 <right paren> ::= )
+
+<left brace> ::= {
+
+<right brace> ::= }
 
 <asterisk> ::= *
 
