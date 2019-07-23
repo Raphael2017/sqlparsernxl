@@ -11,6 +11,7 @@
  * E_SIMPLE_IDENT_LIST, E_WITH_LIST, E_TABLE_HINT_LIST
  * E_QUERY_HINT_LIST, E_EXPR_LIST_PARENS_LIST,
  * E_UPDATE_ELEM_LIST, E_DML_SELECT_LIST
+ * E_SQL_ARGUMENT_LIST
  * */
 #define E_LIST_PROPERTY_CNT             2
 
@@ -534,6 +535,23 @@
 #define E_VALUES_CTOR_PROPERTY_CNT           1
 #define E_VALUES_CTOR_SRC                    0
 //////////////////////////////////////////
+
+/*
+ * E_CALL
+ * */
+#define E_CALL_PROPERTY_CNT                  2
+#define E_CALL_SP_NAME                       0
+#define E_CALL_SQL_ARG_LIST                  1
+//////////////////////////////////////////
+
+/*
+ * E_SQL_ARGUMENT
+ * */
+#define E_SQL_ARGUMENT_PROPERTY_CNT          2
+#define E_SQL_ARGUMENT_VALUE_EXPRESSION      0
+#define E_SQL_ARGUMENT_DATA_TYPE             1
+//////////////////////////////////////////
+
 
 /*
  * E_USE

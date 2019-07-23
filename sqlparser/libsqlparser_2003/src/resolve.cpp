@@ -16,6 +16,7 @@
 #include "UseStmt.h"
 #include "DeleteStmt.h"
 #include "InsertStmt.h"
+#include "CallStmt.h"
 
 namespace resolve
 {
@@ -61,6 +62,12 @@ namespace resolve
                 resolve_use_statement(plan, node, query_id);
             }
                 break;
+            case E_CALL:
+            {
+                query_id = OB_INVALID_ID;
+                resolve_call_statement(plan, node, query_id);
+            }
+                break;
             default:
                 assert(false);  /*unreachable*/
                 break;
@@ -78,6 +85,44 @@ namespace resolve
             plan->reset();
             resolve(plan, stmt, query_id);
             plan->startNewStmt_(plan, query_id);
+        }
+        return 0;
+    }
+
+    int resolve_call_statement(
+            ResultPlan *plan,
+            Node *node,
+            uint64_t& query_id,
+            Stmt *parent/* = nullptr */,
+            ScopeType scope/* = E_SCOPE_WHATEVER*/) {
+        assert(node->nodeType_ == E_CALL);
+        query_id = plan->logicPlan_->generate_query_id();
+        CallStmt *call_stmt = dynamic_cast<CallStmt*>(plan->logicPlan_->add_query(E_STMT_TYPE_CALL));
+        call_stmt->set_query_id(query_id);
+        call_stmt->set_parent(parent);
+
+        Node *sp_node = node->getChild(E_CALL_SP_NAME);
+        assert(sp_node != nullptr);
+        assert(sp_node->nodeType_ == E_TABLE_IDENT);
+
+        Node *server_node = sp_node->getChild(E_TABLE_IDENT_SERVER);
+        Node *database_node = sp_node->getChild(E_TABLE_IDENT_DATABASE);
+        Node *schema_node = sp_node->getChild(E_TABLE_IDENT_SCHEMA);
+        Node *sp = sp_node->getChild(E_TABLE_IDENT_OBJECT);
+        assert(sp != nullptr);
+        std::string sp_name = sp->terminalToken_.str;
+        std::string schema_name = schema_node ? schema_node->terminalToken_.str : plan->local_table_mgr->get_default_schema();
+        std::string db_name = database_node ? database_node->terminalToken_.str : plan->local_table_mgr->get_default_database();
+        std::string sv_name = server_node ? server_node->terminalToken_.str : "";
+
+        call_stmt->set_store_procedure(sv_name, db_name, schema_name, sp_name);
+
+        Node *args = node->getChild(E_CALL_SQL_ARG_LIST);
+        std::list<Node*> ls;
+        Node::ToList(args, ls);
+        for (Node *expr : ls) {
+            uint64_t sql_raw_expr_id = OB_INVALID_ID;
+            resolve_independ_expr(plan, expr, sql_raw_expr_id, parent);
         }
         return 0;
     }

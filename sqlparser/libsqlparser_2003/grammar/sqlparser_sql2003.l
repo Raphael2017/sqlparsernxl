@@ -130,6 +130,7 @@ BOOLEAN             TOKEN(BOOLEAN)          /* SQL-2003-R */
 BY                  TOKEN(BY)               /* SQL-2003-R */
 CASE                TOKEN(CASE)             /* SQL-2003-R */
 CAST                TOKEN(CAST)             /* SQL-2003-R */
+CALL                TOKEN(CALL)             /* SQL-2003-R */
 CHAR                TOKEN(CHAR)             /* SQL-2003-R */
 CHARACTER           TOKEN(CHARACTER)        /* SQL-2003-R */
 CHARACTERS          TOKEN(CHARACTERS)       /* SQL-2003-N */
@@ -399,7 +400,7 @@ FALSE   {
 {comment}   { /* ignore */ }
 [ \t\r\n]+  { /* ignore */ }
 
-[-+&~|^/%*(),.;!$] { return yytext[0];}
+[-+&~|^/%*(){},.;!$] { return yytext[0];}
 
 "||"    { return SQL2003_CNNOP; }
 "="     { return SQL2003_COMP_EQ; }

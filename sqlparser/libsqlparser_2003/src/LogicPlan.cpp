@@ -9,6 +9,7 @@
 #include "UseStmt.h"
 #include "DeleteStmt.h"
 #include "InsertStmt.h"
+#include "CallStmt.h"
 
 namespace resolve
 {
@@ -79,6 +80,9 @@ namespace resolve
                 break;
             case E_STMT_TYPE_INSERT:
                 s = new InsertStmt;
+                break;
+            case E_STMT_TYPE_CALL:
+                s = new CallStmt;
                 break;
             default:
                 assert(false);

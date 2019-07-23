@@ -35,7 +35,7 @@ IPlan* CreatePlan(
 
 void DestroyPlan(IPlan* plan)
 {
-    delete(plan);
+    delete(dynamic_cast<resolve::ResultPlan*>(plan));
 }
 
 void VisitPlan(IPlan* p)

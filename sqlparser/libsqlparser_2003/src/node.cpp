@@ -265,6 +265,7 @@ bool Node::IsList(Node* root)
         case E_DML_SELECT_LIST:
         case E_OPT_DERIVED_COLUMN_LIST:
         case E_NAME_CHAIN:
+        case E_SQL_ARGUMENT_LIST:
         {
             ret = true;
         }

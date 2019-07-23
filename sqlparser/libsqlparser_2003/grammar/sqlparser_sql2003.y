@@ -128,7 +128,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %token ALL AND ANY ARRAY AS ASC
        AVG
 %token BETWEEN BIGINT BINARY BLOB BOOLEAN BY
-%token CASE CAST CHAR CHARACTER CHARACTERS CLOB
+%token CALL CASE CAST CHAR CHARACTER CHARACTERS CLOB
        CNNOP COALESCE CODE_UNITS COLLATE COMP_EQ
        COMP_GE COMP_GT COMP_LE COMP_LT COMP_NE
        CONVERT CORRESPONDING COUNT CROSS CUME_DIST
@@ -169,6 +169,7 @@ int yyerror(YYLTYPE* llocp, ParseResult* result, yyscan_t scanner, const char *m
 %type <node> stmt
 %type <node> dql_stmt
 %type <node> dml_stmt
+%type <node> call_stmt sp_name sql_argument_list sql_argument value_expression
 %type <node> select_stmt
 %type <node> update_stmt
 %type <node> delete_stmt
@@ -248,6 +249,61 @@ stmt:
     /*EMPTY*/	{ $$ = nullptr; } /*EMPTY STATEMENT*/
   | dql_stmt
   | dml_stmt
+  | call_stmt
+;
+
+call_stmt:
+    CALL sp_name '(' sql_argument_list ')'
+{
+    $$ = Node::makeNonTerminalNode(E_CALL, E_CALL_PROPERTY_CNT, $2, $4);
+    $$->serialize_format = &CALL_SERIALIZE_FORMAT;
+}
+  | CALL sp_name '(' ')'
+{
+    $$ = Node::makeNonTerminalNode(E_CALL, E_CALL_PROPERTY_CNT, $2, nullptr);
+    $$->serialize_format = &CALL_SERIALIZE_FORMAT;
+}
+  | '{' CALL sp_name '(' sql_argument_list ')' '}'
+{
+    $$ = Node::makeNonTerminalNode(E_CALL, E_CALL_PROPERTY_CNT, $3, $5);
+    $$->serialize_format = &CALL_SQL_SERVER_SERIALIZE_FORMAT;
+}
+  | '{' CALL sp_name '(' ')' '}'
+{
+    $$ = Node::makeNonTerminalNode(E_CALL, E_CALL_PROPERTY_CNT, $3, nullptr);
+    $$->serialize_format = &CALL_SQL_SERVER_SERIALIZE_FORMAT;
+}
+;
+
+sql_argument_list:
+    sql_argument
+  | sql_argument ',' sql_argument_list
+{
+    $$ = Node::makeNonTerminalNode(E_STMT_LIST, E_LIST_PROPERTY_CNT, $1, $3);
+    $$->serialize_format = &COMMA_LIST_SERIALIZE_FORMAT;
+}
+;
+
+sql_argument:
+    value_expression
+{
+    $$ = Node::makeNonTerminalNode(E_SQL_ARGUMENT, E_SQL_ARGUMENT_PROPERTY_CNT, $1, nullptr);
+    $$->serialize_format = &SQL_ARGUMENT_SERIALIZE_FORMAT;
+}
+  | value_expression AS data_type
+{
+    $$ = Node::makeNonTerminalNode(E_SQL_ARGUMENT, E_SQL_ARGUMENT_PROPERTY_CNT, $1, $3);
+    $$->serialize_format = &SQL_ARGUMENT_SERIALIZE_FORMAT;
+}
+;
+
+value_expression:
+    search_condition	/* <boolean value expression> */
+  | row_expr		/* <common value expression> <row value expression> */
+;
+
+sp_name:
+    relation_factor
 ;
 
 dql_stmt:

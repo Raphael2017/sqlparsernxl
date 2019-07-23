@@ -212,6 +212,10 @@ enum NodeType
     E_INSERT_COLUMNS_AND_SOURCE,
     E_VALUES_CTOR,
 
+    E_CALL,
+    E_SQL_ARGUMENT,
+    E_SQL_ARGUMENT_LIST,
+
     E_NODETYPE_END
 };
 
@@ -223,6 +227,7 @@ enum StmtType
     E_STMT_TYPE_DELETE,
     E_STMT_TYPE_INSERT,
     E_STMT_TYPE_USE,
+    E_STMT_TYPE_CALL,
 };
 
 enum TableItemType

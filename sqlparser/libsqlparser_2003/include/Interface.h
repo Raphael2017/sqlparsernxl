@@ -53,14 +53,18 @@ typedef std::function<void(IPlan*, IWhereCluase*)> WhereClauseVisit;
 typedef std::function<void(IPlan*)> ErrorOccur;
 struct IWhereCluase
 {
+protected:
     virtual ~IWhereCluase(){}
+public:
     virtual std::string GetCondition() = 0;
     virtual bool AddCondition(const std::string& condition) = 0;
     virtual uint64_t GetQueryID() = 0;
 };
 struct IPlan
 {
+protected:
     virtual ~IPlan() {}
+public:
     virtual void* GetContext() = 0;
     virtual IStmt* GetQuery(uint64_t query_id) = 0;
     virtual void SetDefaultSchema(const std::string& default_schema) = 0;
@@ -76,7 +80,9 @@ struct IPlan
 
 struct ITableItem
 {
+protected:
     virtual ~ITableItem(){}
+public:
     virtual TableItemType GetTableItemType() = 0;
     virtual uint64_t GetTableID() = 0;
     virtual uint64_t GetQueryID() = 0;
@@ -98,9 +104,21 @@ struct ITableItem
     virtual int GetColumn() = 0;
 };
 
+struct IStoreProcedure {
+protected:
+    virtual ~IStoreProcedure() {}
+public:
+    virtual std::string GetStoreProcedureName() = 0;
+    virtual std::string GetSchemaName() = 0;
+    virtual std::string GetDatabaseName() = 0;
+    virtual std::string GetServerName() = 0;
+};
+
 struct ITableColumnRefItem
 {
+protected:
     virtual ~ITableColumnRefItem(){}
+public:
     virtual ITableItem* GetTableItem() = 0;
     virtual std::string GetColumnName() = 0;
     virtual std::string GetColumnObject() = 0;
@@ -111,7 +129,9 @@ struct ITableColumnRefItem
 
 struct IStmt
 {
+protected:
     virtual ~IStmt(){}
+public:
     virtual StmtType GetStmtType() = 0;
     virtual uint64_t GetQueryID() = 0;
     virtual size_t GetTableItemCount() const = 0;
@@ -121,28 +141,43 @@ struct IStmt
 
 struct ISelectStmt
 {
+protected:
     virtual ~ISelectStmt(){}
 };
 
 struct IUpdateStmt
 {
+protected:
     virtual ~IUpdateStmt(){}
+public:
     virtual bool IsBasicTableOrAlias() = 0;
     virtual ITableItem* GetUpdateTable() = 0;
 };
 
 struct IDeleteStmt
 {
+protected:
     virtual ~IDeleteStmt() {}
+public:
     virtual bool IsBasicTableOrAlias() = 0;
     virtual ITableItem* GetDeleteTable() = 0;
 };
 
 struct IInsertStmt
 {
+protected:
     virtual ~IInsertStmt() {}
+public:
     virtual bool IsBasicTableOrAlias() = 0;
     virtual ITableItem* GetInsertTable() = 0;
+};
+
+struct ICallStmt
+{
+protected:
+    virtual ~ICallStmt() {}
+public:
+    virtual IStoreProcedure *GetStoreProcedure() = 0;
 };
 
 extern "C"
