@@ -3,7 +3,6 @@
 #include "expr.h"
 #include "TableRef.h"
 
-namespace resolve
-{
+namespace resolve {
 
 }

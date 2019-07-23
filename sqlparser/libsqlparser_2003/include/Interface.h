@@ -16,9 +16,10 @@
 #endif //SQLPARSER_EXPORT
 #endif //WIN32
 
-struct INode
-{
+struct INode {
+protected:
     virtual ~INode(){}
+public:
     virtual NodeType GetType() = 0;
     virtual INode* GetParent() = 0;
     virtual bool SetParent(INode* node) = 0;
@@ -31,9 +32,10 @@ struct INode
     virtual void Print() = 0;
 };
 
-struct IParseResult
-{
+struct IParseResult {
+protected:
     virtual ~IParseResult(){}
+public:
     virtual bool IsAccept() const = 0;
     virtual INode* GetParseTree() = 0;
     virtual size_t GetErrorLine() const = 0;
@@ -51,8 +53,8 @@ typedef std::function<void(IPlan*, ITableColumnRefItem*)> BaseTableColumnVisit;
 typedef std::function<void(IPlan*, uint64_t last_stmt)> StartNewStmt;
 typedef std::function<void(IPlan*, IWhereCluase*)> WhereClauseVisit;
 typedef std::function<void(IPlan*)> ErrorOccur;
-struct IWhereCluase
-{
+
+struct IWhereCluase {
 protected:
     virtual ~IWhereCluase(){}
 public:
@@ -60,8 +62,8 @@ public:
     virtual bool AddCondition(const std::string& condition) = 0;
     virtual uint64_t GetQueryID() = 0;
 };
-struct IPlan
-{
+
+struct IPlan {
 protected:
     virtual ~IPlan() {}
 public:
@@ -78,8 +80,7 @@ public:
     virtual std::string GetErrorDetail() = 0;
 };
 
-struct ITableItem
-{
+struct ITableItem {
 protected:
     virtual ~ITableItem(){}
 public:
@@ -114,8 +115,7 @@ public:
     virtual std::string GetServerName() = 0;
 };
 
-struct ITableColumnRefItem
-{
+struct ITableColumnRefItem {
 protected:
     virtual ~ITableColumnRefItem(){}
 public:
@@ -127,8 +127,7 @@ public:
     virtual int GetColumn() = 0;
 };
 
-struct IStmt
-{
+struct IStmt {
 protected:
     virtual ~IStmt(){}
 public:
@@ -139,14 +138,12 @@ public:
     virtual IStmt* GetParent() = 0;
 };
 
-struct ISelectStmt
-{
+struct ISelectStmt {
 protected:
     virtual ~ISelectStmt(){}
 };
 
-struct IUpdateStmt
-{
+struct IUpdateStmt {
 protected:
     virtual ~IUpdateStmt(){}
 public:
@@ -154,8 +151,7 @@ public:
     virtual ITableItem* GetUpdateTable() = 0;
 };
 
-struct IDeleteStmt
-{
+struct IDeleteStmt {
 protected:
     virtual ~IDeleteStmt() {}
 public:
@@ -163,8 +159,7 @@ public:
     virtual ITableItem* GetDeleteTable() = 0;
 };
 
-struct IInsertStmt
-{
+struct IInsertStmt {
 protected:
     virtual ~IInsertStmt() {}
 public:
@@ -172,16 +167,14 @@ public:
     virtual ITableItem* GetInsertTable() = 0;
 };
 
-struct ICallStmt
-{
+struct ICallStmt {
 protected:
     virtual ~ICallStmt() {}
 public:
     virtual IStoreProcedure *GetStoreProcedure() = 0;
 };
 
-extern "C"
-{
+extern "C" {
 SQLPARSER_PUBLIC_API IParseResult* ParseSql(const std::string& sql, DATABASE_TYPE dbms);
 SQLPARSER_PUBLIC_API void DestroyParseResult(IParseResult*);
 SQLPARSER_PUBLIC_API IPlan* CreatePlan(const BaseTableVisit& baseTableVisit,

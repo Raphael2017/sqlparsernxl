@@ -5,16 +5,13 @@
 #include <vector>
 #include <string>
 
-namespace resolve
-{
-    struct TableColumnRef
-    {
+namespace resolve {
+    struct TableColumnRef {
         uint64_t table_id_;
         uint64_t column_id_;
     };
 
-    struct RawExpr
-    {
+    struct RawExpr {
     public:
         RawExpr() : type_(E_NODETYPE_BEGIN) {}
         virtual ~RawExpr() {}
@@ -27,9 +24,7 @@ namespace resolve
         NodeType type_;
     };
 
-    struct RawExprConst
-            : public RawExpr
-    {
+    struct RawExprConst : public RawExpr {
     public:
         virtual void scanf_table_column_ref(
                 LogicPlan* logic,
@@ -42,9 +37,7 @@ namespace resolve
         } value_;
     };
 
-    struct RawExprScalarSubquery
-            : public RawExpr
-    {
+    struct RawExprScalarSubquery : public RawExpr {
     public:
         uint64_t get_ref_id() const { return query_id_; }
         void set_ref_id(uint64_t id) { query_id_ = id; }
@@ -55,9 +48,7 @@ namespace resolve
         uint64_t query_id_;
     };
 
-    struct RawExprBinaryRef
-            : public RawExpr
-    {
+    struct RawExprBinaryRef : public RawExpr {
     public:
         uint64_t get_first_ref_id() const { return first_id_; }
         void set_first_ref_id(uint64_t id) { first_id_ = id; }
@@ -71,9 +62,7 @@ namespace resolve
         uint64_t second_id_;    // column_id
     };
 
-    struct RawExprUnaryOp
-            : public RawExpr
-    {
+    struct RawExprUnaryOp : public RawExpr {
     public:
         RawExpr* get_op_expr() { return expr_; }
         void set_op_expr(RawExpr* expr) { expr_ = expr; }
@@ -84,9 +73,7 @@ namespace resolve
         RawExpr* expr_;
     };
 
-    struct RawExprBinaryOp
-            : public RawExpr
-    {
+    struct RawExprBinaryOp : public RawExpr {
     public:
         RawExpr* get_first_op_expr() { return first_expr_; }
         void set_first_op_expr(RawExpr* expr) { first_expr_ = expr; }
@@ -100,9 +87,7 @@ namespace resolve
         RawExpr* second_expr_;
     };
 
-    struct RawExprTripleOp
-            : public RawExpr
-    {
+    struct RawExprTripleOp : public RawExpr {
         RawExpr* get_first_op_expr() { return first_expr_; }
         void set_first_op_expr(RawExpr* expr) { first_expr_ = expr; }
         RawExpr* get_second_op_expr() { return second_expr_; }
@@ -118,9 +103,7 @@ namespace resolve
         RawExpr* third_expr_;
     };
 
-    struct RawExprMultiOp
-            : public RawExpr
-    {
+    struct RawExprMultiOp : public RawExpr {
     public:
         RawExpr* get_op_expr(size_t index)
         {
@@ -134,9 +117,7 @@ namespace resolve
         std::vector<RawExpr*> exprs_;
     };
 
-    struct RawExprCaseOp
-            : public RawExpr
-    {
+    struct RawExprCaseOp : public RawExpr {
     public:
         RawExpr* get_arg_op_expr() { return arg_expr; }
         void set_arg_op_expr(RawExpr* expr) { arg_expr = expr; }
@@ -165,9 +146,7 @@ namespace resolve
     /*
      * https://en.wikipedia.org/wiki/Aggregate_function
      * */
-    struct RawExprAggFun
-            : public RawExpr
-    {
+    struct RawExprAggFun : public RawExpr {
     public:
         RawExpr* get_param_expr() { return param_expr_; };
         void set_param_expr(RawExpr* param_expr) { param_expr_ = param_expr; }
@@ -181,15 +160,12 @@ namespace resolve
         bool distinct_;
     };
 
-    struct RawExprSysFun
-            : public RawExpr
-    {
+    struct RawExprSysFun : public RawExpr {
     public:
         std::string get_func_name() { return func_name_; }
         void set_func_name(const std::string& func_name) { func_name_ = func_name; }
         void add_param_expr(RawExpr* param_expr) { param_exprs_.push_back(param_expr); }
-        RawExpr* get_param_expr(size_t index)
-        {
+        RawExpr* get_param_expr(size_t index) {
             return 0 <= index && index < param_exprs_.size() ? param_exprs_[index] : nullptr;
         }
         virtual void scanf_table_column_ref(
@@ -201,8 +177,7 @@ namespace resolve
     };
 
     /////
-    struct SqlRawExpr
-    {
+    struct SqlRawExpr {
     public:
         uint64_t get_expr_id() const { return expr_id_; }
         void set_expr_id(uint64_t expr_id) { expr_id_ = expr_id; }
@@ -223,7 +198,6 @@ namespace resolve
         uint64_t table_id_;
         uint64_t column_id_;
         RawExpr* expr_;
-
     };
 }
 

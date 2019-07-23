@@ -4,13 +4,11 @@
 #include <vector>
 #include <cstdint>
 #include "keydef.h"
-namespace resolve
-{
+namespace resolve {
     struct Stmt;
     struct SqlRawExpr;
     struct SelectItem;
-    struct LogicPlan
-    {
+    struct LogicPlan {
         LogicPlan();
         ~LogicPlan();
         void reset();

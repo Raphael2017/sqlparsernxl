@@ -34,12 +34,9 @@ private:
 
 void _beautify_sql(_Buf *buf, Node *node) {
     int col_f = buf->get_col();
-    if (!node->isTerminalToken)
-    {
-        for (auto info : *(node->serialize_format->beautify_))
-        {
-            if (info.is_simple == 1)
-            {
+    if (!node->isTerminalToken) {
+        for (auto info : *(node->serialize_format->beautify_)) {
+            if (info.is_simple == 1) {
                 if (info.s0 == "\n") {
                     buf->new_line();
                     buf->adjust_col(col_f);
@@ -49,11 +46,9 @@ void _beautify_sql(_Buf *buf, Node *node) {
                     buf->append(info.s0);
                 }
             }
-            else
-            {
+            else {
                 Node* child = node->getChild(info.key);
-                if (child)
-                {
+                if (child) {
                     if (info.s0 == "\n") {
                         buf->new_line();
                         buf->adjust_col(col_f);
@@ -71,14 +66,12 @@ void _beautify_sql(_Buf *buf, Node *node) {
             }
         }
     }
-    else
-    {
+    else {
         buf->append(node->terminalToken_.yytex);
     }
 }
 
-bool parser::parse_sql2003(const std::string& sql, ParseResult* result)
-{
+bool parser::parse_sql2003(const std::string& sql, ParseResult* result) {
     yyscan_t scanner;
     YY_BUFFER_STATE state;
 
@@ -99,8 +92,7 @@ bool parser::parse_sql2003(const std::string& sql, ParseResult* result)
     return result->accept;
 }
 
-bool parser::parse_tsql(const std::string &sql, ParseResult *result)
-{
+bool parser::parse_tsql(const std::string &sql, ParseResult *result) {
     /* todo */
     result->accept = false;
     return false;

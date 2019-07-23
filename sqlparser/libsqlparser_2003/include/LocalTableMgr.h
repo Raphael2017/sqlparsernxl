@@ -6,10 +6,8 @@
 #include <map>
 #include <list>
 
-namespace resolve
-{
-    struct LocalTableMgr
-    {
+namespace resolve {
+    struct LocalTableMgr {
         LocalTableMgr();
         void report();
         void reset();

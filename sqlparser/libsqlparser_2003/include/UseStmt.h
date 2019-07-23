@@ -4,10 +4,8 @@
 #include "Interface.h"
 #include "Stmt.h"
 
-namespace resolve
-{
-    struct UseStmt : public Stmt
-    {
+namespace resolve {
+    struct UseStmt : public Stmt {
     public:
         void set_database_name(const std::string& db) { database_name_ = db; }
         std::string get_database_name() const { return database_name_; }

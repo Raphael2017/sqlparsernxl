@@ -9,10 +9,8 @@
 #include "SelectItem.h"
 #include "join.h"
 
-namespace resolve
-{
-    Stmt::~Stmt()
-    {
+namespace resolve {
+    Stmt::~Stmt() {
         for (auto it : cte_defs_)
             delete(it);
         cte_defs_.clear();
@@ -27,23 +25,18 @@ namespace resolve
     bool Stmt::check_in_cte(
             const std::string& table_name,
             uint64_t& out_query_id,
-            size_t& out_index)
-    {
+            size_t& out_index) {
         assert(table_name.length() > 0);
         Stmt* cur = this;
-        while (cur != nullptr)
-        {
+        while (cur != nullptr) {
             // reverse traversal to find the nearby cte definition
             size_t index = cur->cte_defs_.size() - 1;
-            for (auto rit = cur->cte_defs_.rbegin(); rit != cur->cte_defs_.rend(); ++rit)
-            {
+            for (auto rit = cur->cte_defs_.rbegin(); rit != cur->cte_defs_.rend(); ++rit) {
                 CteDef* cte = *rit;
-                if (cte->cte_def_name_ == table_name)
-                {
+                if (cte->cte_def_name_ == table_name) {
                     out_query_id = cur->query_id_;
                     out_index = index;
-                    if (cte->ref_query_id_ == OB_INVALID_ID)
-                    {
+                    if (cte->ref_query_id_ == OB_INVALID_ID) {
                         /*
                          * this means we are still resolving the cte definition,
                          * it also means that this cte is a recursive definition
@@ -69,8 +62,7 @@ namespace resolve
             const std::string& table_name,
             const std::string& alias_name,
             uint64_t& out_table_id,
-            Node* node)
-    {
+            Node* node) {
         assert(table_name.length() > 0);
         TableRef* ret = nullptr;
 
@@ -81,8 +73,7 @@ namespace resolve
             is_cte = false;
         else
             is_cte = check_in_cte(table_name, out_query_id, out_index);
-        if (is_cte)
-        {
+        if (is_cte) {
             CteTableRef* tb = new CteTableRef;
             tb->table_id_ = plan->logicPlan_->generate_table_id();
             tb->query_id_ = this->query_id_;
@@ -93,11 +84,9 @@ namespace resolve
                 tb->alias_name_ = alias_name;
             ret = tb;
         }
-        else
-        {
+        else {
             std::string schema_name1 = schema_name.length() > 0 ? schema_name : plan->local_table_mgr->get_default_schema();
-            if (alias_name.length() > 0)
-            {
+            if (alias_name.length() > 0) {
                 BaseTableAliasRef* tb = new BaseTableAliasRef;
                 tb->table_id_ = plan->logicPlan_->generate_table_id();
                 tb->query_id_ = this->query_id_;
@@ -110,8 +99,7 @@ namespace resolve
                 tb->alias_name_ = alias_name;
                 ret = tb;
             }
-            else
-            {
+            else {
                 BaseTableRef* tb = new BaseTableRef;
                 tb->query_id_ = this->query_id_;
                 tb->base_table_id_ = plan->local_table_mgr->get_local_table_id(schema_name1+"."+table_name);
@@ -125,10 +113,8 @@ namespace resolve
             }
         }
 
-        for (TableRef* it : table_items_)
-        {
-            if (ret->get_table_name() == it->get_table_name())
-            {
+        for (TableRef* it : table_items_) {
+            if (ret->get_table_name() == it->get_table_name()) {
                 /* ambiguous table name at from clause error */
                 plan->error_detail_ = "ambiguous name " + ret->get_table_name();
                 plan->errorOccur_(plan);
@@ -145,8 +131,7 @@ namespace resolve
             ResultPlan* plan,
             uint64_t query_id,
             const std::string& alias_name,
-            uint64_t& out_table_id)
-    {
+            uint64_t& out_table_id) {
         GeneratedTableRef* ret = new GeneratedTableRef;
         ret->table_id_ = query_id;
         ret->query_id_ = this->query_id_;
@@ -154,10 +139,8 @@ namespace resolve
         assert(alias_name.length() > 0);
         ret->alias_name_ = alias_name;
 
-        for (TableRef* it : table_items_)
-        {
-            if (ret->get_table_name() == it->get_table_name())
-            {
+        for (TableRef* it : table_items_) {
+            if (ret->get_table_name() == it->get_table_name()) {
                 /* ambiguous table name at from clause error */
                 plan->error_detail_ = "ambiguous name " + ret->get_table_name();
                 plan->errorOccur_(plan);
@@ -172,8 +155,7 @@ namespace resolve
     CteDef* Stmt::add_cte_def(
             ResultPlan* plan,
             uint64_t query_id,
-            const std::string& cte_name)
-    {
+            const std::string& cte_name) {
         CteDef* ret = new CteDef;
         ret->cte_def_name_ = cte_name;
         ret->ref_query_id_ = query_id;
@@ -184,17 +166,13 @@ namespace resolve
     bool Stmt::get_table_item(
             const std::string& schema,
             const std::string& table_name,
-            TableRef*& out_table_ref)
-    {
+            TableRef*& out_table_ref) {
         assert(table_name.length() > 0);
 
         Stmt* cur = this;
-        while (cur != nullptr)
-        {
-            for (TableRef* tbi : cur->table_items_)
-            {
-                if (tbi->check_is_ref(schema, table_name))
-                {
+        while (cur != nullptr) {
+            for (TableRef* tbi : cur->table_items_) {
+                if (tbi->check_is_ref(schema, table_name)) {
                     out_table_ref = tbi;
                     return true;
                 }
@@ -216,16 +194,11 @@ namespace resolve
      * */
     bool Stmt::get_table_item(
             uint64_t table_id,
-            TableRef*& out_table_ref
-    )
-    {
+            TableRef*& out_table_ref) {
         Stmt* cur = this;
-        while (cur != nullptr)
-        {
-            for (TableRef* tbi : cur->table_items_)
-            {
-                if (tbi->table_id_ == table_id)
-                {
+        while (cur != nullptr) {
+            for (TableRef* tbi : cur->table_items_) {
+                if (tbi->table_id_ == table_id) {
                     out_table_ref = tbi;
                     return true;
                 }
@@ -249,21 +222,17 @@ namespace resolve
             ResultPlan* plan,
             const std::string& column_name,
             TableRef*& table_item,
-            uint64_t& column_id)
-    {
+            uint64_t& column_id) {
         assert(column_name.length() > 0);
         Stmt* cur = this;
-        while (cur != nullptr)
-        {
+        while (cur != nullptr) {
             /*
              * should not have ambiguous column
              * currently, scanf left-to-right return first hit
              * */
 
-            for (TableRef* tbi : cur->table_items_)
-            {
-                if (tbi->check_column(plan, column_name, column_id))
-                {
+            for (TableRef* tbi : cur->table_items_) {
+                if (tbi->check_column(plan, column_name, column_id)) {
                     table_item = tbi;
                     return true;
                 }
@@ -283,8 +252,7 @@ namespace resolve
             const std::string& table,
             const std::string& column_name,
             TableRef*& table_item,
-            uint64_t& column_id)
-    {
+            uint64_t& column_id) {
         bool ret = get_table_item(schema, table, table_item);
         if (!ret)
             return false;
@@ -293,8 +261,7 @@ namespace resolve
             return false;
         return true;
     }
-    ITableItem* Stmt::GetTableItem(size_t index)
-    {
+    ITableItem* Stmt::GetTableItem(size_t index) {
         return 0 <= index && index < table_items_.size() ? table_items_[index] : nullptr;
     }
 }

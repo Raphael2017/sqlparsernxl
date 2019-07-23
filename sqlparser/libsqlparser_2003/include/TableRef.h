@@ -6,19 +6,16 @@
 
 struct Node;
 
-namespace resolve
-{
+namespace resolve {
     struct ResultPlan;
     struct LogicPlan;
     struct SelectItem;
     struct UpdateStmt;
     struct DeleteStmt;
     struct InsertStmt;
-    struct TableRef : ITableItem
-    {
+    struct TableRef : ITableItem {
     public:
-        enum TableRefType
-        {
+        enum TableRefType {
             NULL_REF,
             BASE_TABLE_DIRECT_REF,
             BASE_TABLE_ALIAS_REF,
@@ -73,8 +70,7 @@ namespace resolve
         friend struct Stmt;
     };
 
-    struct BaseTableRef : public TableRef
-    {
+    struct BaseTableRef : public TableRef {
     public:
         BaseTableRef() { table_ref_type_ = BASE_TABLE_DIRECT_REF; }
         virtual std::string get_table_name() const override;
@@ -147,8 +143,7 @@ namespace resolve
     );
     };
 
-    struct BaseTableAliasRef: public BaseTableRef
-    {
+    struct BaseTableAliasRef: public BaseTableRef {
     public:
         BaseTableAliasRef() { table_ref_type_ = BASE_TABLE_ALIAS_REF; }
         virtual std::string get_table_name() const override;
@@ -169,8 +164,7 @@ namespace resolve
         friend struct Stmt;
     };
 
-    struct GeneratedTableRef: public TableRef
-    {
+    struct GeneratedTableRef: public TableRef {
     public:
         GeneratedTableRef() { table_ref_type_ = GENERATED_TABLE_REF; }
         virtual std::string get_table_name() const override;
@@ -198,8 +192,7 @@ namespace resolve
         friend struct SqlRawExpr;
     };
 
-    struct CteTableRef: public TableRef
-    {
+    struct CteTableRef: public TableRef {
     public:
         CteTableRef() { table_ref_type_ = CTE_TABLE_REF; }
         virtual std::string get_table_name() const override;
@@ -226,8 +219,7 @@ namespace resolve
     };
 
     struct Stmt;
-    struct CteDef
-    {
+    struct CteDef {
     public:
         ~CteDef();
         bool set_column_alias(

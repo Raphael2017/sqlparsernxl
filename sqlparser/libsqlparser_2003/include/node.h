@@ -17,8 +17,7 @@
 std::string NodeTypeToString(NodeType tp);
 
 struct Node;
-struct ParseResult : public IParseResult
-{
+struct ParseResult : public IParseResult {
     ParseResult();
     ~ParseResult();
     Node* result_tree_;
@@ -37,8 +36,7 @@ struct ParseResult : public IParseResult
     virtual std::string GetErrorDetail() const override;
 };
 
-struct TerminalToken
-{
+struct TerminalToken {
     //  after convert
     int i;
     double d;
@@ -53,8 +51,7 @@ struct TerminalToken
 
 struct _FmCB;
 
-struct Node : public INode
-{
+struct Node : public INode {
     static Node* makeTerminalNode(NodeType tp, const std::string&);
     static Node* makeNonTerminalNode(NodeType tp, int num, ...);
 

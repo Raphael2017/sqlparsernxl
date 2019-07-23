@@ -18,56 +18,39 @@
 #include "InsertStmt.h"
 #include "CallStmt.h"
 
-namespace resolve
-{
-    int resolve(ResultPlan* plan, Node* node, uint64_t& query_id)
-    {
+namespace resolve {
+    int resolve(ResultPlan* plan, Node* node, uint64_t& query_id) {
         assert(node != nullptr);
         assert(plan != nullptr);
 
-        switch (node->nodeType_)
-        {
-            case E_STMT_LIST:
-            {
+        switch (node->nodeType_) {
+            case E_STMT_LIST: {
                 resolve_multi_statements(plan, node);
-            }
-                break;
-            case E_DIRECT_SELECT:
-            {
+            } break;
+            case E_DIRECT_SELECT: {
                 query_id = OB_INVALID_ID;
                 resolve_select_statement(plan, node, query_id);
-            }
-                break;
-            case E_UPDATE:
-            {
+            } break;
+            case E_UPDATE: {
                 query_id = OB_INVALID_ID;
                 resolve_update_statement(plan, node, query_id);
-            }
-                break;
-            case E_DELETE:
-            {
+            } break;
+            case E_DELETE: {
                 query_id = OB_INVALID_ID;
                 resolve_delete_statement(plan, node, query_id);
-            }
-                break;
-            case E_INSERT:
-            {
+            } break;
+            case E_INSERT: {
                 query_id = OB_INVALID_ID;
                 resolve_insert_statement(plan, node, query_id);
-            }
-                break;
-            case E_USE:
-            {
+            } break;
+            case E_USE: {
                 query_id = OB_INVALID_ID;
                 resolve_use_statement(plan, node, query_id);
-            }
-                break;
-            case E_CALL:
-            {
+            } break;
+            case E_CALL: {
                 query_id = OB_INVALID_ID;
                 resolve_call_statement(plan, node, query_id);
-            }
-                break;
+            } break;
             default:
                 assert(false);  /*unreachable*/
                 break;
@@ -75,13 +58,11 @@ namespace resolve
         return 0;
     }
 
-    int resolve_multi_statements(ResultPlan* plan, Node* node)
-    {
+    int resolve_multi_statements(ResultPlan* plan, Node* node) {
         std::list<Node*> stmts;
         Node::ToList(plan->tree_root_, stmts);
         uint64_t query_id = OB_INVALID_ID;
-        for (auto stmt : stmts)
-        {
+        for (auto stmt : stmts) {
             plan->reset();
             resolve(plan, stmt, query_id);
             plan->startNewStmt_(plan, query_id);
@@ -132,8 +113,7 @@ namespace resolve
             Node* node,
             uint64_t& query_id,
             Stmt* parent/* = nullptr*/,
-            ScopeType scope/* = E_SCOPE_WHATEVER*/)
-    {
+            ScopeType scope/* = E_SCOPE_WHATEVER*/) {
         assert(node->nodeType_ == E_USE);
         query_id = plan->logicPlan_->generate_query_id();
         UseStmt* use_stmt = dynamic_cast<UseStmt*>(plan->logicPlan_->add_query(E_STMT_TYPE_USE));
@@ -151,8 +131,7 @@ namespace resolve
             Node* node,
             uint64_t& query_id,
             Stmt* parent/* = nullptr*/,
-            ScopeType scope/* = E_SCOPE_WHATEVER*/)
-    {
+            ScopeType scope/* = E_SCOPE_WHATEVER*/) {
         assert(node->nodeType_ == E_UPDATE);
         query_id = plan->logicPlan_->generate_query_id();
         UpdateStmt* update_stmt = dynamic_cast<UpdateStmt*>(plan->logicPlan_->add_query(E_STMT_TYPE_UPDATE));
@@ -173,8 +152,7 @@ namespace resolve
             Node* node,
             uint64_t& query_id,
             Stmt* parent/* = nullptr*/,
-            ScopeType scope/* = E_SCOPE_WHATEVER*/)
-    {
+            ScopeType scope/* = E_SCOPE_WHATEVER*/) {
         assert(node->nodeType_ == E_INSERT);
         query_id = plan->logicPlan_->generate_query_id();
         InsertStmt* insert_stmt = dynamic_cast<InsertStmt*>(plan->logicPlan_->add_query(E_STMT_TYPE_INSERT));
@@ -196,8 +174,7 @@ namespace resolve
             Node* node,
             uint64_t& query_id,
             Stmt* parent/* = nullptr*/,
-            ScopeType scope/* = E_SCOPE_WHATEVER*/)
-    {
+            ScopeType scope/* = E_SCOPE_WHATEVER*/) {
         assert(node->nodeType_ == E_DELETE);
         query_id = plan->logicPlan_->generate_query_id();
         DeleteStmt* delete_stmt = dynamic_cast<DeleteStmt*>(plan->logicPlan_->add_query(E_STMT_TYPE_DELETE));
@@ -216,8 +193,7 @@ namespace resolve
             Node* node,
             uint64_t& query_id,
             Stmt* parent/* = nullptr*/,
-            ScopeType scope/* = E_SCOPE_WHATEVER*/)
-    {
+            ScopeType scope/* = E_SCOPE_WHATEVER*/) {
         Node *with = nullptr;
         Node *select_clause = node;
         Node *order_by = nullptr;
@@ -240,8 +216,7 @@ namespace resolve
         resolve_cte_clause(plan, with, select_stmt);
 
         Node* set_op = select_clause->getChild(E_SELECT_SET_OPERATION);
-        if (set_op != nullptr)
-        {
+        if (set_op != nullptr) {
             /*select with set operation*/
             Node* former = select_clause->getChild(E_SELECT_FORMER_SELECT_STMT);
             uint64_t left_query_id = OB_INVALID_ID;
@@ -252,8 +227,7 @@ namespace resolve
             resolve_select_statement(plan, latter, right_query_id, select_stmt);
             select_stmt->set_set_op_right_query_id(right_query_id);
         }
-        else
-        {
+        else {
             /*simple select*/
             resolve_from_clause(plan, select_clause->getChild(E_SELECT_FROM_LIST), select_stmt);
             resolve_where_clause(plan, select_clause->getChild(E_SELECT_OPT_WHERE), select_clause, select_stmt);
@@ -268,8 +242,7 @@ namespace resolve
     int resolve_group_by_clause(
             ResultPlan *plan,
             Node *node,
-            Stmt *parent
-    ) {
+            Stmt *parent) {
         if (!node)
             return 0;
         assert(node->nodeType_ == E_GROUP_BY);
@@ -287,8 +260,7 @@ namespace resolve
     int resolve_having_clause(
             ResultPlan *plan,
             Node *node,
-            Stmt *parent
-    ) {
+            Stmt *parent) {
         if (!node)
             return 0;
         assert(node->nodeType_ == E_HAVING);
@@ -302,8 +274,7 @@ namespace resolve
     int resolve_order_by_clause(
             ResultPlan *plan,
             Node *node,
-            Stmt *parent
-    ) {
+            Stmt *parent) {
         if (!node)
             return 0;
         assert(node->nodeType_ == E_ORDER_BY);
@@ -323,8 +294,7 @@ namespace resolve
     int resolve_cte_clause(
             ResultPlan* plan,
             Node* node,
-            Stmt* parent)
-    {
+            Stmt* parent) {
         if (!node)
             return 0;
         assert(node->nodeType_ == E_OPT_WITH_CLAUSE);
@@ -343,8 +313,7 @@ namespace resolve
             ResultPlan* plan,
             Node* node,
             Stmt* parent,
-            uint64_t& out_table_id)
-    {
+            uint64_t& out_table_id) {
         assert(node && node->nodeType_ == E_COMMON_TABLE_EXPR);
         Node* subquery = node->getChild(E_COMMON_TABLE_EXPR_SUBQUERY);
         assert(subquery && subquery->nodeType_ == E_SELECT_WITH_PARENS);
@@ -370,8 +339,7 @@ namespace resolve
         ctedef->ref_query_id_ = query_id;
         Node* alias_list = node->getChild(E_COMMON_TABLE_EXPR_COLUMNS);
         std::vector<std::string> aliass{};
-        if (alias_list)
-        {
+        if (alias_list) {
             alias_list = Node::remove_parens(alias_list);
             std::list<Node*> ls;
             Node::ToList(alias_list, ls);
@@ -385,8 +353,7 @@ namespace resolve
     int resolve_from_clause(
             ResultPlan* plan,
             Node* node,
-            Stmt* parent)
-    {
+            Stmt* parent) {
         if (!node)
             return 0;
 
@@ -394,17 +361,14 @@ namespace resolve
         node = node->getChild(E_FROM_CLAUSE_FROM_LIST);
         std::list<Node*> ls{};
         Node::ToList(node, ls);
-        for (auto child_node : ls)
-        {
+        for (auto child_node : ls) {
             uint64_t table_id = OB_INVALID_ID;
             resolve_table(plan, child_node, parent, table_id);
             if (child_node->nodeType_ == E_JOINED_TABLE ||
-                child_node->nodeType_ == E_JOINED_TABLE_WITH_PARENS)
-            {
+                child_node->nodeType_ == E_JOINED_TABLE_WITH_PARENS) {
                 parent->add_from_item(table_id, FromItem::E_JOINED);
             }
-            else
-            {
+            else {
                 parent->add_from_item(table_id, FromItem::E_NORMAL);
             }
         }
@@ -415,10 +379,8 @@ namespace resolve
             ResultPlan* plan,
             Node* node,
             Node* node_parent,
-            Stmt* parent)
-    {
-        if (node)
-        {
+            Stmt* parent) {
+        if (node) {
             assert(node->nodeType_ == E_WHERE_CLAUSE);
             Node* expr = node->getChild(E_WHERE_CLAUSE_EXPR);
             uint64_t sql_raw_expr_id = OB_INVALID_ID;
@@ -510,8 +472,7 @@ namespace resolve
             ResultPlan* plan,
             Node* node,
             SelectStmt* parent,
-            ScopeType scope)
-    {
+            ScopeType scope) {
         RawExpr* e = nullptr;
         resolve_expr(plan, node, nullptr, parent, e);
         return 0;
@@ -521,14 +482,10 @@ namespace resolve
     int resolve_update_clause(
             ResultPlan* plan,
             Node* node,
-            UpdateStmt* parent
-    )
-    {
+            UpdateStmt* parent) {
         assert(node);
-        switch (node->nodeType_)
-        {
-            case E_TABLE_IDENT:
-            {
+        switch (node->nodeType_) {
+            case E_TABLE_IDENT: {
                 Node *database_node = node->getChild(E_TABLE_IDENT_DATABASE);
                 Node* schema_node = node->getChild(E_TABLE_IDENT_SCHEMA);
                 Node* table_node = node->getChild(E_TABLE_IDENT_OBJECT);
@@ -537,11 +494,9 @@ namespace resolve
                 std::string schema_name = schema_node ? schema_node->terminalToken_.str : "";
                 TableRef* tbi = nullptr;
                 parent->set_update_table(plan, schema_name, table_name, tbi);
-                if (tbi)
-                {
+                if (tbi) {
                     if (tbi->get_table_ref_type() == TableRef::BASE_TABLE_DIRECT_REF ||
-                        tbi->get_table_ref_type() == TableRef::BASE_TABLE_ALIAS_REF)
-                    {
+                        tbi->get_table_ref_type() == TableRef::BASE_TABLE_ALIAS_REF) {
                         BaseTableRef* btbi = dynamic_cast<BaseTableRef*>(tbi);
                         btbi->table_name_ = table_name;
                         btbi->schema_name_ = schema_name = schema_node ? schema_node->terminalToken_.str : plan->local_table_mgr->get_default_schema();
@@ -552,11 +507,8 @@ namespace resolve
                     }
                 }
 
-            }
-            case E_TEMP_VARIABLE:
-            {
-
-            }
+            } break;
+            case E_TEMP_VARIABLE: { } break;
             default:
                 break;  /* todo */
         }
@@ -567,9 +519,7 @@ namespace resolve
     int resolve_update_items(
             ResultPlan* plan,
             Node* node,
-            UpdateStmt* parent
-    )
-    {
+            UpdateStmt* parent) {
         assert(node);
         std::list<Node*> ls;
         Node::ToList(node, ls);
@@ -583,14 +533,10 @@ namespace resolve
     int resolve_delete_clause(
             ResultPlan* plan,
             Node* node,
-            DeleteStmt* parent
-    )
-    {
+            DeleteStmt* parent) {
         assert(node);
-        switch (node->nodeType_)
-        {
-            case E_TABLE_IDENT:
-            {
+        switch (node->nodeType_) {
+            case E_TABLE_IDENT: {
                 Node *database_node = node->getChild(E_TABLE_IDENT_DATABASE);
                 Node* schema_node = node->getChild(E_TABLE_IDENT_SCHEMA);
                 Node* table_node = node->getChild(E_TABLE_IDENT_OBJECT);
@@ -599,11 +545,9 @@ namespace resolve
                 std::string schema_name = schema_node ? schema_node->terminalToken_.str : "";
                 TableRef* tbi = nullptr;
                 parent->set_delete_table(plan, schema_name, table_name, tbi);
-                if (tbi)
-                {
+                if (tbi) {
                     if (tbi->get_table_ref_type() == TableRef::BASE_TABLE_DIRECT_REF ||
-                        tbi->get_table_ref_type() == TableRef::BASE_TABLE_ALIAS_REF)
-                    {
+                        tbi->get_table_ref_type() == TableRef::BASE_TABLE_ALIAS_REF) {
                         BaseTableRef* btbi = dynamic_cast<BaseTableRef*>(tbi);
                         btbi->table_name_ = table_name;
                         btbi->schema_name_ = schema_name = schema_node ? schema_node->terminalToken_.str : plan->local_table_mgr->get_default_schema();
@@ -613,12 +557,8 @@ namespace resolve
                         btbi->default_database_ = (database_node == nullptr);
                     }
                 }
-
-            }
-            case E_TEMP_VARIABLE:
-            {
-
-            }
+            } break;
+            case E_TEMP_VARIABLE: { } break;
             default:
                 break;  /* todo */
         }
@@ -628,14 +568,10 @@ namespace resolve
     int resolve_insert_clause(
             ResultPlan* plan,
             Node* node,
-            InsertStmt* parent
-    )
-    {
+            InsertStmt* parent) {
         assert(node);
-        switch (node->nodeType_)
-        {
-            case E_TABLE_IDENT:
-            {
+        switch (node->nodeType_) {
+            case E_TABLE_IDENT: {
                 Node *database_node = node->getChild(E_TABLE_IDENT_DATABASE);
                 Node* schema_node = node->getChild(E_TABLE_IDENT_SCHEMA);
                 Node* table_node = node->getChild(E_TABLE_IDENT_OBJECT);
@@ -644,11 +580,9 @@ namespace resolve
                 std::string schema_name = schema_node ? schema_node->terminalToken_.str : "";
                 TableRef* tbi = nullptr;
                 parent->set_insert_table(plan, schema_name, table_name, tbi);
-                if (tbi)
-                {
+                if (tbi) {
                     if (tbi->get_table_ref_type() == TableRef::BASE_TABLE_DIRECT_REF ||
-                        tbi->get_table_ref_type() == TableRef::BASE_TABLE_ALIAS_REF)
-                    {
+                        tbi->get_table_ref_type() == TableRef::BASE_TABLE_ALIAS_REF) {
                         BaseTableRef* btbi = dynamic_cast<BaseTableRef*>(tbi);
                         btbi->table_name_ = table_name;
                         btbi->schema_name_ = schema_name = schema_node ? schema_node->terminalToken_.str : plan->local_table_mgr->get_default_schema();
@@ -658,11 +592,8 @@ namespace resolve
                         btbi->default_database_ = (database_node == nullptr);
                     }
                 }
-            }
-            case E_TEMP_VARIABLE:
-            {
-
-            }
+            } break;
+            case E_TEMP_VARIABLE: { } break;
             default:
                 break;  /* todo */
         }
@@ -673,59 +604,47 @@ namespace resolve
             ResultPlan* plan,
             Node* node,
             Stmt* parent,
-            uint64_t& out_table_id)
-    {
+            uint64_t& out_table_id) {
         assert(node != nullptr);
         out_table_id = OB_INVALID_ID;
         Node* table_node = node;
         Node* alias_node = nullptr;
         Node* schema_node = nullptr;
-        if (node->nodeType_ == E_ALIAS)
-        {
+        if (node->nodeType_ == E_ALIAS) {
             table_node = node->getChild(E_ALIAS_ORIGN);
             alias_node = node->getChild(E_ALIAS_ALIAS);
         }
-        else if (node->nodeType_ == E_TABLE_IDENT)
-        {
+        else if (node->nodeType_ == E_TABLE_IDENT) {
             table_node = node->getChild(E_TABLE_IDENT_OBJECT);
             schema_node = node->getChild(E_TABLE_IDENT_SCHEMA);
         }
 
-        if (table_node->nodeType_ == E_SELECT_WITH_PARENS)
-        {
+        if (table_node->nodeType_ == E_SELECT_WITH_PARENS) {
             table_node = Node::remove_parens(table_node);
         }
-        else if (table_node->nodeType_ == E_JOINED_TABLE_WITH_PARENS)
-        {
+        else if (table_node->nodeType_ == E_JOINED_TABLE_WITH_PARENS) {
             table_node = Node::remove_parens(table_node);
         }
-        else if (table_node->nodeType_ == E_TABLE_IDENT)
-        {
+        else if (table_node->nodeType_ == E_TABLE_IDENT) {
             schema_node = table_node->getChild(E_TABLE_IDENT_SCHEMA);
             table_node = table_node->getChild(E_TABLE_IDENT_OBJECT);
         }
 
-        switch (table_node->nodeType_)
-        {
-            case E_IDENTIFIER:
-            {
+        switch (table_node->nodeType_) {
+            case E_IDENTIFIER: {
                 std::string table_name = table_node->terminalToken_.str;
                 std::string alias_name = alias_node ? alias_node->terminalToken_.yytex : "";
                 std::string schema_name = schema_node ? schema_node->terminalToken_.str : "";
                 parent->add_table_item(plan, schema_name, table_name, alias_name, out_table_id, node);
-            }
-                break;
+            } break;
             case E_DIRECT_SELECT:
-            case E_SELECT:
-            {
+            case E_SELECT: {
                 //assert(alias_node != nullptr);  // The alias is actually not optional at all.
                 std::string df = table_node->serialize();
-                if (alias_node == nullptr)
-                {
+                if (alias_node == nullptr) {
                     plan->set_err(0, "(" + df + ") must have alias name");
                     plan->errorOccur_(plan);
                 }
-
 
                 uint64_t query_id = OB_INVALID_ID;
                 resolve_select_statement(plan, table_node, query_id, parent, E_SCOPE_FROM);
@@ -733,8 +652,7 @@ namespace resolve
                 TableRef* tbi = parent->add_table_item(plan, query_id, alias_name, out_table_id);
                 Node* alias_list = node->getChild(2);
                 std::vector<std::string> aliass{};
-                if (alias_list)
-                {
+                if (alias_list) {
                     alias_list = Node::remove_parens(alias_list);
                     std::list<Node*> ls;
                     Node::ToList(alias_list, ls);
@@ -744,34 +662,27 @@ namespace resolve
                 GeneratedTableRef* gtbi = dynamic_cast<GeneratedTableRef*>(tbi);
                 assert(gtbi != nullptr);
                 gtbi->set_column_alias(plan, aliass);
-            }
-                break;
-            case E_JOINED_TABLE:
-            {
+            } break;
+            case E_JOINED_TABLE: {
                 JoinedTable* joinedTable = new JoinedTable;
                 out_table_id = parent->generate_join_id();
                 joinedTable->set_join_id(out_table_id);
                 resolve_joined_table(plan, table_node, parent, joinedTable);
                 parent->add_join(joinedTable);
-            }
-                break;
+            } break;
             case E_TABLE_VALUE_CTOR_PARENS:
                 break;
             case E_FUN_CALL:
                 /*todo*/
                 break;
-            case E_PIVOT_TABLE:
-            {
+            case E_PIVOT_TABLE: {
                 /*todo*/
                 resolve_table(plan, table_node->getChild(0), parent, out_table_id);
-            }
-                break;
-            case E_UNPIVOT_TABLE:
-            {
+            } break;
+            case E_UNPIVOT_TABLE: {
                 /*todo*/
                 resolve_table(plan, table_node->getChild(0), parent, out_table_id);
-            }
-                break;
+            } break;
             case E_TEMP_VAR_FUN_CALL:
                 /*todo*/
                 break;
@@ -789,47 +700,35 @@ namespace resolve
             ResultPlan* plan,
             Node* node,
             Stmt* parent,
-            JoinedTable* joinedTable)
-    {
+            JoinedTable* joinedTable) {
         int ret = 0;
         assert(node->nodeType_ == E_JOINED_TABLE);
         Node* table_node = nullptr;
-        for (size_t i = 0; i < node->getChildrenCount(); ++i)
-        {
+        for (size_t i = 0; i < node->getChildrenCount(); ++i) {
             table_node = node->getChild(i);
             if (E_JOINED_TABLE_TABLE_FACTOR_L == i ||
-                E_JOINED_TABLE_TABLE_FACTOR_R == i)
-            {
-                switch (table_node->nodeType_)
-                {
+                E_JOINED_TABLE_TABLE_FACTOR_R == i) {
+                switch (table_node->nodeType_) {
                     case E_IDENTIFIER:
                     case E_SELECT:
-                    case E_ALIAS:
-                    {
+                    case E_ALIAS: {
                         uint64_t tid = OB_INVALID_ID;
                         ret = resolve_table(plan, table_node, parent, tid);
                         joinedTable->add_table(tid);
-                    }
-                        break;
-                    case E_JOINED_TABLE:
-                    {
+                    } break;
+                    case E_JOINED_TABLE: {
                         ret = resolve_joined_table(plan, table_node, parent, joinedTable);
-                    }
-                        break;
-                    case E_SELECT_WITH_PARENS:
-                    {
+                    } break;
+                    case E_SELECT_WITH_PARENS: {
                         table_node = Node::remove_parens(table_node);
                         uint64_t tid = OB_INVALID_ID;
                         ret = resolve_table(plan, table_node, parent, tid);
                         joinedTable->add_table(tid);
-                    }
-                        break;
-                    case E_JOINED_TABLE_WITH_PARENS:
-                    {
+                    } break;
+                    case E_JOINED_TABLE_WITH_PARENS: {
                         table_node = Node::remove_parens(table_node);
                         ret = resolve_joined_table(plan, table_node, parent, joinedTable);
-                    }
-                        break;
+                    } break;
                     default:
                         break;
                 }
@@ -838,38 +737,26 @@ namespace resolve
         uint64_t sql_raw_expr_id = OB_INVALID_ID;
         resolve_independ_expr(plan, node->getChild(E_JOINED_TABLE_ON_EXPR), sql_raw_expr_id, parent);
         Node* join_type_node = node->getChild(E_JOINED_TABLE_JOIN_TYPE);
-        switch (join_type_node->nodeType_)
-        {
-            case E_JOIN_FULL:
-            {
+        switch (join_type_node->nodeType_) {
+            case E_JOIN_FULL: {
                 joinedTable->add_join_op(E_JOIN_FULL, sql_raw_expr_id);
-            }
-                break;
-            case E_JOIN_CROSS:
-            {
+            } break;
+            case E_JOIN_CROSS: {
                 joinedTable->add_join_op(E_JOIN_CROSS, OB_INVALID_ID);
-            }
-                break;
-            case E_JOIN_LEFT:
-            {
+            } break;
+            case E_JOIN_LEFT: {
                 joinedTable->add_join_op(E_JOIN_LEFT, sql_raw_expr_id);
-            }
-                break;
-            case E_JOIN_RIGHT:
-            {
+            } break;
+            case E_JOIN_RIGHT: {
                 joinedTable->add_join_op(E_JOIN_RIGHT, sql_raw_expr_id);
-            }
-                break;
-            case E_JOIN_INNER:
-            {
+            } break;
+            case E_JOIN_INNER: {
                 joinedTable->add_join_op(E_JOIN_INNER, sql_raw_expr_id);
-            }
-                break;
+            } break;
             default:
                 assert(false);  /* unreachable */
                 break;
         }
-
         return ret;
     }
 
@@ -900,12 +787,10 @@ namespace resolve
             ResultPlan *plan,
             Node *node,
             uint64_t& sql_raw_expr_id,
-            Stmt* parent)
-    {
+            Stmt* parent) {
         if (!node)
             return 0;
-        if (node->nodeType_ == E_SELECT || node->nodeType_ == E_DIRECT_SELECT)
-        {
+        if (node->nodeType_ == E_SELECT || node->nodeType_ == E_DIRECT_SELECT) {
             uint64_t query_id = OB_INVALID_ID;
             resolve_select_statement(plan, node, query_id, parent);
             return 0;
@@ -913,8 +798,7 @@ namespace resolve
         /*
          * we donot resolve expr, just find subquery and resolve it
          * */
-        for (size_t i = 0; i < node->getChildrenCount(); ++i)
-        {
+        for (size_t i = 0; i < node->getChildrenCount(); ++i) {
             Node* child = node->getChild(i);
             if (child)
                 resolve_independ_expr(plan, child, sql_raw_expr_id, parent);
@@ -929,27 +813,21 @@ namespace resolve
             Node* node,
             SqlRawExpr* sql_raw_expr,
             Stmt* parent,
-            RawExpr*& out_raw_expr
-    )
-    {
+            RawExpr*& out_raw_expr) {
         assert(node != nullptr);
-        switch (node->nodeType_)
-        {
+        switch (node->nodeType_) {
             case E_NULL:
             case E_INT:
             case E_DOUBLE:
             case E_BOOL:
             case E_TEMP_VARIABLE:
             case E_QUESTIONMARK:
-            case E_STRING:
-            {
+            case E_STRING: {
                 RawExprConst* expr = new RawExprConst;
                 expr->set_expr_type(node->nodeType_);
                 out_raw_expr = expr;
-            }
-                break;
-            case E_OP_NAME_FIELD:
-            {
+            } break;
+            case E_OP_NAME_FIELD: {
                 // this is a column_ref   *,XXX.* illeagal
                 Node* column_node = node->getChild(E_OP_NAME_FIELD_COLUMN_NAME);
                 Node* table_node = node->getChild(E_OP_NAME_FIELD_RELATION_NAME);
@@ -958,29 +836,24 @@ namespace resolve
                 std::string column_name = column_node->terminalToken_.str;
                 uint64_t table_id = OB_INVALID_ID;
                 uint64_t column_id = OB_INVALID_ID;
-                if (!table_node)
-                {
+                if (!table_node) {
                     TableRef* tbi = nullptr;
 
                     bool fd = parent->check_table_column(plan, column_name, tbi, column_id);
-                    if (!fd)
-                    {
+                    if (!fd) {
                         assert(false);
                     }
                     table_id = tbi->get_table_id();
                 }
-                else
-                {
+                else {
                     std::string table_name = table_node->terminalToken_.str;
                     std::string schema_name = schema_node ? schema_node->terminalToken_.str : "";
                     TableRef* tbi = nullptr;
                     bool fd = parent->find_tableref_by_column(plan, schema_name, table_name, column_name, tbi, column_id);
-                    if (!fd)
-                    {
+                    if (!fd) {
                         assert(false);
                     }
-                    else
-                    {
+                    else {
                         table_id = tbi->get_table_id();
                     }
                 }
@@ -989,46 +862,36 @@ namespace resolve
                 expr->set_first_ref_id(table_id);
                 expr->set_second_ref_id(column_id);
                 out_raw_expr = expr;
-            }
-                break;
-            case E_EXPR_LIST_WITH_PARENS:
-            {
+            } break;
+            case E_EXPR_LIST_WITH_PARENS: {
                 Node* nd = Node::remove_parens(node);
                 resolve_expr(plan, nd, sql_raw_expr, parent, out_raw_expr);
-            }
-                break;
-            case E_EXPR_LIST:
-            {
+            } break;
+            case E_EXPR_LIST: {
                 std::list<Node*> ls;
                 Node::ToList(node, ls);
                 RawExprMultiOp* expr = new RawExprMultiOp;
                 expr->set_expr_type(E_EXPR_LIST);
-                for (auto it : ls)
-                {
+                for (auto it : ls) {
                     RawExpr* e = nullptr;
                     resolve_expr(plan, it, sql_raw_expr, parent, e);
                     expr->add_op_expr(e);
                 }
                 out_raw_expr = expr;
-            }
-                break;
-            case E_SELECT_WITH_PARENS:
-            {
+            } break;
+            case E_SELECT_WITH_PARENS: {
                 Node* nd = Node::remove_parens(node);
                 resolve_expr(plan, nd, sql_raw_expr, parent, out_raw_expr);
-            }
-                break;
+            } break;
             case E_DIRECT_SELECT:
-            case E_SELECT:
-            {
+            case E_SELECT: {
                 uint64_t query_id = OB_INVALID_ID;
                 resolve_select_statement(plan, node, query_id, parent);
                 RawExprScalarSubquery* expr = new RawExprScalarSubquery;
                 expr->set_expr_type(E_SELECT);
                 expr->set_ref_id(query_id);
                 out_raw_expr = expr;
-            }
-                break;
+            } break;
             case E_OP_ADD:
             case E_OP_MINUS:
             case E_OP_MUL:
@@ -1060,8 +923,7 @@ namespace resolve
             case E_OP_ASS_BIT_AND:
             case E_OP_ASS_BIT_OR:
             case E_OP_ASS_BIT_XOR:
-            case E_OP_COLLATE:
-            {
+            case E_OP_COLLATE: {
                 RawExpr* l = nullptr;
                 RawExpr* r = nullptr;
                 resolve_expr(plan, node->getChild(E_OP_BINARY_OPERAND_L), sql_raw_expr, parent, l);
@@ -1071,24 +933,20 @@ namespace resolve
                 expr->set_first_op_expr(l);
                 expr->set_second_op_expr(r);
                 out_raw_expr = expr;
-            }
-                break;
+            } break;
             case E_OP_NOT:
             case E_OP_EXISTS:
             case E_OP_POS:
-            case E_OP_NEG:
-            {
+            case E_OP_NEG: {
                 RawExpr* r = nullptr;
                 resolve_expr(plan, node->getChild(E_OP_UNARY_OPERAND), sql_raw_expr, parent, r);
                 RawExprUnaryOp* expr = new RawExprUnaryOp;
                 expr->set_expr_type(node->nodeType_);
                 expr->set_op_expr(r);
                 out_raw_expr = expr;
-            }
-                break;
+            } break;
             case E_OP_BTW:
-            case E_OP_NOT_BTW:
-            {
+            case E_OP_NOT_BTW: {
                 RawExpr* a = nullptr;
                 RawExpr* b = nullptr;
                 RawExpr* c = nullptr;
@@ -1101,10 +959,8 @@ namespace resolve
                 expr->set_second_op_expr(b);
                 expr->set_third_op_expr(c);
                 out_raw_expr = expr;
-            }
-                break;
-            case E_CASE:
-            {
+            } break;
+            case E_CASE: {
                 RawExprCaseOp* expr = new RawExprCaseOp;
                 expr->set_expr_type(E_CASE);
                 RawExpr* arg = nullptr;
@@ -1113,8 +969,7 @@ namespace resolve
                 Node* deft = node->getChild(E_CASE_ELSE);
                 if (!deft)
                     expr->set_default_expr(nullptr);
-                else
-                {
+                else {
                     RawExpr* e = nullptr;
                     resolve_expr(plan, deft->getChild(E_CASE_DEFAULT_EXPR), sql_raw_expr, parent, e);
                     expr->set_default_expr(e);
@@ -1123,8 +978,7 @@ namespace resolve
                 Node* when = node->getChild(E_CASE_WHEN_CLAUSE_LIST);
                 std::list<Node*> ls;
                 Node::ToList(when, ls);
-                for (auto it : ls)
-                {
+                for (auto it : ls) {
                     assert(it->nodeType_ == E_WHEN);
                     RawExpr* w = nullptr;
                     resolve_expr(plan, it->getChild(E_WHEN_WHEN_EXPR), sql_raw_expr, parent, w);
@@ -1134,10 +988,8 @@ namespace resolve
                     expr->add_then_op_expr(t);
                 }
                 out_raw_expr = expr;
-            }
-                break;
-            case E_FUN_CALL:
-            {
+            } break;
+            case E_FUN_CALL: {
                 Node* func = node->getChild(E_FUN_CALL_FUNC_NAME);
                 Node* params = node->getChild(E_FUN_CALL_PARAMS);
                 RawExprSysFun* expr = new RawExprSysFun;
@@ -1145,15 +997,13 @@ namespace resolve
                 expr->set_func_name(func->serialize());
                 std::list<Node*> ls;
                 Node::ToList(params, ls);
-                for (auto it : ls)
-                {
+                for (auto it : ls) {
                     RawExpr* param = nullptr;
                     resolve_expr(plan, it, sql_raw_expr, parent, param);
                     expr->add_param_expr(param);
                 }
                 out_raw_expr = expr;
-            }
-                break;
+            } break;
             default:
                 break;
 

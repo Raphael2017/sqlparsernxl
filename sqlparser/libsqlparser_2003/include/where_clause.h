@@ -4,10 +4,8 @@
 #include "Interface.h"
 struct Node;
 
-namespace resolve
-{
-    struct WhereCluase : public IWhereCluase
-    {
+namespace resolve {
+    struct WhereCluase : public IWhereCluase {
         virtual std::string GetCondition();
         virtual bool AddCondition(const std::string& condition);
         virtual uint64_t GetQueryID() { return query_id_; }

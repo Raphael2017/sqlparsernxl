@@ -7,10 +7,8 @@
 #include <assert.h>
 #include "serialize_format.h"
 
-std::string NodeTypeToString(NodeType tp)
-{
-    switch (tp)
-    {
+std::string NodeTypeToString(NodeType tp) {
+    switch (tp) {
         case E_NULL:
             return "E_NULL";
         case E_INT:
@@ -193,14 +191,12 @@ std::string NodeTypeToString(NodeType tp)
 ParseResult::ParseResult() : result_tree_(nullptr), accept(false),
     errFirstLine(0), errFirstColumn(0) {}
 
-ParseResult::~ParseResult()
-{
+ParseResult::~ParseResult() {
     delete(result_tree_);
     result_tree_ = nullptr;
 }
 
-Node* Node::makeTerminalNode(NodeType tp, const std::string& yytext)
-{
+Node* Node::makeTerminalNode(NodeType tp, const std::string& yytext) {
     Node* ret = new Node;
     ret->nodeType_ = tp;
     ret->isTerminalToken = true;
@@ -209,16 +205,14 @@ Node* Node::makeTerminalNode(NodeType tp, const std::string& yytext)
         case E_IDENTIFIER:
         case E_STRING: {
             ret->terminalToken_.str = yytext;
-        }
-            break;
+        } break;
         default:
             break;
     }
     return ret;
 }
 
-Node* Node::makeNonTerminalNode(NodeType tp, int num, ...)
-{
+Node* Node::makeNonTerminalNode(NodeType tp, int num, ...) {
     Node* ret = new Node;
     ret->nodeType_ = tp;
     ret->isTerminalToken = false;
@@ -231,8 +225,7 @@ Node* Node::makeNonTerminalNode(NodeType tp, int num, ...)
 #endif
     ret->childrenCount_ = num;
     va_start(va, num);
-    for (size_t i = 0; i < (size_t)num; ++i)
-    {
+    for (size_t i = 0; i < (size_t)num; ++i) {
         Node* child = va_arg(va, Node*);
         if (child)
             child->parent_ = ret;
@@ -248,8 +241,7 @@ bool Node::IsList(Node* root)
     bool ret = false;
     if (!root)
         return ret;
-    switch (root->nodeType_)
-    {
+    switch (root->nodeType_) {
         case E_STMT_LIST:
         case E_SORT_LIST:
         case E_SELECT_EXPR_LIST:
@@ -265,41 +257,34 @@ bool Node::IsList(Node* root)
         case E_DML_SELECT_LIST:
         case E_OPT_DERIVED_COLUMN_LIST:
         case E_NAME_CHAIN:
-        case E_SQL_ARGUMENT_LIST:
-        {
+        case E_SQL_ARGUMENT_LIST: {
             ret = true;
-        }
-            break;
+        } break;
         default:
             ret = false;
     }
     return ret;
 }
 
-int Node::ListLength(Node* root)
-{
+int Node::ListLength(Node* root) {
     if (!root)
         return 0;
     if (!IsList(root))
         return 1;
     int cnt = 0;
-    for (size_t i = 0; i < root->childrenCount_; ++i)
-    {
+    for (size_t i = 0; i < root->childrenCount_; ++i) {
         auto child = root->children_[i];
-        if (child->nodeType_ == root->nodeType_)
-        {
+        if (child->nodeType_ == root->nodeType_) {
             cnt += ListLength(child);
         }
-        else
-        {
+        else {
             cnt++;
         }
     }
     return cnt;
 }
 
-int Node::ListLengthNonRecursive(Node* root)
-{
+int Node::ListLengthNonRecursive(Node* root) {
     if (!root)
         return 0;
     int ret = 0;
@@ -307,23 +292,19 @@ int Node::ListLengthNonRecursive(Node* root)
     stack.push(root);
     Node *lpNode;
 
-    while(!stack.empty())
-    {
+    while(!stack.empty()) {
         lpNode = stack.top();
         stack.pop();
 
-        if(!lpNode)
-        {
+        if(!lpNode) {
             continue;
         }
-        else if (!IsList(lpNode))
-        {
+        else if (!IsList(lpNode)) {
             ret++;
             continue;
         }
 
-        for (size_t i = 0; i < lpNode->childrenCount_; i++)
-        {
+        for (size_t i = 0; i < lpNode->childrenCount_; i++) {
             stack.push(lpNode->children_[i]);
         }
     }
@@ -337,46 +318,38 @@ void Node::ToList(Node* root, std::list<Node*>& ret)
         return;
     if (!IsList(root))
         return ret.push_back(root);
-    for (size_t i = 0; i < root->childrenCount_; ++i)
-    {
+    for (size_t i = 0; i < root->childrenCount_; ++i) {
         auto child = root->children_[i];
         if (!child) continue;
-        if (child->nodeType_ == root->nodeType_)
-        {
+        if (child->nodeType_ == root->nodeType_) {
             ToList(child, ret);
         }
-        else
-        {
+        else {
             ret.push_back(child);
         }
     }
 }
 
-void Node::ToListNonRecursive(Node* root, std::list<Node*>& ret)
-{
+void Node::ToListNonRecursive(Node* root, std::list<Node*>& ret) {
     if (!root)
         return;
     std::stack<Node*> stack;
     stack.push(root);
     Node *lpNode;
 
-    while(!stack.empty())
-    {
+    while(!stack.empty()) {
         lpNode = stack.top();
         stack.pop();
 
-        if(!lpNode)
-        {
+        if(!lpNode) {
             continue;
         }
-        else if (!IsList(lpNode))
-        {
+        else if (!IsList(lpNode)) {
             ret.push_back(lpNode);
             continue;
         }
 
-        for (int i=lpNode->childrenCount_ - 1 ; i >= 0; i--)
-        {
+        for (int i=lpNode->childrenCount_ - 1 ; i >= 0; i--) {
             stack.push(lpNode->children_[i]);
         }
     }
@@ -388,16 +361,11 @@ Node::Node() : serialize_format(nullptr),
         children_(nullptr),
 #endif
 childrenCount_(0),
-parent_(nullptr)
-{
+parent_(nullptr) { }
 
-}
-
-Node::~Node()
-{
+Node::~Node() {
     //for (auto& nd : children_)
-    for (size_t i = 0; i < childrenCount_; ++i)
-    {
+    for (size_t i = 0; i < childrenCount_; ++i) {
         auto& nd = children_[i];
         delete(nd);
         nd = nullptr;
@@ -411,38 +379,30 @@ Node::~Node()
     childrenCount_ = 0;
 }
 
-void Node::print(Node* root, int lvl /*= 0*/)
-{
-    for (int i = 0; i < lvl; ++i)
-    {
+void Node::print(Node* root, int lvl /*= 0*/) {
+    for (int i = 0; i < lvl; ++i) {
         fprintf(stderr, "    ");
     }
-    if (!root)
-    {
+    if (!root) {
         fprintf(stderr, "|-> NIL\n");
         return;
     }
     fprintf(stderr, "|-> %s", NodeTypeToString(root->nodeType_).c_str());
-    if (root->isTerminalToken)
-    {
+    if (root->isTerminalToken) {
         fprintf(stderr , " : %s\n", root->terminalToken_.yytex.c_str());
     }
-    else
-    {   fprintf(stderr, "\n");
-        for (size_t i = 0; i < root->childrenCount_; ++i)
-        {
+    else {   fprintf(stderr, "\n");
+        for (size_t i = 0; i < root->childrenCount_; ++i) {
             print(root->getChild(i), 1 + lvl);
         }
     }
 }
 
 
-std::string Node::SerializeNonRecursive(Node* root)
-{
+std::string Node::SerializeNonRecursive(Node* root) {
     if (!root)
         return "";
-    struct Item
-    {
+    struct Item {
         Node* node;
         std::string str;
     };
@@ -454,32 +414,23 @@ std::string Node::SerializeNonRecursive(Node* root)
     Item tt;
     tt.node = root;
     stack.push(tt);
-    while (stack.size() > 0)
-    {
+    while (stack.size() > 0) {
         lpNode = stack.top();
         stack.pop();
         std::string tmp = "";
-        if (lpNode.node)
-        {
-
-            if (lpNode.node->isTerminalToken)
-            {
+        if (lpNode.node) {
+            if (lpNode.node->isTerminalToken) {
                 tmp = lpNode.node->terminalToken_.yytex;
             }
-            else
-            {
+            else {
                 auto serialize_format_tmp = lpNode.node->serialize_format->compact_;
-                for (auto rit = serialize_format_tmp->rbegin(); rit != serialize_format_tmp->rend(); ++rit)
-                {
-                    if (rit->is_simple == 1)
-                    {
+                for (auto rit = serialize_format_tmp->rbegin(); rit != serialize_format_tmp->rend(); ++rit) {
+                    if (rit->is_simple == 1) {
                         stack.push({nullptr, rit->s0});
                     }
-                    else
-                    {
+                    else {
                         Node* child = lpNode.node->getChild(rit->key);
-                        if (child)
-                        {
+                        if (child) {
                             if (rit->s2.length() > 0) stack.push({nullptr, rit->s2});
                             stack.push({child, ""});
                             if (rit->s0.length() > 0) stack.push({nullptr, rit->s0});
@@ -488,39 +439,31 @@ std::string Node::SerializeNonRecursive(Node* root)
                 }
             }
         }
-        else
-        {
+        else {
             tmp = lpNode.str;
         }
-        if (tmp.length() > 0)
-        {
+        if (tmp.length() > 0) {
             ret += tmp;
         }
     }
     return ret;
 }
 
-std::string Node::serialize()
-{
+std::string Node::serialize() {
     std::stringstream buf{};
     serialize(buf);
     return buf.str();
 }
 
 void Node::serialize(std::stringstream& buf) {
-    if (!isTerminalToken)
-    {
-        for (auto info : *(serialize_format->compact_))
-        {
-            if (info.is_simple == 1)
-            {
+    if (!isTerminalToken) {
+        for (auto info : *(serialize_format->compact_)) {
+            if (info.is_simple == 1) {
                 buf << info.s0;
             }
-            else
-            {
+            else {
                 Node* child = getChild(info.key);
-                if (child)
-                {
+                if (child) {
                     buf << info.s0;
                     child->serialize(buf);
                     buf << info.s2;
@@ -528,45 +471,38 @@ void Node::serialize(std::stringstream& buf) {
             }
         }
     }
-    else
-    {
+    else {
         //ret = terminalToken_.yytex;
         buf << terminalToken_.yytex;
     }
 }
 
-Node* Node::getParent()
-{
+Node* Node::getParent() {
     return parent_;
 }
 
-Node* Node::setParent(Node* p)
-{
+Node* Node::setParent(Node* p) {
     assert(nullptr != p);
     parent_ = p;
     return this;
 }
 
-Node* Node::getChild(int key)
-{
+Node* Node::getChild(int key) {
     if (0 <= (size_t)key && (size_t)key < childrenCount_)
         return children_[key];
     else
         return nullptr;
 }
 
-Node** Node::getChildRef(int key)
-{
+Node** Node::getChildRef(int key) {
     if (0 <= (size_t)key && (size_t)key < childrenCount_)
         return &children_[key];
     else
         return nullptr;
 }
 
-bool Node::setChild(int key, Node* newchild)
-{
-    if (0 <= (size_t)key && (size_t)key < childrenCount_)
-    {
+bool Node::setChild(int key, Node* newchild) {
+    if (0 <= (size_t)key && (size_t)key < childrenCount_) {
         children_[key] = newchild;
         if (newchild)
             newchild->setParent(this);
@@ -576,27 +512,23 @@ bool Node::setChild(int key, Node* newchild)
         return false;
 }
 
-size_t Node::getChildrenCount() const
-{
+size_t Node::getChildrenCount() const {
     return childrenCount_;
 }
 
-std::string Node::text()
-{
+std::string Node::text() {
     if(isTerminalToken)
         return terminalToken_.yytex;
     else
         return serialize();
 }
 
-void Node::set_text(const std::string& new_text)
-{
+void Node::set_text(const std::string& new_text) {
     assert(isTerminalToken);
     terminalToken_.yytex = new_text;
 }
 
-int Node::GetKey(const std::string& f)
-{
+int Node::GetKey(const std::string& f) {
     if (f.length() < 3 || f.front() != '{' || f.back() != '}')
         return -1;
     return std::atoi(f.substr(1, f.length() - 2).c_str());
@@ -604,14 +536,12 @@ int Node::GetKey(const std::string& f)
 
 #if 1
 //High efficiency
-bool Node::Divide(const std::string& f, std::vector<std::string>& ret)
-{
+bool Node::Divide(const std::string& f, std::vector<std::string>& ret) {
     auto l = f.find("{");
     auto r = f.find("}");
     if (l == std::string::npos || r == std::string::npos)
         return false;
-    else
-    {
+    else {
         ret.push_back(f.substr(0, l));
         ret.push_back(f.substr(l, r - l + 1));
         ret.push_back(f.substr(r + 1));
@@ -637,21 +567,17 @@ bool Node::Divide(const std::string& f, std::vector<std::string>& ret)
 }
 #endif
 
-Node* Node::remove_parens(Node* node)
-{
-    while (is_with_parens(node))
-    {
+Node* Node::remove_parens(Node* node) {
+    while (is_with_parens(node)) {
         node = node->getChild(0);
     }
     return node;
 }
 
-bool Node::is_with_parens(Node* node)
-{
+bool Node::is_with_parens(Node* node) {
     assert(node);
     bool ret = false;
-    switch (node->nodeType_)
-    {
+    switch (node->nodeType_) {
         case E_SELECT_WITH_PARENS:
         case E_JOINED_TABLE_WITH_PARENS:
         case E_EXPR_LIST_WITH_PARENS:
@@ -660,14 +586,12 @@ bool Node::is_with_parens(Node* node)
             break;
         default:
             ret = false;
-
     }
     return ret;
 }
 
 #if 1
-Node* Node::addjust_cross_join(Node* root, Node* cj)
-{
+Node* Node::addjust_cross_join(Node* root, Node* cj) {
     assert(cj->nodeType_ == E_JOINED_TABLE);
     assert(cj->getChild(E_JOINED_TABLE_TABLE_FACTOR_R) == nullptr);
     cj->setChild(E_JOINED_TABLE_TABLE_FACTOR_R, root);
@@ -693,18 +617,15 @@ Node* Node::addjust_cross_join(Node* root, Node* cj)
 }
 #endif
 
-Node* Node::check_expr_is_column_alias(Node* root)
-{
-    if (root->nodeType_ == E_OP_EQ)
-    {
+Node* Node::check_expr_is_column_alias(Node* root) {
+    if (root->nodeType_ == E_OP_EQ) {
         Node* left = root->getChild(E_OP_BINARY_OPERAND_L);
         Node* right = root->getChild(E_OP_BINARY_OPERAND_R);
         assert(left != nullptr && right != nullptr);
         if (left->nodeType_ == E_OP_NAME_FIELD &&
         left->getChild(0) != nullptr && left->getChild(0)->nodeType_ == E_IDENTIFIER &&
         left->getChild(1) == nullptr && left->getChild(2) == nullptr &&
-        left->getChild(3) == nullptr && left->getChild(4) == nullptr)
-        {
+        left->getChild(3) == nullptr && left->getChild(4) == nullptr) {
             // this is a column_alias
             std::string alias_name = left->getChild(0)->terminalToken_.str;
             Node* alias = makeTerminalNode(E_IDENTIFIER, alias_name);
@@ -716,26 +637,22 @@ Node* Node::check_expr_is_column_alias(Node* root)
             delete(root);
             return ret;
         }
-        else
-        {
+        else {
             // maybe here is an grammar error
         }
     }
     return root;
 }
 
-bool  Node::check_expr_table_hint(Node* root)
-{
-    if (root->nodeType_ == E_IDENTIFIER)
-    {
+bool  Node::check_expr_table_hint(Node* root) {
+    if (root->nodeType_ == E_IDENTIFIER) {
         std::string word = root->terminalToken_.str;
         std::transform(word.begin(), word.end(), word.begin(), ::toupper);
         if (TABLE_HINT_WORDS.find(word) == TABLE_HINT_WORDS.end())
             return false;
         return true;
     }
-    else if (root->nodeType_ == E_OP_EQ)
-    {
+    else if (root->nodeType_ == E_OP_EQ) {
         Node* l = root->getChild(E_OP_BINARY_OPERAND_L);
         assert(l);
         if (l->nodeType_ != E_IDENTIFIER)
@@ -746,8 +663,7 @@ bool  Node::check_expr_table_hint(Node* root)
             return false;
         return true;
     }
-    else if (root->nodeType_ == E_FUN_CALL)
-    {
+    else if (root->nodeType_ == E_FUN_CALL) {
         Node* l = root->getChild(0);
         assert(l && l->nodeType_ == E_IDENTIFIER);
         std::string word = l->terminalToken_.str;
@@ -778,21 +694,18 @@ std::string Node::convert_join_hint(int ival)
     }
 }
 
-Node* Node::make_query_hint(const std::string& text)
-{
+Node* Node::make_query_hint(const std::string& text) {
     return makeTerminalNode(E_STRING, text);
 }
 
-Node* Node::make_query_hint(const std::string& text, Node* num)
-{
+Node* Node::make_query_hint(const std::string& text, Node* num) {
     Node* nd = makeTerminalNode(E_STRING, text);
     Node* ret = makeNonTerminalNode(E_QUERY_HINT, E_QUERY_HINT_PROPERTY_CNT, nd, num);
     ret->serialize_format = &DOUBLE_SERIALIZE_FORMAT;
     return ret;
 }
 
-bool Node::check_update_item(Node* root, Node*& out_expr)
-{
+bool Node::check_update_item(Node* root, Node*& out_expr) {
     if (root->nodeType_ == E_OP_EQ ||
         root->nodeType_ == E_OP_ASS_BIT_AND ||
         root->nodeType_ == E_OP_ASS_BIT_OR ||
@@ -801,51 +714,42 @@ bool Node::check_update_item(Node* root, Node*& out_expr)
         root->nodeType_ == E_OP_ASS_MINUS ||
         root->nodeType_ == E_OP_ASS_MUL ||
         root->nodeType_ == E_OP_ASS_DIV ||
-        root->nodeType_ == E_OP_ASS_REM)
-    {
+        root->nodeType_ == E_OP_ASS_REM) {
         // check NAME ... NAME assign expr
         //       @variable assign expr
         Node* l = root->getChild(E_OP_BINARY_OPERAND_L);
         out_expr = root->getChild(E_OP_BINARY_OPERAND_R);
-        switch (l->nodeType_)
-        {
-            case E_OP_NAME_FIELD:
-            {
+        switch (l->nodeType_) {
+            case E_OP_NAME_FIELD: {
                 Node* column = l->getChild(E_OP_NAME_FIELD_COLUMN_NAME);
                 assert(column != nullptr);
                 return column->nodeType_ != E_STAR;
-            }
-                break;
-            case E_OP_EQ:
-            {
+            } break;
+            case E_OP_EQ: {
                 Node* var = l->getChild(E_OP_BINARY_OPERAND_L);
                 Node* column = l->getChild(E_OP_BINARY_OPERAND_R);
                 assert(var != nullptr);
                 assert(column != nullptr);
                 return var->nodeType_ == E_TEMP_VARIABLE &&
                     column->nodeType_ == E_OP_NAME_FIELD;
-            }
-                break;
+            } break;
             default:
                 return false;
         }
     }
-    else if (root->nodeType_ == E_FUN_CALL)
-    {
+    else if (root->nodeType_ == E_FUN_CALL) {
         // check format like NAME.NAME(...)
         Node* func = root->getChild(0);
         if (func->nodeType_ == E_PROC_IDENT &&
             func->getChild(0) && func->getChild(1) &&
-            !func->getChild(2) && func->getChild(3))
-        {
+            !func->getChild(2) && func->getChild(3)) {
             return true;
         }
     }
     return false;
 }
 
-Node* Node::NAME_CHAIN_TO_TABLE_IDENT(Node* root)
-{
+Node* Node::NAME_CHAIN_TO_TABLE_IDENT(Node* root) {
     assert(root->nodeType_ == E_NAME_CHAIN);
     std::list<Node*> ls;
     ToList(root, ls);
@@ -853,25 +757,21 @@ Node* Node::NAME_CHAIN_TO_TABLE_IDENT(Node* root)
         return nullptr;
     int i = 0;
     Node* ret = Node::makeNonTerminalNode(E_TABLE_IDENT, E_TABLE_IDENT_PROPERTY_CNT, nullptr, nullptr, nullptr, nullptr);
-    for (auto it = ls.rbegin(); it != ls.rend(); ++it,++i)
-    {
+    for (auto it = ls.rbegin(); it != ls.rend(); ++it,++i) {
         ret->setChild(i, *it);
     }
     return nullptr;
 }
 
-Node* Node::NAME_CHAIN_STAR_TO_NAME_FIELD(Node* root)
-{
+Node* Node::NAME_CHAIN_STAR_TO_NAME_FIELD(Node* root) {
     return nullptr;
 }
 
-Node* Node::NAME_CHAIN_TO_NAME_FIELD(Node* root)
-{
+Node* Node::NAME_CHAIN_TO_NAME_FIELD(Node* root) {
     return nullptr;
 }
 
-bool Node::CHECK_FUNCTION_CALL_WITH_STAR(Node* node)
-{
+bool Node::CHECK_FUNCTION_CALL_WITH_STAR(Node* node) {
     assert(node->isTerminalToken);
     std::string word = node->terminalToken_.yytex;
     std::transform(word.begin(), word.end(), word.begin(), ::toupper);

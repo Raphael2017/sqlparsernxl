@@ -13,10 +13,8 @@
 
 struct Node;
 
-namespace resolve
-{
-    enum ScopeType
-    {
+namespace resolve {
+    enum ScopeType {
         E_SCOPE_WHATEVER,
         E_SCOPE_FROM,
         E_SCOPE_EXPR,
@@ -84,106 +82,90 @@ namespace resolve
     int resolve_group_by_clause(
             ResultPlan *plan,
             Node *node,
-            Stmt *parent
-            );
+            Stmt *parent);
 
     int resolve_having_clause(
             ResultPlan *plan,
             Node *node,
-            Stmt *parent
-            );
+            Stmt *parent);
 
     int resolve_order_by_clause(
             ResultPlan *plan,
             Node *node,
-            Stmt *parent
-            );
+            Stmt *parent);
 
     int resolve_cte_clause(
             ResultPlan* plan,
             Node* node,
-            Stmt* parent
-            );
+            Stmt* parent);
 
     int resolve_cte(
             ResultPlan* plan,
             Node* node,
             Stmt* parent,
-            uint64_t& out_table_id
-            );
+            uint64_t& out_table_id);
 
     int resolve_from_clause(
             ResultPlan* plan,
             Node* node,
-            Stmt* parent
-            );
+            Stmt* parent);
 
     int resolve_table(
             ResultPlan* plan,
             Node* node,
             Stmt* parent,
-            uint64_t& out_table_id
-            );
+            uint64_t& out_table_id);
 
     int resolve_joined_table(
             ResultPlan* plan,
             Node* node,
             Stmt* parent,
-            JoinedTable* joinedTable
-            );
+            JoinedTable* joinedTable);
 
     int resolve_where_clause(
             ResultPlan* plan,
             Node* node,
             Node* node_parent,
-            Stmt* parent
-            );
+            Stmt* parent);
 
     int resolve_select_items(
             ResultPlan* plan,
             Node* node,
             SelectStmt* parent,
-            ScopeType scope
-            );
+            ScopeType scope);
 
     int resolve_update_clause(
             ResultPlan* plan,
             Node* node,
-            UpdateStmt* parent
-            );
+            UpdateStmt* parent);
 
     int resolve_update_items(
             ResultPlan* plan,
             Node* node,
-            UpdateStmt* parent
-            );
+            UpdateStmt* parent);
 
     int resolve_delete_clause(
             ResultPlan* plan,
             Node* node,
-            DeleteStmt* parent
-    );
+            DeleteStmt* parent);
 
     int resolve_insert_clause(
             ResultPlan* plan,
             Node* node,
-            InsertStmt* parent
-    );
+            InsertStmt* parent);
 
     int resolve_independ_expr(
             ResultPlan *plan,
             Node *node,
             uint64_t& sql_raw_expr_id,
-            Stmt* parent
-            );  // not use
+            Stmt* parent);  // not use
 
     int resolve_expr(
             ResultPlan* plan,
             Node* node,
             SqlRawExpr* sql_raw_expr,
             Stmt* parent,
-            RawExpr*& out_raw_expr
-            );
+            RawExpr*& out_raw_expr);
 }
 
 #endif

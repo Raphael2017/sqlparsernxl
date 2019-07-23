@@ -4,8 +4,7 @@
 #include "Interface.h"
 #include "Stmt.h"
 
-namespace resolve
-{
+namespace resolve {
     struct InsertStmt : public Stmt, public IInsertStmt
     {
     public:

@@ -2,8 +2,8 @@
 #include "LogicPlan.h"
 #include "LocalTableMgr.h"
 #include "Stmt.h"
-namespace resolve
-{
+
+namespace resolve {
     ResultPlan::ResultPlan(
             const BaseTableVisit& visit,
             const BaseTableColumnVisit& visit1,
@@ -17,18 +17,14 @@ namespace resolve
             errorOccur_(errorOccur),
             logicPlan_(new LogicPlan),
             local_table_mgr(new LocalTableMgr),
-            error_code_(0)
-    {
+            error_code_(0) { }
 
-    }
-    ResultPlan::~ResultPlan()
-    {
+    ResultPlan::~ResultPlan() {
         delete(logicPlan_);
         delete(local_table_mgr);
     }
 
-    void ResultPlan::reset()
-    {
+    void ResultPlan::reset() {
         error_code_ = 0;
         error_detail_ = "";
         tree_root_ = nullptr;
@@ -38,38 +34,32 @@ namespace resolve
             local_table_mgr->reset();
     }
 
-    void ResultPlan::set_err(int err_code, const std::string err_detail)
-    {
+    void ResultPlan::set_err(int err_code, const std::string err_detail) {
         error_code_ = err_code;
         error_detail_ = err_detail;
     }
 
-    IStmt* ResultPlan::GetQuery(uint64_t query_id)
-    {
+    IStmt* ResultPlan::GetQuery(uint64_t query_id) {
         Stmt* ret = logicPlan_->get_query(query_id);
         return ret;
     }
 
-    void ResultPlan::SetDefaultSchema(const std::string& default_schema)
-    {
+    void ResultPlan::SetDefaultSchema(const std::string& default_schema) {
         local_table_mgr->set_default_schema(default_schema);
     }
 
-    void ResultPlan::SetDefaultDatabase(const std::string& default_database)
-    {
+    void ResultPlan::SetDefaultDatabase(const std::string& default_database) {
         local_table_mgr->set_default_database(default_database);
     }
 
-    std::string ResultPlan::GetDefaultDatabase()
-    {
+    std::string ResultPlan::GetDefaultDatabase() {
         return local_table_mgr->get_default_database();
     }
 
     void ResultPlan::AddTableStructure(
             const std::string& schema,
             const std::string& table,
-            const std::list<std::string>& columns)
-    {
+            const std::list<std::string>& columns) {
         local_table_mgr->add_table_struct(schema + "." + table, columns);
     }
 }

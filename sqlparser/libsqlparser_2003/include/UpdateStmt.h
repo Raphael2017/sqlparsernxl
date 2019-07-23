@@ -4,18 +4,15 @@
 #include "Interface.h"
 #include "Stmt.h"
 
-namespace resolve
-{
-    struct UpdateItem
-    {
+namespace resolve {
+    struct UpdateItem {
         uint64_t table_id_;         // basic table
         uint64_t column_id_;
         uint64_t sql_raw_expr_id_;
         NodeType assign_type_;
     };
     struct TableRef;
-    struct UpdateStmt : public Stmt, public IUpdateStmt
-    {
+    struct UpdateStmt : public Stmt, public IUpdateStmt {
     public:
         ~UpdateStmt();
         const std::vector<UpdateItem*>& get_update_items() const { return update_items_; }

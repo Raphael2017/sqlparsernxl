@@ -5,15 +5,12 @@
 
 struct Node;
 
-namespace resolve
-{
+namespace resolve {
     struct CteDef;
     struct TableRef;
     struct ResultPlan;
-    struct FromItem
-    {
-        enum FromItemType
-        {
+    struct FromItem {
+        enum FromItemType {
             E_JOINED,
             E_NORMAL,
         };
@@ -22,8 +19,7 @@ namespace resolve
     };
     struct JoinedTable;
 
-    struct Stmt : public IStmt
-    {
+    struct Stmt : public IStmt {
     public:
         ~Stmt();
         uint64_t get_query_id() const { return query_id_; }

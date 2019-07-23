@@ -4,9 +4,7 @@
 #include "Interface.h"
 #include "Stmt.h"
 
-namespace resolve
-{
-
+namespace resolve {
     struct StoreProcedure : public IStoreProcedure {
         StoreProcedure(
                 const std::string& server_name,

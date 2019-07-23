@@ -4,21 +4,18 @@
 #include "Interface.h"
 #include <vector>
 
-namespace resolve
-{
+namespace resolve {
     /*
      * use RPN to descripe join detail
      * (A op1 B) op2 C means join_nodes_{A,B,op1,C,op2}
      * A op1 (B op2 C) means join_nodes_{A,B,C,op2,op1}
      * */
-    struct JoinedTable
-    {
+    struct JoinedTable {
         /*
          * join_type_ == E_NODETYPE_BEGIN id_ means table
          * else means join operator, id_ means expr
          * */
-        struct JoinNode
-        {
+        struct JoinNode {
             NodeType join_type_;
             uint64_t id_;
         };

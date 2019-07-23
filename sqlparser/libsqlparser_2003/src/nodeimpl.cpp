@@ -18,8 +18,7 @@ IPlan* CreatePlan(
         const StartNewStmt& startNewStmt,
         const WhereClauseVisit& whereClauseVisit,
         const ErrorOccur& errorOccur,
-        void* context, IParseResult* parseResult)
-{
+        void* context, IParseResult* parseResult) {
     auto parser_result = dynamic_cast<ParseResult*>(parseResult);
     if (!parser_result) return nullptr;
     auto root = dynamic_cast<Node*>(parser_result->result_tree_);
@@ -33,13 +32,11 @@ IPlan* CreatePlan(
     return ret;
 }
 
-void DestroyPlan(IPlan* plan)
-{
+void DestroyPlan(IPlan* plan) {
     delete(dynamic_cast<resolve::ResultPlan*>(plan));
 }
 
-void VisitPlan(IPlan* p)
-{
+void VisitPlan(IPlan* p) {
     resolve::ResultPlan* plan = dynamic_cast<resolve::ResultPlan*>(p);
     if (!plan)
         return;
@@ -49,47 +46,36 @@ void VisitPlan(IPlan* p)
     resolve::resolve_multi_statements(plan, plan->tree_root_);
 }
 
-IParseResult* ParseSql(const std::string &sql, DATABASE_TYPE dbms)
-{
+IParseResult* ParseSql(const std::string &sql, DATABASE_TYPE dbms) {
     ParseResult* result = new ParseResult;
     result->type_ = dbms;
-    switch (dbms)
-    {
-        case DBMS_SQL2003:
-        {
+    switch (dbms) {
+        case DBMS_SQL2003: {
             parser::parse_sql2003(sql, result);
-        }
-            break;
-        case DBMS_TSQL:
-        {
+        } break;
+        case DBMS_TSQL: {
             parser::parse_tsql(sql, result);
-        }
-            break;
-        default:
-        {
+        } break;
+        default: {
             result->errDetail = "UNKNOWN DATABASE_TYPE";
         }
     }
     return result;
 }
 
-void DestroyParseResult(IParseResult* result)
-{
-    delete(result);
+void DestroyParseResult(IParseResult* result) {
+    delete(dynamic_cast<ParseResult*>(result));
 }
 
-NodeType Node::GetType()
-{
+NodeType Node::GetType() {
     return nodeType_;
 }
 
-INode* Node::GetParent()
-{
+INode* Node::GetParent() {
     return parent_;
 }
 
-bool Node::SetParent(INode *node)
-{
+bool Node::SetParent(INode *node) {
     Node* parent = dynamic_cast<Node*>(node);
     if (!parent)
         return false;
@@ -97,65 +83,53 @@ bool Node::SetParent(INode *node)
     return true;
 }
 
-INode* Node::GetChild(int key)
-{
+INode* Node::GetChild(int key) {
     return getChild(key);
 }
 
-bool Node::SetChild(int key, INode *node)
-{
+bool Node::SetChild(int key, INode *node) {
     Node* child = dynamic_cast<Node*>(node);
     if (!child)
         return false;
     return setChild(key, child);
 }
 
-int Node::GetChildrenCount() const
-{
+int Node::GetChildrenCount() const {
     return getChildrenCount();
 }
 
-std::string Node::Text()
-{
+std::string Node::Text() {
     return text();
 }
 
-bool Node::IsTerminal() const
-{
+bool Node::IsTerminal() const {
     return isTerminalToken;
 }
 
-std::string Node::Serialize()
-{
+std::string Node::Serialize() {
     return serialize();
 }
 
-void Node::Print()
-{
+void Node::Print() {
     print(this, 0);
 }
 
-bool ParseResult::IsAccept() const
-{
+bool ParseResult::IsAccept() const {
     return accept;
 }
 
-INode* ParseResult::GetParseTree()
-{
+INode* ParseResult::GetParseTree() {
     return result_tree_;
 }
 
-size_t ParseResult::GetErrorLine() const
-{
+size_t ParseResult::GetErrorLine() const {
     return errFirstLine;
 }
 
-size_t ParseResult::GetErrorColumn() const
-{
+size_t ParseResult::GetErrorColumn() const {
     return errFirstColumn;
 }
 
-std::string ParseResult::GetErrorDetail() const
-{
+std::string ParseResult::GetErrorDetail() const {
     return errDetail;
 }

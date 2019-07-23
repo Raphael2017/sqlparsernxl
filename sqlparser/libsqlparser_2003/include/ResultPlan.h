@@ -4,12 +4,10 @@
 #include "Interface.h"
 struct Node;
 
-namespace resolve
-{
+namespace resolve {
     struct LogicPlan;
     struct LocalTableMgr;
-    struct ResultPlan : public IPlan
-    {
+    struct ResultPlan : public IPlan {
         ResultPlan(
                 const BaseTableVisit& visit,
                 const BaseTableColumnVisit& visit1,

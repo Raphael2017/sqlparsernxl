@@ -3,14 +3,11 @@
 
 #include "Interface.h"
 
-namespace resolve
-{
+namespace resolve {
     struct LogicPlan;
-    struct SelectItem
-    {
+    struct SelectItem {
     public:
-        enum SelectItemType
-        {
+        enum SelectItemType {
             E_SEL_ITEM_EXPR_ALIAS,
             E_SEL_ITEM_EXPR,
             E_SEL_ITEM_EXPAND_STAR,
@@ -31,16 +28,13 @@ namespace resolve
         std::string alias_;
     };
 
-    struct SelItemExprAlias : public SelectItem
-    {
+    struct SelItemExprAlias : public SelectItem {
     public:
         SelItemExprAlias() { select_item_type_ = E_SEL_ITEM_EXPR_ALIAS; }
-        virtual std::string get_column_name() const override
-        {
+        virtual std::string get_column_name() const override {
             return alias_;
         }
-        virtual SelectItem* clone() const override
-        {
+        virtual SelectItem* clone() const override {
             SelectItem* ret = new SelItemExprAlias(*this);
             return ret;
         }
@@ -50,19 +44,16 @@ namespace resolve
         friend struct SqlRawExpr;
     };
 
-    struct SelItemExpr : public SelectItem
-    {
+    struct SelItemExpr : public SelectItem {
     public:
         SelItemExpr() { select_item_type_ = E_SEL_ITEM_EXPR; }
-        virtual std::string get_column_name() const override
-        {
+        virtual std::string get_column_name() const override {
             if (alias_.length() > 0)
                 return alias_;
             else
                 return name_;
         }
-        virtual SelectItem* clone() const override
-        {
+        virtual SelectItem* clone() const override {
             SelectItem* ret = new SelItemExpr(*this);
             return ret;
         }
@@ -73,19 +64,16 @@ namespace resolve
         friend struct SqlRawExpr;
     };
 
-    struct SelItemExpandStar : public SelectItem
-    {
+    struct SelItemExpandStar : public SelectItem {
     public:
         SelItemExpandStar() { select_item_type_ = E_SEL_ITEM_EXPAND_STAR; }
-        virtual std::string get_column_name() const override
-        {
+        virtual std::string get_column_name() const override {
             if (alias_.length() > 0)
                 return alias_;
             else
                 return col_name_;
         }
-        virtual SelectItem* clone() const override
-        {
+        virtual SelectItem* clone() const override {
             SelectItem* ret = new SelItemExpandStar(*this);
             return ret;
         }

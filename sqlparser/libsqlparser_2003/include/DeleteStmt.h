@@ -4,10 +4,8 @@
 #include "Interface.h"
 #include "Stmt.h"
 
-namespace resolve
-{
-    struct DeleteStmt : public Stmt, public IDeleteStmt
-    {
+namespace resolve {
+    struct DeleteStmt : public Stmt, public IDeleteStmt {
     public:
         ~DeleteStmt();
         bool set_delete_table(

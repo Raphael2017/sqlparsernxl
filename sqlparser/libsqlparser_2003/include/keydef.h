@@ -6,8 +6,7 @@
 #include <set>
 #include "node_struct.h"
 
-enum NodeType
-{
+enum NodeType {
     E_NODETYPE_BEGIN = 0,
 
     /* terminal */
@@ -219,8 +218,7 @@ enum NodeType
     E_NODETYPE_END
 };
 
-enum StmtType
-{
+enum StmtType {
     E_NONE,
     E_STMT_TYPE_SELECT,
     E_STMT_TYPE_UPDATE,
@@ -230,8 +228,7 @@ enum StmtType
     E_STMT_TYPE_CALL,
 };
 
-enum TableItemType
-{
+enum TableItemType {
     E_UNKNOWN,
     E_BASIC_TABLE,
     E_BASIC_TABLE_WITH_ALIAS,
@@ -250,8 +247,7 @@ const std::set<std::string> TABLE_HINT_WORDS{
     "TABLOCK", "TABLOCKX", "UPDLOCK", "XLOCK"
 };
 
-enum DATABASE_TYPE
-{
+enum DATABASE_TYPE {
     DBMS_SQL2003,
     DBMS_TSQL
 };
