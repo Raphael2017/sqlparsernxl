@@ -19,7 +19,7 @@
 #include <assert.h>
 
 std::string escape_double_quotation(const std::string& src, char c) {
-    assert(c == '"' || c == '`');
+    assert(c == '"' || c == '`' || c == ']');
     std::string ret = "";
     for (size_t i = 0; i < src.length(); ++i) {
         if (src[i] == c && src[1+i] == c) {
@@ -370,7 +370,9 @@ FALSE   {
     ((ParseResult*)yyextra)->buf_ << ']';
     std::string text = ((ParseResult*)yyextra)->buf_.str();
     Node* nd = Node::makeTerminalNode(E_IDENTIFIER, text.c_str());
-    nd->terminalToken_.str = text.substr(1, text.length() - 2);
+    nd->terminalToken_.str = escape_double_quotation(text.substr(1, text.length() - 2), ']');
+    nd->terminalToken_.line = yylloc->first_line;
+    nd->terminalToken_.column = yylloc->first_column;
     yylval->node = nd;
     return SQL2003_NAME;
 }

@@ -1208,7 +1208,7 @@ static const flex_int16_t yy_chk[1448] =
 #include <assert.h>
 
 std::string escape_double_quotation(const std::string& src, char c) {
-    assert(c == '"' || c == '`');
+    assert(c == '"' || c == '`' || c == ']');
     std::string ret = "";
     for (size_t i = 0; i < src.length(); ++i) {
         if (src[i] == c && src[1+i] == c) {
@@ -2471,13 +2471,15 @@ YY_RULE_SETUP
     ((ParseResult*)yyextra)->buf_ << ']';
     std::string text = ((ParseResult*)yyextra)->buf_.str();
     Node* nd = Node::makeTerminalNode(E_IDENTIFIER, text.c_str());
-    nd->terminalToken_.str = text.substr(1, text.length() - 2);
+    nd->terminalToken_.str = escape_double_quotation(text.substr(1, text.length() - 2), ']');
+    nd->terminalToken_.line = yylloc->first_line;
+    nd->terminalToken_.column = yylloc->first_column;
     yylval->node = nd;
     return SQL2003_NAME;
 }
 	YY_BREAK
 case YY_STATE_EOF(sb):
-#line 378 "sqlparser_sql2003.l"
+#line 380 "sqlparser_sql2003.l"
 {
     fprintf(stderr, "[SQL-Lexer-Error] Unterminated identifier WITH '['\n");
     return SQL2003_ERROR;
@@ -2485,7 +2487,7 @@ case YY_STATE_EOF(sb):
 	YY_BREAK
 case 164:
 YY_RULE_SETUP
-#line 384 "sqlparser_sql2003.l"
+#line 386 "sqlparser_sql2003.l"
 {
     Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
     yylval->node = nd;
@@ -2497,7 +2499,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 165:
 YY_RULE_SETUP
-#line 393 "sqlparser_sql2003.l"
+#line 395 "sqlparser_sql2003.l"
 {
     Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
     yylval->node = nd;
@@ -2509,7 +2511,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 166:
 YY_RULE_SETUP
-#line 402 "sqlparser_sql2003.l"
+#line 404 "sqlparser_sql2003.l"
 {
 	Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
 	yylval->node = nd;
@@ -2522,68 +2524,68 @@ YY_RULE_SETUP
 case 167:
 /* rule 167 can match eol */
 YY_RULE_SETUP
-#line 411 "sqlparser_sql2003.l"
+#line 413 "sqlparser_sql2003.l"
 { /* ignore */ }
 	YY_BREAK
 case 168:
 /* rule 168 can match eol */
 YY_RULE_SETUP
-#line 412 "sqlparser_sql2003.l"
+#line 414 "sqlparser_sql2003.l"
 { /* ignore */ }
 	YY_BREAK
 case 169:
 YY_RULE_SETUP
-#line 414 "sqlparser_sql2003.l"
+#line 416 "sqlparser_sql2003.l"
 { return yytext[0];}
 	YY_BREAK
 case 170:
 YY_RULE_SETUP
-#line 416 "sqlparser_sql2003.l"
+#line 418 "sqlparser_sql2003.l"
 { return SQL2003_CNNOP; }
 	YY_BREAK
 case 171:
 YY_RULE_SETUP
-#line 417 "sqlparser_sql2003.l"
+#line 419 "sqlparser_sql2003.l"
 { return SQL2003_COMP_EQ; }
 	YY_BREAK
 case 172:
 YY_RULE_SETUP
-#line 418 "sqlparser_sql2003.l"
+#line 420 "sqlparser_sql2003.l"
 { return SQL2003_COMP_GE; }
 	YY_BREAK
 case 173:
 YY_RULE_SETUP
-#line 419 "sqlparser_sql2003.l"
+#line 421 "sqlparser_sql2003.l"
 { return SQL2003_COMP_GT; }
 	YY_BREAK
 case 174:
 YY_RULE_SETUP
-#line 420 "sqlparser_sql2003.l"
+#line 422 "sqlparser_sql2003.l"
 { return SQL2003_COMP_LE; }
 	YY_BREAK
 case 175:
 YY_RULE_SETUP
-#line 421 "sqlparser_sql2003.l"
+#line 423 "sqlparser_sql2003.l"
 { return SQL2003_COMP_LT; }
 	YY_BREAK
 case 176:
 YY_RULE_SETUP
-#line 422 "sqlparser_sql2003.l"
+#line 424 "sqlparser_sql2003.l"
 { return SQL2003_COMP_NE; }
 	YY_BREAK
 case 177:
 YY_RULE_SETUP
-#line 423 "sqlparser_sql2003.l"
+#line 425 "sqlparser_sql2003.l"
 { return SQL2003_COMP_NE; }
 	YY_BREAK
 case 178:
 YY_RULE_SETUP
-#line 425 "sqlparser_sql2003.l"
+#line 427 "sqlparser_sql2003.l"
 
 	YY_BREAK
 case 179:
 YY_RULE_SETUP
-#line 427 "sqlparser_sql2003.l"
+#line 429 "sqlparser_sql2003.l"
 {
     Node* nd = Node::makeTerminalNode(E_QUESTIONMARK, yytext);
     yylval->node = nd;
@@ -2592,12 +2594,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(hint):
-#line 434 "sqlparser_sql2003.l"
+#line 436 "sqlparser_sql2003.l"
 { return SQL2003_END_P; }
 	YY_BREAK
 case 180:
 YY_RULE_SETUP
-#line 436 "sqlparser_sql2003.l"
+#line 438 "sqlparser_sql2003.l"
 {
     fprintf(stderr, "[SQL-Lexer-Error] Unknown Character: %c\n", yytext[0]);
     return SQL2003_ERROR;   /* todo ignore or return ERROR */
@@ -2605,10 +2607,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 181:
 YY_RULE_SETUP
-#line 440 "sqlparser_sql2003.l"
+#line 442 "sqlparser_sql2003.l"
 ECHO;
 	YY_BREAK
-#line 2612 "sqlparser_sql2003_flex.cpp"
+#line 2614 "sqlparser_sql2003_flex.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -3762,7 +3764,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 440 "sqlparser_sql2003.l"
+#line 442 "sqlparser_sql2003.l"
 
 /***************************
  ** Section 3: User code
