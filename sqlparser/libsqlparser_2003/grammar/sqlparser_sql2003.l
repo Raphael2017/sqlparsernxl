@@ -16,17 +16,15 @@
 #include <sstream>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
-std::string escape_double_quotation(const std::string& src) {
+std::string escape_double_quotation(const std::string& src, char c) {
+    assert(c == '"' || c == '`');
     std::string ret = "";
     for (size_t i = 0; i < src.length(); ++i) {
-        if (src[i] == '"' && src[1+i] == '"') {
-            ret += '"';
+        if (src[i] == c && src[1+i] == c) {
+            ret += c;
             ++i;    // skip one
-        }
-        else if (src[i] == '`' && src[1+i] == '`') {
-            ret += '`';
-            ++i;    // for mysql
         }
         else
             ret += src[i];
@@ -386,7 +384,7 @@ FALSE   {
 \"(\"\"|[^"\\\n])+\" {
     Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
     yylval->node = nd;
-    nd->terminalToken_.str = escape_double_quotation(std::string(yytext+1, yytext + strlen(yytext) - 1));    /* todo convert "" */
+    nd->terminalToken_.str = escape_double_quotation(std::string(yytext+1, yytext + strlen(yytext) - 1), '"');
     nd->terminalToken_.line = yylloc->first_line;
     nd->terminalToken_.column = yylloc->first_column;
     return SQL2003_NAME;
@@ -395,7 +393,7 @@ FALSE   {
 `(``|[^`\\\n])+` {
     Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
     yylval->node = nd;
-    nd->terminalToken_.str = escape_double_quotation(std::string(yytext+1, yytext + strlen(yytext) - 1));    /* todo convert `` */
+    nd->terminalToken_.str = escape_double_quotation(std::string(yytext+1, yytext + strlen(yytext) - 1), '`');
     nd->terminalToken_.line = yylloc->first_line;
     nd->terminalToken_.column = yylloc->first_column;
     return SQL2003_NAME;
