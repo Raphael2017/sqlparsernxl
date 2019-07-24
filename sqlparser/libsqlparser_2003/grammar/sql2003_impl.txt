@@ -514,6 +514,7 @@
 
 <delimited identifier> ::=
     <double quote> <delimited identifier body> <double quote>
+  | <grave accent> <delimited identifier body> <grave accent>       -- for mysql
 
 <rank function name> ::= RANK | DENSE_RANK | ROW_NUMBER | PERCENT_RANK | CUME_DIST
 
@@ -595,6 +596,8 @@
 <circumflex> ::= ^
 
 <question mark> ::= ?
+
+<grave accent> ::= `
 
 <digit> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 

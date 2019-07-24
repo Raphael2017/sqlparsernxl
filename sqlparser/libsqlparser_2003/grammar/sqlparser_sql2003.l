@@ -24,6 +24,10 @@ std::string escape_double_quotation(const std::string& src) {
             ret += '"';
             ++i;    // skip one
         }
+        else if (src[i] == '`' && src[1+i] == '`') {
+            ret += '`';
+            ++i;    // for mysql
+        }
         else
             ret += src[i];
     }
@@ -383,6 +387,15 @@ FALSE   {
     Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
     yylval->node = nd;
     nd->terminalToken_.str = escape_double_quotation(std::string(yytext+1, yytext + strlen(yytext) - 1));    /* todo convert "" */
+    nd->terminalToken_.line = yylloc->first_line;
+    nd->terminalToken_.column = yylloc->first_column;
+    return SQL2003_NAME;
+}
+
+`(``|[^`\\\n])+` {
+    Node* nd = Node::makeTerminalNode(E_IDENTIFIER, yytext);
+    yylval->node = nd;
+    nd->terminalToken_.str = escape_double_quotation(std::string(yytext+1, yytext + strlen(yytext) - 1));    /* todo convert `` */
     nd->terminalToken_.line = yylloc->first_line;
     nd->terminalToken_.column = yylloc->first_column;
     return SQL2003_NAME;
