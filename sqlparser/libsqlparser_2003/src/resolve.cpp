@@ -753,6 +753,9 @@ namespace resolve {
             case E_JOIN_INNER: {
                 joinedTable->add_join_op(E_JOIN_INNER, sql_raw_expr_id);
             } break;
+            case E_JOIN_NATURAL: {
+                joinedTable->add_join_op(E_JOIN_NATURAL, OB_INVALID_ID);
+            } break;
             default:
                 assert(false);  /* unreachable */
                 break;

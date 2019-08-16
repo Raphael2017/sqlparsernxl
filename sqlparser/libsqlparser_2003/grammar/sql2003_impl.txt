@@ -557,6 +557,8 @@
 
 <logic op> ::= AND | OR
 
+<quantifier> ::= ALL | SOME | ANY
+
 <period> ::= .
 
 <semicolon> ::= ;

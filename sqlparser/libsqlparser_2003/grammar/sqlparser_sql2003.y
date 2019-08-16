@@ -1030,6 +1030,12 @@ natural_join:
     $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, $1, $5, nullptr);
     $$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
 }
+  | table_reference NATURAL JOIN table_primary
+{
+    Node* nd = Node::makeTerminalNode(E_JOIN_NATURAL, "NATURAL");
+    $$ = Node::makeNonTerminalNode(E_JOINED_TABLE, E_JOINED_TABLE_PROPERTY_CNT, nd, $1, $4, nullptr);
+    $$->serialize_format = &JOINED_TB_2_SERIALIZE_FORMAT;
+}
 ;
 
 join_type:

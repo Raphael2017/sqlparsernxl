@@ -113,7 +113,7 @@ Form DOUBLE_SERIALIZE_FORMAT_C                {{0,"",0," "}, {0,"",1,""}};
 FmCB DOUBLE_SERIALIZE_FORMAT                  {&DOUBLE_SERIALIZE_FORMAT_C, &DOUBLE_SERIALIZE_FORMAT_C};
 
 /*
- * ORACLE only support table alias with keyword AS
+ * ORACLE only support table alias without keyword AS
  * But, opt AS is supported by most DBMS.
  * */
 Form AS_SERIALIZE_FORMAT_C                    {{0,"",0,""}, {0," ",4,""}, {0,/*" AS "*/ " " ,1,""}, {0," ",2,""}, {0," ",3,""}};
